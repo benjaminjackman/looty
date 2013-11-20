@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en" ng-app="main.Looty">
+<head>
+    <meta charset="utf-8">
+    <title>Looty!</title>
+    <link rel="shortcut icon" href="resources/images/gold-coins.png"/>
+    <%= css %>
+</head>
+<body>
+<!-- menubar -->
+<div ng-controller="ThetaMenuBarCtrl">
+    <menubar entries="menuItems" ></menubar>
+</div>
+
+<!-- view container -->
+<div id="main-view" ng-view>
+</div>
+
+<%= js %>
+
+</body>
+</html>

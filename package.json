@@ -1,0 +1,29 @@
+{
+  "name": "cgta-theta",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "0.4.1",
+    "grunt-bower-task": "0.2.3",
+    "grunt-contrib-clean": "0.4.1",
+    "grunt-contrib-coffee": "0.7.0",
+    "grunt-contrib-less": "0.6.2",
+    "grunt-contrib-watch": "0.5.1",
+    "grunt-copy-to": "0.0.4",
+    "grunt-shell": "0.3.0",
+    "underscore": "1.4.4",
+    "grunt-typescript": "0.2.3",
+    "karma-script-launcher": "0.1.0",
+    "karma-chrome-launcher": "0.1.0",
+    "karma-firefox-launcher": "0.1.0",
+    "karma-html2js-preprocessor": "0.1.0",
+    "karma-jasmine": "0.1.0",
+    "karma-requirejs": "0.1.0",
+    "karma-coffee-preprocessor": "0.1.0",
+    "karma-phantomjs-launcher": "0.1.0",
+    "karma": "0.10.0",
+    "karma-junit-reporter": "0.1.0",
+    "shelljs": "0.1.4",
+    "grunt-exec": "0.4.2",
+    "grunt-express": "1.2.0"
+  }
+}

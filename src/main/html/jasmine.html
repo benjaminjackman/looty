@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html class="jasmine">
+<head>
+    <meta charset="utf-8">
+    <title>Jasmine Tests</title>
+    <%= css %>
+</head>
+<body>
+
+
+<!--Angular mock requires jasmine already be included to create the global inject and module methods-->
+<script src="test/scripts/lib/jasmine/jasmine.js"></script>
+<script src="test/scripts/lib/jasmine/jasmine-html.js"></script>
+
+<%= js %>
+<%= jstest %>
+
+<script type="text/javascript">
+  (function() {
+    var jasmineEnv = jasmine.getEnv();
+    jasmineEnv.updateInterval = 1000;
+
+    var htmlReporter = new jasmine.HtmlReporter();
+
+    jasmineEnv.addReporter(htmlReporter);
+
+    jasmineEnv.specFilter = function(spec) {
+      return htmlReporter.specFilter(spec);
+    };
+
+    var currentWindowOnload = window.onload;
+
+    window.onload = function() {
+      if (currentWindowOnload) {
+        currentWindowOnload();
+      }
+      execJasmine();
+    };
+
+    function execJasmine() {
+      jasmineEnv.execute();
+    }
+
+  })();
+</script>
+
+</body>
+</html>

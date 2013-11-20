@@ -1,0 +1,40 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2013 Ben Jackman, Jeff Gomberg
+// All Rights Reserved
+// please contact ben@jackman.biz or jeff@cgtanalytics.com
+// for licensing inquiries
+// Created by bjackman @ 8/17/13 1:38 PM
+//////////////////////////////////////////////////////////////
+
+.menubar {
+  list-style: none;
+  border-bottom: 0.1em solid black;
+  margin-bottom: 10px;
+  margin-left: 0px;
+  padding: 0 0 0.5em;
+
+  &:before {
+    content: "[";
+  }
+
+  &:after {
+    content: "]";
+  }
+
+  &  > li {
+    display: inline;
+  }
+
+  &  > li:before {
+    content: "|";
+    padding-right: 0.3em;
+  }
+
+  &  > li:nth-child(1):before {
+    content: "";
+    padding: 0;
+  }
+}
+
+
+
