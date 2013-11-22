@@ -9,14 +9,14 @@
 module Cgta.Views {
   export module SimpleView {
     var mod = angular.module("views.SimpleView", []);
+    import CharacterInfo = Cgta.Services.CharacterInfo
 
     export class SimpleCtrl {
       stuff = "Nothing to see here"
-      constructor($inventoryService: Cgta.Services.InventoryService) {
-        console.log("Hello")
-        $inventoryService.ensure().then(function() {
-          console.log("Characters", $inventoryService.getCharacters())
-        })
+      constructor($gameStateService: Cgta.Services.GameStateService) {
+//        $inventoryService.getInventories().done(function(inventories) {
+//          console.log("Inventories", inventories)
+//        }, console.error)
       }
 
     }

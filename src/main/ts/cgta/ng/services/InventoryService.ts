@@ -9,13 +9,14 @@
 module Cgta {
   export module Services {
     var mod = angular.module("services.InventoryService", [])
+    var RETRY_IN_MS = 10000;
 
     /**
      * Wraps rpc calls to the ggg servers.
      */
-    export class RpcService {
+    export class PoeRpcService {
 
-      constructor(private $q:ng.IQService, private $http:ng.IHttpService) {
+      constructor(private $http:ng.IHttpService) {
       }
 
       private getItems<T>(url:string, params:any):Q.Promise<T> {
@@ -44,14 +45,14 @@ module Cgta {
         return deferred.promise;
       }
 
-      getCharacterItems(character:String):Q.Promise<CharacterItems> {
+      getCharacterInventory(character:String):Q.Promise<Inventory> {
         var url = "http://www.pathofexile.com/character-window/get-items";
-        return this.getItems<CharacterItems>(url, {character: character});
+        return this.getItems<Inventory>(url, {character: character});
       }
 
-      getStashItems(league:League, tabIndex:Int):Q.Promise<StashItems> {
+      getStashTab(league:League, tabIndex:Int):Q.Promise<StashTab> {
         var url = "http://www.pathofexile.com/character-window/get-stash-items";
-        return this.getItems<StashItems>(url, {league: league, tabIndex: tabIndex});
+        return this.getItems<StashTab>(url, {league: league, tabIndex: tabIndex});
       }
 
       getCharacters():Q.Promise<Array<CharacterInfo> > {
@@ -61,11 +62,22 @@ module Cgta {
       }
     }
 
+    export class FlatItem {
+      constructor() {
+
+      }
+    }
+
+    function rpcError(error:String) {
+      console.error("Unable to refresh ", error)
+    }
+
+
     /**
-     * Abstracts inventory into a searchable updatable sync'd thing.
+     * Synchronized state between the extension and GGG
      */
-    export class InventoryService {
-      constructor(private $q:ng.IQService, private $rpcService:RpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
+    export class GameStateService {
+      constructor(private $q:ng.IQService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
 
 //        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
 //          console.log("Inv", items)
@@ -78,60 +90,136 @@ module Cgta {
 //        });
       }
 
-      characters:Array<CharacterInfo> = null;
+      private characters:Array<CharacterInfo> = []
+      private inventories:any = {}
+      private stashTabs:any = {}
+      private flatItems:Array<FlatItem> = []
 
-      //doUpdate(tabs: Array<Int>, )
-      refreshCharacters(forced?:boolean):Q.Promise<Array<CharacterInfo> > {
+      private setCharacters(characters:Array<CharacterInfo>) {
+        this.characters = characters
+      }
+
+      getCharacters():Array<CharacterInfo> {
+        return this.characters
+      }
+
+      private setInventory(characterName:String, inventory:Inventory) {
+        this.inventories[characterName] = inventory
+        this.$storageService.put("inventories", this.inventories)
+      }
+
+      getInventory(characterName:String):Inventory {
+        return this.inventories[characterName]
+      }
+
+      private setStashTab(league:League, id:Int, stashTab:StashTab) {
+        if (this.stashTabs[league] == null) {
+          this.stashTabs[league] == {}
+        }
+        this.stashTabs[league][id] = stashTab
+        this.$storageService.put("stashtabs", this.stashTabs)
+      }
+
+      getStashTab(league:League, id:Int):StashTab {
+        var leagueTab = this.stashTabs[league]
+        return leagueTab != null ? this.stashTabs[league][id] : null
+      }
+
+      refreshCharacters(webAlways?:boolean):Q.Promise<Array<CharacterInfo>> {
         var self = this;
-        forced = forced == null ? false : forced;
-        function rpcError(error:String) {
-          console.error("Unable to refresh characters ", error)
+        webAlways = webAlways == null ? false : webAlways;
+
+
+        function webRefresh():Q.Promise<Array<CharacterInfo>> {
+          console.debug("Doing Web Refresh");
+          function setCharacters(characters: Array<CharacterInfo>) {
+            self.setCharacters(characters)
+            return characters
+          }
+          return (<any> self.$poeRpcService.getCharacters().then(setCharacters).fail(rpcError))
         }
 
-        function setCharacters(characters:Array<CharacterInfo>) {
-          console.debug("Set characters", characters);
-          self.characters = characters
-          return (<any> self.$storageService.put({characters: characters}).then(() => characters))
-        }
-
-        function doRefresh() :Q.Promise<Array<CharacterInfo>> {
-          console.debug("Doing refresh");
-          return self.$rpcService.getCharacters().then(setCharacters, rpcError)
-        }
-
-        if (forced) {
-          return doRefresh()
+        if (webAlways) {
+          return webRefresh()
         } else {
           //Refresh only when we no characters field in storage
-          var charactersFromStorage = this.$storageService.find<Array<CharacterInfo> >('characters')
-          function onFind(characters: Array<CharacterInfo>) {
+          var storageRefresh = this.$storageService.find<Array<CharacterInfo> >('characters')
+
+          function onFind(characters:Array<CharacterInfo>) {
             if (characters == null) {
-              return doRefresh()
+              return webRefresh()
             } else {
-              self.characters = characters
-              return Q.fcall(() => characters)
+              return Q(characters)
             }
           }
-          return (<any> charactersFromStorage.then(onFind).fail(doRefresh))
+
+          //Typescript is having a hard time understanding that this is invoking
+          //then<U>(onFulfill: (value: T) => IPromise<U>, ...) rather than
+          //then<U>(onFulfill: (value: T) => U, ...)
+          return (<any> storageRefresh.then(onFind).fail(webRefresh))
         }
       }
 
-      refreshCharacterInventories() {
-        //Go over each character and refresh their inventory, if we fail due to
-        //throttle with server then we need to retry.
-      }
-
-      refreshStash() {
-
-      }
-
-      getCharacters() {return this.characters}
 
 
-      ensure():Q.Promise<any> {
-        return this.refreshCharacters()
-      }
-
+//      refreshInventory(name:String, forced?:Boolean):Q.Promise<Inventory> {
+//        var self = this
+//
+//        function doRefresh():Q.Promise<Inventory> {
+//          var res:any = self.$poeRpcService.getCharacterInventory(name).fail(function (reason) {
+//            if (_.isString(reason) && reason.match(/throttle/) != null) {
+//              //GGG throttles so retry in a bit.
+//              console.log("...Throttled..", name, reason)
+//              return Q(0).delay(RETRY_IN_MS).then(doRefresh)
+//            } else {
+//              console.error("Unable to complete rpc for character", reason)
+//              //Unknown reason for failure, so stop
+//              return Q.reject(reason)
+//            }
+//          })
+//          return res
+//        }
+//
+//        //See if we have the items in the storage.
+//        return self.$storageService.find("inventories-" + name).then(function (inventories) {
+//          if (inventories == null || inventories[name] == null) {
+//            function setInventory(inventory:Inventory) {
+//              self.$storageService.put("inventories-" + name, inventory)
+//              return inventories
+//            }
+//
+//            return doRefresh().then(setInventory)
+//          } else {
+//            return inventories
+//          }
+//        })
+//      }
+//
+//      refreshInventories(characters:Array<String>, forced?:Boolean):Q.Promise<any> {
+//        var self = this
+//        //Go over each character and refresh their inventory, if we fail due to
+//        //throttle with server then we need to retry.
+//        var promises = characters.map(function (name:String) {
+//          return self.refreshInventory(name);
+//        });
+//
+//        return (<any> Q.allSettled(promises))
+//      }
+//
+//      getInventories():Q.Promise<Array<Inventory> > {
+//        var self = this
+//
+//        function updateInventories(characterInfos:Array<CharacterInfo>) {
+//          return self.refreshInventories(characterInfos.map((ci) => ci.name))
+//        }
+//
+//        return (<any> this.refreshCharacters().then(updateInventories))
+//      }
+//
+//      refreshStash(league:League, id:Int):Q.Promise<StashTab> {
+//        var self = this
+//        return null;
+//      }
 
     }
 
@@ -139,14 +227,47 @@ module Cgta {
       constructor() {
       }
 
-      put(items:Object):Q.Promise<any> {
-        var d = Q.defer()
 
+//      upsert<A>(key:String, f:(x:A) => A):Q.Promise<A> {
+//        var d = Q.defer()
+//
+//        chrome.storage.local.get(key, function (x:any) {
+//          var oldValue : any = null
+//          if (x != null && x[key] != null) {
+//            oldValue = x[key]
+//          }
+//          Q(f(oldValue)).then(function (v) {
+//            var obj:any = {}
+//            obj[key] = v
+//            function onSet() {
+//              if (chrome.runtime.lastError != null) {
+//                d.reject(chrome.runtime.lastError)
+//              } else {
+//                d.resolve(v)
+//              }
+//            }
+//
+//            chrome.storage.local.set(obj, onSet)
+//          })
+//        });
+//
+//        return d.promise;
+//      }
+
+      put<A>(key:String, value:A):Q.Promise<A> {
+        var d = Q.defer<A>()
+
+        var obj:any = {}
+        obj[key] = value
         function onSet() {
-          if (chrome.runtime.lastError != null) { d.reject(chrome.runtime.lastError) } else { d.resolve(null) }
+          if (chrome.runtime.lastError != null) {
+            d.reject(chrome.runtime.lastError)
+          } else {
+            d.resolve(value)
+          }
         }
 
-        chrome.storage.local.set(items, onSet);
+        chrome.storage.local.set(obj, onSet)
         return d.promise;
       }
 
@@ -154,7 +275,17 @@ module Cgta {
         var d = Q.defer()
 
         function onGet(x:A) {
-          if (chrome.runtime.lastError != null) { d.reject(chrome.runtime.lastError) } else { d.resolve((<any> x)[key]) }
+          if (chrome.runtime.lastError != null) {
+            d.reject(chrome.runtime.lastError)
+          } else {
+            var o:any = x
+            if (o == null || o[key] == null) {
+              d.resolve(null)
+            } else {
+              d.resolve(o[key])
+            }
+
+          }
         }
 
         chrome.storage.local.get(key, onGet)
@@ -200,9 +331,9 @@ module Cgta {
 
     }
 
-    mod.service("$rpcService", RpcService);
+    mod.service("$poeRpcService", PoeRpcService);
     mod.service("$storageService", StorageService);
-    mod.service("$inventoryService", InventoryService);
+    mod.service("$gameStateService", GameStateService);
     mod.service("$userAlertService", UserAlertService);
 
 
@@ -221,13 +352,13 @@ module Cgta {
       name: String
     }
 
-    export interface CharacterItems {
+    export interface Inventory {
       error?: String
       character: String
       items: Array<InventoryItem>
     }
 
-    export interface StashItems {
+    export interface StashTab {
       error?: String
       numTabs: Int
       items: Array<InventoryItem>
