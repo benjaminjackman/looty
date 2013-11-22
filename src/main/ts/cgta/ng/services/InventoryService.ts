@@ -9,7 +9,14 @@
 module Cgta {
   export module Services {
     var mod = angular.module("services.InventoryService", [])
-    var RETRY_IN_MS = 10000;
+    var RETRY_IN_MS = 20000;
+
+    function isThrottleReject(reject:any): boolean {
+      return reject != null &&
+        reject.reason != null &&
+        _.isString(reject.reason.message) &&
+        reject.reason.message.match(/too frequently/) != null
+    }
 
     /**
      * Wraps rpc calls to the ggg servers.
@@ -35,8 +42,8 @@ module Cgta {
         }
 
         this.$http(args).success(function (resp:any) {
-          if ((<any> resp) === "false" || resp.error != null) {
-            console.error("Rpc Error", resp.error || " Unknown error!");
+          if (resp === false || resp === "false" || resp.error != null) {
+            console.error("Rpc Error", resp);
             deferred.reject(resp.error);
           } else {
             deferred.resolve(resp)
@@ -50,7 +57,7 @@ module Cgta {
         return this.getItems<Inventory>(url, {character: character});
       }
 
-      getStashTab(league:League, tabIndex:Int):Q.Promise<StashTab> {
+      getStashTab(league:League, tabIndex:number):Q.Promise<StashTab> {
         var url = "http://www.pathofexile.com/character-window/get-stash-items";
         return this.getItems<StashTab>(url, {league: league, tabIndex: tabIndex});
       }
@@ -62,23 +69,30 @@ module Cgta {
       }
     }
 
-    export class FlatItem {
-      constructor() {
-
-      }
+    interface FlatItem {
+      locationId : String
+      name : String
     }
 
-    function rpcError(error:String) {
-      console.error("Unable to refresh ", error)
-    }
+    function flattenItem(item:InventoryItem):FlatItem {
+      var ret:FlatItem = (<any> {})
+      //TODO
+      return ret
 
+    }
 
     /**
      * Synchronized state between the extension and GGG
      */
     export class GameStateService {
-      constructor(private $q:ng.IQService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
 
+      private characters:Array<CharacterInfo> = null
+      private inventories:any = null
+      private stashTabs:any = null
+      private flatItems:Array<FlatItem> = []
+
+
+      constructor(private $q:ng.IQService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
 //        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
 //          console.log("Inv", items)
 //        });
@@ -90,10 +104,19 @@ module Cgta {
 //        });
       }
 
-      private characters:Array<CharacterInfo> = []
-      private inventories:any = {}
-      private stashTabs:any = {}
-      private flatItems:Array<FlatItem> = []
+
+      loadAllFromStorage():Q.Promise<any> {
+        var self = this
+
+        function load(key:String, defa:any):Q.Promise<any> {
+          return self.$storageService.find(key).then(function (value:any) {
+            (<any> self)[key] = value != null ? value : defa
+          })
+        }
+
+        return Q.all([load("characters", []), load("inventories", {}), load("stashTabs", {}), load("flatItems", [])])
+      }
+
 
       private setCharacters(characters:Array<CharacterInfo>) {
         this.characters = characters
@@ -112,147 +135,173 @@ module Cgta {
         return this.inventories[characterName]
       }
 
-      private setStashTab(league:League, id:Int, stashTab:StashTab) {
+      getInventories():any {
+        return this.inventories
+      }
+
+      private setStashTab(league:League, id:number, stashTab:StashTab) {
         if (this.stashTabs[league] == null) {
-          this.stashTabs[league] == {}
+          this.stashTabs[league] = {}
         }
         this.stashTabs[league][id] = stashTab
         this.$storageService.put("stashtabs", this.stashTabs)
       }
 
-      getStashTab(league:League, id:Int):StashTab {
+      getStashTab(league:League, id:number):StashTab {
         var leagueTab = this.stashTabs[league]
         return leagueTab != null ? this.stashTabs[league][id] : null
       }
 
-      refreshCharacters(webAlways?:boolean):Q.Promise<Array<CharacterInfo>> {
-        var self = this;
-        webAlways = webAlways == null ? false : webAlways;
+      getStashTabs():any {
+        return this.stashTabs;
+      }
 
-
-        function webRefresh():Q.Promise<Array<CharacterInfo>> {
-          console.debug("Doing Web Refresh");
-          function setCharacters(characters: Array<CharacterInfo>) {
-            self.setCharacters(characters)
-            return characters
-          }
-          return (<any> self.$poeRpcService.getCharacters().then(setCharacters).fail(rpcError))
+      downloadCharacters():Q.Promise<Array<CharacterInfo>> {
+        var self = this
+        console.debug("Doing Web Refresh");
+        function setCharacters(characters:Array<CharacterInfo>) {
+          self.setCharacters(characters)
+          return characters
         }
 
-        if (webAlways) {
-          return webRefresh()
-        } else {
-          //Refresh only when we no characters field in storage
-          var storageRefresh = this.$storageService.find<Array<CharacterInfo> >('characters')
-
-          function onFind(characters:Array<CharacterInfo>) {
-            if (characters == null) {
-              return webRefresh()
-            } else {
-              return Q(characters)
-            }
-          }
-
-          //Typescript is having a hard time understanding that this is invoking
-          //then<U>(onFulfill: (value: T) => IPromise<U>, ...) rather than
-          //then<U>(onFulfill: (value: T) => U, ...)
-          return (<any> storageRefresh.then(onFind).fail(webRefresh))
-        }
+        return (<any> self.$poeRpcService.getCharacters().then(setCharacters))
       }
 
 
+      downloadInventory(name:String):Q.Promise<Inventory> {
+        var self = this
 
-//      refreshInventory(name:String, forced?:Boolean):Q.Promise<Inventory> {
-//        var self = this
-//
-//        function doRefresh():Q.Promise<Inventory> {
-//          var res:any = self.$poeRpcService.getCharacterInventory(name).fail(function (reason) {
-//            if (_.isString(reason) && reason.match(/throttle/) != null) {
-//              //GGG throttles so retry in a bit.
-//              console.log("...Throttled..", name, reason)
-//              return Q(0).delay(RETRY_IN_MS).then(doRefresh)
-//            } else {
-//              console.error("Unable to complete rpc for character", reason)
-//              //Unknown reason for failure, so stop
-//              return Q.reject(reason)
-//            }
-//          })
-//          return res
-//        }
-//
-//        //See if we have the items in the storage.
-//        return self.$storageService.find("inventories-" + name).then(function (inventories) {
-//          if (inventories == null || inventories[name] == null) {
-//            function setInventory(inventory:Inventory) {
-//              self.$storageService.put("inventories-" + name, inventory)
-//              return inventories
-//            }
-//
-//            return doRefresh().then(setInventory)
-//          } else {
-//            return inventories
-//          }
-//        })
-//      }
-//
-//      refreshInventories(characters:Array<String>, forced?:Boolean):Q.Promise<any> {
-//        var self = this
-//        //Go over each character and refresh their inventory, if we fail due to
-//        //throttle with server then we need to retry.
-//        var promises = characters.map(function (name:String) {
-//          return self.refreshInventory(name);
-//        });
-//
-//        return (<any> Q.allSettled(promises))
-//      }
-//
-//      getInventories():Q.Promise<Array<Inventory> > {
-//        var self = this
-//
-//        function updateInventories(characterInfos:Array<CharacterInfo>) {
-//          return self.refreshInventories(characterInfos.map((ci) => ci.name))
-//        }
-//
-//        return (<any> this.refreshCharacters().then(updateInventories))
-//      }
-//
-//      refreshStash(league:League, id:Int):Q.Promise<StashTab> {
-//        var self = this
-//        return null;
-//      }
+        function setInventory(inventory:Inventory):Inventory {
+          self.setInventory(name, inventory)
+          return inventory
+        }
 
+        function webRefresh():Q.Promise<Inventory> {
+          var res:any = self.$poeRpcService.getCharacterInventory(name).fail(function (reason) {
+            return Q.reject({reason: reason, name: name})
+          })
+          return res
+        }
+
+        return webRefresh().then(setInventory)
+      }
+
+      downloadInventories(all:boolean):Q.Promise<any> {
+        var self = this
+        var d = Q.defer()
+        var chars = this.getCharacters()
+        var countDown = chars.length
+
+        function downloadFor(name: String) {
+          function doDownload(){
+            self.downloadInventory(name).then(onOk, onReject)
+          }
+          function onOk(inventory:Inventory) {
+            self.setInventory(name, inventory)
+            countDown--
+            if (countDown == 0) {d.resolve(null)}
+          }
+          function onReject(reject:any) {
+            if (isThrottleReject(reject)) {
+              console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
+              setTimeout(() => doDownload(), RETRY_IN_MS)
+            } else {
+              countDown--
+              if (countDown == 0) {d.reject(reject)}
+            }
+          }
+          doDownload()
+        }
+
+        chars.forEach((cInfo)=>downloadFor(cInfo.name))
+
+        return d.promise
+      }
+
+      downloadStashTab(league:League, tabId:number) {
+        var self = this
+
+        function setStashTab(stashTab:StashTab):StashTab {
+          self.setStashTab(league, tabId, stashTab)
+          return stashTab
+        }
+
+        function webRefresh():Q.Promise<StashTab> {
+          var res:any = self.$poeRpcService.getStashTab(league, tabId).fail(function (reason) {
+            return Q.reject({reason: reason, league: league, tabId: tabId})
+          })
+          return res
+        }
+
+        return webRefresh().then(setStashTab)
+      }
+
+      downloadStashTabs(all:boolean):Q.Promise<any> {
+        console.log("Downloading stash tabs")
+        var self = this
+        var a = Q.defer()
+
+        function downloadAllForLeague(league:League):Q.Promise<any> {
+          console.log("Downloading all for league", league)
+          var b = Q.defer()
+          var i = all ? 0 : (_.isArray(self.stashTabs[league]) ? self.stashTabs[league].length - 1 : 0)
+
+          function doDownload(i:number) {
+            console.log("Downloading...", league, i)
+            self.downloadStashTab(league, i).then(onOk(i), onReject(i))
+          }
+
+          //first download the first stashtab
+          function onOk(i:number) {
+            return function (tab:StashTab) {
+              console.log("OK", i, tab)
+              if (i + 1 >= tab.numTabs) {
+                //all done
+                b.resolve(null)
+              } else {
+                self.setStashTab(league, i, tab)
+                doDownload(i + 1)
+              }
+            }
+          }
+
+          function onReject(i:number) {
+            return function (reject:any) {
+              if (isThrottleReject(reject)) {
+                console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
+                setTimeout(() => doDownload(i), RETRY_IN_MS)
+              } else {
+                console.log("Unexpected Reject Type: ", league, i, reject)
+                b.reject(reject)
+              }
+            }
+          }
+
+          doDownload(0)
+
+          return b.promise
+        }
+
+        var leagues = _.uniq(self.getCharacters().map((cInfo)=>cInfo.league).filter((l)=>l !== "Void"))
+        var countDown = leagues.length
+
+        leagues.forEach(function (l) {
+          downloadAllForLeague(l).finally(function () {
+            countDown--
+            if (countDown == 0) {
+              a.resolve(null)
+            }
+          })
+        })
+
+        return a.promise
+      }
     }
 
     export class StorageService {
       constructor() {
       }
 
-
-//      upsert<A>(key:String, f:(x:A) => A):Q.Promise<A> {
-//        var d = Q.defer()
-//
-//        chrome.storage.local.get(key, function (x:any) {
-//          var oldValue : any = null
-//          if (x != null && x[key] != null) {
-//            oldValue = x[key]
-//          }
-//          Q(f(oldValue)).then(function (v) {
-//            var obj:any = {}
-//            obj[key] = v
-//            function onSet() {
-//              if (chrome.runtime.lastError != null) {
-//                d.reject(chrome.runtime.lastError)
-//              } else {
-//                d.resolve(v)
-//              }
-//            }
-//
-//            chrome.storage.local.set(obj, onSet)
-//          })
-//        });
-//
-//        return d.promise;
-//      }
 
       put<A>(key:String, value:A):Q.Promise<A> {
         var d = Q.defer<A>()
@@ -346,9 +395,9 @@ module Cgta {
 
     export interface CharacterInfo {
       class: ClassName
-      classId: Int
+      classId: number
       league: League
-      level: Int
+      level: number
       name: String
     }
 
@@ -360,14 +409,10 @@ module Cgta {
 
     export interface StashTab {
       error?: String
-      numTabs: Int
+      numTabs: number
       items: Array<InventoryItem>
     }
 
-
-    export interface Int extends Number {
-
-    }
 
     export interface Url extends String {
     }
@@ -412,8 +457,8 @@ module Cgta {
 
     export interface AnyItem {
       verified: Boolean
-      w: Int //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
-      h: Int
+      w: number //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
+      h: number
       icon: Url;
       support: Boolean
       league: League
@@ -426,29 +471,29 @@ module Cgta {
       descrText?: String
       secDescrText?: String
       explicitMods: Array<ExplicitMod>
-      frameType: Int
+      frameType: number
       socketedItems: Array<SocketedItem>
     }
 
     export interface InventoryItem extends AnyItem {
-      x: Int //The top left corner, when in an item slot, this is 0,0 from what i can tell
-      y: Int
+      x: number //The top left corner, when in an item slot, this is 0,0 from what i can tell
+      y: number
       inventoryId: InventoryId
     }
     export interface SocketedItem extends AnyItem {
-      socket: Int
+      socket: number
       colour: SocketColour  //Rhymes with Zap Brannigan's favorite fabric.
     }
 
     export interface Socket {
-      group: Int; //used for socket groups, aka a 6 linked would have all sockets in group 0
+      group: number; //used for socket groups, aka a 6 linked would have all sockets in group 0
       attr: String //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
     }
 
     export interface ItemProperty {
       name : String
       values : Array<ItemPropertyValue>
-      displayMode: Int
+      displayMode: number
     }
 
     export interface ItemPropertyValue extends Array<Number> {
@@ -458,7 +503,7 @@ module Cgta {
     export interface ItemRequirement {
       name: String
       values: Array<ItemRequirementValue>
-      displayMode: Int
+      displayMode: number
     }
 
     export interface ItemRequirementValue extends Array<String> {
