@@ -70,15 +70,67 @@ module Cgta {
     }
 
     interface FlatItem {
-      locationId : String
-      name : String
+      //Id fields
+      locationId: String
+
+      league: League
+      character: String
+      stashTab: number
+      inventoryId: String
+      x: number
+      y: number
+      inSocket: number
+
+      item : AnyItem
+      containingItem : AnyItem
     }
 
-    function flattenItem(item: InventoryItem): FlatItem {
-      var ret: FlatItem = (<any> {})
-      //TODO
-      return ret
+    function generateId(item: FlatItem): String {
+      return item.league + "-" + item.character + "-" + item.stashTab + "-" + item.inventoryId + "-" + item.x + "-" + item.y + "-" + item.inSocket;
+    }
 
+    function firstNonNull(...xs: any[]): any {
+      var res = _.find(xs, function (a) {return a != null})
+      if (res == null) {
+        //no undefineds
+        return null
+      } else {
+        return res
+      }
+    }
+
+    function flattenItem(item: AnyItem, character: String = null, league: League = null, stashTab: number = null, parent: AnyItem = null): FlatItem {
+      var ret: FlatItem = (<any> {})
+      parent = parent || (<any> {})
+
+      //Set the id fields
+      ret.league = firstNonNull(league, item.league, parent.league)
+      ret.character = firstNonNull(character)
+      ret.stashTab = firstNonNull(stashTab)
+      ret.inventoryId = firstNonNull(item.inventoryId, parent.inventoryId)
+      ret.x = firstNonNull(item.x, parent.x)
+      ret.y = firstNonNull(item.y, parent.y)
+      ret.inSocket = firstNonNull(item.socket)
+
+      //Set the id
+      ret.locationId = generateId(ret)
+
+      //Set other fields
+      ret.item = item
+      ret.containingItem = parent
+
+      return ret
+    }
+
+    function flattenItemAndSocketedItems(item: AnyItem, character: String, league: League, stashTab: number): Array<FlatItem> {
+      var ret: Array<FlatItem> = []
+
+      ret.push(flattenItem(item, character, league, stashTab, null))
+      _.each(item.socketedItems, function (socketedItem) {
+        ret.push(flattenItem(socketedItem, character, league, stashTab, item))
+      })
+
+      return ret
     }
 
     /**
@@ -89,7 +141,7 @@ module Cgta {
       private characters: Array<CharacterInfo> = null
       private inventories: any = null
       private stashTabs: any = null
-      private flatItems: Array<FlatItem> = []
+      private flatItems: Array<FlatItem> = null
 
 
       constructor(private $q: ng.IQService, private $poeRpcService: PoeRpcService, private $storageService: StorageService, private $userAlertService: UserAlertService) {
@@ -102,6 +154,25 @@ module Cgta {
 //        RpcService.getCharacters().then(function (chars:Array<CharacterInfo>) {
 //          console.log("Characters", chars)
 //        });
+      }
+
+      reFlattenAll() {
+
+        console.log("Reflatten all")
+
+        var self = this
+        //clear the array
+        self.flatItems.length = 0
+
+        //Go over the inventories and push all the data in
+        _.each(self.inventories, function (inventory: Inventory, character: string) {
+          _.each(inventory.items, function (item: AnyItem) {
+            var flatItems = flattenItemAndSocketedItems(item, character, null, null)
+            self.flatItems.push.apply(self.flatItems, flatItems)
+          })
+        })
+
+        console.log(self.flatItems)
       }
 
 
@@ -223,13 +294,9 @@ module Cgta {
 
       loopDownloadInventories(all: boolean = false): Q.Promise<any> {
         var self = this
-        var d = Q.defer()
         var chars = this.getCharacters()
-        var countDown = chars.length
 
-        chars.forEach((cInfo)=>self.loopDownloadInventory(cInfo.name, all))
-
-        return d.promise
+        return Q.allSettled(chars.map((cInfo)=>self.loopDownloadInventory(cInfo.name, all)))
       }
 
       downloadStashTab(league: League, tabId: number) {
@@ -284,7 +351,7 @@ module Cgta {
         var self = this
         console.log("Downloading all for league", league)
         var d = Q.defer()
-        var i = all ? 0 : (_.isArray(self.stashTabs[league]) ? self.stashTabs[league].length - 1 : 0)
+        var i = all ? 0 : (_.isArray(self.stashTabs[league]) ? self.stashTabs[league].length : 0)
 
         function doDownload(i: number) {
           self.loopDownloadStashTab(league, i).done(function (stashTab) {
@@ -307,7 +374,6 @@ module Cgta {
       loopDownloadStashTabs(all: boolean = false): Q.Promise<any> {
         var self = this
         var a = Q.defer()
-
 
         var leagues = _.uniq(self.getCharacters().map((cInfo)=>cInfo.league).filter((l)=>l !== "Void"))
         var countDown = leagues.length
@@ -431,13 +497,13 @@ module Cgta {
     export interface Inventory {
       error?: String
       character: String
-      items: Array<InventoryItem>
+      items: Array<AnyItem>
     }
 
     export interface StashTab {
       error?: String
       numTabs: number
-      items: Array<InventoryItem>
+      items: Array<AnyItem>
     }
 
 
@@ -499,17 +565,17 @@ module Cgta {
       secDescrText?: String
       explicitMods: Array<ExplicitMod>
       frameType: number
-      socketedItems: Array<SocketedItem>
-    }
+      socketedItems: Array<AnyItem>
 
-    export interface InventoryItem extends AnyItem {
-      x: number //The top left corner, when in an item slot, this is 0,0 from what i can tell
-      y: number
-      inventoryId: InventoryId
-    }
-    export interface SocketedItem extends AnyItem {
-      socket: number
-      colour: SocketColour  //Rhymes with Zap Brannigan's favorite fabric.
+      //For items that are not socketed in other items
+      x?: number //The top left corner, when in an item slot, this is 0,0 from what i can tell
+      y?: number
+      inventoryId?: InventoryId
+
+      //For items that are socketed in other items
+      socket?: number
+      colour?: SocketColour
+
     }
 
     export interface Socket {

@@ -19,10 +19,11 @@ module Cgta.Views {
           .then(() => $gameStateService.downloadCharacters())
           .then(() => $gameStateService.loopDownloadInventories())
           .then(() => $gameStateService.loopDownloadStashTabs())
-          .then(() => console.log("Characters", $gameStateService.getCharacters()))
-          .then(() => console.log("Inventories", $gameStateService.getInventories()))
-          .then(() => console.log("Stash Tabs", $gameStateService.getStashTabs()))
-
+          .finally(() => console.log("Characters", $gameStateService.getCharacters()))
+          .finally(() => console.log("Inventories", $gameStateService.getInventories()))
+          .finally(() => console.log("Stash Tabsxx", $gameStateService.getStashTabs()))
+          .finally(() => $gameStateService.reFlattenAll())
+          .done()
 
       }
 
