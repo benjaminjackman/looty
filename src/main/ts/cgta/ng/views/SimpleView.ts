@@ -15,13 +15,13 @@ module Cgta.Views {
       stuff = "Nothing to see here"
       constructor($gameStateService: Cgta.Services.GameStateService) {
 
-//        $gameStateService.loadAllFromStorage()
-//          .then(() => $gameStateService.downloadCharacters())
-//          .then(() => $gameStateService.downloadInventories())
-//          .then(() => $gameStateService.downloadStashTabs())
-//          .then(() => console.log("Characters", $gameStateService.getCharacters()))
-//          .then(() => console.log("Inventories", $gameStateService.getInventories()))
-//          .then(() => console.log("Stash Tabs", $gameStateService.getStashTabs()))
+        $gameStateService.loadAllFromStorage()
+          .then(() => $gameStateService.downloadCharacters())
+          .then(() => $gameStateService.downloadInventories())
+          .then(() => $gameStateService.downloadStashTabs())
+          .then(() => console.log("Characters", $gameStateService.getCharacters()))
+          .then(() => console.log("Inventories", $gameStateService.getInventories()))
+          .then(() => console.log("Stash Tabs", $gameStateService.getStashTabs()))
 
 
       }

@@ -120,6 +120,7 @@ module Cgta {
 
       private setCharacters(characters:Array<CharacterInfo>) {
         this.characters = characters
+        this.$storageService.put("characters", this.characters)
       }
 
       getCharacters():Array<CharacterInfo> {
@@ -141,10 +142,10 @@ module Cgta {
 
       private setStashTab(league:League, id:number, stashTab:StashTab) {
         if (this.stashTabs[league] == null) {
-          this.stashTabs[league] = {}
+          this.stashTabs[league] = []
         }
         this.stashTabs[league][id] = stashTab
-        this.$storageService.put("stashtabs", this.stashTabs)
+        this.$storageService.put("stashTabs", this.stashTabs)
       }
 
       getStashTab(league:League, id:number):StashTab {
@@ -186,13 +187,19 @@ module Cgta {
         return webRefresh().then(setInventory)
       }
 
-      downloadInventories(all:boolean):Q.Promise<any> {
+      downloadInventories(all:boolean=false):Q.Promise<any> {
         var self = this
         var d = Q.defer()
         var chars = this.getCharacters()
         var countDown = chars.length
 
         function downloadFor(name: String) {
+          if (!all && self.getInventory(name) != null) {
+            console.debug("Not downloading already downloaded character", name)
+            countDown--
+            if (countDown == 0) {d.resolve(null)}
+            return
+          }
           function doDownload(){
             self.downloadInventory(name).then(onOk, onReject)
           }
@@ -207,7 +214,7 @@ module Cgta {
               setTimeout(() => doDownload(), RETRY_IN_MS)
             } else {
               countDown--
-              if (countDown == 0) {d.reject(reject)}
+              if (countDown == 0) {d.resolve(null)}
             }
           }
           doDownload()
@@ -236,7 +243,7 @@ module Cgta {
         return webRefresh().then(setStashTab)
       }
 
-      downloadStashTabs(all:boolean):Q.Promise<any> {
+      downloadStashTabs(all:boolean=false):Q.Promise<any> {
         console.log("Downloading stash tabs")
         var self = this
         var a = Q.defer()
@@ -277,7 +284,7 @@ module Cgta {
             }
           }
 
-          doDownload(0)
+          doDownload(i)
 
           return b.promise
         }
