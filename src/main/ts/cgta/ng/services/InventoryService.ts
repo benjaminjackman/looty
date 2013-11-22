@@ -11,7 +11,7 @@ module Cgta {
     var mod = angular.module("services.InventoryService", [])
     var RETRY_IN_MS = 20000;
 
-    function isThrottleReject(reject:any): boolean {
+    function isThrottleReject(reject: any): boolean {
       return reject != null &&
         reject.reason != null &&
         _.isString(reject.reason.message) &&
@@ -23,10 +23,10 @@ module Cgta {
      */
     export class PoeRpcService {
 
-      constructor(private $http:ng.IHttpService) {
+      constructor(private $http: ng.IHttpService) {
       }
 
-      private getItems<T>(url:string, params:any):Q.Promise<T> {
+      private getItems<T>(url: string, params: any): Q.Promise<T> {
         var deferred = Q.defer()
         var args = {
           method: "POST",
@@ -41,7 +41,7 @@ module Cgta {
           delete args.data;
         }
 
-        this.$http(args).success(function (resp:any) {
+        this.$http(args).success(function (resp: any) {
           if (resp === false || resp === "false" || resp.error != null) {
             console.error("Rpc Error", resp);
             deferred.reject(resp.error);
@@ -52,17 +52,17 @@ module Cgta {
         return deferred.promise;
       }
 
-      getCharacterInventory(character:String):Q.Promise<Inventory> {
+      getCharacterInventory(character: String): Q.Promise<Inventory> {
         var url = "http://www.pathofexile.com/character-window/get-items";
         return this.getItems<Inventory>(url, {character: character});
       }
 
-      getStashTab(league:League, tabIndex:number):Q.Promise<StashTab> {
+      getStashTab(league: League, tabIndex: number): Q.Promise<StashTab> {
         var url = "http://www.pathofexile.com/character-window/get-stash-items";
         return this.getItems<StashTab>(url, {league: league, tabIndex: tabIndex});
       }
 
-      getCharacters():Q.Promise<Array<CharacterInfo> > {
+      getCharacters(): Q.Promise<Array<CharacterInfo> > {
         var url = "http://www.pathofexile.com/character-window/get-characters";
         return this.getItems<Array<CharacterInfo>>(url, null);
 
@@ -74,8 +74,8 @@ module Cgta {
       name : String
     }
 
-    function flattenItem(item:InventoryItem):FlatItem {
-      var ret:FlatItem = (<any> {})
+    function flattenItem(item: InventoryItem): FlatItem {
+      var ret: FlatItem = (<any> {})
       //TODO
       return ret
 
@@ -86,13 +86,13 @@ module Cgta {
      */
     export class GameStateService {
 
-      private characters:Array<CharacterInfo> = null
-      private inventories:any = null
-      private stashTabs:any = null
-      private flatItems:Array<FlatItem> = []
+      private characters: Array<CharacterInfo> = null
+      private inventories: any = null
+      private stashTabs: any = null
+      private flatItems: Array<FlatItem> = []
 
 
-      constructor(private $q:ng.IQService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
+      constructor(private $q: ng.IQService, private $poeRpcService: PoeRpcService, private $storageService: StorageService, private $userAlertService: UserAlertService) {
 //        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
 //          console.log("Inv", items)
 //        });
@@ -105,11 +105,11 @@ module Cgta {
       }
 
 
-      loadAllFromStorage():Q.Promise<any> {
+      loadAllFromStorage(): Q.Promise<any> {
         var self = this
 
-        function load(key:String, defa:any):Q.Promise<any> {
-          return self.$storageService.find(key).then(function (value:any) {
+        function load(key: String, defa: any): Q.Promise<any> {
+          return self.$storageService.find(key).then(function (value: any) {
             (<any> self)[key] = value != null ? value : defa
           })
         }
@@ -118,29 +118,29 @@ module Cgta {
       }
 
 
-      private setCharacters(characters:Array<CharacterInfo>) {
+      private setCharacters(characters: Array<CharacterInfo>) {
         this.characters = characters
         this.$storageService.put("characters", this.characters)
       }
 
-      getCharacters():Array<CharacterInfo> {
+      getCharacters(): Array<CharacterInfo> {
         return this.characters
       }
 
-      private setInventory(characterName:String, inventory:Inventory) {
+      private setInventory(characterName: String, inventory: Inventory) {
         this.inventories[characterName] = inventory
         this.$storageService.put("inventories", this.inventories)
       }
 
-      getInventory(characterName:String):Inventory {
+      getInventory(characterName: String): Inventory {
         return this.inventories[characterName]
       }
 
-      getInventories():any {
+      getInventories(): any {
         return this.inventories
       }
 
-      private setStashTab(league:League, id:number, stashTab:StashTab) {
+      private setStashTab(league: League, id: number, stashTab: StashTab) {
         if (this.stashTabs[league] == null) {
           this.stashTabs[league] = []
         }
@@ -148,19 +148,19 @@ module Cgta {
         this.$storageService.put("stashTabs", this.stashTabs)
       }
 
-      getStashTab(league:League, id:number):StashTab {
+      getStashTab(league: League, id: number): StashTab {
         var leagueTab = this.stashTabs[league]
         return leagueTab != null ? this.stashTabs[league][id] : null
       }
 
-      getStashTabs():any {
+      getStashTabs(): any {
         return this.stashTabs;
       }
 
-      downloadCharacters():Q.Promise<Array<CharacterInfo>> {
+      downloadCharacters(): Q.Promise<Array<CharacterInfo>> {
         var self = this
         console.debug("Doing Web Refresh");
-        function setCharacters(characters:Array<CharacterInfo>) {
+        function setCharacters(characters: Array<CharacterInfo>) {
           self.setCharacters(characters)
           return characters
         }
@@ -169,16 +169,16 @@ module Cgta {
       }
 
 
-      downloadInventory(name:String):Q.Promise<Inventory> {
+      downloadInventory(name: String): Q.Promise<Inventory> {
         var self = this
 
-        function setInventory(inventory:Inventory):Inventory {
+        function setInventory(inventory: Inventory): Inventory {
           self.setInventory(name, inventory)
           return inventory
         }
 
-        function webRefresh():Q.Promise<Inventory> {
-          var res:any = self.$poeRpcService.getCharacterInventory(name).fail(function (reason) {
+        function webRefresh(): Q.Promise<Inventory> {
+          var res: any = self.$poeRpcService.getCharacterInventory(name).fail(function (reason) {
             return Q.reject({reason: reason, name: name})
           })
           return res
@@ -187,54 +187,61 @@ module Cgta {
         return webRefresh().then(setInventory)
       }
 
-      downloadInventories(all:boolean=false):Q.Promise<any> {
+
+      loopDownloadInventory(name: String, all: boolean = false): Q.Promise<any> {
+        var self = this
+        var d = Q.defer()
+
+        if (!all && self.getInventory(name) != null) {
+          console.debug("Not downloading already downloaded character", name)
+          d.resolve(null)
+          return d.promise
+        }
+        function doDownload() {
+          self.downloadInventory(name).then(onOk, onReject)
+        }
+
+        function onOk(inventory: Inventory) {
+          self.setInventory(name, inventory)
+          d.resolve(null)
+        }
+
+        function onReject(reject: any) {
+          if (isThrottleReject(reject)) {
+            console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
+            setTimeout(() => doDownload(), RETRY_IN_MS)
+          } else {
+            d.reject(null)
+          }
+        }
+
+        doDownload()
+
+        return d.promise;
+      }
+
+
+      loopDownloadInventories(all: boolean = false): Q.Promise<any> {
         var self = this
         var d = Q.defer()
         var chars = this.getCharacters()
         var countDown = chars.length
 
-        function downloadFor(name: String) {
-          if (!all && self.getInventory(name) != null) {
-            console.debug("Not downloading already downloaded character", name)
-            countDown--
-            if (countDown == 0) {d.resolve(null)}
-            return
-          }
-          function doDownload(){
-            self.downloadInventory(name).then(onOk, onReject)
-          }
-          function onOk(inventory:Inventory) {
-            self.setInventory(name, inventory)
-            countDown--
-            if (countDown == 0) {d.resolve(null)}
-          }
-          function onReject(reject:any) {
-            if (isThrottleReject(reject)) {
-              console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
-              setTimeout(() => doDownload(), RETRY_IN_MS)
-            } else {
-              countDown--
-              if (countDown == 0) {d.resolve(null)}
-            }
-          }
-          doDownload()
-        }
-
-        chars.forEach((cInfo)=>downloadFor(cInfo.name))
+        chars.forEach((cInfo)=>self.loopDownloadInventory(cInfo.name, all))
 
         return d.promise
       }
 
-      downloadStashTab(league:League, tabId:number) {
+      downloadStashTab(league: League, tabId: number) {
         var self = this
 
-        function setStashTab(stashTab:StashTab):StashTab {
+        function setStashTab(stashTab: StashTab): StashTab {
           self.setStashTab(league, tabId, stashTab)
           return stashTab
         }
 
-        function webRefresh():Q.Promise<StashTab> {
-          var res:any = self.$poeRpcService.getStashTab(league, tabId).fail(function (reason) {
+        function webRefresh(): Q.Promise<StashTab> {
+          var res: any = self.$poeRpcService.getStashTab(league, tabId).fail(function (reason) {
             return Q.reject({reason: reason, league: league, tabId: tabId})
           })
           return res
@@ -243,57 +250,70 @@ module Cgta {
         return webRefresh().then(setStashTab)
       }
 
-      downloadStashTabs(all:boolean=false):Q.Promise<any> {
-        console.log("Downloading stash tabs")
+      loopDownloadStashTab(league: League, tabId: number): Q.Promise<StashTab> {
+        var self = this
+        var d = Q.defer<StashTab>()
+
+        function doDownload() {
+          console.log("Downloading...", league, tabId)
+          self.downloadStashTab(league, tabId).then(onOk, onReject)
+        }
+
+        function onOk(tab: StashTab) {
+          console.log("OK", tabId, tab)
+          self.setStashTab(league, tabId, tab)
+          d.resolve(tab)
+        }
+
+        function onReject(reject: any) {
+          if (isThrottleReject(reject)) {
+            console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
+            setTimeout(() => doDownload(), RETRY_IN_MS)
+          } else {
+            console.log("Unexpected Reject Type: ", league, tabId, reject)
+            d.reject(reject)
+          }
+        }
+
+        doDownload()
+
+        return d.promise
+      }
+
+      loopDownloadStashTabsForLeague(league: League, all: boolean = false): Q.Promise<any> {
+        var self = this
+        console.log("Downloading all for league", league)
+        var d = Q.defer()
+        var i = all ? 0 : (_.isArray(self.stashTabs[league]) ? self.stashTabs[league].length - 1 : 0)
+
+        function doDownload(i: number) {
+          self.loopDownloadStashTab(league, i).done(function (stashTab) {
+            if (i + 1 >= stashTab.numTabs) {
+              //all done with this league
+              d.resolve(null)
+            } else {
+              doDownload(i + 1)
+            }
+          }, function (reject) {
+            d.reject(reject)
+          })
+        }
+
+        doDownload(i)
+        return d.promise
+      }
+
+
+      loopDownloadStashTabs(all: boolean = false): Q.Promise<any> {
         var self = this
         var a = Q.defer()
 
-        function downloadAllForLeague(league:League):Q.Promise<any> {
-          console.log("Downloading all for league", league)
-          var b = Q.defer()
-          var i = all ? 0 : (_.isArray(self.stashTabs[league]) ? self.stashTabs[league].length - 1 : 0)
-
-          function doDownload(i:number) {
-            console.log("Downloading...", league, i)
-            self.downloadStashTab(league, i).then(onOk(i), onReject(i))
-          }
-
-          //first download the first stashtab
-          function onOk(i:number) {
-            return function (tab:StashTab) {
-              console.log("OK", i, tab)
-              if (i + 1 >= tab.numTabs) {
-                //all done
-                b.resolve(null)
-              } else {
-                self.setStashTab(league, i, tab)
-                doDownload(i + 1)
-              }
-            }
-          }
-
-          function onReject(i:number) {
-            return function (reject:any) {
-              if (isThrottleReject(reject)) {
-                console.log("Reached the GGG server limit, sleeping for " + RETRY_IN_MS, reject)
-                setTimeout(() => doDownload(i), RETRY_IN_MS)
-              } else {
-                console.log("Unexpected Reject Type: ", league, i, reject)
-                b.reject(reject)
-              }
-            }
-          }
-
-          doDownload(i)
-
-          return b.promise
-        }
 
         var leagues = _.uniq(self.getCharacters().map((cInfo)=>cInfo.league).filter((l)=>l !== "Void"))
         var countDown = leagues.length
 
         leagues.forEach(function (l) {
-          downloadAllForLeague(l).finally(function () {
+          self.loopDownloadStashTabsForLeague(l, all).finally(function () {
             countDown--
             if (countDown == 0) {
               a.resolve(null)
@@ -310,10 +330,10 @@ module Cgta {
       }
 
 
-      put<A>(key:String, value:A):Q.Promise<A> {
+      put<A>(key: String, value: A): Q.Promise<A> {
         var d = Q.defer<A>()
 
-        var obj:any = {}
+        var obj: any = {}
         obj[key] = value
         function onSet() {
           if (chrome.runtime.lastError != null) {
@@ -327,14 +347,14 @@ module Cgta {
         return d.promise;
       }
 
-      find<A>(key:String):Q.Promise<A> {
+      find<A>(key: String): Q.Promise<A> {
         var d = Q.defer()
 
-        function onGet(x:A) {
+        function onGet(x: A) {
           if (chrome.runtime.lastError != null) {
             d.reject(chrome.runtime.lastError)
           } else {
-            var o:any = x
+            var o: any = x
             if (o == null || o[key] == null) {
               d.resolve(null)
             } else {
@@ -354,17 +374,17 @@ module Cgta {
      * Make beacons in services that will then be used for pub/sub type stuff.
      */
     export class Beacon<T> {
-      listeners:Array<(t:T) => void> = [];
+      listeners: Array<(t: T) => void> = [];
 
-      subscribe(listener:(t:T) => void) {
+      subscribe(listener: (t: T) => void) {
         this.listeners.push(listener)
       }
 
-      unsubscribe(listener:(t:T) => void) {
+      unsubscribe(listener: (t: T) => void) {
         this.listeners = _.filter(this.listeners, (l) => l !== l)
       }
 
-      notifyAll(t:T) {
+      notifyAll(t: T) {
         this.listeners.forEach((l)=>l(t))
       }
     }
@@ -374,13 +394,13 @@ module Cgta {
      * the state of the program.
      */
     export class UserAlertService {
-      msgs:Array<String> = [];
+      msgs: Array<String> = [];
       beacon = new Beacon<String>();
 
       constructor() {
       }
 
-      log(msg:String) {
+      log(msg: String) {
         this.msgs.push(msg);
         this.beacon.notifyAll(msg);
       }

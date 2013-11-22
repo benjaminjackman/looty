@@ -17,8 +17,8 @@ module Cgta.Views {
 
         $gameStateService.loadAllFromStorage()
           .then(() => $gameStateService.downloadCharacters())
-          .then(() => $gameStateService.downloadInventories())
-          .then(() => $gameStateService.downloadStashTabs())
+          .then(() => $gameStateService.loopDownloadInventories())
+          .then(() => $gameStateService.loopDownloadStashTabs())
           .then(() => console.log("Characters", $gameStateService.getCharacters()))
           .then(() => console.log("Inventories", $gameStateService.getInventories()))
           .then(() => console.log("Stash Tabs", $gameStateService.getStashTabs()))
