@@ -6,44 +6,25 @@
 // Created by bjackman @ 11/20/13 1:58 AM
 //////////////////////////////////////////////////////////////
 
-
 module Cgta {
   export module Services {
     var mod = angular.module("services.InventoryService", [])
 
     /**
-     * Abstracts inventory into a searchable updatable sync'd thing.
-     */
-    export class InventoryService {
-      constructor(RpcService:RpcService, UserAlertService:UserAlertService) {
-//        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
-//          console.log("Inv", items)
-//        });
-//        RpcService.getStashItems("Standard", 55).then(function (items:StashItems) {
-//          console.log("Stash", items)
-//        });
-//        RpcService.getCharacters().then(function (chars:Array<CharacterInfo>) {
-//          console.log("Characters", chars)
-//        });
-      }
-
-      //doUpdate(tabs: Array<Int>, )
-    }
-
-    /**
      * Wraps rpc calls to the ggg servers.
      */
     export class RpcService {
+
       constructor(private $q:ng.IQService, private $http:ng.IHttpService) {
       }
 
-      private getItems<T>(url:string, params:any):ng.IPromise<T> {
-        var deferred = this.$q.defer<T>();
+      private getItems<T>(url:string, params:any):Q.Promise<T> {
+        var deferred = Q.defer()
         var args = {
           method: "POST",
           url: url,
           headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-          data:null
+          data: null
         };
 
         if (params != null) {
@@ -63,19 +44,121 @@ module Cgta {
         return deferred.promise;
       }
 
-      getCharacterItems(character:String):ng.IPromise<CharacterItems> {
+      getCharacterItems(character:String):Q.Promise<CharacterItems> {
         var url = "http://www.pathofexile.com/character-window/get-items";
         return this.getItems<CharacterItems>(url, {character: character});
       }
 
-      getStashItems(league:League, tabIndex:Int):ng.IPromise<StashItems> {
+      getStashItems(league:League, tabIndex:Int):Q.Promise<StashItems> {
         var url = "http://www.pathofexile.com/character-window/get-stash-items";
         return this.getItems<StashItems>(url, {league: league, tabIndex: tabIndex});
       }
 
-      getCharacters():ng.IPromise<Array<CharacterInfo> > {
+      getCharacters():Q.Promise<Array<CharacterInfo> > {
         var url = "http://www.pathofexile.com/character-window/get-characters";
         return this.getItems<Array<CharacterInfo>>(url, null);
+
+      }
+    }
+
+    /**
+     * Abstracts inventory into a searchable updatable sync'd thing.
+     */
+    export class InventoryService {
+      constructor(private $q:ng.IQService, private $rpcService:RpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
+
+//        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
+//          console.log("Inv", items)
+//        });
+//        RpcService.getStashItems("Standard", 55).then(function (items:StashItems) {
+//          console.log("Stash", items)
+//        });
+//        RpcService.getCharacters().then(function (chars:Array<CharacterInfo>) {
+//          console.log("Characters", chars)
+//        });
+      }
+
+      characters:Array<CharacterInfo> = null;
+
+      //doUpdate(tabs: Array<Int>, )
+      refreshCharacters(forced?:boolean):Q.Promise<Array<CharacterInfo> > {
+        var self = this;
+        forced = forced == null ? false : forced;
+        function rpcError(error:String) {
+          console.error("Unable to refresh characters ", error)
+        }
+
+        function setCharacters(characters:Array<CharacterInfo>) {
+          console.debug("Set characters", characters);
+          self.characters = characters
+          return (<any> self.$storageService.put({characters: characters}).then(() => characters))
+        }
+
+        function doRefresh() :Q.Promise<Array<CharacterInfo>> {
+          console.debug("Doing refresh");
+          return self.$rpcService.getCharacters().then(setCharacters, rpcError)
+        }
+
+        if (forced) {
+          return doRefresh()
+        } else {
+          //Refresh only when we no characters field in storage
+          var charactersFromStorage = this.$storageService.find<Array<CharacterInfo> >('characters')
+          function onFind(characters: Array<CharacterInfo>) {
+            if (characters == null) {
+              return doRefresh()
+            } else {
+              self.characters = characters
+              return Q.fcall(() => characters)
+            }
+          }
+          return (<any> charactersFromStorage.then(onFind).fail(doRefresh))
+        }
+      }
+
+      refreshCharacterInventories() {
+        //Go over each character and refresh their inventory, if we fail due to
+        //throttle with server then we need to retry.
+      }
+
+      refreshStash() {
+
+      }
+
+      getCharacters() {return this.characters}
+
+
+      ensure():Q.Promise<any> {
+        return this.refreshCharacters()
+      }
+
+
+    }
+
+    export class StorageService {
+      constructor() {
+      }
+
+      put(items:Object):Q.Promise<any> {
+        var d = Q.defer()
+
+        function onSet() {
+          if (chrome.runtime.lastError != null) { d.reject(chrome.runtime.lastError) } else { d.resolve(null) }
+        }
+
+        chrome.storage.local.set(items, onSet);
+        return d.promise;
+      }
+
+      find<A>(key:String):Q.Promise<A> {
+        var d = Q.defer()
+
+        function onGet(x:A) {
+          if (chrome.runtime.lastError != null) { d.reject(chrome.runtime.lastError) } else { d.resolve((<any> x)[key]) }
+        }
+
+        chrome.storage.local.get(key, onGet)
+        return d.promise;
       }
     }
 
@@ -117,16 +200,17 @@ module Cgta {
 
     }
 
-    mod.service("RpcService", RpcService);
-    mod.service("InventoryService", InventoryService);
-    mod.service("UserAlertService", UserAlertService);
+    mod.service("$rpcService", RpcService);
+    mod.service("$storageService", StorageService);
+    mod.service("$inventoryService", InventoryService);
+    mod.service("$userAlertService", UserAlertService);
 
 
     //Damage Icons
     //♨ Fire
     //⚡ Lightning
     //❄ Ice
-    //☠ Chaos
+    //☣ Chaos
     //⚒ Physical
 
     export interface CharacterInfo {

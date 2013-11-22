@@ -12,7 +12,11 @@ module Cgta.Views {
 
     export class SimpleCtrl {
       stuff = "Nothing to see here"
-      constructor(InventoryService: Cgta.Services.InventoryService) {
+      constructor($inventoryService: Cgta.Services.InventoryService) {
+        console.log("Hello")
+        $inventoryService.ensure().then(function() {
+          console.log("Characters", $inventoryService.getCharacters())
+        })
       }
 
     }

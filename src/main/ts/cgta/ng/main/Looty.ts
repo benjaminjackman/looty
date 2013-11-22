@@ -13,7 +13,7 @@ import Menubar = Cgta.Directives.Menubar
 declare var TradeStreamCtrl:any
 
 module Cgta.Main.Looty {
-  var mod = angular.module('main.Looty', ['views', 'services', 'directives', 'ui', 'ngGrid', 'ngRoute']);
+  var mod = angular.module('main.Looty', ['views', 'services', 'directives', 'ui', 'ngRoute']);
 
   mod.config(['$sceProvider', function ($sceProvider) {
     $sceProvider.enabled(false);
