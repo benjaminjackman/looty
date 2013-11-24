@@ -15,7 +15,7 @@
     "angular-ui": "0.4.0",
     "moment": "timrwood/moment#2.0.0",
     "bootstrap": "twbs/bootstrap#3.0.0",
-    "keypress": "dmauro/Keypress#1.0.9",
+    "keypress": "dmauro/Keypress#1.0.9"
   },
   "ignore": [],
   "exportsOverride": {

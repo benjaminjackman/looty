@@ -4,6 +4,9 @@
 
 body {
   margin-left: 10px;
+  background-color: black;
+  color: white;
+
 }
 
 
@@ -33,4 +36,37 @@ table.strapless {
 
 .strapless table, .strapless th, .strapless td {
   border: 1px solid black;
+}
+
+.slick-column-name {
+  font-size: 100%;
+}
+
+.slick-header-column {
+  height: 20px !important;
+}
+
+.slick-header-column.ui-state-default {
+    background:none ;
+    background-color: #505050 ;
+    color: #eeeeee;
+    border: none;
+    padding: 0;
+    text-shadow: none;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    font-size: 13px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.slick-row.ui-widget-content, .slick-cell {
+    background: none;
+    background-color: black;
+    color: white;
+    border: none;
+    /*border-bottom: solid 1px #ffffff;*/
+    /*font-size: 14px;*/
+    /*height: 60px;*/
+    /*line-height: 60px;*/
+    /*padding: 0 5px;*/
 }

@@ -124,7 +124,7 @@ module Cgta {
       export class ModParser {
         //Is Boolen are things like Dispels Frozen and Chilled mods, they are either there
         //or they are not
-        constructor(private regex:RegExp, public name:string, public isBoolean:boolean) {
+        constructor(private regex:RegExp, public name:string, public title: string, public isBoolean:boolean) {
         }
 
         parse(mod:ExplicitMod):ModEntry {
@@ -146,104 +146,105 @@ module Cgta {
 
       export var all:Array<ModParser> = []
 
-      function regexBased(regex:RegExp, parseStr:string, shortName:string = null, isBoolean = false) {
-        var shortName = shortName || parseStr.replace(/ /g, "")
-        return new ModParser(regex, shortName, isBoolean)
+      function regexBased(regex:RegExp, parseStr:string, shortName:string = null, title:string=null, isBoolean = false) {
+        shortName = shortName || parseStr.replace(/ /g, "")
+        title = title || shortName
+        return new ModParser(regex, shortName, title, isBoolean)
       }
 
       function minDamage(element:String) {
-        return regexBased(new RegExp("^Adds (\\d+)-\\d+ " + element + " Damage$"), "", "AddsMin" + element + "Damage")
+        return regexBased(new RegExp("^Adds (\\d+)-\\d+ " + element + " Damage$"), "", "AddsMin" + element + "Damage", element.substr(0,3)+"MinDmg")
       }
 
       function maxDamage(element:String) {
-        return regexBased(new RegExp("^Adds \\d+-(\\d+) " + element + "$"), "", "AddsMax" + element + "Damage")
+        return regexBased(new RegExp("^Adds \\d+-(\\d+) " + element + " Damage$"), "", "AddsMax" + element + "Damage", element.substr(0,3)+"MaxDmg")
       }
 
-      function simple(parseStr:string, shortName:string = null, prefix:string = "") {
-        return regexBased(new RegExp("^" + prefix + "([.+-\\d]+)%* " + parseStr + "$"), parseStr, shortName)
+      function simple(parseStr:string, shortName:string = null, title:string=null, prefix:string = "") {
+        return regexBased(new RegExp("^" + prefix + "([.+-\\d]+)%* " + parseStr + "$"), parseStr, shortName, title)
       }
 
-      function simpleTo(parseStr:string, shortName:string = null) {
-        return regexBased(new RegExp("^([.+-\\d]+)%* to " + parseStr + "$"), parseStr, shortName)
+      function simpleTo(parseStr:string, shortName:string = null, title:string=null) {
+        return regexBased(new RegExp("^([.+-\\d]+)%* to " + parseStr + "$"), parseStr, shortName, title)
       }
 
       function gemLevel(element:String) {
-        return simpleTo("Level of " + element + " Gems in this item", element + "GemLevel")
+        return simpleTo("Level of " + element + " Gems in this item", element + "GemLevel", "+"+element.substr(0,3)+"G")
       }
 
-      function simpleIncreased(parseStr:string, shortName:string = null) {
-        return regexBased(new RegExp("^([.+-\\d]+)%* increased " + parseStr + "$"), parseStr, shortName)
+      function simpleIncreased(parseStr:string, shortName:string = null, title:string=null) {
+        return regexBased(new RegExp("^([.+-\\d]+)%* increased " + parseStr + "$"), parseStr, "Increased"+shortName, title)
       }
 
-      function simpleReduced(parseStr:string, shortName:string = null) {
-        return regexBased(new RegExp("^([.+-\\d]+)%* reduced " + parseStr + "$"), parseStr, shortName)
+      function simpleReduced(parseStr:string, shortName:string = null, title:string=null) {
+        return regexBased(new RegExp("^([.+-\\d]+)%* reduced " + parseStr + "$"), parseStr, shortName, title)
       }
 
       function resist(resistType:String) {
-        return simpleTo(resistType + " Resistance", resistType + "Resist")
+        return simpleTo(resistType + " Resistance", resistType + "Resist", "+%Res"+resistType.substr(0,3))
       }
 
-      all.push(regexBased(new RegExp("^Reflects ([.+-\\d]+) Physical Damage to Melee Attackers$"), "Reflect Physical", "ReflectPhysical"))
+      all.push(regexBased(new RegExp("^Reflects ([.+-\\d]+) Physical Damage to Melee Attackers$"), "Reflect Physical", "ReflectPhysical", "Ref"))
 
-      all.push(simple("Life Regenerated per second", "LifeRegen"))
-      all.push(simple("Life gained on Kill", "LifeOnKill"))
-      all.push(simple("Mana Gained on Kill", "ManaOnKill"))
-      all.push(simple("Life gained for each enemy hit by your Attacks", "LifeOnHit"))
-      all.push(simple("of Physical Attack Damage Leeched as Life", "LifeLeech"))
-      all.push(simple("of Physical Attack Damage Leeched as Mana", "ManaLeech"))
-      all.push(simple("additional Block Chance", "AdditionalBlockChance"))
+      all.push(simple("Life Regenerated per second", "LifeRegen", "LRegen"))
+      all.push(simple("Life gained on Kill", "LifeOnKill", "LOK"))
+      all.push(simple("Mana Gained on Kill", "ManaOnKill", "MOK"))
+      all.push(simple("Life gained for each enemy hit by your Attacks", "LifeOnHit", "LOH"))
+      all.push(simple("of Physical Attack Damage Leeched as Life", "LifeLeech", "LLeech"))
+      all.push(simple("of Physical Attack Damage Leeched as Mana", "ManaLeech", "MLeech"))
+      all.push(simple("additional Block Chance", "AdditionalBlockChance", "Block"))
 
-      all.push(simpleTo("Accuracy Rating"))
-      all.push(simpleTo("Strength"))
-      all.push(simpleTo("Intelligence"))
-      all.push(simpleTo("Dexterity"))
-      all.push(simpleTo("all Attributes", "AllAttributes"))
-      all.push(simpleTo("maximum Life", "MaximumLife"))
-      all.push(simpleTo("maximum Mana", "MaximumMana"))
-      all.push(simpleTo("Armour", "ToArmour"))
-      all.push(simpleTo("Evasion Rating", "ToEvasionRating"))
-      all.push(simpleTo("maximum Energy Shield", "ToEnergyShield"))
+      all.push(simpleTo("Accuracy Rating", "Acc"))
+      all.push(simpleTo("Strength", "Str"))
+      all.push(simpleTo("Intelligence","Int"))
+      all.push(simpleTo("Dexterity", "Dex"))
+      all.push(simpleTo("all Attributes", "AllAttributes", "AllAts"))
+      all.push(simpleTo("maximum Life", "MaximumLife", "Life"))
+      all.push(simpleTo("maximum Mana", "MaximumMana", "Mana"))
+      all.push(simpleTo("Armour", "ToArmour", "+AR"))
+      all.push(simpleTo("Evasion Rating", "ToEvasionRating", "+EV"))
+      all.push(simpleTo("maximum Energy Shield", "ToEnergyShield", "+ES"))
 
-      all.push(simpleIncreased("Armour", "IncreasedArmour"))
-      all.push(simpleIncreased("Evasion Rating", "IncreasedEvasionRating"))
-      all.push(simpleIncreased("Energy Shield", "IncreasedEnergyShield"))
-      all.push(simpleIncreased("maximum Energy Shield", "IncreasedMaximumEnergyShield"))
-      all.push(simpleIncreased("Evasion and Energy Shield", "IncreasedEvasionAndEnergyShield"))
-      all.push(simpleIncreased("Armour and Evasion", "IncreasedArmourAndEvasion"))
-      all.push(simpleIncreased("Armour and Energy Shield", "IncreasedArmourAndEnergyShield"))
+      all.push(simpleIncreased("Armour", "Armour", "%AR"))
+      all.push(simpleIncreased("Evasion Rating", "EvasionRating", "%EV"))
+      all.push(simpleIncreased("Energy Shield", "EnergyShield", "%ES"))
+      all.push(simpleIncreased("maximum Energy Shield", "MaximumEnergyShield", "%ES"))
+      all.push(simpleIncreased("Armour and Energy Shield", "ArmourAndEnergyShield", "%AR&ES"))
+      all.push(simpleIncreased("Armour and Evasion", "ArmourAndEvasion", "%AR&EV"))
+      all.push(simpleIncreased("Evasion and Energy Shield", "EvasionAndEnergyShield", "%EV&ES"))
 
-      all.push(simpleIncreased("Quantity of Items found", "IncreasedItemQuantity"))
-      all.push(simpleIncreased("Rarity of Items found", "IncreasedItemRarity"))
+      all.push(simpleIncreased("Quantity of Items found", "ItemQuantity", "IIQ"))
+      all.push(simpleIncreased("Rarity of Items found", "ItemRarity", "IIR"))
 
-      all.push(simpleIncreased("Spell Damage", "IncreasedSpellDamage"))
+      all.push(simpleIncreased("Spell Damage", "SpellDamage", "+%SpelDmg"))
 
-      all.push(simpleIncreased("Accuracy Rating", "IncreasedAccuracyRating"))
-      all.push(simpleIncreased("Cast Speed", "IncreasedCastSpeed"))
-      all.push(simpleIncreased("Movement Speed", "IncreasedMovementSpeed"))
-      all.push(simpleIncreased("Light Radius", "IncreasedLightRadius"))
-      all.push(simpleIncreased("Attack Speed", "IncreasedAttackSpeed"))
-      all.push(simpleIncreased("Projectile Speed", "IncreasedProjectileSpeed"))
-      all.push(simpleIncreased("Mana Regeneration Rate", "IncreasedManaRegen"))
-      all.push(simpleIncreased("Global Critical Strike Multiplier", "IncreasedGlobalCriticalStrikeMultiplier"))
+      all.push(simpleIncreased("Accuracy Rating", "AccuracyRating", "+%Acc"))
+      all.push(simpleIncreased("Cast Speed", "CastSpeed", "+%CastSpd"))
+      all.push(simpleIncreased("Movement Speed", "MovementSpeed", "+%MovSpd"))
+      all.push(simpleIncreased("Light Radius", "LightRadius", "+%LR"))
+      all.push(simpleIncreased("Attack Speed", "AttackSpeed", "+%AttSpd"))
+      all.push(simpleIncreased("Projectile Speed", "ProjectileSpeed", "+%ProjSpd"))
+      all.push(simpleIncreased("Mana Regeneration Rate", "ManaRegen", "+%MRegen"))
+      all.push(simpleIncreased("Critical Strike Chance", "CriticalStrikeChance","+%CSC"))
+      all.push(simpleIncreased("Global Critical Strike Chance", "GlobalCriticalStrikeChance","+%GCSC"))
+      all.push(simpleIncreased("Global Critical Strike Multiplier", "GlobalCriticalStrikeMultiplier", "+%GCSM"))
+      all.push(simpleIncreased("Critical Strike Chance for Spells", "CriticalStrikeChanceForSpells","+%GCCS"))
 
-      all.push(simpleIncreased("Critical Strike Chance for Spells", "IncreasedCriticalStrikeChanceForSpells"))
-      all.push(simpleIncreased("Critical Strike Chance", "IncreasedCriticalStrikeChance"))
-      all.push(simpleIncreased("Global Critical Strike Chance", "IncreasedGlobalCriticalStrikeChance"))
+      all.push(simpleReduced("Enemy Stun Threshold", "ReducedEnemyStunThreshold", "-%StunThres"))
+      all.push(simpleIncreased("Stun Duration on enemies", "StunDurationOnEnemies", "+%StnDur"))
 
-      all.push(simpleIncreased("Stun Duration on enemies", "IncreasedStunDurationOnEnemies"))
-      all.push(simpleIncreased("Block and Stun Recovery", "IncreasedBlockAndStunRecovery"))
-      all.push(simpleIncreased("Elemental Damage with Weapons", "IncreasedElementalDamageWithWeapons"))
+      all.push(simpleIncreased("Block and Stun Recovery", "BlockAndStunRecovery", "+%BlkStnRec"))
+      all.push(simpleIncreased("Elemental Damage with Weapons", "ElementalDamageWithWeapons", "+%ElDmgWep"))
 
-      all.push(simpleReduced("Attribute Requirements", "ReducedAttributeRequirements"))
-      all.push(simpleReduced("Enemy Stun Threshold", "ReducedEnemyStunThreshold"))
+      all.push(simpleReduced("Attribute Requirements", "ReducedAttributeRequirements", "-%AttrReq"))
 
-      all.push(simpleTo("all Elemental Resistances", "AllResist"));
+      all.push(simpleTo("all Elemental Resistances", "AllResist", "+%ResAll"));
       //All different element types
       ["Fire", "Lightning", "Cold", "Physical", "Chaos"].forEach(function (element) {
         all.push(resist(element))
         all.push(minDamage(element))
         all.push(maxDamage(element))
-        all.push(simpleIncreased(element + " Damage", "Increased" + element + "Damage"))
+        all.push(simpleIncreased(element + " Damage", "" + element + "Damage", "+%"+element.substr(0,3)+"Dmg"))
       });
       //Gem levels
       ["Fire", "Cold", "Lightning", "Melee", "Minion", "Bow", "Strength"].forEach(function (element) {
@@ -263,33 +264,33 @@ module Cgta {
       all.push(simple("additional Elemental Resistances during flask effect", "AllResistDuringFlask"))
       all.push(simple("Extra Charges", "ExtraCharges"))
 
-      all.push(simpleIncreased("Recovery when on Low Life", "IncreasedRecoveryOnLowLife"))
-      all.push(simpleIncreased("Evasion Rating during flask effect", "IncreasedEvasionRatingDuringFlask"))
-      all.push(simpleIncreased("Stun Recovery during flask effect", "IncreasedStunRecoveryDuringFlask"))
-      all.push(simpleIncreased("Life Recovered", "IncreasedLifeRecovered"))
-      all.push(simpleIncreased("Flask Charges gained", "IncreasedFlaskChargesGained"))
-      all.push(simpleIncreased("Charge Recovery", "IncreasedChargeRecovery"))
-      all.push(simpleIncreased("Armour during flask effect", "IncreasedArmourDuringFlask"))
-      all.push(simpleIncreased("Amount Recovered", "IncreasedAmountRecovered"))
-      all.push(simpleIncreased("Recovery Speed", "IncreasedRecoverySpeed"))
-      all.push(simpleIncreased("Flask Life Recovery rate", "IncreasedFlaskLifeRecoveryRate"))
-      all.push(simpleIncreased("Flask Mana Recovery rate", "IncreasedFlaskManaRecoveryRate"))
-      all.push(simpleIncreased("Flask effect duration", "IncreasedFlaskEffectDuration"))
-      all.push(simpleIncreased("Movement Speed during flask effect", "IncreasedMovementSpeedDuringFlask"))
+      all.push(simpleIncreased("Recovery when on Low Life", "RecoveryOnLowLife"))
+      all.push(simpleIncreased("Evasion Rating during flask effect", "EvasionRatingDuringFlask"))
+      all.push(simpleIncreased("Stun Recovery during flask effect", "StunRecoveryDuringFlask"))
+      all.push(simpleIncreased("Life Recovered", "LifeRecovered"))
+      all.push(simpleIncreased("Flask Charges gained", "FlaskChargesGained"))
+      all.push(simpleIncreased("Charge Recovery", "ChargeRecovery"))
+      all.push(simpleIncreased("Armour during flask effect", "ArmourDuringFlask"))
+      all.push(simpleIncreased("Amount Recovered", "AmountRecovered"))
+      all.push(simpleIncreased("Recovery Speed", "RecoverySpeed"))
+      all.push(simpleIncreased("Flask Life Recovery rate", "FlaskLifeRecoveryRate"))
+      all.push(simpleIncreased("Flask Mana Recovery rate", "FlaskManaRecoveryRate"))
+      all.push(simpleIncreased("Flask effect duration", "FlaskEffectDuration"))
+      all.push(simpleIncreased("Movement Speed during flask effect", "MovementSpeedDuringFlask"))
 
-      all.push(regexBased(/Dispels Frozen and Chilled/, null, "DispelsFrozenAndChilled", true))
-      all.push(regexBased(/Dispels Shocked/, null, "DispelsShocked", true))
-      all.push(regexBased(/Dispels Burning/, null, "DispelsBurning", true))
-      all.push(regexBased(/Removes Bleeding/, null, "RemovesBleeding", true))
-      all.push(regexBased(/Immunity to Curses during flask effect. Removes Curses on use/, null, "ImmunityToCursesDuringFlask", true))
-      all.push(regexBased(/Adds Knockback to Melee Attacks during flask effect/, null, "KnockbackDuringFlask", true))
-      all.push(regexBased(/Instant Recovery when on Low Life/, null, "InstantRecoveryOnLowLife", true))
-      all.push(regexBased(/Instant Recovery/, null, "InstantRecovery", true))
+      all.push(regexBased(/Dispels Frozen and Chilled/, null, "DispelsFrozenAndChilled", "NoCol", true))
+      all.push(regexBased(/Dispels Shocked/, null, "DispelsShocked", "NoLig",true))
+      all.push(regexBased(/Dispels Burning/, null, "DispelsBurning", "NoFir",true))
+      all.push(regexBased(/Removes Bleeding/, null, "RemovesBleeding", "NoBle", true))
+      all.push(regexBased(/Immunity to Curses during flask effect. Removes Curses on use/, null, "ImmunityToCursesDuringFlask", "NoCur", true))
+      all.push(regexBased(/Adds Knockback to Melee Attacks during flask effect/, null, "KnockbackDuringFlask", "KBak", true))
+      all.push(regexBased(/Instant Recovery when on Low Life/, null, "InstantRecoveryOnLowLife", "InstLL", true))
+      all.push(regexBased(/Instant Recovery/, null, "InstantRecovery", "Inst", true))
 
 
-      all.push(simpleReduced("Amount Recovered", "ReducedAmountRecovered"))
-      all.push(simpleReduced("Recovery Speed", "ReducedRecoverySpeed"))
-      all.push(simpleReduced("Flask Charges used", "ReducedFlaskChargesUsed"))
+      all.push(simpleReduced("Amount Recovered", "ReducedAmountRecovered", "-AmtRec"))
+      all.push(simpleReduced("Recovery Speed", "ReducedRecoverySpeed", "-RecSpeed"))
+      all.push(simpleReduced("Flask Charges used", "ReducedFlaskChargesUsed", "-ChrgUsed"))
 
 
     }
@@ -318,7 +319,7 @@ module Cgta {
             found = true;
             //Assign the mod to the item
             (<any> out)[res.name] = res.value
-            break
+            //break
           }
         }
         if (!found) {

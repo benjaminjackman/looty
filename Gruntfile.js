@@ -81,11 +81,11 @@ module.exports = function (grunt) {
         ]},
       js: {
         files: [
-          {cwd: "src/main/js", src: "**/*.js", dest: "target/site/scripts/js/"}
+          {cwd: "src/main/js", src: "**/*", dest: "target/site/scripts/js/"}
         ]},
       jsTest: {
         files: [
-          {cwd: "src/test/js", src: "**/*.js", dest: "target/site/test/scripts/js/"}
+          {cwd: "src/test/js", src: "**/*", dest: "target/site/test/scripts/js/"}
         ]},
       jslib: {
         files: [
@@ -323,9 +323,9 @@ module.exports = function (grunt) {
         'scripts/lib/jquery-migrate/jquery-migrate.js',
         'scripts/lib/underscore/underscore.js',
         'scripts/lib/angular/angular.js',
-        'scripts/lib/slickgrid/jquery.event.drag-2.0.min.js',
-        'scripts/lib/slickgrid/slick.core.js',
-        'scripts/lib/slickgrid/slick.grid.js',
+        'scripts/js/slickgrid/lib/jquery.event.drag-2.0.min.js',
+        'scripts/js/slickgrid/slick.core.js',
+        'scripts/js/slickgrid/slick.grid.js',
         'scripts/js/ng-modules.js',
         'scripts/lib/**/*.js',
         'scripts/js/**/*.js',
@@ -353,6 +353,7 @@ module.exports = function (grunt) {
       ['styles/lib/**/*.css',
         'styles/css/**/*.css',
         'styles/less/**/*.css',
+        'scripts/js/slickgrid/**/*.css',
         'resources/glyphicons/web/html_css/css/glyphicons.css',
         'resources/glyphicons_halflings/web/html_css/css/halflings.css'
       ],

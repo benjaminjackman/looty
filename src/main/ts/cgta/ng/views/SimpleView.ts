@@ -16,7 +16,8 @@ module Cgta.Views {
 
     export class SimpleCtrl {
       stuff = "Nothing to see here"
-      constructor($gameStateService: Cgta.Services.GameStateService) {
+
+      constructor($gameStateService:Cgta.Services.GameStateService) {
 
         $gameStateService.loadAllFromStorage()
           .then(() => $gameStateService.downloadCharacters())
@@ -29,19 +30,52 @@ module Cgta.Views {
           .done(() => render($gameStateService.getFlatItems()))
 
 
-        function render(items : Array<FlatItem>) {
-          var columns = ModParsers.all.map(function(mp: ModParser) {
-            return {id: mp.name, name: mp.name, field: mp.name, sortable:true}
+        function render(items:Array<FlatItem>) {
+          var columns = ModParsers.all.map(function (mp:ModParser) {
+            return {id: mp.name, name: mp.title, field: mp.name, toolTip: mp.name, sortable: true}
           })
 
           var options = {
-             enableCellNavigation: true,
-            enableColumnReorder:false,
-             multiColumnSort: true
-           };
+            enableCellNavigation: true,
+            enableColumnReorder: false,
+            multiColumnSort: true
+          };
 
-          var grid = new Slick.Grid("#myGrid",items,columns,options)
+          var grid = new Slick.Grid("#myGrid", items, columns, options)
+          grid.render();
 
+          grid.onSort.subscribe(function (e:any, args:any) {
+            var cols = args.sortCols;
+
+            items.sort(function (dataRow1:any, dataRow2:any) {
+              for (var i = 0, l = cols.length; i < l; i++) {
+                var field = cols[i].sortCol.field;
+                var sign = cols[i].sortAsc ? 1 : -1;
+                var value1 = dataRow1[field] || 0
+                var value2 = dataRow2[field] || 0
+                if (value1 != null && value2 != null) {
+                  var result = (value1 == value2 ? 0 : (value1 > value2 ? 1 : -1)) * sign;
+                  if (result != 0) {
+                    return result;
+                  }
+                }
+              }
+              return 0;
+            });
+            grid.invalidate();
+            grid.render();
+          });
+
+          function resize() {
+            $('#myGrid').css('height', window.innerHeight - 50);
+            grid.resizeCanvas();
+          }
+
+          resize();
+
+          $(window).resize(function () {
+            resize()
+          });
 
         }
 
@@ -49,7 +83,7 @@ module Cgta.Views {
 
     }
 
-    mod.controller("SimpleCtrl",SimpleCtrl)
+    mod.controller("SimpleCtrl", SimpleCtrl)
 
   }
 }
