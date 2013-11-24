@@ -10,6 +10,9 @@ module Cgta.Views {
   export module SimpleView {
     var mod = angular.module("views.SimpleView", []);
     import CharacterInfo = Cgta.Services.CharacterInfo
+    import FlatItem = Cgta.Services.FlatItem
+    import ModParsers = Cgta.Services.ModParsers
+    import ModParser = ModParsers.ModParser
 
     export class SimpleCtrl {
       stuff = "Nothing to see here"
@@ -23,7 +26,24 @@ module Cgta.Views {
           .finally(() => console.log("Inventories", $gameStateService.getInventories()))
           .finally(() => console.log("Stash Tabsxx", $gameStateService.getStashTabs()))
           .finally(() => $gameStateService.reFlattenAll())
-          .done()
+          .done(() => render($gameStateService.getFlatItems()))
+
+
+        function render(items : Array<FlatItem>) {
+          var columns = ModParsers.all.map(function(mp: ModParser) {
+            return {id: mp.name, name: mp.name, field: mp.name, sortable:true}
+          })
+
+          var options = {
+             enableCellNavigation: true,
+            enableColumnReorder:false,
+             multiColumnSort: true
+           };
+
+          var grid = new Slick.Grid("#myGrid",items,columns,options)
+
+
+        }
 
       }
 

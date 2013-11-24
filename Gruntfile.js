@@ -320,8 +320,12 @@ module.exports = function (grunt) {
     var scriptsTmpl = paths(
       "target/site",
       [ 'scripts/lib/jquery/jquery.js',
+        'scripts/lib/jquery-migrate/jquery-migrate.js',
         'scripts/lib/underscore/underscore.js',
         'scripts/lib/angular/angular.js',
+        'scripts/lib/slickgrid/jquery.event.drag-2.0.min.js',
+        'scripts/lib/slickgrid/slick.core.js',
+        'scripts/lib/slickgrid/slick.grid.js',
         'scripts/js/ng-modules.js',
         'scripts/lib/**/*.js',
         'scripts/js/**/*.js',

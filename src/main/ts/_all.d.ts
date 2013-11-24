@@ -14,4 +14,5 @@
 /// <reference path="lib/jquery/jquery.d.ts" />
 /// <reference path="lib/moment/moment.d.ts" />
 /// <reference path="lib/q/Q.d.ts" />
+/// <reference path="lib/slickgrid/SlickGrid.d.ts" />
 /// <reference path="lib/underscore/underscore.d.ts" />
