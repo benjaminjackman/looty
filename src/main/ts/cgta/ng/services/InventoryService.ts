@@ -18,6 +18,99 @@ module Cgta {
         reject.reason.message.match(/too frequently/) != null
     }
 
+    export class ImplicitMod {
+      static parse(name:string, value:string):ImplicitMod {
+        var r = new ImplicitMod
+        r.name = name
+        r.value = value
+        return r
+      }
+
+      name:string
+      value:string
+    }
+
+    export class BaseItem {
+      name:string
+      ar:number
+      ev:number
+      es:number
+      level:number
+      implicitMods:Array<ImplicitMod>
+      dex:number
+      str:number
+      int:number
+      cat1:string
+      cat2:string
+
+
+      static parse(json:any, cat1:string, cat2:string):BaseItem {
+        var x = new BaseItem()
+        x.cat1 = cat1
+        x.cat2 = cat2
+
+        x.name = json["Name"]
+        x.ar = +json["Armour"]
+        x.ev = +json["Evasion Rating"]
+        x.es = +json["Energy Shield"]
+        x.level = +json["Level"]
+        x.dex = +json["Req Dex"]
+        x.int = +json["Req Int"]
+        x.str = +json["Req Str"]
+
+        var imods = json["Implicit Mods"]
+        var imodValues = json["Mod Values"]
+        x.implicitMods = []
+        if (imods != null && imods !== "") {
+          var ns = imods.split(" : ")
+          var vs = (imodValues || "").split(" : ")
+          for (var i = 0; i < ns.length; i++) {
+            x.implicitMods.push(ImplicitMod.parse(ns[i], vs[i]))
+          }
+        }
+
+        return x
+      }
+    }
+
+//    "Armour": "0",
+//    "Energy Shield": "105",
+//    "Evasion Rating": "251",
+//    "Implicit Mods": "From Armour Movement Speed +% : Base Maximum Mana",
+//    "Level": "71",
+//    "Mod Values": "-4 : 20 to 25",
+//    "Name": "Carnal Armour",
+//    "Req Dex": "88",
+//    "Req Int": "122",
+//    "Req Str": "0"
+
+
+    export class BaseItemService {
+      baseItems:any = {};
+
+      constructor() {
+        var self = this
+        var bis = (<any> window).BaseItems;
+
+        ["Armour", "Jewelry", "Weapon"].forEach(
+          function (cat1:string) {
+            _.each(bis[cat1], function (items:any, cat2:string) {
+              _.each(items, function (item:any) {
+                var bi = BaseItem.parse(item, cat1, cat2)
+                self.baseItems[bi.name] = bi
+              })
+            })
+          }
+        )
+      }
+
+      get(item: AnyItem):BaseItem {
+        //Magic items aren't going to work here.
+        return this.baseItems[item.typeLine] || null
+      }
+
+    }
+
     /**
      * Wraps rpc calls to the ggg servers.
      */
@@ -59,7 +152,11 @@ module Cgta {
 
       getStashTab(league:League, tabIndex:number):Q.Promise<StashTab> {
         var url = "http://www.pathofexile.com/character-window/get-stash-items";
-        return this.getItems<StashTab>(url, {league: league, tabIndex: tabIndex});
+        return this.getItems<StashTab>(url, {league: league, tabIndex: tabIndex, tabs: 1}).then(function (stashTab:StashTab) {
+          stashTab.info = stashTab.tabs[tabIndex]
+          delete stashTab.tabs
+          return stashTab
+        })
       }
 
       getCharacters():Q.Promise<Array<CharacterInfo> > {
@@ -69,37 +166,9 @@ module Cgta {
       }
     }
 
-    export interface FlatItem {
-      //Id fields
-      locationId: String
-
-      league: League
-      character: String
-      stashTab: number
-      inventoryId: String
-      x: number
-      y: number
-      inSocket: number
-
-      name: string
-      rarity: Rarity
-
-
-
-      item : AnyItem
-      containingItem : AnyItem
-
-      isGem : boolean
-      isSupportGem : boolean
-
-      isCurrency : boolean
-
-    }
-
-
 
     function generateId(item:FlatItem):String {
-      return item.league + "-" + item.character + "-" + item.stashTab + "-" + item.inventoryId + "-" + item.x + "-" + item.y + "-" + item.inSocket;
+      return item.league + "-" + item.character + "-" + item.stashTabIdx + "-" + item.inventoryId + "-" + item.x + "-" + item.y + "-" + item.inSocket;
     }
 
     function firstNonNull(...xs:any[]):any {
@@ -124,7 +193,7 @@ module Cgta {
       export class ModParser {
         //Is Boolen are things like Dispels Frozen and Chilled mods, they are either there
         //or they are not
-        constructor(private regex:RegExp, public name:string, public title: string, public isBoolean:boolean) {
+        constructor(private regex:RegExp, public name:string, public title:string, public isBoolean:boolean) {
         }
 
         parse(mod:ExplicitMod):ModEntry {
@@ -146,42 +215,42 @@ module Cgta {
 
       export var all:Array<ModParser> = []
 
-      function regexBased(regex:RegExp, parseStr:string, shortName:string = null, title:string=null, isBoolean = false) {
+      function regexBased(regex:RegExp, parseStr:string, shortName:string = null, title:string = null, isBoolean = false) {
         shortName = shortName || parseStr.replace(/ /g, "")
         title = title || shortName
         return new ModParser(regex, shortName, title, isBoolean)
       }
 
       function minDamage(element:String) {
-        return regexBased(new RegExp("^Adds (\\d+)-\\d+ " + element + " Damage$"), "", "AddsMin" + element + "Damage", element.substr(0,3)+"MinDmg")
+        return regexBased(new RegExp("^Adds (\\d+)-\\d+ " + element + " Damage$"), "", "AddsMin" + element + "Damage", element.substr(0, 3) + "MinDmg")
       }
 
       function maxDamage(element:String) {
-        return regexBased(new RegExp("^Adds \\d+-(\\d+) " + element + " Damage$"), "", "AddsMax" + element + "Damage", element.substr(0,3)+"MaxDmg")
+        return regexBased(new RegExp("^Adds \\d+-(\\d+) " + element + " Damage$"), "", "AddsMax" + element + "Damage", element.substr(0, 3) + "MaxDmg")
       }
 
-      function simple(parseStr:string, shortName:string = null, title:string=null, prefix:string = "") {
+      function simple(parseStr:string, shortName:string = null, title:string = null, prefix:string = "") {
         return regexBased(new RegExp("^" + prefix + "([.+-\\d]+)%* " + parseStr + "$"), parseStr, shortName, title)
       }
 
-      function simpleTo(parseStr:string, shortName:string = null, title:string=null) {
+      function simpleTo(parseStr:string, shortName:string = null, title:string = null) {
         return regexBased(new RegExp("^([.+-\\d]+)%* to " + parseStr + "$"), parseStr, shortName, title)
       }
 
       function gemLevel(element:String) {
-        return simpleTo("Level of " + element + " Gems in this item", element + "GemLevel", "+"+element.substr(0,3)+"G")
+        return simpleTo("Level of " + element + " Gems in this item", element + "GemLevel", "+" + element.substr(0, 3) + "G")
       }
 
-      function simpleIncreased(parseStr:string, shortName:string = null, title:string=null) {
-        return regexBased(new RegExp("^([.+-\\d]+)%* increased " + parseStr + "$"), parseStr, "Increased"+shortName, title)
+      function simpleIncreased(parseStr:string, shortName:string = null, title:string = null) {
+        return regexBased(new RegExp("^([.+-\\d]+)%* increased " + parseStr + "$"), parseStr, "Increased" + shortName, title)
       }
 
-      function simpleReduced(parseStr:string, shortName:string = null, title:string=null) {
+      function simpleReduced(parseStr:string, shortName:string = null, title:string = null) {
         return regexBased(new RegExp("^([.+-\\d]+)%* reduced " + parseStr + "$"), parseStr, shortName, title)
       }
 
       function resist(resistType:String) {
-        return simpleTo(resistType + " Resistance", resistType + "Resist", "+%Res"+resistType.substr(0,3))
+        return simpleTo(resistType + " Resistance", resistType + "Resist", "+%Res" + resistType.substr(0, 3))
       }
 
       all.push(regexBased(new RegExp("^Reflects ([.+-\\d]+) Physical Damage to Melee Attackers$"), "Reflect Physical", "ReflectPhysical", "Ref"))
@@ -196,7 +265,7 @@ module Cgta {
 
       all.push(simpleTo("Accuracy Rating", "Acc"))
       all.push(simpleTo("Strength", "Str"))
-      all.push(simpleTo("Intelligence","Int"))
+      all.push(simpleTo("Intelligence", "Int"))
       all.push(simpleTo("Dexterity", "Dex"))
       all.push(simpleTo("all Attributes", "AllAttributes", "AllAts"))
       all.push(simpleTo("maximum Life", "MaximumLife", "Life"))
@@ -205,13 +274,14 @@ module Cgta {
       all.push(simpleTo("Evasion Rating", "ToEvasionRating", "+EV"))
       all.push(simpleTo("maximum Energy Shield", "ToEnergyShield", "+ES"))
 
-      all.push(simpleIncreased("Armour", "Armour", "%AR"))
-      all.push(simpleIncreased("Evasion Rating", "EvasionRating", "%EV"))
-      all.push(simpleIncreased("Energy Shield", "EnergyShield", "%ES"))
-      all.push(simpleIncreased("maximum Energy Shield", "MaximumEnergyShield", "%ES"))
-      all.push(simpleIncreased("Armour and Energy Shield", "ArmourAndEnergyShield", "%AR&ES"))
-      all.push(simpleIncreased("Armour and Evasion", "ArmourAndEvasion", "%AR&EV"))
-      all.push(simpleIncreased("Evasion and Energy Shield", "EvasionAndEnergyShield", "%EV&ES"))
+      all.push(simpleIncreased("Armour", "IncreasedArmour", "+%AR"))
+      all.push(simpleIncreased("Evasion Rating", "IncreasedEvasionRating", "+%EV"))
+      all.push(simpleIncreased("Energy Shield", "IncreasedEnergyShield", "+%ES"))
+      all.push(simpleIncreased("Armour and Energy Shield", "IncreasedArmourAndEnergyShield", "+%AR&ES"))
+      all.push(simpleIncreased("Armour and Evasion", "IncreasedArmourAndEvasion", "+%AR&EV"))
+      all.push(simpleIncreased("Evasion and Energy Shield", "IncreasedEvasionAndEnergyShield", "+%EV&ES"))
+
+      all.push(simpleIncreased("maximum Energy Shield", "IncreasedMaximumEnergyShield", "+%MaxES"))
 
       all.push(simpleIncreased("Quantity of Items found", "ItemQuantity", "IIQ"))
       all.push(simpleIncreased("Rarity of Items found", "ItemRarity", "IIR"))
@@ -225,10 +295,10 @@ module Cgta {
       all.push(simpleIncreased("Attack Speed", "AttackSpeed", "+%AttSpd"))
       all.push(simpleIncreased("Projectile Speed", "ProjectileSpeed", "+%ProjSpd"))
       all.push(simpleIncreased("Mana Regeneration Rate", "ManaRegen", "+%MRegen"))
-      all.push(simpleIncreased("Critical Strike Chance", "CriticalStrikeChance","+%CSC"))
-      all.push(simpleIncreased("Global Critical Strike Chance", "GlobalCriticalStrikeChance","+%GCSC"))
+      all.push(simpleIncreased("Critical Strike Chance", "CriticalStrikeChance", "+%CSC"))
+      all.push(simpleIncreased("Global Critical Strike Chance", "GlobalCriticalStrikeChance", "+%GCSC"))
       all.push(simpleIncreased("Global Critical Strike Multiplier", "GlobalCriticalStrikeMultiplier", "+%GCSM"))
-      all.push(simpleIncreased("Critical Strike Chance for Spells", "CriticalStrikeChanceForSpells","+%GCCS"))
+      all.push(simpleIncreased("Critical Strike Chance for Spells", "CriticalStrikeChanceForSpells", "+%GCCS"))
 
       all.push(simpleReduced("Enemy Stun Threshold", "ReducedEnemyStunThreshold", "-%StunThres"))
       all.push(simpleIncreased("Stun Duration on enemies", "StunDurationOnEnemies", "+%StnDur"))
@@ -244,7 +314,7 @@ module Cgta {
         all.push(resist(element))
         all.push(minDamage(element))
         all.push(maxDamage(element))
-        all.push(simpleIncreased(element + " Damage", "" + element + "Damage", "+%"+element.substr(0,3)+"Dmg"))
+        all.push(simpleIncreased(element + " Damage", "" + element + "Damage", "+%" + element.substr(0, 3) + "Dmg"))
       });
       //Gem levels
       ["Fire", "Cold", "Lightning", "Melee", "Minion", "Bow", "Strength"].forEach(function (element) {
@@ -253,15 +323,15 @@ module Cgta {
       all.push(simpleTo("Level of Gems in this item", "GemLevel"))
 
       //Flask specific
-      all.push(simple("of Life Recovered from Mana when used", "RemovesLifeFromMana", "Removes "))
-      all.push(simple("Charges when you take a Critical Strike", "RechargesOnCriticalTaken", "Recharges "))
-      all.push(simple("Charge when you deal a Critical Strike", "RechargesOnCriticalGiven", "Recharges "))
-      all.push(simple("of Life Recovery to Minions", "GrantsLifeToMinions", "Grants "))
+      all.push(simple("of Life Recovered from Mana when used", "RemovesLifeFromMana", "-LifeFromMana", "Removes "))
+      all.push(simple("Charges when you take a Critical Strike", "RechargesOnCriticalTaken", "RChrgTakeCrit", "Recharges "))
+      all.push(simple("Charge when you deal a Critical Strike", "RechargesOnCriticalGiven", "RChrgGiveCrit", "Recharges "))
+      all.push(simple("of Life Recovery to Minions", "GrantsLifeToMinions", "LifeToMini", "Grants "))
 
-      all.push(simple("of Recovery applied Instantly", "RecoveryAppliedInstantly"))
-      all.push(simple("of Physical Attack Damage Leeched as Life during flask effect", "LifeLeechDuringFlask"))
-      all.push(simple("of Physical Attack Damage Leeched as Mana during flask effect", "ManaLeechDuringFlask"))
-      all.push(simple("additional Elemental Resistances during flask effect", "AllResistDuringFlask"))
+      all.push(simple("of Recovery applied Instantly", "RecoveryAppliedInstantly", "+%RecInst"))
+      all.push(simple("of Physical Attack Damage Leeched as Life during flask effect", "LifeLeechDuringFlask", "%LLeechWFl"))
+      all.push(simple("of Physical Attack Damage Leeched as Mana during flask effect", "ManaLeechDuringFlask", "%MLeechWFl"))
+      all.push(simple("additional Elemental Resistances during flask effect", "AllResistDuringFlask", "%MLeechWFl"))
       all.push(simple("Extra Charges", "ExtraCharges"))
 
       all.push(simpleIncreased("Recovery when on Low Life", "RecoveryOnLowLife"))
@@ -279,8 +349,8 @@ module Cgta {
       all.push(simpleIncreased("Movement Speed during flask effect", "MovementSpeedDuringFlask"))
 
       all.push(regexBased(/Dispels Frozen and Chilled/, null, "DispelsFrozenAndChilled", "NoCol", true))
-      all.push(regexBased(/Dispels Shocked/, null, "DispelsShocked", "NoLig",true))
-      all.push(regexBased(/Dispels Burning/, null, "DispelsBurning", "NoFir",true))
+      all.push(regexBased(/Dispels Shocked/, null, "DispelsShocked", "NoLig", true))
+      all.push(regexBased(/Dispels Burning/, null, "DispelsBurning", "NoFir", true))
       all.push(regexBased(/Removes Bleeding/, null, "RemovesBleeding", "NoBle", true))
       all.push(regexBased(/Immunity to Curses during flask effect. Removes Curses on use/, null, "ImmunityToCursesDuringFlask", "NoCur", true))
       all.push(regexBased(/Adds Knockback to Melee Attacks during flask effect/, null, "KnockbackDuringFlask", "KBak", true))
@@ -296,15 +366,56 @@ module Cgta {
     }
 
     function isGem(item:AnyItem):boolean {
-      return (item.descrText || "").match(/Place into an item socket/) != null
+      return item.frameType === 4
     }
 
     function isSupportGem(item:AnyItem):boolean {
-      return item.support
+      return isGem(item) && item.support
     }
 
     function isCurrency(item:AnyItem):boolean {
-      return (item.icon || "").match(/\/2DItems\/Currency\//) != null
+      return item.frameType === 5
+    }
+
+    function isMap(item:AnyItem):boolean {
+      return (item.icon || "").match(/\/2DItems\/Maps\//) != null
+    }
+
+    function setRequirements(item:AnyItem, baseItem:BaseItem, flatItem:FlatItem) {
+
+      if (item.name == "Facebreaker") {
+        console.log("XXX FACEKBREAER XXXX", item)
+      }
+
+
+      if (baseItem != null) {
+        flatItem.level = baseItem.level || 0
+        flatItem.dex = baseItem.dex
+        flatItem.str = baseItem.str
+        flatItem.int = baseItem.int
+        return
+      }
+      //Have to look in the item itself to find it's requirement, note this uses
+      //gems if they are slotted so that is why we go the base item type route first
+      //However that breaks, i believe for uniques, so i will need to figure that out
+      function getReq(name:string):number {
+        var req = _.find(item.requirements, function (ireq:ItemRequirement) {
+          return ireq == null ? false : ireq.name == name
+        })
+        if (req != null && req.values[0] != null && req.values[0][0] != null) {
+          return +req.values[0][0]
+        } else {
+          return null;
+        }
+      }
+
+
+      flatItem.level = getReq("Level")
+      flatItem.dex = getReq("Dex")
+      flatItem.str = getReq("Str")
+      flatItem.int = getReq("Int")
+//      flatItem.str = getReq("Str (gem)")
+      return
     }
 
     function parseExplicitMods(mods:Array<ExplicitMod>, out:FlatItem) {
@@ -328,30 +439,86 @@ module Cgta {
       })
     }
 
-    function flattenItem(item:AnyItem, character:String = null, league:League = null, stashTab:number = null, parent:AnyItem = null):FlatItem {
+    export interface FlatItem {
+      //Id fields
+      locationId: String
+      locationName: string
+
+      league: League
+      character: String
+      stashTabIdx: number
+      inventoryId: String
+      x: number
+      y: number
+      inSocket: number
+
+      name: string
+      rarity: Rarity
+
+      cat1: string
+      cat2: string
+
+      stashTabInfo? : StashTabInfo
+      stashTabName? : string
+
+      baseItem?: BaseItem
+
+      item : AnyItem
+      containingItem : AnyItem
+
+      isGem : boolean
+      isSupportGem : boolean
+
+      isCurrency : boolean
+
+      level: number
+      dex: number
+      str: number
+      int: number
+
+    }
+
+    function flattenItem(item:AnyItem, baseItem:BaseItem, character:String = null, league:League = null, stashTabInfo:StashTabInfo = null, parent:AnyItem = null):FlatItem {
       var ret:FlatItem = (<any> {})
       parent = parent || (<any> {})
 
       //Set the name
-      ret.name = item.name
+      ret.name = item.name || item.typeLine
 
-      //Set the id fields
+      if (baseItem != null) {
+        ret.baseItem = baseItem
+        ret.cat1 = baseItem.cat1
+        ret.cat2 = baseItem.cat2
+      }
+
       ret.league = firstNonNull(league, item.league, parent.league)
       ret.character = firstNonNull(character)
-      ret.stashTab = firstNonNull(stashTab)
+      ret.stashTabIdx = null
       ret.inventoryId = firstNonNull(item.inventoryId, parent.inventoryId)
       ret.x = firstNonNull(item.x, parent.x)
       ret.y = firstNonNull(item.y, parent.y)
       ret.inSocket = firstNonNull(item.socket)
 
+      //Set the id fields
+      if (stashTabInfo != null) {
+        ret.stashTabInfo = stashTabInfo
+        ret.stashTabIdx = firstNonNull(stashTabInfo.i)
+        ret.stashTabName = stashTabInfo.n
+      }
 
       //Set the id
       ret.locationId = generateId(ret)
+      //Human readable name of the location
+      ret.locationName = ret.stashTabName || ret.character
 
       ret.isGem = isGem(item)
       ret.isSupportGem = isSupportGem(item)
 
       ret.isCurrency = isCurrency(item)
+
+
+
+      setRequirements(item, baseItem, ret)
 
       //Add in the explicit mods
       if (item.explicitMods != null && !ret.isGem && !ret.isCurrency) {
@@ -368,12 +535,13 @@ module Cgta {
       return ret
     }
 
-    function flattenItemAndSocketedItems(item:AnyItem, character:String, league:League, stashTab:number):Array<FlatItem> {
+    function flattenItemAndSocketedItems(item:AnyItem, baseItem:BaseItem, character:String, league:League, stashTabInfo:StashTabInfo):Array<FlatItem> {
       var ret:Array<FlatItem> = []
+      var stashTabIndex = stashTabInfo != null ? stashTabInfo.i : null
 
-      ret.push(flattenItem(item, character, league, stashTab, null))
+      ret.push(flattenItem(item, baseItem, character, league, stashTabInfo, null))
       _.each(item.socketedItems, function (socketedItem) {
-        ret.push(flattenItem(socketedItem, character, league, stashTab, item))
+        ret.push(flattenItem(socketedItem, baseItem, character, league, stashTabInfo, item))
       })
 
       return ret
@@ -386,16 +554,17 @@ module Cgta {
 
       private characters:Array<CharacterInfo> = null
       private inventories:any = null
-      //League -> [StashTab]
+      //League -> id -> [StashTab]
       private stashTabs:any = null
       private flatItems:Array<FlatItem> = null
 
 
-      constructor(private $q:ng.IQService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
+      constructor(private $q:ng.IQService, private $baseItemService:BaseItemService, private $poeRpcService:PoeRpcService, private $storageService:StorageService, private $userAlertService:UserAlertService) {
 //        RpcService.getCharacterItems("SantaTheClaws").then(function (items:CharacterItems) {
 //          console.log("Inv", items)
 //        });
-//        RpcService.getStashItems("Standard", 55).then(function (items:StashItems) {
+
+//        $poeRpcService.getStashTab("Standard", 1).then(function (items:StashTab) {
 //          console.log("Stash", items)
 //        });
 //        RpcService.getCharacters().then(function (chars:Array<CharacterInfo>) {
@@ -418,7 +587,8 @@ module Cgta {
         //Go over the inventories and push all the data in
         _.each(self.inventories, function (inventory:Inventory, character:string) {
           _.each(inventory.items, function (item:AnyItem) {
-            var flatItems = flattenItemAndSocketedItems(item, character, null, null)
+            var baseItem = self.$baseItemService.get(item)
+            var flatItems = flattenItemAndSocketedItems(item, baseItem, character, null, null)
             self.flatItems.push.apply(self.flatItems, flatItems)
           })
         })
@@ -426,7 +596,8 @@ module Cgta {
         _.each(self.stashTabs, function (stashTabs:any, league:League) {
           _.each(stashTabs, function (stashTab:StashTab, id:String) {
             _.each(stashTab.items, function (item:AnyItem) {
-              var flatItems = flattenItemAndSocketedItems(item, null, null, null)
+              var baseItem = self.$baseItemService.get(item)
+              var flatItems = flattenItemAndSocketedItems(item, baseItem, null, null, stashTab.info)
               self.flatItems.push.apply(self.flatItems, flatItems)
             })
           })
@@ -736,6 +907,7 @@ module Cgta {
     }
 
     mod.service("$poeRpcService", PoeRpcService);
+    mod.service("$baseItemService", BaseItemService);
     mod.service("$storageService", StorageService);
     mod.service("$gameStateService", GameStateService);
     mod.service("$userAlertService", UserAlertService);
@@ -766,6 +938,16 @@ module Cgta {
       error?: String
       numTabs: number
       items: Array<AnyItem>
+      tabs?: Array<StashTabInfo>
+      info: StashTabInfo
+    }
+
+    export interface StashTabInfo {
+      colour: {r:number;g:number;b:number
+      }
+      i:number
+      n:string
+      src:string
     }
 
 
@@ -861,8 +1043,8 @@ module Cgta {
     }
 
     export interface ItemRequirement {
-      name: String
-      values: Array<ItemRequirementValue>
+      name?: String
+      values: Array<Array<ItemRequirementValue>>
       displayMode: number
     }
 

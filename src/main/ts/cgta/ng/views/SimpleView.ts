@@ -31,18 +31,48 @@ module Cgta.Views {
 
 
         function render(items:Array<FlatItem>) {
-          var columns = ModParsers.all.map(function (mp:ModParser) {
-            return {id: mp.name, name: mp.title, field: mp.name, toolTip: mp.name, sortable: true}
-          })
+
+          function makeColumn(name:String, title:String) {
+            return {id: name, name: title, field: name, toolTip: name, sortable: true}
+          }
+
+          var columns:Array<any> = [
+            makeColumn("league", "Lge"),
+            makeColumn("locationName", "Loc"),
+            makeColumn("name", "Name"),
+            makeColumn("level", "Lvl"),
+            makeColumn("cat1", "cat"),
+            makeColumn("cat2", "slt")
+          ].concat(ModParsers.all.map(function (mp:ModParser) {
+              return makeColumn(mp.name, mp.title)
+            }));
+
 
           var options = {
             enableCellNavigation: true,
             enableColumnReorder: false,
-            multiColumnSort: true
+            multiColumnSort: true,
+            frozenColumn: 6
           };
 
           var grid = new Slick.Grid("#myGrid", items, columns, options)
           grid.render();
+
+
+          grid.onActiveCellChanged.subscribe(function () {
+            var currentCell:any;
+            var $canvas = $(grid.getCanvasNode());
+
+            currentCell = grid.getActiveCell();
+
+            $canvas.find(".slick-row").removeClass("active");
+            if (currentCell) {
+              $canvas.find(".slick-row[row=" + currentCell.row + "]").addClass("active");
+            }
+          });
+
+
+          //grid.autosizeColumns();
 
           grid.onSort.subscribe(function (e:any, args:any) {
             var cols = args.sortCols;

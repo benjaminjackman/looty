@@ -70,3 +70,12 @@ table.strapless {
     /*line-height: 60px;*/
     /*padding: 0 5px;*/
 }
+
+/* Currently selected cell */
+.slick-cell.active {
+  background: #00ff00;
+}
+
+.slick-row:hover {
+  background-color: red;
+}
