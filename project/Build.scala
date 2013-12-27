@@ -13,27 +13,28 @@ object Build extends sbt.Build {
     val htmlSrcs: PathFinder = htmlSrcDir * "*.template.html"
     val outDir: File = (crossTarget in Compile).value
     val outMappings = htmlSrcs x Path.rebase(htmlSrcDir, outDir)
-    outMappings.flatMap { case (in, out0) =>
-      val content = IO.read(in)
-      val outDir = out0.getParentFile
-      val Re = """.*/([^/]+)\.template\.html""".r
-      val basename = Re.findFirstMatchIn(in.getPath).get.group(1)
-      //Make a dev version and a release version
-      val devFile = outDir / (basename + "-dev.html")
-      val releaseFile = outDir / (basename + ".html")
+    outMappings.flatMap {
+      case (in, out0) =>
+        val content = IO.read(in)
+        val outDir = out0.getParentFile
+        val Re = """.*/([^/]+)\.template\.html""".r
+        val basename = Re.findFirstMatchIn(in.getPath).get.group(1)
+        //Make a dev version and a release version
+        val devFile = outDir / (basename + "-dev.html")
+        val releaseFile = outDir / (basename + ".html")
 
-      val devScripts = """<script type="text/javascript" src="looty-extdeps.js"></script>
-                                  |<script type="text/javascript" src="looty-intdeps.js"></script>
-                                  |<script type="text/javascript" src="looty.js"></script>""".stripMargin
+        val devScripts = """<script type="text/javascript" src="looty-extdeps.js"></script>
+                           |<script type="text/javascript" src="looty-intdeps.js"></script>
+                           |<script type="text/javascript" src="looty.js"></script>""".stripMargin
 
-      val releaseScripts = """<script type="text/javascript" src="looty-opt.js"></script>"""
+        val releaseScripts = """<script type="text/javascript" src="looty-opt.js"></script>"""
 
-      val devOut = content.replace("<!-- insert scalajs -->", devScripts)
-      val releaseOut = content.replace("<!-- insert scalajs -->", releaseScripts)
+        val devOut = content.replace("<!-- insert scalajs -->", devScripts)
+        val releaseOut = content.replace("<!-- insert scalajs -->", releaseScripts)
 
-      IO.write(devFile, devOut.getBytes("UTF-8"))
-      IO.write(releaseFile, releaseOut.getBytes("UTF-8"))
-      List(devFile, releaseFile)
+        IO.write(devFile, devOut.getBytes("UTF-8"))
+        IO.write(releaseFile, releaseOut.getBytes("UTF-8"))
+        List(devFile, releaseFile)
 
     }
     Seq[File]()
@@ -52,33 +53,37 @@ object Build extends sbt.Build {
   }
 
 
-  def pject(name : String) = Project(name, file(name)).settings(
+  def pject(name: String) = Project(name, file(name)).settings(
     scalaJSSettings: _*).settings(
-        scalacOptions += "-deprecation",
-        scalacOptions += "-unchecked",
-        scalacOptions += "-feature",
-        scalacOptions += "-language:implicitConversions",
-        scalacOptions += "-language:existentials",
-        scalacOptions += "-language:higherKinds"
-      ).settings(
-        // Continuation plugin
-        autoCompilerPlugins := true,
-        libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
-        scalacOptions += "-P:continuations:enable"
-      )
+      scalacOptions += "-deprecation",
+      scalacOptions += "-unchecked",
+      scalacOptions += "-feature",
+      scalacOptions += "-language:implicitConversions",
+      scalacOptions += "-language:existentials",
+      scalacOptions += "-language:higherKinds"
+    ).settings(
+      // Continuation plugin
+      autoCompilerPlugins := true,
+      libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
+      libraryDependencies ++= Seq(Libs.jQuery, Libs.dom),
+      scalacOptions += "-P:continuations:enable"
+    )
 
-  lazy val csjs = pject("cgta-scala-js").dependsOn(Libs.dom, Libs.jQuery)
+  lazy val csjs = pject("cgta-scala-js")
 
   lazy val looty = pject("looty").settings(
-    unmanagedSources in (Compile, ScalaJSKeys.packageJS) += baseDirectory.value / "js" / "startup.js",
+    unmanagedSources in(Compile, ScalaJSKeys.packageJS) += baseDirectory.value / "js" / "startup.js",
     resourceGenerators in Compile <+= generateHtml,
-    resourceGenerators in Compile <+= copyAll).dependsOn(Libs.dom, Libs.jQuery, csjs)
+    resourceGenerators in Compile <+= copyAll).dependsOn(csjs)
 
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
 
   object Libs {
-    lazy val dom    = RootProject(file("../scala-js-dom"))
-    lazy val jQuery = RootProject(file("../scala-js-jquery"))
+    val jQuery = "org.scala-lang.modules.scalajs" %% "scalajs-jquery" % "0.1-SNAPSHOT"
+    val dom = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.1-SNAPSHOT"
+    //    lazy val dom    = RootProject(file("../scala-js-dom"))
+    //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }
+
 }
 
