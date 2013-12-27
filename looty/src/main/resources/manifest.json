@@ -1,0 +1,25 @@
+{
+  "name": "Looty!",
+  "version": "0.1.0",
+  "manifest_version": 2,
+
+  "description": "Looty! A tool for Path of Exile that makes inventory searching fun!",
+
+  "app": {
+    "launch": {
+      "local_path": "looty-dev.html",
+      "container": "tab"
+    }
+  },
+
+  "icons" : {
+      "16" : "images/coin16.png",
+      "128" : "images/coin128.png"
+    },
+
+  "update_url": "https://raw.github.com/benjaminjackman/looty/master/looty-updates.xml",
+
+  "content_security_policy": "object-src 'self'; script-src 'self' 'unsafe-eval'",
+
+  "permissions": ["http://www.pathofexile.com/*","http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
+}

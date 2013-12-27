@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#Obviously gen the idea files
+sbt gen-idea
+
+#Make idea use it's own build directories so that it doesn't fight sbt
+find .idea_modules -maxdepth 1 -type f -exec sed -e 's|/target/scala-2|/target/idea-scala-2|g' -i '{}' +
+
+#Remove all the dependencies from root for other projects
+grep -v 'type="module"' .idea_modules/root.iml > root.iml
+mv root.iml .idea_modules/
