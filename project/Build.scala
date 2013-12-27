@@ -65,14 +65,14 @@ object Build extends sbt.Build {
         autoCompilerPlugins := true,
         libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
         scalacOptions += "-P:continuations:enable"
-      ).dependsOn(Libs.dom, Libs.jQuery)
+      )
 
-  lazy val csjs = pject("cgta-scala-js")
+  lazy val csjs = pject("cgta-scala-js").dependsOn(Libs.dom, Libs.jQuery)
 
   lazy val looty = pject("looty").settings(
     unmanagedSources in (Compile, ScalaJSKeys.packageJS) += baseDirectory.value / "js" / "startup.js",
     resourceGenerators in Compile <+= generateHtml,
-    resourceGenerators in Compile <+= copyAll).dependsOn(csjs)
+    resourceGenerators in Compile <+= copyAll).dependsOn(Libs.dom, Libs.jQuery, csjs)
 
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
 
