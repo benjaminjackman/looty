@@ -37,7 +37,7 @@ class LootGrid() {
 
       //TODO Remove take1
       for {
-        (tab, i) <- tabs.zipWithIndex.take(1)
+        (tab, i) <- tabs.zipWithIndex //.take(1)
         item <- tab.items
       } {
         ItemParser.parseItem(item).foreach { ci =>
@@ -48,7 +48,7 @@ class LootGrid() {
 
       //TODO Remove take1
       for {
-        (char, inv) <- invs.take(1)
+        (char, inv) <- invs //.take(1)
         item <- inv.items
       } {
 
@@ -210,22 +210,43 @@ class LootGrid() {
     d.css("bottom", bottom.getOrElse("".toJs))
     d.css("left", left.getOrElse("".toJs))
     val color = item.item.getFrameType.color
-    def requirements  = {
-      (for {
+    def requirements = {
+      val xs = for {
         rs <- item.item.requirements.toOption.toList
         r <- rs.toList
         n <- r.name.toOption.toList
         vs <- r.values.toList
       } yield {
         s"$n ${vs(0).toString}"
-      }).mkString("Requires ", ", ", "")
+      }
+      xs.oIf(_.nonEmpty, _ => xs.mkString("Requires ", ", ", ""), _ => "")
+    }
+    def properties = {
+      (for {
+        props <- item.item.properties.toOption.toList
+        prop <- props.toList
+      } yield {
+        val vs = for {
+          v <- prop.values.toList
+        } yield {
+          v(0)
+        }
+        prop.name + " " + vs.mkString("")
+      }).mkString("<br>")
+    }
+    def flavorText = {
+      item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
     }
     val sections = List(
       item.item.name.toString,
       item.item.typeLine.toString,
+      properties,
       requirements,
+      item.item.descrText.toOption.map(_.toString).getOrElse(""),
       item.item.implicitModList.mkString("<br>"),
-      item.item.explicitModList.mkString("<br>")
+      item.item.explicitModList.mkString("<br>"),
+      item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
+      flavorText
     ).filter(_.nonEmpty)
     console.log(sections.toArray.toJs)
     val h = s"""
@@ -244,16 +265,15 @@ class LootGrid() {
       val row = grid.getCellFromEvent(e).row
       if (row.nullSafe.isDefined) {
         val (top, bottom) = if (e.clientY / global.window.innerHeight < .5) {
-          console.error("PAD FOR SCROLL SO IT DOWS NOT FDALL ON MOUSE")
           Some(e.clientY.toJsNum + 10) -> None
         } else {
-          None -> Some(global.window.innerHeight - e.clientY)
+          None -> Some(global.window.innerHeight - e.clientY + 10)
         }
 
         val (right, left) = if (e.clientX / global.window.innerWidth < .5) {
           None -> Some(e.clientX.toJsNum + 10)
         } else {
-          Some(global.window.innerWidth - e.clientX) -> None
+          Some(global.window.innerWidth - e.clientX + 10) -> None
         }
 
         val item = grid.getDataItem(row).asInstanceOf[ComputedItem]

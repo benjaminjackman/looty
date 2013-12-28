@@ -87,8 +87,8 @@ object PoeTypes {
       val magic    = FrameType(1, "magic", "rgb(128,128,255)")
       val rare     = FrameType(2, "rare", "rgb(255,255,0)")
       val unique   = FrameType(3, "unique", "rgb(255,128,128)")
-      val gem      = FrameType(4, "gem", "rgb(0,128,128)")
-      val currency = FrameType(5, "currency", "rgb(255,215,0)")
+      val gem      = FrameType(4, "gem", "rgb(0,192,192)")
+      val currency = FrameType(5, "currency", "rgb(165,146,99)")
       val quest    = FrameType(6, "quest", "rgb(0,255,0)")
 
       val all = List(normal, magic, rare, unique, gem, currency, quest)
@@ -137,6 +137,7 @@ object PoeTypes {
     val implicitMods : Optional[js.Array[js.String]]
     val frameType    : js.Number
     val socketedItems: js.Array[AnyItem]
+    val flavourText   : Optional[js.Array[js.String]]
 
     //For items that are not socketed in other items
     val x          : js.Number
