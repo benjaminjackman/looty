@@ -25,7 +25,7 @@ object DEBUG {
 object IdeaStrip {
   val debug = false
 
-  val projects = List("looty-ext", "cgta-scala-js").map(Project.apply _)
+  val projects = List("looty", "cgta-scala-js").map(Project.apply _)
 
   val MaxLen = projects.flatMap(_.allPaths.map(_.name.length())).max
 

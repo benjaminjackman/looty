@@ -80,16 +80,16 @@ object PoeTypes {
   }
 
   object AnyItem {
-    case class FrameType(id: Int, name: String)
+    case class FrameType(id: Int, name: String, color: String)
     object FrameTypes {
-      val unknown  = FrameType(-1, "unknown")
-      val normal   = FrameType(0, "normal")
-      val magic    = FrameType(1, "magic")
-      val rare     = FrameType(2, "rare")
-      val unique   = FrameType(3, "unique")
-      val gem      = FrameType(4, "gem")
-      val currency = FrameType(5, "currency")
-      val quest    = FrameType(6, "quest")
+      val unknown  = FrameType(-1, "unknown", "rgb(128,128,128)")
+      val normal   = FrameType(0, "normal", "rgb(255,255,255)")
+      val magic    = FrameType(1, "magic", "rgb(128,128,255)")
+      val rare     = FrameType(2, "rare", "rgb(255,255,0)")
+      val unique   = FrameType(3, "unique", "rgb(255,128,128)")
+      val gem      = FrameType(4, "gem", "rgb(0,128,128)")
+      val currency = FrameType(5, "currency", "rgb(255,215,0)")
+      val quest    = FrameType(6, "quest", "rgb(0,255,0)")
 
       val all = List(normal, magic, rare, unique, gem, currency, quest)
     }
@@ -100,6 +100,9 @@ object PoeTypes {
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
+
+      def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
+      def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
 
       def getFrameType = {
         val ft = x.frameType.toInt

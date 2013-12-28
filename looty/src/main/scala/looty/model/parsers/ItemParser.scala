@@ -20,7 +20,6 @@ object ItemParser {
   var parseCnt = 0
 
   def parseItem(item: AnyItem): List[ComputedItem] = {
-    console.error("Inspect the sockets as well!")
     val ci = new ComputedItem(item)
     if (ci.isEquippable) {
       parseMods(ci, ci.item.explicitMods.toOption)
@@ -30,7 +29,7 @@ object ItemParser {
       parseTypeLine(ci)
       parseSockets(ci)
     }
-    ci :: (for (items <- item.socketedItems.toList) yield parseItem(item)).flatten
+    ci :: (for (socketedItem <- item.socketedItems.toList) yield parseItem(socketedItem)).flatten
   }
 
 

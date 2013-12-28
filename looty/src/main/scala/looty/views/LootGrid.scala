@@ -6,6 +6,7 @@ import scala.scalajs.js
 import looty.model.{ComputedItemProps, PoeCacher, ComputedItem}
 import looty.poeapi.PoeTypes.Leagues
 import looty.model.parsers.ItemParser
+import looty.poeapi.PoeTypes.AnyItem.FrameTypes
 
 
 //////////////////////////////////////////////////////////////
@@ -36,23 +37,25 @@ class LootGrid() {
 
       //TODO Remove take1
       for {
-        (tab, i) <- tabs.zipWithIndex//.take(1)
+        (tab, i) <- tabs.zipWithIndex.take(1)
         item <- tab.items
       } {
-        val ci = ItemParser.parseItem(item)
-        ci.location = tabInfos(i).n
-        items.push(ci)
+        ItemParser.parseItem(item).foreach { ci =>
+          ci.location = tabInfos(i).n
+          items.push(ci)
+        }
       }
 
       //TODO Remove take1
       for {
-        (char, inv) <- invs//.take(1)
+        (char, inv) <- invs.take(1)
         item <- inv.items
       } {
 
-        val ci = ItemParser.parseItem(item)
-        ci.location = char
-        items.push(ci)
+        ItemParser.parseItem(item).foreach { ci =>
+          ci.location = char
+          items.push(ci)
+        }
       }
 
       this.displayItems = items
@@ -74,6 +77,7 @@ class LootGrid() {
     appendGrid(displayItems)
 
   }
+
   private def appendControls() {
     val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
     val el = jq("#controls")
@@ -96,8 +100,8 @@ class LootGrid() {
           val items = new js.Array[ComputedItem]()
           for {
             item <- st.items
+            ci <- ItemParser.parseItem(item)
           } {
-            val ci = ItemParser.parseItem(item)
             ci.location = sti.n
             items.push(ci)
           }
@@ -127,8 +131,9 @@ class LootGrid() {
     }
     val columns = js.Array[js.Dynamic]()
 
-    ComputedItemProps.all.foreach { p =>
-      columns.push(makeColumn(p.shortName, p.description)(p.getJs))
+    ComputedItemProps.all.foreach {
+      p =>
+        columns.push(makeColumn(p.shortName, p.description)(p.getJs))
     }
 
     val options = {
@@ -159,30 +164,31 @@ class LootGrid() {
     grid.onSort.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       val cols = args.sortCols.asInstanceOf[js.Array[js.Dynamic]]
 
-      displayItems.sort { (a: ComputedItem, b: ComputedItem) =>
-        var i = 0
-        var ret = 0.0
-        while (i < cols.length && ret == 0) {
-          val col = cols(i)
-          val sign = if (cols(i).sortAsc.asInstanceOf[js.Boolean]) 1 else -1
-          val a1: js.Dynamic = col.sortCol.getter(a.asInstanceOf[js.Any])
-          val b1: js.Dynamic = col.sortCol.getter(b.asInstanceOf[js.Any])
+      displayItems.sort {
+        (a: ComputedItem, b: ComputedItem) =>
+          var i = 0
+          var ret = 0.0
+          while (i < cols.length && ret == 0) {
+            val col = cols(i)
+            val sign = if (cols(i).sortAsc.asInstanceOf[js.Boolean]) 1 else -1
+            val a1: js.Dynamic = col.sortCol.getter(a.asInstanceOf[js.Any])
+            val b1: js.Dynamic = col.sortCol.getter(b.asInstanceOf[js.Any])
 
-          val res = a1 - b1
-          if (js.isNaN(res)) {
-            if (a1.toString > b1.toString) {
-              ret = sign
-            } else if (b1.toString > a1.toString) {
-              ret = -sign
+            val res = a1 - b1
+            if (js.isNaN(res)) {
+              if (a1.toString > b1.toString) {
+                ret = sign
+              } else if (b1.toString > a1.toString) {
+                ret = -sign
+              }
+
+            } else {
+              ret = sign * res
             }
 
-          } else {
-            ret = sign * res
+            i += 1
           }
-
-          i += 1
-        }
-        ret: js.Number
+          ret: js.Number
       }
 
       grid.invalidate()
@@ -190,19 +196,47 @@ class LootGrid() {
     })
   }
 
-  def showItemDetail(top: Option[js.Number],
+  def showItemDetail(
+    top: Option[js.Number],
     right: Option[js.Number],
     bottom: Option[js.Number],
     left: Option[js.Number],
     item: ComputedItem) {
+
     val d = jq("#itemdetail")
     d.show()
     d.css("top", top.getOrElse("".toJs))
     d.css("right", right.getOrElse("".toJs))
     d.css("bottom", bottom.getOrElse("".toJs))
     d.css("left", left.getOrElse("".toJs))
-    console.log(item)
+    val color = item.item.getFrameType.color
+    def requirements  = {
+      (for {
+        rs <- item.item.requirements.toOption.toList
+        r <- rs.toList
+        n <- r.name.toOption.toList
+        vs <- r.values.toList
+      } yield {
+        s"$n ${vs(0).toString}"
+      }).mkString("Requires ", ", ", "")
+    }
+    val sections = List(
+      item.item.name.toString,
+      item.item.typeLine.toString,
+      requirements,
+      item.item.implicitModList.mkString("<br>"),
+      item.item.explicitModList.mkString("<br>")
+    ).filter(_.nonEmpty)
+    console.log(sections.toArray.toJs)
+    val h = s"""
+    <div style="color:$color;padding:5px">
+    ${sections.mkString("<hr>")}
+    </div>
+    """
 
+    d.html(h)
+
+    console.log(item)
   }
 
   private def addMouseover() {
@@ -211,13 +245,13 @@ class LootGrid() {
       if (row.nullSafe.isDefined) {
         val (top, bottom) = if (e.clientY / global.window.innerHeight < .5) {
           console.error("PAD FOR SCROLL SO IT DOWS NOT FDALL ON MOUSE")
-          Some(e.clientY.toJsNum+10) -> None
+          Some(e.clientY.toJsNum + 10) -> None
         } else {
           None -> Some(global.window.innerHeight - e.clientY)
         }
 
         val (right, left) = if (e.clientX / global.window.innerWidth < .5) {
-          None -> Some(e.clientX.toJsNum+10)
+          None -> Some(e.clientX.toJsNum + 10)
         } else {
           Some(global.window.innerWidth - e.clientX) -> None
         }
