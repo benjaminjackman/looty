@@ -12,7 +12,7 @@ import cgta.ojs.lang.JsPromise
 
 
 @JSName("chrome.storage")
-object Storage extends js.Object {
+object ChromeStorage extends js.Object {
 
 
   @JSName("chrome.storage.local")
@@ -20,6 +20,12 @@ object Storage extends js.Object {
 
   object Local {
     implicit class LocalExt(val x: Local) extends AnyVal {
+      def getAll(): Future[js.Any] = {
+        val p = JsPromise[js.Any]
+        x.get((o: js.Any) => p.success(o))
+        p.future
+      }
+
       def futGet[B](key: js.String): Future[Option[B]] = {
         val p = JsPromise[Option[B]]()
         def setPromise(kv: js.Any) {
@@ -28,7 +34,7 @@ object Storage extends js.Object {
         x.get(key, setPromise _)
         p.future
       }
-      def futSet(key: js.String, value : js.Any) : Future[Unit] = {
+      def futSet(key: js.String, value: js.Any): Future[Unit] = {
         val p = JsPromise[Unit]()
         def setPromise() {
           p.success(Unit)
@@ -38,6 +44,14 @@ object Storage extends js.Object {
         x.set(kv, setPromise _)
         p.future
       }
+      def futClear(key: js.String): Future[Unit] = {
+        val p = JsPromise[Unit]()
+        def clearPromise() {
+          p.success(Unit)
+        }
+        x.clear(clearPromise _)
+        p.future
+      }
     }
   }
 
@@ -45,7 +59,7 @@ object Storage extends js.Object {
   trait Local extends js.Object {
     val QUOTA_BYTES: js.Number = ???
     def clear() = ???
-    def clear(cb: js.Function1[js.Any, Unit]) = ???
+    def clear(cb: js.Function0[Unit]) = ???
 
     def set(items: js.Any) = ???
     def set(items: js.Any, cb: js.Function0[Unit]) = ???
@@ -55,6 +69,8 @@ object Storage extends js.Object {
     //
     //    def get(keys: js.Array[js.String]) = ???
     //    def get(keys: js.Array[js.String], cb: js.Dynamic => Unit) = ???
+
+    def get(cb: js.Function1[js.Any, Unit])
 
     def get(keys: js.Any) = ???
     def get(keys: js.Any, cb: js.Function1[js.Any, Unit]) = ???

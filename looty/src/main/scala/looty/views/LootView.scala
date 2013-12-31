@@ -4,9 +4,8 @@ package views
 import org.scalajs.jquery.JQueryStatic
 import scala.scalajs.js
 import looty.model.{ComputedItemProps, PoeCacher, ComputedItem}
-import looty.poeapi.PoeTypes.Leagues
+import looty.poeapi.PoeTypes.{AnyItem, Leagues}
 import looty.model.parsers.ItemParser
-import looty.poeapi.PoeTypes.AnyItem.FrameTypes
 
 
 //////////////////////////////////////////////////////////////
@@ -18,7 +17,7 @@ import looty.poeapi.PoeTypes.AnyItem.FrameTypes
 //////////////////////////////////////////////////////////////
 
 
-class LootGrid() {
+class LootView() {
   val jq          : JQueryStatic           = global.jQuery.asInstanceOf[JQueryStatic]
   var grid        : js.Dynamic             = null
   var displayItems: js.Array[ComputedItem] = null
@@ -85,6 +84,7 @@ class LootGrid() {
 
     val pc = new PoeCacher()
 
+    //Buttons for stashed
     for {
       stis <- pc.Net.getStisAndStore(Leagues.Standard)
       sti <- stis.toList
@@ -93,27 +93,39 @@ class LootGrid() {
       el.append(button)
       button.on("click", (a: js.Any) => {
         //Set the grid to only have this tabs items in it and refresh this tab
-        for {
-          st <- pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt)
-        } {
-          val pc = new PoeCacher()
-          val items = new js.Array[ComputedItem]()
-          for {
-            item <- st.items
-            ci <- ItemParser.parseItem(item)
-          } {
-            ci.location = sti.n
-            items.push(ci)
-          }
-          displayItems = items
-          console.log(items(0))
-          grid.setData(displayItems)
-          grid.invalidate()
-          grid.render()
-        }
-      }
-      )
+        pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showItems(st.items, sti.n))
+      })
     }
+
+    //Buttons for characters
+    for {
+      chars <- pc.Net.getCharsAndStore
+      char <- chars.toList
+    } {
+      val button = jq(s"""<button>${char.name}</button>""")
+      el.append(button)
+      button.on("click", (a: js.Any) => {
+        //Set the grid to only have this tabs items in it and refresh this tab
+        pc.Net.getInvAndStore(char.name).foreach(inv => showItems(inv.items, char.name))
+      })
+    }
+
+  }
+
+  private def showItems(xs: js.Array[AnyItem], location: String) {
+    val pc = new PoeCacher()
+    val items = new js.Array[ComputedItem]()
+    for {
+      item <- xs
+      ci <- ItemParser.parseItem(item)
+    } {
+      ci.location = location
+      items.push(ci)
+    }
+    displayItems = items
+    grid.setData(displayItems)
+    grid.invalidate()
+    grid.render()
 
   }
 
@@ -248,7 +260,6 @@ class LootGrid() {
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
       flavorText
     ).filter(_.nonEmpty)
-    console.log(sections.toArray.toJs)
     val h = s"""
     <div style="color:$color;padding:5px">
     ${sections.mkString("<hr>")}

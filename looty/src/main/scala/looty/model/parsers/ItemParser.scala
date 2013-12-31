@@ -46,7 +46,6 @@ object ItemParser {
 
 
   def parseProperties(ci: ComputedItem) {
-
     for {
       props <- ci.item.properties.toOption.toList
       prop <- props

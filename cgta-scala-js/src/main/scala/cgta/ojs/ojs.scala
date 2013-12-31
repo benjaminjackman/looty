@@ -11,4 +11,7 @@ import scala.scalajs.js
 package object ojs extends OJsDsl {
   val obj = new JsObjectBuilder
   def arr(xs: js.Any*) = js.Array(xs: _*)
+  val MMap = scala.collection.mutable.Map
+  type MMap[K, V] = scala.collection.mutable.Map[K, V]
+
 }

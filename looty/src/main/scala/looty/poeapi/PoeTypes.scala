@@ -38,14 +38,25 @@ object PoeTypes {
     val name   : js.String
   }
 
+  object ItemContainer {
+    implicit class ItemContainerExtensions(val ic: ItemContainer) extends AnyVal {
+      def allItems: List[AnyItem] = {
+        ic.items.toList.flatMap { item =>
+          item :: item.socketedItems.toList.map { i => i.inItem = item; i}
+        }
+      }
+    }
+  }
+
   trait ItemContainer extends js.Object {
     val items: js.Array[AnyItem]
   }
 
   trait Inventory extends js.Object with ItemContainer {
-    val error    : Optional[js.String]
     val character: js.String
 
+    //Returned when there is an error (throttled)
+    val error: Optional[js.String]
   }
 
   trait StashTab extends js.Object with ItemContainer {
@@ -53,6 +64,7 @@ object PoeTypes {
 
     //Returned optionally when tabs = 1 is set
     val tabs : Optional[js.Array[StashTabInfo]]
+    //Returned when there was an error (throttled for example)
     val error: Optional[js.String]
   }
 
@@ -86,7 +98,7 @@ object PoeTypes {
       val normal   = FrameType(0, "normal", "rgb(255,255,255)")
       val magic    = FrameType(1, "magic", "rgb(128,128,255)")
       val rare     = FrameType(2, "rare", "rgb(255,255,0)")
-      val unique   = FrameType(3, "unique", "rgb(255,128,128)")
+      val unique   = FrameType(3, "unique", "rgb(192,64,64)")
       val gem      = FrameType(4, "gem", "rgb(0,192,192)")
       val currency = FrameType(5, "currency", "rgb(165,146,99)")
       val quest    = FrameType(6, "quest", "rgb(0,255,0)")
@@ -101,6 +113,8 @@ object PoeTypes {
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
 
+      def isInSocket = x.socket.toOption.isDefined
+
       def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
 
@@ -113,31 +127,64 @@ object PoeTypes {
           FrameTypes.all(ft)
         }
       }
+
+      //(Y experience points, Z needed for next level)
+      def getXpProgress: Option[(Int, Long, Long)] = {
+        (for {
+          ps <- x.additionalProperties.toOption.toList
+          p <- ps.toList
+          if p.name.toString == "Experience"
+          prog = p.progress
+          vss <- p.values.toList
+          v <- vss.toList.headOption
+          (c, n) <- v.toString.split("/").toList match {
+            case c :: t :: Nil => Some(c.toLong -> t.toLong)
+            case xs => None
+          }
+          l <- x.getLevel
+        } yield {
+          console.log("VVVV", l, c, n, x)
+          (l, c, n)
+        }).headOption
+      }
+
+      def getLevel: Option[Int] = {
+        (for {
+          props <- x.properties.toOption.toList
+          prop <- props.toList.find(_.name.toString == "Level").toList
+          lvss <- prop.values.toList
+          lv <- lvss.toList.headOption
+          l = lv.toString.toInt
+        } yield {
+          l
+        }).headOption
+      }
     }
   }
 
   trait AnyItem extends js.Object {
-    val verified     : js.Boolean
+    val verified            : js.Boolean
     //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
-    val w            : js.Number
-    val h            : js.Number
+    val w                   : js.Number
+    val h                   : js.Number
     //a Url
-    val icon         : js.String
-    val support      : js.Boolean
-    val league       : js.String
-    val name         : js.String
-    val typeLine     : js.String
-    val identified   : js.Boolean
-    val sockets      : Optional[js.Array[Socket]]
-    val properties   : Optional[js.Array[ItemProperty]]
-    val requirements : Optional[js.Array[ItemRequirement]]
-    val descrText    : Optional[js.String]
-    val secDescrText : Optional[js.String]
-    val explicitMods : Optional[js.Array[js.String]]
-    val implicitMods : Optional[js.Array[js.String]]
-    val frameType    : js.Number
-    val socketedItems: js.Array[AnyItem]
-    val flavourText   : Optional[js.Array[js.String]]
+    val icon                : js.String
+    val support             : js.Boolean
+    val league              : js.String
+    val name                : js.String
+    val typeLine            : js.String
+    val identified          : js.Boolean
+    val additionalProperties: Optional[js.Array[AdditionalProperty]]
+    val sockets             : Optional[js.Array[Socket]]
+    val properties          : Optional[js.Array[ItemProperty]]
+    val requirements        : Optional[js.Array[ItemRequirement]]
+    val descrText           : Optional[js.String]
+    val secDescrText        : Optional[js.String]
+    val explicitMods        : Optional[js.Array[js.String]]
+    val implicitMods        : Optional[js.Array[js.String]]
+    val frameType           : js.Number
+    val socketedItems       : js.Array[AnyItem]
+    val flavourText         : Optional[js.Array[js.String]]
 
     //For items that are not socketed in other items
     val x          : js.Number
@@ -149,6 +196,19 @@ object PoeTypes {
     val socket: Optional[js.Number]
     val colour: Optional[js.String]
 
+    //Added by allItems if this item is in another item
+    var inItem: Optional[AnyItem]
+
+  }
+
+  trait AdditionalProperty extends js.Object {
+    val displayMode: js.Number
+    //Experience for gem experience
+    val name       : js.String
+    //0 to 1 depending on progress to next level for gems
+    val progress   : js.Number
+    //For XP in Gems: Typically the 0th element of the inner array is a string like "175815/175816"
+    val values     : js.Array[js.Array[js.Any]]
   }
 
   object Socket {

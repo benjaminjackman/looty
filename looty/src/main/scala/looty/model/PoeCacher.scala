@@ -2,11 +2,12 @@ package looty
 package model
 
 import looty.poeapi.PoeRpcs
-import cgta.ojs.chrome.Storage
+import cgta.ojs.chrome.ChromeStorage
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes.{Leagues, StashTab, StashTabInfos, Inventory, Characters}
 import cgta.ojs.lang.JsFuture
 import scala.scalajs.js
+import cgta.ojs.io.StoreMaster
 
 
 //////////////////////////////////////////////////////////////
@@ -23,64 +24,68 @@ import scala.scalajs.js
 class PoeCacher(account: String = "UnknownAccount!") {
 
   object Store {
-    def getChars = Storage.local.futGet[Characters](s"$account-characters")
-    def setChars(chars: Characters) = Storage.local.futSet(s"$account-characters", chars)
+    val store = StoreMaster
 
-    def getInv(char: String) = Storage.local.futGet[Inventory](s"$account-$char-inventory")
-    def setInv(char: String, inv: Inventory) = Storage.local.futSet(s"$account-$char-inventory", inv)
+    def getChars = store.get[Characters](s"$account-characters")
+    def setChars(chars: Characters) = store.set(s"$account-characters", chars)
 
-    def getStis(league: String) = Storage.local.futGet[StashTabInfos](s"$account-$league-stis")
-    def setStis(league: String, stis: StashTabInfos) = Storage.local.futSet(s"$account-$league-stis", stis)
+    def getInv(char: String) = store.get[Inventory](s"$account-$char-inventory")
+    def setInv(char: String, inv: Inventory) = store.set(s"$account-$char-inventory", inv)
 
-    def getStashTab(league: String, tabIdx: Int) =
-      Storage.local.futGet[StashTab](s"$account-$league-$tabIdx-stis")
-    def setStashTab(league: String, tabIdx: Int, st: StashTab) =
-      Storage.local.futSet(s"$account-$league-$tabIdx-stis", st)
+    def getStis(league: String) = store.get[StashTabInfos](s"$account-$league-stis")
+    def setStis(league: String, stis: StashTabInfos) = store.set(s"$account-$league-stis", stis)
+
+    def getStashTab(league: String, tabIdx: Int) = store.get[StashTab](s"$account-$league-$tabIdx-stis")
+    def setStashTab(league: String, tabIdx: Int, st: StashTab) = store.set(s"$account-$league-$tabIdx-stis", st)
   }
 
   object Net {
-    def getCharsAndStore = PoeRpcs.getCharacters() flatMap {
-      chars => Store.setChars(chars).map(_ => chars)
+    def getCharsAndStore = PoeRpcs.getCharacters() map { chars =>
+      Store.setChars(chars)
+      chars
     }
 
-    def getInvAndStore(char: String) = PoeRpcs.getCharacterInventory(char) flatMap {
-      inv => Store.setInv(char, inv).map(_ => inv)
+    def getInvAndStore(char: String) = PoeRpcs.getCharacterInventory(char) map { inv =>
+      Store.setInv(char, inv)
+      inv
     }
 
-    def getStisAndStore(league: String) = PoeRpcs.getStashTabInfos(league) flatMap {
-      stis => Store.setStis(league, stis).map(_ => stis)
+    def getStisAndStore(league: String) = PoeRpcs.getStashTabInfos(league) map { stis =>
+      Store.setStis(league, stis)
+      stis
     }
 
-    def getStashTabAndStore(league: String, tabIdx: Int) = PoeRpcs.getStashTab(league, tabIdx) flatMap {
-      stis => Store.setStashTab(league, tabIdx, stis).map(_ => stis)
+    def getStashTabAndStore(league: String, tabIdx: Int) = PoeRpcs.getStashTab(league, tabIdx) map { stab =>
+      Store.setStashTab(league, tabIdx, stab)
+      stab
     }
   }
 
 
   def getChars(): Future[Characters] = {
     //Attempt to get get the chars from local storage, or else go out to the network and load
-    Store.getChars flatMap {
+    JsFuture.successful(Store.getChars) flatMap {
       case Some(chars) => JsFuture(chars)
       case None => Net.getCharsAndStore
     }
   }
 
   def getInv(char: String): Future[Inventory] = {
-    Store.getInv(char) flatMap {
+    JsFuture.successful(Store.getInv(char)) flatMap {
       case Some(inv) => JsFuture(inv)
       case None => Net.getInvAndStore(char)
     }
   }
 
   def getStashInfo(league: String): Future[StashTabInfos] = {
-    Store.getStis(league) flatMap {
+    JsFuture.successful(Store.getStis(league)) flatMap {
       case Some(stis) => JsFuture(stis)
       case None => Net.getStisAndStore(league)
     }
   }
 
   def getStashTab(league: String, tabIdx: Int): Future[StashTab] = {
-    Store.getStashTab(league, tabIdx) flatMap {
+    JsFuture.successful(Store.getStashTab(league, tabIdx)) flatMap {
       case Some(st) => JsFuture(st)
       case None => Net.getStashTabAndStore(league, tabIdx)
     }
@@ -90,7 +95,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
     getStashInfo(league).flatMap { si =>
       JsFuture.sequence {
         si.toList.map { sti =>
-          getStashTab(league, sti.i.toInt)//.log("Got Stash Tab")
+          getStashTab(league, sti.i.toInt) //.log("Got Stash Tab")
         }
       }
     }
@@ -110,11 +115,11 @@ class PoeCacher(account: String = "UnknownAccount!") {
     //Doesn't download anything that is already present
     //Get all the character inventories
     JsFuture.sequence(
-      List(
+      List[Future[Any]](
         getChars() flatMap { chars =>
           JsFuture.sequence(chars.toList.map(char => getInv(char.name))).map(_ => Unit)
         },
-        JsFuture.sequence {
+        JsFuture.sequence[Any, List] {
           Leagues.all.toList.map { league =>
             getAllStashTabs(league)
           }
