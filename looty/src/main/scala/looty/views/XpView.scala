@@ -27,6 +27,10 @@ object GemProgress {
     x.xpForLevelUp = xpForLevelUp
     x.asInstanceOf[GemProgress]
   }
+
+  implicit class GemProgressExtensions(val x : GemProgress) extends AnyVal {
+    def progress : Double = (x.xpGained / x.xpForLevelUp).toDouble
+  }
 }
 
 class GemProgress private() extends js.Object {
@@ -197,7 +201,7 @@ class XpView {
         $tbody.append(s"<tr>" +
             s"<td>${gem.id.name}</td>" +
             s"<td>${gem.current.level}</td>" +
-            s"<td>?</td>" +
+            f"<td>${gem.current.progress * 100}%.2f</td>" +
             s"<td>${gem.current.xpGained}</td>" +
             s"<td>${gem.current.xpForLevelUp}</td>" +
             s"<td>?</td>" +
