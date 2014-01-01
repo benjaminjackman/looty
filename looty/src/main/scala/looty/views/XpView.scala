@@ -28,8 +28,9 @@ object GemProgress {
     x.asInstanceOf[GemProgress]
   }
 
-  implicit class GemProgressExtensions(val x : GemProgress) extends AnyVal {
-    def progress : Double = (x.xpGained / x.xpForLevelUp).toDouble
+  implicit class GemProgressExtensions(val x: GemProgress) extends AnyVal {
+    def progress: Double = x.xpGained / x.xpForLevelUp
+    def xpToGo: Double = x.xpForLevelUp - x.xpGained
   }
 }
 
@@ -76,33 +77,38 @@ class GemId private() extends js.Object {
 }
 
 object GemHistory {
-  def empty(id: GemId) = apply(id, new js.Array[GemProgress]())
-
-  def apply(id: GemId, samples: js.Array[GemProgress]) = {
+  def empty(id: GemId) = {
     val x = newObject
     x.id = id
-    x.samples = samples
+    x.gemProgressions = new js.Array()
+    x.runs = new js.Array()
     x.asInstanceOf[GemHistory]
   }
   implicit class GemHistoryExtensions(val x: GemHistory) extends AnyVal {
     def add(g: AnyItem) = {
       GemProgress.fromItem(g).foreach { gp =>
-        x.samples.push(gp)
+        if (x.gemProgressions.isUndefined) x.gemProgressions = new js.Array()
+        x.gemProgressions.push(gp)
       }
     }
-    def current = x.samples.last
+    def current = x.gemProgressions.last
+    def forTime(time: js.Number): Option[GemProgress] = {
+     x.gemProgressions.samples
+    }
   }
 }
 
 class GemHistory private() extends js.Object {
-  val id     : GemId                 = ???
-  val samples: js.Array[GemProgress] = ???
+  val id             : GemId                 = ???
+  var gemProgressions: js.Array[GemProgress] = ???
+  val runs           : js.Array[js.Number]   = ???
 }
 object CharacterGemHistory {
   def empty(character: js.String) = {
     val x = newObject
     x.character = character
     x.gems = new js.Array[GemHistory]()
+    x.runs = new js.Array[js.Number]()
     x.asInstanceOf[CharacterGemHistory]
   }
 
@@ -120,20 +126,34 @@ object CharacterGemHistory {
       }
       x.gems = newGems
     }
+    def addRun() = {
+      if (x.runs.isUndefined) {
+        x.runs = new js.Array()
+      }
+      x.runs.push(new js.Date().getTime())
+    }
+    def getGemWithMostXpToGoToNextLevel() = x.gems.toList.maxByOpt(_.current.xpToGo)
+    def gemsAtTime(utcMs: js.Number): List[(GemHistory, GemProgress)] = x.gems.toList.map(x => x.forTime(utcMs).toList.map(x -> _)).flatten
   }
 }
 
 class CharacterGemHistory private() extends js.Object {
+
   val character: js.String            = ???
   var gems     : js.Array[GemHistory] = ???
+  var runs     : js.Array[js.Number]  = ???
 }
 
-class XpView {
+class XpView extends View {
   //Get a poe cacher
-  val jq     : JQueryStatic        = global.jQuery.asInstanceOf[JQueryStatic]
-  val pc                           = new PoeCacher()
-  var curHist: CharacterGemHistory = null
-  val store                        = StoreMaster
+  val jq                 : JQueryStatic        = global.jQuery.asInstanceOf[JQueryStatic]
+  val pc                                       = new PoeCacher()
+  var curHist            : CharacterGemHistory = null
+  var curGemHistory      : GemHistory          = null
+  var runStartGemProgress: GemProgress         = null
+  var autoUpdateTimer    : js.Any              = null
+  val store                                    = StoreMaster
+  val msPerHour                                = 60 * 60 * 1000
 
 
   def start() {
@@ -141,11 +161,11 @@ class XpView {
     val el = jq("#content")
     el.empty()
 
-
-    //Add the buttons
-    val btns = jq("""<div id="controls"></div>""")
+    val btns = jq("""<div id="btns"></div>""")
     el.append(btns)
+    val sessionBtns = el.append("""<div id="session-btns"></div>""")
     el.append("""<div id="xp-info">Please select a character</div>""")
+    //Add a list of buttons one per character
     for {
       chars <- pc.getChars()
       char <- chars
@@ -156,27 +176,68 @@ class XpView {
         setChar(char)
       })
     }
-    //Add a list of buttons one per character
+
+    val runBtn = jq("<button>Start Run</button>")
+    sessionBtns.append(runBtn)
+    runBtn.on("click", () => {
+      console.log("I WAS CLICKED")
+      if (curHist == null) {
+        Alerter.alert("Please select a character before pressing the start run button")
+      } else {
+        updateGemStatus()
+        curHist.addRun()
+        curHist.getGemWithMostXpToGoToNextLevel().foreach { gem =>
+          curGemHistory = gem
+          runStartGemProgress = gem.current
+        }
+        startTimer()
+        save()
+        display()
+      }
+    })
+  }
+
+  def startTimer() {
+    autoUpdateTimer = global.setInterval(() => {
+      console.log("TIMER FIRED")
+      updateGemStatus()
+      save()
+      display()
+    }, 10000)
+  }
+
+  def save() {
+    if (curHist != null) {
+      val key = getKey(curHist.character)
+      store.set(key, curHist)
+    }
+  }
+
+  def getKey(character: String) = {
+    "gem-history-" + character
   }
 
   def clearChar(c: CharacterInfo) {
-    val key = "gem-history-" + c.name
+    val key = getKey(c.name)
     store.clear(key)
   }
 
   def setChar(info: CharacterInfo) {
     val character = info.name
     //Get the current history for this character.
-    val key = "gem-history-" + character
-    curHist = store.get(key).getOrElse {
-      val r = CharacterGemHistory.empty(character)
-      store.set(key, r)
-      r
+    val key = getKey(character)
+    curHist = store.get(key).getOrElse(CharacterGemHistory.empty(character))
+    curHist.runs.lastOption.foreach { lastRunTime =>
+      curHist.gemsAtTime(lastRunTime)
+      console.error("FINISH ME")
+
     }
+    updateGemStatus()
+    save()
     display()
   }
 
-  def updateChar() {
+  def updateGemStatus() {
     //Update history with the new items
     curHist.nullSafe.foreach { hist =>
       val key = "gem-history-" + hist.character
@@ -189,31 +250,84 @@ class XpView {
     }
   }
 
+  val fmt = global.d3.format(",d")
+
+  def format(d: Double): String = {
+    fmt(d).toString
+  }
+  val fmt2 = global.d3.format(".2f")
+  def format2(d: Double): String = {
+    fmt2(d).toString
+  }
+
   def display() {
     val el = jq("#xp-info")
     el.empty()
     curHist.nullSafe.foreach { hist =>
       el.append(s"<div>Character: ${hist.character}</div>")
-      val $table = el.append(s"<table></table>")
-      $table.append(s"<thead><th>Name</th><th>Level</th><th>Progress</th><th>Xp Gained</th><th>Xp Next Level</th><th>Xp/Hour</th><th>Time To Level</th></thead>")
-      val $tbody = $table.append("<tbody></tbody>")
+      el.append(s"""<table border="1"></table>""")
+      val $table = jq("table", el)
+      $table.append("<thead>" +
+          "<th>Name</th>" +
+          "<th>Level</th>" +
+          "<th>Progress</th>" +
+          "<th>Xp Gained</th>" +
+          "<th>Xp Next Level</th>" +
+          "<th>Xp To Go</th>" +
+          "<th>Xp In Run</th>" +
+          "<th>Xp/Hour</th>" +
+          "<th>Seconds To Level</th>" +
+          "</thead>")
+      $table.append("<tbody></tbody>")
+      val $tbody = jq("tbody", el)
       hist.gems.iterator.foreach { gem =>
         $tbody.append(s"<tr>" +
             s"<td>${gem.id.name}</td>" +
             s"<td>${gem.current.level}</td>" +
-            f"<td>${gem.current.progress * 100}%.2f</td>" +
-            s"<td>${gem.current.xpGained}</td>" +
-            s"<td>${gem.current.xpForLevelUp}</td>" +
-            s"<td>?</td>" +
-            s"<td>?</td>" +
+            f"<td>${format2(gem.current.progress * 100)}</td>" +
+            s"<td>${format(gem.current.xpGained)}</td>" +
+            s"<td>${format(gem.current.xpForLevelUp)}</td>" +
+            s"<td>${format(gem.current.xpToGo)}</td>" +
+            s"<td>$xpInRun</td>" +
+            s"<td>${xpPerMs.map(x => format(x * msPerHour)).getOrElse("press the start run button")}</td>" +
+            s"<td>${msToLevel(gem).map(x => format(x / 1000)).getOrElse("press the start run button")}</td>" +
             s"</tr>")
       }
     }
   }
 
+  def xpInRun = for {
+    gemHistory <- curGemHistory.nullSafe
+    startProgress <- runStartGemProgress.nullSafe
+    curProgress = gemHistory.current
+  } yield {
+    (curProgress.xpGained - startProgress.xpGained).toDouble
+  }
+
+  def xpPerMs: Option[Double] = for {
+    gemHistory <- curGemHistory.nullSafe
+    startProgress <- runStartGemProgress.nullSafe
+    curProgress = gemHistory.current
+  } yield {
+    val time = new js.Date().getTime()
+    val msElapsed: Double = time - startProgress.time
+    val xpGainedInRun: Double = curProgress.xpGained - startProgress.xpGained
+    xpGainedInRun / msElapsed
+  }
+
+
+  def msToLevel(gem: GemHistory): Option[Double] = for {
+    rate <- xpPerMs
+    if rate >= 0
+  } yield {
+    gem.current.xpToGo / (rate + 1)
+  }
+
   def stop() {
     //Kill the timer if it exists
-
+    autoUpdateTimer.nullSafe.foreach { autoUpdateTimer =>
+      global.clearInterval(autoUpdateTimer)
+    }
   }
 
 

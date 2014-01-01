@@ -33,6 +33,7 @@ class JsAnyExtensions(val a: js.Any) extends AnyVal {
   def toJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
   def toJsStr: js.String = a.asInstanceOf[js.String]
   def toJsNum: js.Number = a.asInstanceOf[js.Number]
+  def isUndefined: Boolean = a.isInstanceOf[js.Undefined]
 }
 
 class JsFutureExtensions[A](val f: Future[A]) extends AnyVal {

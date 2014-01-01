@@ -15,7 +15,7 @@ import looty.poeapi.PoeTypes.Leagues
 //////////////////////////////////////////////////////////////
 
 
-class RefreshView {
+class RefreshView extends View {
   def start() {
     val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
     val el = jq("#content")
@@ -36,6 +36,8 @@ class RefreshView {
     console.log("Got Hereyy")
 
   }
+
+  def stop(){}
 
 
 

@@ -143,7 +143,6 @@ object PoeTypes {
           }
           l <- x.getLevel
         } yield {
-          console.log("VVVV", l, c, n, x)
           (l, c, n)
         }).headOption
       }

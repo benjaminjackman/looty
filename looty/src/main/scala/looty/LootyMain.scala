@@ -1,7 +1,7 @@
 package looty
 
 import scala.scalajs.js
-import looty.views.{XpView, RefreshView, LootView}
+import looty.views.{HomeView, View, XpView, RefreshView, LootView}
 import org.scalajs.jquery.JQueryStatic
 import looty.mods.ModsCsvParser
 import scala.concurrent.Future
@@ -18,39 +18,28 @@ import cgta.ojs.io.StoreMaster
 //////////////////////////////////////////////////////////////
 
 
-
 object LootyMain {
+  var curView: View = null
 
-  def loadGrid() {
-    val grid = new LootView
-    grid.start()
+  def setView(v: View) {
+    curView.nullSafe.foreach {_.stop()}
+    curView = v
+    curView.start()
   }
 
-  def loadHome() {
-    val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-    jq("#content").text("Home Page!")
-  }
-
-  def loadRefresh() {
-    new RefreshView().start()
-  }
-
-  def loadXp() {
-    new XpView().start()
-  }
 
   def addRoutes() {
     val crossroads = global.crossroads
     val hasher = global.hasher
-    crossroads.addRoute("home", () => loadHome())
-    crossroads.addRoute("grid", () => loadGrid())
-    crossroads.addRoute("xp", () => loadXp())
-    crossroads.addRoute("refresh", () => loadRefresh())
+    crossroads.addRoute("home", () => setView(new HomeView))
+    crossroads.addRoute("grid", () => setView(new LootView))
+    crossroads.addRoute("xp", () => setView(new XpView))
+    crossroads.addRoute("refresh", () => setView(new RefreshView))
     crossroads.routed.add(global.console.log, console)
-    if(hasher.getURL().toString.endsWith("home")) {
+    if (hasher.getURL().toString.endsWith("home")) {
       hasher.setHash("home")
     }
-    def parseHash(newHash : js.String, oldHash: js.String) {
+    def parseHash(newHash: js.String, oldHash: js.String) {
       crossroads.parse(newHash)
     }
     hasher.initialized.add(parseHash _)
@@ -58,7 +47,7 @@ object LootyMain {
     hasher.init()
   }
 
-  def initComponents() : Future[_] = {
+  def initComponents(): Future[_] = {
     JsFuture.sequence(List(ModsCsvParser.init(), StoreMaster.init()))
   }
 
@@ -68,10 +57,6 @@ object LootyMain {
       addRoutes()
     }
   }
-
-
-
-
 
 
 }

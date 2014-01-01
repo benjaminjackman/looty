@@ -17,7 +17,7 @@ import looty.model.parsers.ItemParser
 //////////////////////////////////////////////////////////////
 
 
-class LootView() {
+class LootView() extends View {
   val jq          : JQueryStatic           = global.jQuery.asInstanceOf[JQueryStatic]
   var grid        : js.Dynamic             = null
   var displayItems: js.Array[ComputedItem] = null
@@ -65,6 +65,8 @@ class LootView() {
 
     fut.log()
   }
+
+  def stop() {}
 
   private def setHtml() {
     val el = jq("#content")
