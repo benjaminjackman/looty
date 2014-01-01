@@ -5,7 +5,7 @@ import org.scalajs.jquery.JQueryStatic
 import looty.model.PoeCacher
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
-import cgta.ojs.io.StoreMaster
+import cgta.ojs.io.{DurationText, StoreMaster}
 
 
 //////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ object GemHistory {
     }
     def current = x.gemProgressions.last
     def forTime(time: js.Number): Option[GemProgress] = {
-     x.gemProgressions.toList.takeWhile(_.time <= time).lastOption
+      x.gemProgressions.toList.takeWhile(_.time <= time).lastOption
     }
   }
 }
@@ -253,14 +253,14 @@ class XpView extends View {
     }
   }
 
-  val fmt = global.d3.format(",d")
+  val fmt = global.d3.format(",f")
 
   def format(d: Double): String = {
-    fmt(d).toString
+    fmt(d.toJs).toString
   }
   val fmt2 = global.d3.format(".2f")
   def format2(d: Double): String = {
-    fmt2(d).toString
+    fmt2(d.toJs).toString
   }
 
   def display() {
@@ -279,7 +279,7 @@ class XpView extends View {
           "<th>Xp To Go</th>" +
           "<th>Xp In Run</th>" +
           "<th>Xp/Hour</th>" +
-          "<th>Seconds To Level</th>" +
+          "<th>Time To Level</th>" +
           "</thead>")
       $table.append("<tbody></tbody>")
       val $tbody = jq("tbody", el)
@@ -291,9 +291,9 @@ class XpView extends View {
             s"<td>${format(gem.current.xpGained)}</td>" +
             s"<td>${format(gem.current.xpForLevelUp)}</td>" +
             s"<td>${format(gem.current.xpToGo)}</td>" +
-            s"<td>$xpInRun</td>" +
+            s"<td>${xpInRun.map(format).getOrElse("press the start run button")}</td>" +
             s"<td>${xpPerMs.map(x => format(x * msPerHour)).getOrElse("press the start run button")}</td>" +
-            s"<td>${msToLevel(gem).map(x => format(x / 1000)).getOrElse("press the start run button")}</td>" +
+            s"<td>${msToLevel(gem).map(x => DurationText.durationMs((x).toLong, showFields = 2)).getOrElse("press the start run button")}</td>" +
             s"</tr>")
       }
     }
@@ -312,7 +312,6 @@ class XpView extends View {
     startProgress <- runStartGemProgress.nullSafe
     curProgress = gemHistory.current
   } yield {
-    console.log("YEP")s
     val time = new js.Date().getTime()
     val msElapsed: Double = time - startProgress.time
     val xpGainedInRun: Double = curProgress.xpGained - startProgress.xpGained
@@ -324,7 +323,8 @@ class XpView extends View {
     rate <- xpPerMs
     if rate >= 0
   } yield {
-    gem.current.xpToGo / (rate + 1)
+    console.log("mstogo", gem.current.xpToGo.toJs, rate.toJs)
+    gem.current.xpToGo / rate
   }
 
   def stop() {
