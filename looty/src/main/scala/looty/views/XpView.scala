@@ -93,7 +93,7 @@ object GemHistory {
     }
     def current = x.gemProgressions.last
     def forTime(time: js.Number): Option[GemProgress] = {
-     x.gemProgressions.samples
+     x.gemProgressions.toList.takeWhile(_.time <= time).lastOption
     }
   }
 }
@@ -133,7 +133,8 @@ object CharacterGemHistory {
       x.runs.push(new js.Date().getTime())
     }
     def getGemWithMostXpToGoToNextLevel() = x.gems.toList.maxByOpt(_.current.xpToGo)
-    def gemsAtTime(utcMs: js.Number): List[(GemHistory, GemProgress)] = x.gems.toList.map(x => x.forTime(utcMs).toList.map(x -> _)).flatten
+    def gemsAtTime(utcMs: js.Number): List[(GemHistory, GemProgress)] =
+      x.gems.toList.map(x => x.forTime(utcMs).toList.map(x -> _)).flatten
   }
 }
 
@@ -227,10 +228,12 @@ class XpView extends View {
     //Get the current history for this character.
     val key = getKey(character)
     curHist = store.get(key).getOrElse(CharacterGemHistory.empty(character))
-    curHist.runs.lastOption.foreach { lastRunTime =>
-      curHist.gemsAtTime(lastRunTime)
-      console.error("FINISH ME")
-
+    for {
+      lastRunTime <- curHist.runs.lastOption
+      (hist, prog) <- curHist.gemsAtTime(lastRunTime).maxByOpt(_._2.xpToGo)
+    } {
+      curGemHistory = hist
+      runStartGemProgress = prog
     }
     updateGemStatus()
     save()
@@ -309,6 +312,7 @@ class XpView extends View {
     startProgress <- runStartGemProgress.nullSafe
     curProgress = gemHistory.current
   } yield {
+    console.log("YEP")s
     val time = new js.Date().getTime()
     val msElapsed: Double = time - startProgress.time
     val xpGainedInRun: Double = curProgress.xpGained - startProgress.xpGained

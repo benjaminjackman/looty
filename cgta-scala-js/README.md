@@ -12,6 +12,10 @@ http://infoscience.epfl.ch/record/190834/
 
 
 # Tips #
+## Occasionally Chrome console.log will stop working
+If you keep developing in the same tab and refreshing eventually console.log doesn't
+work anymore for some reason. Closing out the tab and opening a new one seems to work
+
 ##  debugger / typeof not expressible?
 Use this line to pause execution of the script and show a debugger in chrome when the dev tools are open
     js.eval("debugger")
