@@ -43,7 +43,7 @@ class LootView() extends View {
 
       //TODO Remove take1
       for {
-        (tab, i) <- tabs.zipWithIndex.take(1)
+        (tab, i) <- tabs.zipWithIndex//.take(1)
         item <- tab.allItems
       } {
         val ci = ItemParser.parseItem(item)
@@ -53,7 +53,7 @@ class LootView() extends View {
 
       //TODO Remove take1
       for {
-        (char, inv) <- invs.take(1)
+        (char, inv) <- invs//.take(1)
         item <- inv.allItems
       } {
         val ci = ItemParser.parseItem(item)
