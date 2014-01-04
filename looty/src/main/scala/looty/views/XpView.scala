@@ -256,7 +256,7 @@ class XpView extends View {
       val key = "gem-history-" + hist.character
       pc.Net.getInvAndStore(hist.character).foreach { inv =>
       //Compare the gems to the other gems we have already for this character
-        curHist.updateGems(inv.allItems.filter(i => i.getXpProgress.isDefined))
+        curHist.updateGems(inv.allItems(Some(hist.character)).filter(i => i.getXpProgress.isDefined))
         store.set(key, curHist)
         display()
       }

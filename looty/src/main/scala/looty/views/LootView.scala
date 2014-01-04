@@ -27,7 +27,11 @@ class LootView() extends View {
   val jq      : JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   var grid    : js.Dynamic   = null
   var dataView: js.Dynamic   = js.Dynamic.newInstance(global.Slick.Data.DataView)()
-  dataView.setIdGetter((d: ComputedItem) => d.item.getLocationId.toJs)
+  dataView.setIdGetter { (d: ComputedItem) =>
+    val id = d.item.getLocationId.toJs
+    console.log(id)
+    id
+  }
   var allItems: js.Array[ComputedItem] = null
 
 
@@ -43,8 +47,8 @@ class LootView() extends View {
 
       //TODO Remove take1
       for {
-        (tab, i) <- tabs.zipWithIndex//.take(1)
-        item <- tab.allItems
+        (tab, i) <- tabs.zipWithIndex //.take(1)
+        item <- tab.allItems(None)
       } {
         val ci = ItemParser.parseItem(item)
         ci.location = tabInfos(i).n
@@ -53,8 +57,8 @@ class LootView() extends View {
 
       //TODO Remove take1
       for {
-        (char, inv) <- invs//.take(1)
-        item <- inv.allItems
+        (char, inv) <- invs //.take(1)
+        item <- inv.allItems(Some(char))
       } {
         val ci = ItemParser.parseItem(item)
         ci.location = char
@@ -98,7 +102,7 @@ class LootView() extends View {
       el.append(button)
       button.on("click", (a: js.Any) => {
         //Set the grid to only have this tabs items in it and refresh this tab
-        pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems, sti.n))
+        pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
       })
     }
 
@@ -111,7 +115,7 @@ class LootView() extends View {
       el.append(button)
       button.on("click", (a: js.Any) => {
         //Set the grid to only have this tabs items in it and refresh this tab
-        pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems, char.name))
+        pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
       })
     }
 
