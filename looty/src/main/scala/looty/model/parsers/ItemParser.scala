@@ -19,7 +19,7 @@ object ItemParser {
   var failCnt  = 0
   var parseCnt = 0
 
-  def parseItem(item: AnyItem): List[ComputedItem] = {
+  def parseItem(item: AnyItem): ComputedItem = {
     val ci = new ComputedItem(item)
     if (ci.isEquippable) {
       parseMods(ci, ci.item.explicitMods.toOption)
@@ -29,7 +29,7 @@ object ItemParser {
       parseTypeLine(ci)
       parseSockets(ci)
     }
-    ci :: (for (socketedItem <- item.socketedItems.toList) yield parseItem(socketedItem)).flatten
+    ci
   }
 
 

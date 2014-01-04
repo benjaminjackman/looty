@@ -28,11 +28,11 @@ class TypeAExtensions[A](val a: A) extends AnyVal {
 
 class JsAnyExtensions(val a: js.Any) extends AnyVal {
   def toJsonString: js.String = js.JSON.stringify(a)
-  def toJsDic: js.Dictionary = a.asInstanceOf[js.Dictionary]
-  def toJsObj: js.Object = a.asInstanceOf[js.Object]
-  def toJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
-  def toJsStr: js.String = a.asInstanceOf[js.String]
-  def toJsNum: js.Number = a.asInstanceOf[js.Number]
+  def asJsDic: js.Dictionary = a.asInstanceOf[js.Dictionary]
+  def asJsObj: js.Object = a.asInstanceOf[js.Object]
+  def asJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
+  def asJsStr: js.String = a.asInstanceOf[js.String]
+  def asJsNum: js.Number = a.asInstanceOf[js.Number]
   def isUndefined: Boolean = a.isInstanceOf[js.Undefined]
 }
 
@@ -41,10 +41,10 @@ class JsFutureExtensions[A](val f: Future[A]) extends AnyVal {
     val p = JsPromise[A]()
     f.onComplete {
       case Success(x) =>
-        if (prefix != null) console.log(prefix, x) else console.log(x + "", x)
+        if (prefix != null) console.log(prefix, x) else console.log(x.nullSafe.map(_.toString).getOrElse(""), x)
         p.success(x)
       case Failure(t) =>
-        if (prefix != null) console.error(prefix, t) else console.error(t + "", t)
+        if (prefix != null) console.error(prefix, t) else console.error(t.nullSafe.map(_.toString).getOrElse(""), t)
         p.failure(t)
     }
     p.future

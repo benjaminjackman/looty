@@ -12,9 +12,9 @@ object Optional {
     def isNull = a == null
     def isUndefined = a.isInstanceOf[js.Undefined]
     def isEmpty = isNull || isUndefined
-    def isNonEmpty = !isEmpty
-    def get: A = if (isNonEmpty) a.asInstanceOf[A] else sys.error(s"get called on nullable when A is not defined")
-    def toOption: Option[A] = if (isNonEmpty) Some(get) else None
+    def nonEmpty = !isEmpty
+    def get: A = if (nonEmpty) a.asInstanceOf[A] else sys.error(s"get called on nullable when A is not defined")
+    def toOption: Option[A] = if (nonEmpty) Some(get) else None
   }
   implicit def AToOptional[A](a : A) = a.asInstanceOf[Optional[A]]
 }

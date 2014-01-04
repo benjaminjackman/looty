@@ -49,7 +49,7 @@ object PoeTypes {
   }
 
   trait ItemContainer extends js.Object {
-    val items: js.Array[AnyItem]
+    protected val items: js.Array[AnyItem]
   }
 
   trait Inventory extends js.Object with ItemContainer {
@@ -158,38 +158,49 @@ object PoeTypes {
           l
         }).headOption
       }
+
+      def getLocationId: String = {
+        val i = if (x.inItem.isEmpty) x else x.inItem.get
+        var res = s"l:${i.league}"
+        if (x.inventoryId.nonEmpty) res += s";i:${i.inventoryId}"
+        if (x.x.nonEmpty) res += s";x:${i.x}"
+        if (x.y.nonEmpty) res += s";y:${i.y}"
+        if (x.inItem.nonEmpty) res += s";s:${x.socket}"
+        res
+      }
     }
   }
 
   trait AnyItem extends js.Object {
-    val verified            : js.Boolean
+    val verified             : js.Boolean
     //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
-    val w                   : js.Number
-    val h                   : js.Number
+    val w                    : js.Number
+    val h                    : js.Number
     //a Url
-    val icon                : js.String
-    val support             : js.Boolean
-    val league              : js.String
-    val name                : js.String
-    val typeLine            : js.String
-    val identified          : js.Boolean
-    val additionalProperties: Optional[js.Array[AdditionalProperty]]
-    val sockets             : Optional[js.Array[Socket]]
-    val properties          : Optional[js.Array[ItemProperty]]
-    val requirements        : Optional[js.Array[ItemRequirement]]
-    val descrText           : Optional[js.String]
-    val secDescrText        : Optional[js.String]
-    val explicitMods        : Optional[js.Array[js.String]]
-    val implicitMods        : Optional[js.Array[js.String]]
-    val frameType           : js.Number
-    val socketedItems       : js.Array[AnyItem]
-    val flavourText         : Optional[js.Array[js.String]]
+    val icon                 : js.String
+    val support              : js.Boolean
+    val league               : js.String
+    val name                 : js.String
+    val typeLine             : js.String
+    val identified           : js.Boolean
+    val additionalProperties : Optional[js.Array[AdditionalProperty]]
+    val sockets              : Optional[js.Array[Socket]]
+    val properties           : Optional[js.Array[ItemProperty]]
+    val nextLevelRequirements: Optional[js.Array[ItemRequirement]]
+    val requirements         : Optional[js.Array[ItemRequirement]]
+    val descrText            : Optional[js.String]
+    val secDescrText         : Optional[js.String]
+    val explicitMods         : Optional[js.Array[js.String]]
+    val implicitMods         : Optional[js.Array[js.String]]
+    val frameType            : js.Number
+    val socketedItems        : js.Array[AnyItem]
+    val flavourText          : Optional[js.Array[js.String]]
 
     //For items that are not socketed in other items
-    val x          : js.Number
+    val x          : Optional[js.Number]
     //The top left corner, when in an item slot, this is 0,0 from what i can tell
-    val y          : js.Number
-    val inventoryId: js.String
+    val y          : Optional[js.Number]
+    val inventoryId: Optional[js.String]
 
     //For items that are socketed in other items
     val socket: Optional[js.Number]

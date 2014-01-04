@@ -29,7 +29,7 @@ object ChromeStorage extends js.Object {
       def futGet[B](key: js.String): Future[Option[B]] = {
         val p = JsPromise[Option[B]]()
         def setPromise(kv: js.Any) {
-          p.success(kv.toJsDic(key).nullSafe.map(_.asInstanceOf[B]))
+          p.success(kv.asJsDic(key).nullSafe.map(_.asInstanceOf[B]))
         }
         x.get(key, setPromise _)
         p.future
@@ -39,7 +39,7 @@ object ChromeStorage extends js.Object {
         def setPromise() {
           p.success(Unit)
         }
-        val kv = newObject.toJsDic
+        val kv = newObject.asJsDic
         kv(key) = value
         x.set(kv, setPromise _)
         p.future

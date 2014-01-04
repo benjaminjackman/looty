@@ -44,7 +44,7 @@ class GemProgress private() extends js.Object {
 
 object GemId {
   def fromItem(item: AnyItem): Option[GemId] = {
-    for {inventoryId <- item.inItem.toOption.map(_.inventoryId)
+    for {inventoryId <- item.inItem.toOption.flatMap(_.inventoryId.toOption)
          socket <- item.socket.toOption
     } yield {
       apply(
