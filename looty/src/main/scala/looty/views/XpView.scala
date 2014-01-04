@@ -6,6 +6,7 @@ import looty.model.PoeCacher
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
 import cgta.ojs.io.{DurationText, StoreMaster}
+import looty.views.GemHistory.GemHistoryExtensions
 
 
 //////////////////////////////////////////////////////////////
@@ -95,10 +96,14 @@ object GemHistory {
     def forTime(time: js.Number): Option[GemProgress] = {
       x.gemProgressions.toList.takeWhile(_.time <= time).lastOption
     }
+    def xpToGo = x.current.xpToGo
+
   }
 }
 
 class GemHistory private() extends js.Object {
+
+
   val id             : GemId                 = ???
   var gemProgressions: js.Array[GemProgress] = ???
   val runs           : js.Array[js.Number]   = ???
@@ -191,20 +196,25 @@ class XpView extends View {
           curGemHistory = gem
           runStartGemProgress = gem.current
         }
-        startTimer()
         save()
         display()
       }
     })
+
+    //Start the timer
+    startTimer()
+
   }
 
   def startTimer() {
-    autoUpdateTimer = global.setInterval(() => {
-      console.log("TIMER FIRED")
-      updateGemStatus()
-      save()
-      display()
-    }, 10000)
+    if (autoUpdateTimer == null)  {
+      autoUpdateTimer = global.setInterval(() => {
+        console.log("TIMER FIRED")
+        updateGemStatus()
+        save()
+        display()
+      }, 10000)
+    }
   }
 
   def save() {
@@ -277,13 +287,16 @@ class XpView extends View {
           "<th>Xp Gained</th>" +
           "<th>Xp Next Level</th>" +
           "<th>Xp To Go</th>" +
+          "<th>Time in run</th>" +
           "<th>Xp In Run</th>" +
           "<th>Xp/Hour</th>" +
           "<th>Time To Level</th>" +
+          """<th title="pronounced tit,el (things the programmer ancticipated yet lacked the grace to mention..huhhaw, i have gotten biscuit on my dress. redress. LET US REDRESS get your mouse off me creepo, this area contains the one and only patch notes easter egg essiison. essesiion. session. yerp. dingo. bate, my. ate. ter[[dfs TO REDDIT WITH LOVE AND PROCEMENT wit h a fatherly satifaction of being an older programmer at a youbg mans game and a chris wilson at a self reddit credditing dancfloor of aw3esome and too many drings on new years. etc. kiwis rule and so dsoes procurement. and this pogrom appearantly.]
+          '?">Smarmy Comment Area.</th>""" +
           "</thead>")
       $table.append("<tbody></tbody>")
       val $tbody = jq("tbody", el)
-      hist.gems.iterator.foreach { gem =>
+      hist.gems.toList.sortBy(_.xpToGo).foreach { gem =>
         $tbody.append(s"<tr>" +
             s"<td>${gem.id.name}</td>" +
             s"<td>${gem.current.level}</td>" +
@@ -291,12 +304,20 @@ class XpView extends View {
             s"<td>${format(gem.current.xpGained)}</td>" +
             s"<td>${format(gem.current.xpForLevelUp)}</td>" +
             s"<td>${format(gem.current.xpToGo)}</td>" +
+            s"<td>${timeInRun.map(t => DurationText.durationMs(t.toLong, 3)).getOrElse("press the start run button")}</td>" +
             s"<td>${xpInRun.map(format).getOrElse("press the start run button")}</td>" +
             s"<td>${xpPerMs.map(x => format(x * msPerHour)).getOrElse("press the start run button")}</td>" +
             s"<td>${msToLevel(gem).map(x => DurationText.durationMs((x).toLong, showFields = 2)).getOrElse("press the start run button")}</td>" +
             s"</tr>")
       }
     }
+  }
+
+  def timeInRun = for {
+    startProgress <- runStartGemProgress.nullSafe
+  } yield {
+    val time = new js.Date().getTime()
+    time - startProgress.time: Double
   }
 
   def xpInRun = for {
