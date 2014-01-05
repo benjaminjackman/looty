@@ -40,9 +40,16 @@ object PoeTypes {
 
   object ItemContainer {
     implicit class ItemContainerExtensions(val ic: ItemContainer) extends AnyVal {
-      def allItems(character : Option[String]): List[AnyItem] = {
+      def allItems(character: Option[String]): List[AnyItem] = {
         ic.items.toList.flatMap { item =>
-          item :: item.socketedItems.toList.map { i => i.inItem = item; character.foreach(c=>i.character = c.toJs.asJsStr); i}
+          (item :: item.socketedItems.toList.map { i =>
+            i.inItem = item
+            i
+          }) map { i =>
+            character.foreach(c => i.character = c.toJs.asJsStr)
+            i.locationId = i.getLocationId.toJs.asJsStr
+            i
+          }
         }
       }
     }
@@ -163,7 +170,7 @@ object PoeTypes {
         val i = if (x.inItem.isEmpty) x else x.inItem.get
         var res = s"l:${i.league}"
         if (i.inventoryId.nonEmpty) res += s";i:${i.inventoryId}"
-        if (i.inventoryId == "MainInventory".toJs) console.log("##########MI##########3", i)
+        if (i.character.nonEmpty) res += s";c:${i.character}"
         if (i.x.nonEmpty) res += s";x:${i.x}"
         if (i.y.nonEmpty) res += s";y:${i.y}"
         if (x.inItem.nonEmpty) res += s";s:${x.socket}"
@@ -207,9 +214,10 @@ object PoeTypes {
     val socket: Optional[js.Number]
     val colour: Optional[js.String]
 
-    //Added by allItems if this item is in another item
-    var inItem: Optional[AnyItem]
+    //Added by allItems
+    var inItem   : Optional[AnyItem]
     var character: Optional[js.String]
+    var locationId: Optional[js.String]
 
   }
 

@@ -27,11 +27,7 @@ class LootView() extends View {
   val jq      : JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   var grid    : js.Dynamic   = null
   var dataView: js.Dynamic   = js.Dynamic.newInstance(global.Slick.Data.DataView)()
-  dataView.setIdGetter { (d: ComputedItem) =>
-    val id = d.item.getLocationId.toJs
-    console.log(id)
-    id
-  }
+  dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
   var allItems: js.Array[ComputedItem] = null
 
 
@@ -181,8 +177,13 @@ class LootView() extends View {
             case LTE(n) if (n.nonEmpty) => numFilter(n)(_ <= _)
             case LT(n) if (n.nonEmpty) => numFilter(n)(_ < _)
             case EQ(n) if (n.nonEmpty) => numFilter(n)(_ == _)
-            case _ =>
-              LootFilter(text, i => true)
+            case "" => LootFilter(text, i => true)
+            case s =>
+              val toks = s.split(" ")
+              LootFilter(text, (i) => {
+                val value = col.getter(i.asInstanceOf[js.Any]).toString.toLowerCase
+                toks.exists(tok=>value.contains(tok.toLowerCase))
+              })
           }
         } catch {
           case e: Throwable =>

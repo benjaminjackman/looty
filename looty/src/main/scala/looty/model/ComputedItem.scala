@@ -149,10 +149,10 @@ class ComputedItem(val item: AnyItem) {
   object total {
     def dps: Double = perElementDps.all.sum
     val perElementDps = Elements calculatedWith { element =>
-      properties.damages(element).avg * {
-        var x = properties.attacksPerSecond
-        if (x == 0.0) x = 1.0
-        x
+      if (slots.isWeapon) {
+        properties.damages(element).avg * properties.attacksPerSecond
+      } else {
+        damages(element).avg
       }
     }
     def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 *
