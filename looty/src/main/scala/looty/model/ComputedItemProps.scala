@@ -155,6 +155,10 @@ object ComputedItemProps {
     "Increased Movement Speed")(_.increased.movementSpeed)
   add(Increased_MoveSpeed)
 
+  case object Increased_ManaRegen extends ComputedItemPropPosNumber("+%mregen",
+    "Increased Mana Regeneration Rate")(_.increased.manaRegenerationRate)
+  add(Increased_ManaRegen)
+
   case object Increased_SpellDamage extends ComputedItemPropPosNumber("+%spelDmg",
     "Increased Spell Damage")(_.increased.spellDamage)
   add(Increased_SpellDamage)
@@ -201,6 +205,7 @@ object ComputedItemProps {
   case object Increased_GemLevelIntelligence extends ComputedItemPropPosNumber("+gInt",
     "Increased Intelligence Gem Level ")(_.gemLevel.attribute.intelligence)
   add(Increased_GemLevelIntelligence)
+
 
 
 }
