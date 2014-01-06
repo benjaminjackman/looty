@@ -12,6 +12,11 @@ http://infoscience.epfl.ch/record/190834/
 
 
 # Tips #
+
+## Don't cast, it won't work. (Per Sebastien)
+In general, never cast between Scala types and JS types, because things break! (Just like it is not valid to cast a List into a Vector.) There is only one exception: you may cast to js.Any if you need to pass a Scala object as is to a JS API (without conversion, e.g., for storing it into a collection for later retrieval). At runtime scala.AnyRef <:< js.Any (whereas at compile time js.Any <:< scala.AnyRef -_-), so this is valid.
+
+
 ## Occasionally Chrome console.log will stop working
 If you keep developing in the same tab and refreshing eventually console.log doesn't
 work anymore for some reason. Closing out the tab and opening a new one seems to work
