@@ -1,12 +1,12 @@
 package looty
 
 import scala.scalajs.js
-import looty.views.{HomeView, View, XpView, RefreshView, LootView}
-import org.scalajs.jquery.JQueryStatic
+import looty.views._
 import looty.mods.ModsCsvParser
 import scala.concurrent.Future
 import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
+import org.scalajs.jquery.JQueryStatic
 
 
 //////////////////////////////////////////////////////////////
@@ -21,10 +21,16 @@ import cgta.ojs.io.StoreMaster
 object LootyMain {
   var curView: View = null
 
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+
+
+
   def setView(v: View) {
     curView.nullSafe.foreach {_.stop()}
     curView = v
-    curView.start()
+    val el = jq("#content")
+    el.empty()
+    curView.start(el)
   }
 
 
@@ -35,6 +41,7 @@ object LootyMain {
     crossroads.addRoute("grid", () => setView(new LootView))
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("refresh", () => setView(new RefreshView))
+    crossroads.addRoute("wealth", () => setView(new WealthView))
     crossroads.routed.add(global.console.log, console)
     if (hasher.getURL().toString.endsWith("home")) {
       hasher.setHash("home")

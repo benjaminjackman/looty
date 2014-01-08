@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQueryStatic
+import org.scalajs.jquery.JQuery
 
 
 //////////////////////////////////////////////////////////////
@@ -10,11 +10,11 @@ import org.scalajs.jquery.JQueryStatic
 
 
 class HomeView extends View {
-  def start(): Unit = {
-    val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-    jq("#content").text("Home Page!")
+  def start(el: JQuery) {
+    el.text("Home Page!")
   }
-  def stop(): Unit = {
 
-  }
+  def stop() {}
+
+
 }

@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQueryStatic
+import org.scalajs.jquery.JQuery
 import looty.model.PoeCacher
 import looty.poeapi.PoeTypes.Leagues
 
@@ -16,9 +16,8 @@ import looty.poeapi.PoeTypes.Leagues
 
 
 class RefreshView extends View {
-  def start() {
-    val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-    val el = jq("#content")
+  def start(el : JQuery) {
+
     el.empty()
 
     val pc = new PoeCacher()

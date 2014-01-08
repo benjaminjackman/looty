@@ -188,6 +188,7 @@ class ComputedItem(val item: AnyItem) {
     var criticalStrikeChance   = 0.0
     var attacksPerSecond       = 0.0
     var chanceToBlock          = 0.0
+    var stackSize = 0.0
   }
 
   var reflectsPhysicalDamageToAttackers = 0.0

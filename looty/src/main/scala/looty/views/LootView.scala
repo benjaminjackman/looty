@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQueryStatic
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.model.{ComputedItemProps, PoeCacher, ComputedItem}
 import looty.poeapi.PoeTypes.{AnyItem, Leagues}
@@ -29,11 +29,13 @@ class LootView() extends View {
   var dataView: js.Dynamic   = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
   var allItems: js.Array[ComputedItem] = null
+  var el : JQuery = null
 
 
-  def start() {
+  def start(el : JQuery) {
     val items = new js.Array[ComputedItem]()
     val pc = new PoeCacher()
+    this.el = el
 
     val fut = for {
       tabInfos <- pc.getStashInfo(Leagues.Standard)
@@ -73,7 +75,6 @@ class LootView() extends View {
   def stop() {}
 
   private def setHtml() {
-    val el = jq("#content")
     el.empty()
     el.append("""<div id="controls"></div>""")
     el.append("""<div id="grid"></div>""")
@@ -172,11 +173,11 @@ class LootView() extends View {
 
         val fil = try {
           text.trim match {
-            case GTE(n) if (n.nonEmpty) => numFilter(n)(_ >= _)
-            case GT(n) if (n.nonEmpty) => numFilter(n)(_ > _)
-            case LTE(n) if (n.nonEmpty) => numFilter(n)(_ <= _)
-            case LT(n) if (n.nonEmpty) => numFilter(n)(_ < _)
-            case EQ(n) if (n.nonEmpty) => numFilter(n)(_ == _)
+            case GTE(n) if n.nonEmpty => numFilter(n)(_ >= _)
+            case GT(n) if n.nonEmpty => numFilter(n)(_ > _)
+            case LTE(n) if n.nonEmpty => numFilter(n)(_ <= _)
+            case LT(n) if n.nonEmpty => numFilter(n)(_ < _)
+            case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
             case "" => LootFilter(text, i => true)
             case s =>
               val toks = s.split(" ")

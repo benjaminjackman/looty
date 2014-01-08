@@ -21,14 +21,12 @@ object ItemParser {
 
   def parseItem(item: AnyItem): ComputedItem = {
     val ci = new ComputedItem(item)
-    if (ci.isEquippable) {
-      parseMods(ci, ci.item.explicitMods.toOption)
-      parseMods(ci, ci.item.implicitMods.toOption)
-      parseProperties(ci)
-      parseRequirements(ci)
-      parseTypeLine(ci)
-      parseSockets(ci)
-    }
+    if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
+    if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)
+    if (ci.isEquippable || ci.item.isCurrency) parseProperties(ci)
+    if (ci.isEquippable) parseRequirements(ci)
+    if (ci.isEquippable) parseTypeLine(ci)
+    if (ci.isEquippable) parseSockets(ci)
     ci
   }
 

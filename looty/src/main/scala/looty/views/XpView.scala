@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQueryStatic
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 import looty.model.PoeCacher
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
@@ -162,10 +162,8 @@ class XpView extends View {
   val msPerHour                                = 60 * 60 * 1000
 
 
-  def start() {
+  def start(el : JQuery) {
     //Clear the view
-    val el = jq("#content")
-    el.empty()
 
     val btns = jq("""<div id="btns"></div>""")
     el.append(btns)

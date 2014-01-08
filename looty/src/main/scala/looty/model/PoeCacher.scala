@@ -4,10 +4,13 @@ package model
 import looty.poeapi.PoeRpcs
 import cgta.ojs.chrome.ChromeStorage
 import scala.concurrent.Future
-import looty.poeapi.PoeTypes.{Leagues, StashTab, StashTabInfos, Inventory, Characters}
+import looty.poeapi.PoeTypes._
 import cgta.ojs.lang.JsFuture
 import scala.scalajs.js
 import cgta.ojs.io.StoreMaster
+import scala.Some
+import looty.model.parsers.ItemParser
+import scala.collection.mutable.ListBuffer
 
 
 //////////////////////////////////////////////////////////////
@@ -108,6 +111,39 @@ class PoeCacher(account: String = "UnknownAccount!") {
           getInv(char.name).map(char.name -> _)
         }
       }
+    }
+  }
+
+  def getAllItems(league: String): Future[List[ComputedItem]] = {
+    for {
+      tabInfos <- getStashInfo(league)
+      tabs <- getAllStashTabs(league)
+      invs <- getAllInventories(league)
+    } yield {
+      val items = new ListBuffer[ComputedItem]
+
+      //TODO Remove take1
+      for {
+        (tab, i) <- tabs.zipWithIndex //.take(1)
+        item <- tab.allItems(None)
+      } {
+        val ci = ItemParser.parseItem(item)
+        ci.location = tabInfos(i).n
+        items.append(ci)
+      }
+
+      //TODO Remove take1
+      for {
+        (char, inv) <- invs //.take(1)
+        item <- inv.allItems(Some(char))
+      } {
+        val ci = ItemParser.parseItem(item)
+        ci.location = char
+        items.append(ci)
+      }
+
+      items.toList
+
     }
   }
 
