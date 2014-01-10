@@ -2,7 +2,6 @@ package looty
 package model
 
 import looty.poeapi.PoeRpcs
-import cgta.ojs.chrome.ChromeStorage
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes._
 import cgta.ojs.lang.JsFuture
@@ -10,7 +9,6 @@ import scala.scalajs.js
 import cgta.ojs.io.StoreMaster
 import scala.Some
 import looty.model.parsers.ItemParser
-import scala.collection.mutable.ListBuffer
 
 
 //////////////////////////////////////////////////////////////
@@ -20,6 +18,10 @@ import scala.collection.mutable.ListBuffer
 // for licensing inquiries
 // Created by bjackman @ 12/11/13 12:37 AM
 //////////////////////////////////////////////////////////////
+
+sealed trait BagId
+case class StashTabId(idx: Int) extends BagId
+case class InventoryId(character: String) extends BagId
 
 /**
  * This class will cache the data from the website in localstorage
@@ -94,56 +96,67 @@ class PoeCacher(account: String = "UnknownAccount!") {
     }
   }
 
-  def getAllStashTabs(league: String): Future[List[StashTab]] = {
-    getStashInfo(league).flatMap { si =>
-      JsFuture.sequence {
-        si.toList.map { sti =>
-          getStashTab(league, sti.i.toInt) //.log("Got Stash Tab")
-        }
+  def getAllStashTabs(league: String): Future[List[Future[(StashTabId, StashTab)]]] = {
+    getStashInfo(league).map { si =>
+      si.toList.map { sti =>
+        getStashTab(league, sti.i.toInt).map(StashTabId(sti.i.toInt) -> _) //.log("Got Stash Tab")
       }
     }
   }
 
-  def getAllInventories(league: String): Future[List[(js.String, Inventory)]] = {
-    getChars() flatMap { chars =>
-      JsFuture.sequence {
-        chars.toList.filter(_.league.toString =?= league).map { char =>
-          getInv(char.name).map(char.name -> _)
-        }
+  def getAllInventories(league: String): Future[List[Future[(InventoryId, Inventory)]]] = {
+    getChars() map { chars =>
+      chars.toList.filter(_.league.toString =?= league).map { char =>
+        getInv(char.name).map(InventoryId(char.name) -> _)
       }
     }
   }
 
   def getAllItems(league: String): Future[List[ComputedItem]] = {
+    getAllContainersFuture(league)
+  }
+
+  def getAllContainersFuture(league: String): Future[List[Future[(BagId, List[ComputedItem])]]] = {
     for {
       tabInfos <- getStashInfo(league)
       tabs <- getAllStashTabs(league)
       invs <- getAllInventories(league)
     } yield {
-      val items = new ListBuffer[ComputedItem]
-
       //TODO Remove take1
-      for {
-        (tab, i) <- tabs.zipWithIndex //.take(1)
-        item <- tab.allItems(None)
-      } {
-        val ci = ItemParser.parseItem(item)
-        ci.location = tabInfos(i).n
-        items.append(ci)
+      val xs = for {
+        fut <- tabs //.take(1)
+      } yield {
+        for {
+          (bagId, tab) <- fut
+        } yield {
+          bagId -> (for {
+            item <- tab.allItems(None)
+          } yield {
+            val ci = ItemParser.parseItem(item)
+            ci.location = tabInfos(bagId.idx).n
+            ci
+          })
+        }
       }
 
       //TODO Remove take1
-      for {
-        (char, inv) <- invs //.take(1)
-        item <- inv.allItems(Some(char))
-      } {
-        val ci = ItemParser.parseItem(item)
-        ci.location = char
-        items.append(ci)
+      val ys = for {
+        fut <- invs //.take(1)
+      } yield {
+        for {
+          (bagId, inv) <- fut
+        } yield {
+          bagId -> (for {
+            item <- inv.allItems(Some(bagId.character))
+          } yield {
+            val ci = ItemParser.parseItem(item)
+            ci.location = bagId.character
+            ci
+          })
+        }
       }
 
-      items.toList
-
+      xs ::: ys
     }
   }
 

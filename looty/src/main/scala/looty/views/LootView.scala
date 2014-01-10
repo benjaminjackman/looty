@@ -29,48 +29,62 @@ class LootView() extends View {
   var dataView: js.Dynamic   = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
   var allItems: js.Array[ComputedItem] = null
-  var el : JQuery = null
+  var el      : JQuery                 = null
 
 
-  def start(el : JQuery) {
+  def start(el: JQuery) {
     val items = new js.Array[ComputedItem]()
     val pc = new PoeCacher()
     this.el = el
+    //
+    //    val fut = for {
+    //      tabInfos <- pc.getStashInfo(Leagues.Standard)
+    //      tabs <- pc.getAllStashTabs(Leagues.Standard)
+    //      invs <- pc.getAllInventories(Leagues.Standard)
+    //    } yield {
+    //
+    //      //TODO Remove take1
+    //      for {
+    //        (tabF, i) <- tabs.zipWithIndex //.take(1)
+    //        tab <- tabF
+    //        item <- tab.allItems(None)
+    //      } {
+    //        val ci = ItemParser.parseItem(item)
+    //        ci.location = tabInfos(i).n
+    //        items.push(ci)
+    //      }
+    //
+    //      //TODO Remove take1
+    //      for {
+    //        fut <- invs //.take(1)
+    //        (char, inv) <- fut
+    //        item <- inv.allItems(Some(char))
+    //      } {
+    //        val ci = ItemParser.parseItem(item)
+    //        ci.location = char
+    //        items.push(ci)
+    //      }
+    //
+    //      this.allItems = items
+    //
+    //      setHtml()
+    //      showComputedItems(items)
+    //    }
 
-    val fut = for {
-      tabInfos <- pc.getStashInfo(Leagues.Standard)
-      tabs <- pc.getAllStashTabs(Leagues.Standard)
-      invs <- pc.getAllInventories(Leagues.Standard)
-    } yield {
-
-      //TODO Remove take1
+    for {
+      bags <- pc.getAllItems(Leagues.Standard)
+      bagFut <- bags
+      (bagId, bag) <- bagFut
+    } {
+      clearLocation(bagId)
       for {
-        (tab, i) <- tabs.zipWithIndex //.take(1)
-        item <- tab.allItems(None)
+        item <- bag
       } {
-        val ci = ItemParser.parseItem(item)
-        ci.location = tabInfos(i).n
-        items.push(ci)
+        addItem(item)
       }
-
-      //TODO Remove take1
-      for {
-        (char, inv) <- invs //.take(1)
-        item <- inv.allItems(Some(char))
-      } {
-        val ci = ItemParser.parseItem(item)
-        ci.location = char
-        items.push(ci)
-      }
-
-      this.allItems = items
-
-      setHtml()
-      showComputedItems(items)
     }
-
-    fut.log()
   }
+
 
   def stop() {}
 
@@ -183,7 +197,7 @@ class LootView() extends View {
               val toks = s.split(" ")
               LootFilter(text, (i) => {
                 val value = col.getter(i.asInstanceOf[js.Any]).toString.toLowerCase
-                toks.exists(tok=>value.contains(tok.toLowerCase))
+                toks.exists(tok => value.contains(tok.toLowerCase))
               })
           }
         } catch {
