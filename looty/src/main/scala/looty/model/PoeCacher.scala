@@ -5,10 +5,10 @@ import looty.poeapi.PoeRpcs
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes._
 import cgta.ojs.lang.JsFuture
-import scala.scalajs.js
 import cgta.ojs.io.StoreMaster
 import scala.Some
 import looty.model.parsers.ItemParser
+import scala.collection.mutable.ListBuffer
 
 
 //////////////////////////////////////////////////////////////
@@ -19,9 +19,9 @@ import looty.model.parsers.ItemParser
 // Created by bjackman @ 12/11/13 12:37 AM
 //////////////////////////////////////////////////////////////
 
-sealed trait BagId
-case class StashTabId(idx: Int) extends BagId
-case class InventoryId(character: String) extends BagId
+sealed trait ContainerId
+case class StashTabId(idx: Int) extends ContainerId
+case class InventoryId(character: String) extends ContainerId
 
 /**
  * This class will cache the data from the website in localstorage
@@ -113,10 +113,15 @@ class PoeCacher(account: String = "UnknownAccount!") {
   }
 
   def getAllItems(league: String): Future[List[ComputedItem]] = {
-    getAllContainersFuture(league)
+    for {
+      yf <- for (conFuts <- getAllContainersFuture(league)) yield JsFuture.sequence(conFuts)
+      y <- yf
+    } yield {
+      for ((conId, con) <- y; item <- con) yield item
+    }
   }
 
-  def getAllContainersFuture(league: String): Future[List[Future[(BagId, List[ComputedItem])]]] = {
+  def getAllContainersFuture(league: String): Future[List[Future[(ContainerId, List[ComputedItem])]]] = {
     for {
       tabInfos <- getStashInfo(league)
       tabs <- getAllStashTabs(league)

@@ -23,8 +23,8 @@ object ItemParser {
     val ci = new ComputedItem(item)
     if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
     if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)
-    if (ci.isEquippable || ci.item.isCurrency) parseProperties(ci)
-    if (ci.isEquippable) parseRequirements(ci)
+    if (ci.isEquippable || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
+    if (ci.isEquippable || ci.item.isGem) parseRequirements(ci)
     if (ci.isEquippable) parseTypeLine(ci)
     if (ci.isEquippable) parseSockets(ci)
     ci
@@ -36,7 +36,8 @@ object ItemParser {
       emods <- mods
       mod: js.String <- emods
     } {
-      if (!AffixesParser.parse(ci, mod) && ci.item.getFrameType =!= FrameTypes.unique) {
+      if (!AffixesParser.parse(ci, mod)
+          && (ci.item.getFrameType =!= FrameTypes.unique || !ci.isEquippable)) {
         console.log("Unable to parse affix", ci.item.getFrameType.name, ci.item.name, "->", mod)
       }
     }
@@ -49,7 +50,7 @@ object ItemParser {
       prop <- props
     } {
       if (!PropertyParsers.parse(ci, prop)) {
-        if (!ci.item.isFlask) {
+        if (!ci.item.isFlask && !ci.item.isGem) {
           console.log("Unable to parse property", ci.item.getFrameType.name, ci.item.name, "->", prop, ci.item)
         }
       }

@@ -45,13 +45,13 @@ object DurationText {
       var z = 0
 
       if (x < 0L) {append("-")}
-      if (d > 0) {append(d);append("d"); z += 1}
-      if (z < maxShowFields && (z > 0 || h > 0)) {append(h);append("h"); z += 1}
-      if (z < maxShowFields && (z > 0 || m > 0)) {append(m);append("m"); z += 1}
-      if (z < maxShowFields && (z > 0 || s > 0)) {append(s);append("s"); z += 1}
-      if (z < maxShowFields && (z > 0 || ms > 0)) {append(ms);append("ms"); z += 1}
-      if (z < maxShowFields && (z > 0 || us > 0)) {append(us);append("us"); z += 1}
-      if (z < maxShowFields && (z > 0 || ns > 0)) {append(ns);append("ns"); z += 1}
+      if (d > 0) {append(d.toInt);append("d"); z += 1}
+      if (z < maxShowFields && (z > 0 || h > 0)) {append(h.toInt);append("h"); z += 1}
+      if (z < maxShowFields && (z > 0 || m > 0)) {append(m.toInt);append("m"); z += 1}
+      if (z < maxShowFields && (z > 0 || s > 0)) {append(s.toInt);append("s"); z += 1}
+      if (z < maxShowFields && (z > 0 || ms > 0)) {append(ms.toInt);append("ms"); z += 1}
+      if (z < maxShowFields && (z > 0 || us > 0)) {append(us.toInt);append("us"); z += 1}
+      if (z < maxShowFields && (z > 0 || ns > 0)) {append(ns.toInt);append("ns"); z += 1}
     }
     ret
   }

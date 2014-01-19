@@ -43,7 +43,6 @@ class WealthView extends View {
       items <- pc.getAllItems(Leagues.Standard)
       item <- items
       if item.item.isCurrency
-
     } {
       console.log(item.properties.stackSize.toJs, item)
 
@@ -53,8 +52,9 @@ class WealthView extends View {
       }
 
     }
-
-    console.log("TOTAL CHAOS WEALTH: ", tot.toJs, "Exalts", (valueMap("Exalted Orb") * tot).toJs)
+    val str = s"TOTAL CHAOS WEALTH: $tot Exalts: " + (valueMap("Exalted Orb") * tot)
+    el.text(str)
+    console.log(str)
   }
 
   def stop(): Unit = {

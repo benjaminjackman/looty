@@ -3,9 +3,10 @@ package views
 
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{ComputedItemProps, PoeCacher, ComputedItem}
-import looty.poeapi.PoeTypes.{AnyItem, Leagues}
-import looty.model.parsers.ItemParser
+import looty.model.{ContainerId, ComputedItemProps, PoeCacher, ComputedItem}
+import looty.poeapi.PoeTypes.Leagues
+import scala.collection.immutable
+import cgta.ojs.lang.JsObjectBuilder
 
 
 //////////////////////////////////////////////////////////////
@@ -24,83 +25,83 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
 
 
 class LootView() extends View {
-  val jq      : JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-  var grid    : js.Dynamic   = null
-  var dataView: js.Dynamic   = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  val obj        = new JsObjectBuilder
+  var containers = immutable.Map.empty[ContainerId, List[ComputedItem]]
+
+
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+
+  var grid    : js.Dynamic = null
+  var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
-  var allItems: js.Array[ComputedItem] = null
-  var el      : JQuery                 = null
 
 
   def start(el: JQuery) {
     val items = new js.Array[ComputedItem]()
     val pc = new PoeCacher()
-    this.el = el
-    //
-    //    val fut = for {
-    //      tabInfos <- pc.getStashInfo(Leagues.Standard)
-    //      tabs <- pc.getAllStashTabs(Leagues.Standard)
-    //      invs <- pc.getAllInventories(Leagues.Standard)
-    //    } yield {
-    //
-    //      //TODO Remove take1
-    //      for {
-    //        (tabF, i) <- tabs.zipWithIndex //.take(1)
-    //        tab <- tabF
-    //        item <- tab.allItems(None)
-    //      } {
-    //        val ci = ItemParser.parseItem(item)
-    //        ci.location = tabInfos(i).n
-    //        items.push(ci)
-    //      }
-    //
-    //      //TODO Remove take1
-    //      for {
-    //        fut <- invs //.take(1)
-    //        (char, inv) <- fut
-    //        item <- inv.allItems(Some(char))
-    //      } {
-    //        val ci = ItemParser.parseItem(item)
-    //        ci.location = char
-    //        items.push(ci)
-    //      }
-    //
-    //      this.allItems = items
-    //
-    //      setHtml()
-    //      showComputedItems(items)
-    //    }
-
+    setHtml(el)
     for {
-      bags <- pc.getAllItems(Leagues.Standard)
-      bagFut <- bags
-      (bagId, bag) <- bagFut
+      cons <- pc.getAllContainersFuture(Leagues.Standard)
+      conFut <- cons
+      (conId, con) <- conFut
     } {
-      clearLocation(bagId)
-      for {
-        item <- bag
-      } {
-        addItem(item)
-      }
+      updateContainer(conId, con)
     }
+  }
+
+
+  def updateContainer(containerId: ContainerId, container: List[ComputedItem]) {
+    dataView.beginUpdate()
+    for {
+      container <- containers.get(containerId)
+      item <- container
+      locId <- item.item.locationId.toOption
+    } {
+      dataView.deleteItem(locId)
+    }
+    containers += containerId -> container
+    for {
+      item <- container
+    } {
+      dataView.addItem(item.asInstanceOf[js.Any])
+    }
+    dataView.endUpdate()
   }
 
 
   def stop() {}
 
-  private def setHtml() {
+  private def setHtml(el: JQuery) {
     el.empty()
     el.append("""<div id="controls"></div>""")
     el.append("""<div id="grid"></div>""")
     el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
-    appendControls()
+    appendControls(jq("#controls"))
     appendGrid()
   }
 
-  private def appendControls() {
-    val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-    val el = jq("#controls")
+  private def appendControls(el: JQuery) {
     el.empty()
+    val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]<a>""")
+    el.append(showHide)
+    var shown = true
+    val subControls = jq("<div></div>")
+    el.append(subControls)
+    showHide.click { () =>
+      if (shown) {
+        shown = false
+        subControls.hide()
+      } else {
+        shown = true
+        subControls.show()
+      }
+      false
+    }
+
+    val elTabs = jq("<div></div>")
+    val elChars = jq("<div></div>")
+    subControls.append(elTabs)
+    subControls.append(elChars)
 
     val pc = new PoeCacher()
 
@@ -109,11 +110,19 @@ class LootView() extends View {
       stis <- pc.Net.getStisAndStore(Leagues.Standard)
       sti <- stis.toList
     } {
-      val button = jq(s"""<button style="color: white;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;background-color:${sti.colour.toRgb}">${sti.n}</button>""")
-      el.append(button)
+      val button = jq(s"""<button>${sti.n}</button>""")
+      button.css(obj[js.Any](
+        color = "white",
+        textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
+        backgroundColor = sti.colour.toRgb
+      ))
+      //      style="color: white;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;background-color:${sti.colour.toRgb}
+      elTabs.append(button)
       button.on("click", (a: js.Any) => {
         //Set the grid to only have this tabs items in it and refresh this tab
-        pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
+        //pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
+        console.error("Implements me!")
+        ???
       })
     }
 
@@ -123,33 +132,35 @@ class LootView() extends View {
       char <- chars.toList
     } {
       val button = jq(s"""<button>${char.name}</button>""")
-      el.append(button)
+      elChars.append(button)
       button.on("click", (a: js.Any) => {
         //Set the grid to only have this tabs items in it and refresh this tab
-        pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
+        //pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
+        console.error("Implements me!")
+        ???
       })
     }
 
   }
 
-  private def showAnyItems(xs: List[AnyItem], location: String) {
-    val items = new js.Array[ComputedItem]()
-    for {
-      item <- xs
-    } {
-      val ci = ItemParser.parseItem(item)
-      ci.location = location
-      items.push(ci)
-    }
-    showComputedItems(items)
-  }
+  //  private def showAnyItems(xs: List[AnyItem], location: String) {
+  //    val items = new js.Array[ComputedItem]()
+  //    for {
+  //      item <- xs
+  //    } {
+  //      val ci = ItemParser.parseItem(item)
+  //      ci.location = location
+  //      items.push(ci)
+  //    }
+  //    showComputedItems(items)
+  //  }
 
-  private def showComputedItems(xs: js.Array[ComputedItem]) {
-    console.log("SETTING ITEMS", xs)
-    dataView.setItems(xs)
-    grid.invalidate()
-    grid.render()
-  }
+  //  private def showComputedItems(xs: js.Array[ComputedItem]) {
+  //    console.log("SETTING ITEMS", xs)
+  //    dataView.setItems(xs)
+  //    grid.invalidate()
+  //    grid.render()
+  //  }
 
   private def appendGrid() {
     def makeColumn(name: String, tooltip: String)(f: ComputedItem => js.Any) = {
@@ -197,7 +208,7 @@ class LootView() extends View {
               val toks = s.split(" ")
               LootFilter(text, (i) => {
                 val value = col.getter(i.asInstanceOf[js.Any]).toString.toLowerCase
-                toks.exists(tok => value.contains(tok.toLowerCase))
+                toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
               })
           }
         } catch {
@@ -381,6 +392,8 @@ class LootView() extends View {
     val sections = List(
       item.item.name.toString,
       item.item.typeLine.toString,
+      s"Location: ${item.location} x:${item.item.x.toOption.getOrElse("")} y:${item.item.y.toOption.getOrElse("")}",
+      "Sockets: " + item.socketColors,
       properties,
       requirements,
       item.item.descrText.toOption.map(_.toString).getOrElse(""),

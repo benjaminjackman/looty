@@ -56,6 +56,9 @@ object ComputedItemProps {
   case object TypeName extends ComputedItemPropCategory("type",
     "The name of the base item type")(_.typeName)
   add(TypeName)
+  case object Sockets extends ComputedItemPropCategory("sockets",
+    "The sockets sorted by number in group, then by color")(_.socketColors)
+  add(Sockets)
 
   case object Quality extends ComputedItemPropPosNumber("qual",
     "The quality of the item")(_.properties.quality)

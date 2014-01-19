@@ -3,7 +3,6 @@ package model
 
 import looty.poeapi.PoeTypes.AnyItem
 import looty.model.WeaponTypes.WeaponType
-import scala.scalajs.js
 
 
 //////////////////////////////////////////////////////////////
@@ -106,6 +105,7 @@ class ComputedItem(val item: AnyItem) {
   }
 
   var sockets: List[List[String]] = Nil
+  lazy val socketColors = sockets.map(_.mkString("-")).mkString(" ")
 
   object requirements {
     var level     = 0.0
