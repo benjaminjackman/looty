@@ -3,10 +3,11 @@ package views
 
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{ContainerId, ComputedItemProps, PoeCacher, ComputedItem}
+import looty.model.{InventoryId, StashTabId, ContainerId, ComputedItemProps, PoeCacher, ComputedItem}
 import looty.poeapi.PoeTypes.Leagues
 import scala.collection.immutable
-import cgta.ojs.lang.JsObjectBuilder
+import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
+import scala.concurrent.Future
 
 
 //////////////////////////////////////////////////////////////
@@ -27,6 +28,7 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
 class LootView() extends View {
   val obj        = new JsObjectBuilder
   var containers = immutable.Map.empty[ContainerId, List[ComputedItem]]
+  var buttons    = immutable.Map.empty[ContainerId, JQuery]
 
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
@@ -37,9 +39,13 @@ class LootView() extends View {
 
 
   def start(el: JQuery) {
+    setHtml(el).foreach(x=>addAllItems)
+  }
+
+  def addAllItems {
     val items = new js.Array[ComputedItem]()
     val pc = new PoeCacher()
-    setHtml(el)
+
     for {
       cons <- pc.getAllContainersFuture(Leagues.Standard)
       conFut <- cons
@@ -60,6 +66,11 @@ class LootView() extends View {
       dataView.deleteItem(locId)
     }
     containers += containerId -> container
+    //    buttons.get(containerId).foreach(_.css("border-color", ""))
+    buttons.get(containerId) match {
+      case Some(btn) => btn.css("border-color", "")
+      case None => console.log("No button for container", containerId)
+    }
     for {
       item <- container
     } {
@@ -71,16 +82,16 @@ class LootView() extends View {
 
   def stop() {}
 
-  private def setHtml(el: JQuery) {
+  private def setHtml(el: JQuery): Future[Unit] = {
     el.empty()
     el.append("""<div id="controls"></div>""")
     el.append("""<div id="grid"></div>""")
     el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
-    appendControls(jq("#controls"))
     appendGrid()
+    appendControls(jq("#controls"))
   }
 
-  private def appendControls(el: JQuery) {
+  private def appendControls(el: JQuery): Future[Unit] = {
     el.empty()
     val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]<a>""")
     el.append(showHide)
@@ -106,41 +117,52 @@ class LootView() extends View {
     val pc = new PoeCacher()
 
     //Buttons for stashed
-    for {
+    val tabBtnsFut = for {
       stis <- pc.Net.getStisAndStore(Leagues.Standard)
-      sti <- stis.toList
-    } {
-      val button = jq(s"""<button>${sti.n}</button>""")
-      button.css(obj[js.Any](
-        color = "white",
-        textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
-        backgroundColor = sti.colour.toRgb
-      ))
-      //      style="color: white;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;background-color:${sti.colour.toRgb}
-      elTabs.append(button)
-      button.on("click", (a: js.Any) => {
-        //Set the grid to only have this tabs items in it and refresh this tab
-        //pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
-        console.error("Implements me!")
-        ???
-      })
+    } yield {
+      stis.foreach { sti =>
+        val button = jq(s"""<button>${sti.n}</button>""")
+        button.css(obj[js.Any](
+          color = "white",
+          textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
+          backgroundColor = sti.colour.toRgb
+        ))
+        val conId = StashTabId((sti.i: Double).toInt)
+        console.log("Adding button", conId)
+        buttons += conId -> button
+        if (!containers.contains(conId)) button.css("border-color", "red")
+        elTabs.append(button)
+        button.on("click", (a: js.Any) => {
+          //Set the grid to only have this tabs items in it and refresh this tab
+          //pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
+          console.error("Implements me!")
+        })
+      }
     }
 
     //Buttons for characters
-    for {
+    val charBtnsFut = for {
       chars <- pc.Net.getCharsAndStore
-      char <- chars.toList
-    } {
-      val button = jq(s"""<button>${char.name}</button>""")
-      elChars.append(button)
-      button.on("click", (a: js.Any) => {
-        //Set the grid to only have this tabs items in it and refresh this tab
-        //pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
-        console.error("Implements me!")
-        ???
-      })
+    } yield {
+      chars.foreach { char =>
+        val button = jq(s"""<button>${char.name}</button>""")
+        button.css(obj[js.Any](
+          borderColor = "red"
+        ))
+        button.data("charName", char.name)
+        val conId = InventoryId(char.name)
+        buttons += conId -> button
+        if (!containers.contains(conId)) button.css("border-color", "red")
+        elChars.append(button)
+        button.on("click", (a: js.Any) => {
+          //Set the grid to only have this tabs items in it and refresh this tab
+          //pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
+          console.error("Implements me!")
+        })
+      }
     }
 
+    JsFuture.sequence(List(tabBtnsFut, charBtnsFut)).map(x=>Unit)
   }
 
   //  private def showAnyItems(xs: List[AnyItem], location: String) {

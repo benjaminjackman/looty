@@ -16,7 +16,7 @@ import looty.model.ComputedItem
 
 object ArmourParser {
   val helmets      = List("Helmet", "Hat", "Sallet", "Crown", "Hood", "Helm", "Mitts", "Circlet", "Bascinet",
-    "Tricorne", "Mask", "Wolf Pelt", "Ursine Pelt", "Burgonet", "Cap", "Cage", "Lion Pelt")
+    "Tricorne", "Mask", "Wolf Pelt", "Ursine Pelt", "Burgonet", "Cap", "Cage", "Lion Pelt", "Coif")
   val gloves       = List("Gauntlets", "Gloves", "Mitts", "Bracers")
   val boots        = List("Boots", "Greaves", "Slippers", "Shoes")
   val chest        = List("Robe", "Jacket", "Leather", "Plate", "Brigandine", "Chainmail", "Garb", "Vestment",
@@ -35,7 +35,7 @@ object ArmourParser {
         ci.slots.isRing = true
         true
       } else {
-        console.error("1x1 Non Jewelery", ci)
+        console.error("1x1 Non Jewelery", ci.item.typeLine, ci)
         false
       }
     } else if (ci.item.h =?= (1: js.Number) && ci.item.w =?= (2: js.Number)) {
@@ -60,7 +60,7 @@ object ArmourParser {
         ci.slots.isShield = true
         true
       } else {
-        console.error("2x2 Unknown", ci)
+        console.error("2x2 Unknown", ci.item.typeLine, ci)
         false
       }
     } else if (ci.item.h =?= (3: js.Number) && ci.item.w =?= (2: js.Number)) {
@@ -74,7 +74,7 @@ object ArmourParser {
         ci.slots.isQuiver = true
         true
       } else {
-        console.error("3x2 Unknown", ci)
+        console.error("3x2 Unknown", ci.item.typeLine, ci)
         false
       }
     } else if (ci.item.h =?= (4: js.Number) && ci.item.w =?= (2: js.Number)) {
@@ -82,11 +82,11 @@ object ArmourParser {
         ci.slots.isShield = true
         true
       } else {
-        console.error("4x2 Unknown", ci)
+        console.error("4x2 Unknown", ci.item.typeLine, ci)
         false
       }
     } else {
-      console.error("Unknown", ci)
+      console.error("Unknown", ci.item.typeLine, ci)
       false
     }
 

@@ -154,13 +154,30 @@ object ComputedItemProps {
     "Increased Critical Strike Chance (includes increased global critical strike chance from item)")(_.total.critChance)
   add(Increased_CritChance)
 
+  case object Increased_CritChanceSpells extends ComputedItemPropPosNumber("+%spCrit",
+    "Increased Critical Strike Chance For Spells")(i => i.increased.globalCriticalStrikeChance + i.increased.criticalStrikeChanceForSpells)
+  add(Increased_CritChanceSpells)
+
+  case object Increased_GlobalCritChance extends ComputedItemPropPosNumber("+%gcc",
+    "Increased Global Critical Strike Chance")(_.increased.globalCriticalStrikeChance)
+  add(Increased_GlobalCritChance)
+
+  case object Increased_GlobalCritMult extends ComputedItemPropPosNumber("+%gcm",
+    "Increased Global Critical Strike Multiplier")(_.increased.globalCriticalStrikeMultiplier)
+  add(Increased_GlobalCritMult)
+
+  case object Increased_ProjectileSpeed extends ComputedItemPropPosNumber("+%projSpeed",
+    "Increased Projectile Speed")(_.increased.projectileSpeed)
+  add(Increased_ProjectileSpeed)
+
   case object Increased_MoveSpeed extends ComputedItemPropPosNumber("+%move",
     "Increased Movement Speed")(_.increased.movementSpeed)
   add(Increased_MoveSpeed)
 
-  case object Increased_ManaRegen extends ComputedItemPropPosNumber("+%mregen",
+  case object Increased_ManaRegen extends ComputedItemPropPosNumber("+%mareg",
     "Increased Mana Regeneration Rate")(_.increased.manaRegenerationRate)
   add(Increased_ManaRegen)
+
 
   case object Increased_SpellDamage extends ComputedItemPropPosNumber("+%spelDmg",
     "Increased Spell Damage")(_.increased.spellDamage)
