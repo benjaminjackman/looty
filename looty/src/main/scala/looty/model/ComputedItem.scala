@@ -155,8 +155,13 @@ class ComputedItem(val item: AnyItem) {
         damages(element).avg
       }
     }
+    def armour = properties.armour.oIf(_ == 0.0, x => plusTo.armour, x => x)
+    def evasionRating = properties.evasionRating.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
+    def energyShield = properties.energyShield.oIf(_ == 0.0, x => plusTo.energyShield, x => x)
     def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 *
         properties.criticalStrikeChance
+
+
   }
 
   object slots {
@@ -188,7 +193,7 @@ class ComputedItem(val item: AnyItem) {
     var criticalStrikeChance   = 0.0
     var attacksPerSecond       = 0.0
     var chanceToBlock          = 0.0
-    var stackSize = 0.0
+    var stackSize              = 0.0
   }
 
   var reflectsPhysicalDamageToAttackers = 0.0

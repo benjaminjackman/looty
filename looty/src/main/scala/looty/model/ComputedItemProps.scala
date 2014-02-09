@@ -75,13 +75,13 @@ object ComputedItemProps {
   add(AttacksPerSecond)
 
   case object Armour extends ComputedItemPropPosNumber("AR",
-    "Total Amount of Armour from this item")(_.properties.armour)
+    "Total Amount of Armour from this item")(_.total.armour)
   add(Armour)
   case object Evasion extends ComputedItemPropPosNumber("EV",
-    "Total Amount of Evasion from this item")(_.properties.evasionRating)
+    "Total Amount of Evasion from this item")(_.total.evasionRating)
   add(Evasion)
   case object EnergyShield extends ComputedItemPropPosNumber("ES",
-    "Total Amount of Energy Shield from this item")(_.properties.energyShield)
+    "Total Amount of Energy Shield from this item")(_.total.energyShield)
   add(EnergyShield)
 
   case object Dps_Physical extends ComputedItemPropPosNumber("pDps",
@@ -117,6 +117,16 @@ object ComputedItemProps {
     "The intelligence required to equip the item")(_.requirements.attribute.intelligence)
   add(Required_Int)
 
+  case object LifeLeech extends ComputedItemPropNegNumber("lleech",
+    "Life Leech from Physical Attack Damage")(_.leech.physical.life)
+  add(LifeLeech)
+
+  case object ManaLeech extends ComputedItemPropNegNumber("mleech",
+    "Mana Leech from Physical Attack Damage")(_.leech.physical.mana)
+  add(ManaLeech)
+
+
+
 
   case object Plus_Life extends ComputedItemPropPosNumber("+life",
     "Adds this amount of life")(_.plusTo.lifeAndMana.life)
@@ -151,7 +161,7 @@ object ComputedItemProps {
   add(Plus_Chaos_Resist)
 
   case object Increased_CritChance extends ComputedItemPropPosNumber("+%crit",
-    "Increased Critical Strike Chance (includes increased global critical strike chance from item)")(_.total.critChance)
+    "Increased Critical Strike Chance")(_.properties.criticalStrikeChance)
   add(Increased_CritChance)
 
   case object Increased_CritChanceSpells extends ComputedItemPropPosNumber("+%spCrit",
