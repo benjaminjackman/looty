@@ -52,11 +52,11 @@ class JsFutureExtensions[A](val f: Future[A]) extends AnyVal {
 }
 
 class JsStringExtensions(val s: String) extends AnyVal {
-  def cap = {
+  def cap : String = {
     if (s.isEmpty) {
       s
     } else {
-      s.substring(0, 1).toUpperCase + s.substring(1)
+      s.substring(0, 1).toJs.asJsStr.toUpperCase() + s.substring(1)
     }
   }
   def emptyToNone = if (s.isEmpty) None else Some(s)

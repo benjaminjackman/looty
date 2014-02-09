@@ -38,7 +38,7 @@ object ItemParser {
     } {
       if (!AffixesParser.parse(ci, mod)
           && (ci.item.getFrameType =!= FrameTypes.unique || !ci.isEquippable)) {
-        console.log("Unable to parse affix", ci.item.getFrameType.name, ci.item.name, "->", mod)
+        console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.name, "->", mod)
       }
     }
   }
@@ -51,7 +51,7 @@ object ItemParser {
     } {
       if (!PropertyParsers.parse(ci, prop)) {
         if (!ci.item.isFlask && !ci.item.isGem) {
-          console.log("Unable to parse property", ci.item.getFrameType.name, ci.item.name, "->", prop, ci.item)
+          console.warn("Unable to parse property", ci.item.getFrameType.name, ci.item.name, "->", prop, ci.item)
         }
       }
     }
@@ -65,7 +65,7 @@ object ItemParser {
 
   def parseTypeLine(ci: ComputedItem) {
     if (ci.isEquippable && !ci.slots.isWeapon && !ci.slots.isFlask && !ArmourParser.parse(ci, ci.item.typeLine)) {
-      console.log("Unable to parse typeline", ci.item.getFrameType.name, ci.item.typeLine, ci.item.name, ci.item)
+      console.warn("Unable to parse typeline", ci.item.getFrameType.name, ci.item.typeLine, ci.item.name, ci.item)
     }
   }
 

@@ -17,11 +17,13 @@ object StoreMaster {
   private val values = scala.collection.mutable.Map.empty[String, js.Any]
 
   def init(): Future[Unit] = {
+    console.debug("Store Master Init")
     backingStore.getAll().map { allObjs =>
       val dict = allObjs.asInstanceOf[js.Dictionary]
       Dictionary.propertiesOf(allObjs).iterator.foreach { key =>
         values(key) = dict(key)
       }
+      console.debug("Store Master Complete")
       Unit
     }
   }

@@ -48,7 +48,7 @@ object ComputedItemProps {
   }
 
   case object Location extends ComputedItemPropCategory("loc",
-    "The name of the character / stash tab that contains the item.")(_.location)
+    "The name of the character / stash tab that contains the item.")(_.locAndCoords)
   add(Location)
   case object DisplayName extends ComputedItemPropString("name",
     "The name of the item")(_.displayName)

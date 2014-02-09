@@ -3,7 +3,7 @@ package poeapi
 
 import scala.scalajs.js
 import org.scalajs.jquery.JQueryStatic
-import scala.concurrent.Future
+import scala.concurrent.{Promise, Future}
 import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsPromise}
 import cgta.ojs.io.AjaxHelp
@@ -57,10 +57,10 @@ object PoeRpcs {
   //the calls to their api we will need to re-attempt certain
   //calls on throttle failures
   def enqueue[A](url: String, params: js.Any): Future[A] = {
-    val qi = QueueItem[A](url, params)
+    val qi = QueueItem(url, params)
     requestQueue = requestQueue.enqueue(qi)
     scheduleQueueCheck(wasThrottled = false)
-    qi.promise.future
+    qi.promise.future.asInstanceOf[Future[A]]
   }
 
   def get[A](url: String, params: js.Any): Future[A] = {
@@ -92,7 +92,7 @@ object PoeRpcs {
     willCheckQueue = false
     requestQueue.headOption match {
       case Some(qi) =>
-        get(qi.url, qi.params).onComplete {
+        get[Any](qi.url, qi.params).onComplete {
           case Success(x) =>
             requestQueue = requestQueue.tail
             qi.promise.success(x)
@@ -104,21 +104,22 @@ object PoeRpcs {
             requestQueue = requestQueue.tail
             qi.promise.failure(t)
             checkQueue()
+
         }
       case None => //Do Nothing, queue is empty
     }
   }
 
-  private case class QueueItem[A](url: String, params: js.Any) {
-    val promise = JsPromise()
+  private case class QueueItem(url: String, params: js.Any) {
+    val promise = JsPromise[Any]()
   }
 
-  private var requestQueue   = immutable.Queue.empty[QueueItem[_]]
+  private var requestQueue   = immutable.Queue.empty[QueueItem]
   private var willCheckQueue = false
   //How long to wait after we hit the throttle before checking again
   val coolOffMs = 10000
 
-  case class BadParameters(msg : String) extends Exception
+  case class BadParameters(msg: String) extends Exception
   case class ThrottledFailure(msg: String) extends Exception
 
 

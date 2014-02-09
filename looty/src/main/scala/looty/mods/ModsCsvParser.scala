@@ -58,9 +58,18 @@ object ModsCsvParser {
   var modDescriptions: List[ModRow] = null
 
   def init(): Future[Unit] = {
+    console.debug("Init ModsCsvParser")
     AjaxHelp.get[String]("/data/item-mods.csv").map { csv =>
+      console.debug("Parsing descriptions")
+    try {
       modDescriptions = global.d3.csv.parse(csv).asInstanceOf[js.Array[ModRow]].toList
       loadParsers()
+    } catch {
+      case e : Throwable =>
+        console.log(e)
+        e.printStackTrace()
+    }
+      console.debug("Loaded parsers")
     }
   }
 

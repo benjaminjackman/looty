@@ -14,7 +14,6 @@ import scala.reflect.ClassTag
 //////////////////////////////////////////////////////////////
 
 
-
 object JsFuture {
 
   case class JsFutureFailure(reason: Any) extends Exception
@@ -28,9 +27,9 @@ object JsFuture {
     }
 
     val p = JsPromise[A]()
-    that.`then`((data: js.Any) => p.success(data.asInstanceOf[A]),
-      (reason: js.Any) => p.failure(wrapAPlusReason(reason))
-    )
+    that.`then`(
+      (data: js.Any) => p.success(data.asInstanceOf[A]),
+      (reason: js.Any) => p.failure(wrapAPlusReason(reason)))
     p.future
   }
 
@@ -91,7 +90,9 @@ object JsFuture {
   def sequence[A, M[_] <: TraversableOnce[_]](in: M[Future[A]])(implicit cbf: CanBuildFrom[M[Future[A]], A, M[A]], executor: ExecutionContext): Future[M[A]] = {
     in.foldLeft(Promise.successful(cbf(in)).future) {
       (fr, fa) => for (r <- fr; a <- fa.asInstanceOf[Future[A]]) yield (r += a)
-    } map (_.result)
+    } map { x =>
+      x.result
+    }
   }
 
   /** Returns a `Future` to the result of the first future in the list that is completed.

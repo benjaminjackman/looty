@@ -35,6 +35,7 @@ object LootyMain {
 
 
   def addRoutes() {
+    console.debug("Adding routes")
     val crossroads = global.crossroads
     val hasher = global.hasher
     crossroads.addRoute("home", () => setView(new HomeView))
@@ -55,11 +56,18 @@ object LootyMain {
   }
 
   def initComponents(): Future[_] = {
-    JsFuture.sequence(List(ModsCsvParser.init(), StoreMaster.init()))
+    //ModsCsvParser.init()
+    JsFuture.sequence(List(StoreMaster.init()))
   }
 
 
+
+
   def main(args: Array[String]) {
+
+//    Blamo.kaboom(Some(5))
+
+    console.log("Starting looty!")
     initComponents().foreach { _ =>
       addRoutes()
     }
@@ -67,3 +75,20 @@ object LootyMain {
 
 
 }
+
+//object Blamo {
+//
+//  var boomList : List[QueueItem[_]] = List()
+//  case class QueueItem[A](a : A)
+//
+//  def get[A](y : )
+//
+//  def kaboom(x : Option[Any]) {
+//    x match {
+//      case Some(y) =>
+//        boomList ::= x
+//      case _ =>
+//    }
+//  }
+//
+//}

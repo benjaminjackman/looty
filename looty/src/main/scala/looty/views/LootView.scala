@@ -39,6 +39,7 @@ class LootView() extends View {
 
 
   def start(el: JQuery) {
+    console.log("Starting Grid View")
     setHtml(el).foreach(x=>addAllItems)
   }
 
@@ -69,7 +70,7 @@ class LootView() extends View {
     //    buttons.get(containerId).foreach(_.css("border-color", ""))
     buttons.get(containerId) match {
       case Some(btn) => btn.css("border-color", "")
-      case None => console.log("No button for container", containerId)
+      case None => console.error("No button for container", containerId)
     }
     for {
       item <- container
@@ -128,7 +129,6 @@ class LootView() extends View {
           backgroundColor = sti.colour.toRgb
         ))
         val conId = StashTabId((sti.i: Double).toInt)
-        console.log("Adding button", conId)
         buttons += conId -> button
         if (!containers.contains(conId)) button.css("border-color", "red")
         elTabs.append(button)
@@ -414,7 +414,7 @@ class LootView() extends View {
     val sections = List(
       item.item.name.toString,
       item.item.typeLine.toString,
-      s"Location: ${item.location} x:${item.item.x.toOption.getOrElse("")} y:${item.item.y.toOption.getOrElse("")}",
+      s"Location: ${item.locAndCoords}",
       "Sockets: " + item.socketColors,
       properties,
       requirements,

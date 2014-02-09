@@ -52,6 +52,10 @@ class ComputedItem(val item: AnyItem) {
   }
 
   var location = ""
+
+  //This location includes coordinates
+  def locAndCoords = s"${location} x:${item.x.toOption.getOrElse("")} y:${item.y.toOption.getOrElse("")}"
+
   def typeName = {
     if (slots.isAmulet) "Amulet"
     else if (slots.isRing) "Ring"

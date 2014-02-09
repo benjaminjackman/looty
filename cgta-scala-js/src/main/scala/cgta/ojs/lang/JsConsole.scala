@@ -10,6 +10,8 @@ import scala.scalajs.js
 
 
 trait JsConsole extends js.Object {
+  def debug(xs : Any*)
   def log(xs : Any*)
+  def warn(xs : Any*)
   def error(xs : Any*)
 }
