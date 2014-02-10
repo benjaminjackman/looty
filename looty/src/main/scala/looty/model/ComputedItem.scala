@@ -36,7 +36,7 @@ case class MinMaxDamage(var min: Double, var max: Double) {
 //  }
 //}
 
-class ComputedItem(val item: AnyItem) {
+class ComputedItem(val item: AnyItem, val containerId : ContainerId, val locationName : String) {
   lazy val maxLinks: Int       = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
   lazy val score   : ItemScore = ItemScorer(this).getOrElse(ItemScore(Nil, 0))
 
@@ -51,10 +51,8 @@ class ComputedItem(val item: AnyItem) {
     n
   }
 
-  var location = ""
-
   //This location includes coordinates
-  def locAndCoords = s"${location} x:${item.x.toOption.getOrElse("")} y:${item.y.toOption.getOrElse("")}"
+  def locAndCoords = s"${locationName} x:${item.x.toOption.map(_+1).getOrElse("")} y:${item.y.toOption.map(_+1).getOrElse("")}"
 
   def typeName = {
     if (slots.isAmulet) "Amulet"

@@ -137,9 +137,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
           bagId -> (for {
             item <- tab.allItems(None)
           } yield {
-            val ci = ItemParser.parseItem(item)
-            ci.location = tabInfos(bagId.idx).n
-            ci
+            ItemParser.parseItem(item, bagId, tabInfos(bagId.idx).n)
           })
         }
       }
@@ -154,9 +152,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
           bagId -> (for {
             item <- inv.allItems(Some(bagId.character))
           } yield {
-            val ci = ItemParser.parseItem(item)
-            ci.location = bagId.character
-            ci
+            ItemParser.parseItem(item, bagId, bagId.character)
           })
         }
       }

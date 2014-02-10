@@ -7,6 +7,7 @@ import scala.concurrent.Future
 import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
 import org.scalajs.jquery.JQueryStatic
+import looty.poeapi.PoeTypes.Leagues
 
 
 //////////////////////////////////////////////////////////////
@@ -24,7 +25,6 @@ object LootyMain {
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
 
-
   def setView(v: View) {
     curView.nullSafe.foreach {_.stop()}
     curView = v
@@ -39,7 +39,7 @@ object LootyMain {
     val crossroads = global.crossroads
     val hasher = global.hasher
     crossroads.addRoute("home", () => setView(new HomeView))
-    crossroads.addRoute("grid", () => setView(new LootView))
+    crossroads.addRoute("grid", () => setView(new LootView(Leagues.Standard)))
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("refresh", () => setView(new RefreshView))
     crossroads.addRoute("wealth", () => setView(new WealthView))
@@ -61,34 +61,32 @@ object LootyMain {
   }
 
 
-
-
   def main(args: Array[String]) {
 
-//    Blamo.kaboom(Some(5))
+//    Blamo.kaboom()
 
-    console.log("Starting looty!")
-    initComponents().foreach { _ =>
-      addRoutes()
-    }
+        console.log("Starting looty!")
+        initComponents().foreach { _ =>
+          addRoutes()
+        }
   }
 
 
 }
 
 //object Blamo {
-//
-//  var boomList : List[QueueItem[_]] = List()
-//  case class QueueItem[A](a : A)
-//
-//  def get[A](y : )
-//
-//  def kaboom(x : Option[Any]) {
-//    x match {
-//      case Some(y) =>
-//        boomList ::= x
+//  def set[A](x: A) {}
+//  def get[A](): Option[A] = Some(1).asInstanceOf[Option[A]]
+//  def kaboom() {
+//    get() match {
+//      case Some(x) => set(x)
+//        //Emits:
+//        //var x2 = ScalaJS.as.scala_Some(x1);
+//        //var x = ScalaJS.as.scala_Nothing(x2.x__O());
+//        //this.set__O__V(x);
+//        //The following exception then is thrown:
+//        //Uncaught TypeError: Object #<Object> has no method 'scala_Nothing'
 //      case _ =>
 //    }
 //  }
-//
 //}

@@ -4,10 +4,10 @@ package views
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.model.{InventoryId, StashTabId, ContainerId, ComputedItemProps, PoeCacher, ComputedItem}
-import looty.poeapi.PoeTypes.Leagues
 import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
 import scala.concurrent.Future
+import looty.model.parsers.ItemParser
 
 
 //////////////////////////////////////////////////////////////
@@ -18,6 +18,10 @@ import scala.concurrent.Future
 // Created by bjackman @ 12/9/13 11:17 PM
 //////////////////////////////////////////////////////////////
 
+object LootFilter {
+  def all = LootFilter("All", _ => true)
+}
+
 case class LootFilter(text: String, p: ComputedItem => Boolean) {
   def allows(i: ComputedItem): Boolean = {
     try p(i) catch {case e: Throwable => false}
@@ -25,7 +29,7 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
 }
 
 
-class LootView() extends View {
+class LootView(val league: String) extends View {
   val obj        = new JsObjectBuilder
   var containers = immutable.Map.empty[ContainerId, List[ComputedItem]]
   var buttons    = immutable.Map.empty[ContainerId, JQuery]
@@ -33,14 +37,15 @@ class LootView() extends View {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
-  var grid    : js.Dynamic = null
-  var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  var grid     : js.Dynamic = null
+  var dataView : js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  var tabFilter = LootFilter.all
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
 
 
   def start(el: JQuery) {
     console.log("Starting Grid View")
-    setHtml(el).foreach(x=>addAllItems)
+    setHtml(el).foreach(x => addAllItems)
   }
 
   def addAllItems {
@@ -48,7 +53,7 @@ class LootView() extends View {
     val pc = new PoeCacher()
 
     for {
-      cons <- pc.getAllContainersFuture(Leagues.Standard)
+      cons <- pc.getAllContainersFuture(league)
       conFut <- cons
       (conId, con) <- conFut
     } {
@@ -119,7 +124,7 @@ class LootView() extends View {
 
     //Buttons for stashed
     val tabBtnsFut = for {
-      stis <- pc.Net.getStisAndStore(Leagues.Standard)
+      stis <- pc.Net.getStisAndStore(league)
     } yield {
       stis.foreach { sti =>
         val button = jq(s"""<button>${sti.n}</button>""")
@@ -128,14 +133,18 @@ class LootView() extends View {
           textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
           backgroundColor = sti.colour.toRgb
         ))
-        val conId = StashTabId((sti.i: Double).toInt)
+        val conId : ContainerId = StashTabId((sti.i: Double).toInt)
         buttons += conId -> button
         if (!containers.contains(conId)) button.css("border-color", "red")
         elTabs.append(button)
         button.on("click", (a: js.Any) => {
-          //Set the grid to only have this tabs items in it and refresh this tab
-          //pc.Net.getStashTabAndStore(Leagues.Standard, sti.i.toInt).foreach(st => showAnyItems(st.allItems(None), sti.n))
-          console.error("Implements me!")
+          //Refresh this tab
+          pc.Net.getStashTabAndStore(league, sti.i.toInt).foreach { st =>
+            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
+            updateContainer(conId, items)
+          }
+          //Filter the grid to show only that tab
+          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
         })
       }
     }
@@ -150,19 +159,23 @@ class LootView() extends View {
           borderColor = "red"
         ))
         button.data("charName", char.name)
-        val conId = InventoryId(char.name)
+        val conId : ContainerId = InventoryId(char.name)
         buttons += conId -> button
         if (!containers.contains(conId)) button.css("border-color", "red")
         elChars.append(button)
         button.on("click", (a: js.Any) => {
-          //Set the grid to only have this tabs items in it and refresh this tab
-          //pc.Net.getInvAndStore(char.name).foreach(inv => showAnyItems(inv.allItems(Some(char.name)), char.name))
-          console.error("Implements me!")
+          //Refresh this tab
+          pc.Net.getInvAndStore(char.name).foreach { st =>
+            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
+            updateContainer(conId, items)
+          }
+          //Filter the grid to show only that tab
+          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
         })
       }
     }
 
-    JsFuture.sequence(List(tabBtnsFut, charBtnsFut)).map(x=>Unit)
+    JsFuture.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
   }
 
   //  private def showAnyItems(xs: List[AnyItem], location: String) {
@@ -258,7 +271,7 @@ class LootView() extends View {
     def filter(item: ComputedItem): js.Boolean = {
       columnFilters.forall { case (colId, fil) =>
         fil.allows(item)
-      }
+      } && tabFilter.allows(item)
     }
 
 
