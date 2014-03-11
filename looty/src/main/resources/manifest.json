@@ -19,7 +19,7 @@
 
 
 
-  "content_security_policy": "object-src 'self'; script-src 'self' 'unsafe-eval'",
+  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com",
 
   "permissions": ["http://www.pathofexile.com/*","http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
 }

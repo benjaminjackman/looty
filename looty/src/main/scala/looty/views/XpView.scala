@@ -162,7 +162,7 @@ class XpView extends View {
   val msPerHour                                = 60 * 60 * 1000
 
 
-  def start(el : JQuery) {
+  def start(el: JQuery) {
     //Clear the view
 
     val btns = jq("""<div id="btns"></div>""")
@@ -181,9 +181,9 @@ class XpView extends View {
       })
     }
 
-    val runBtn = jq("<button>Start Run</button>")
-    sessionBtns.append(runBtn)
-    runBtn.on("click", () => {
+    val startRunBtn = jq("<button>Start Run</button>")
+    sessionBtns.append(startRunBtn)
+    startRunBtn.on("click", () => {
       console.log("I WAS CLICKED")
       if (curHist == null) {
         Alerter.error("Please select a character before pressing the start run button")
@@ -198,22 +198,20 @@ class XpView extends View {
         display()
       }
     })
-
-    //Start the timer
-    startTimer()
-
-  }
-
-  def startTimer() {
-    if (autoUpdateTimer == null)  {
-      autoUpdateTimer = global.setInterval(() => {
-        console.log("TIMER FIRED")
+    val updateRunBtn = jq("<button>Update Run</button>")
+    sessionBtns.append(updateRunBtn)
+    updateRunBtn.on("click", () => {
+      if (curHist == null) {
+        Alerter.error("Please select a character before pressing the start run button")
+      } else {
         updateGemStatus()
         save()
         display()
-      }, 10000)
-    }
+      }
+    })
+
   }
+
 
   def save() {
     if (curHist != null) {

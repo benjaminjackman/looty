@@ -136,12 +136,14 @@ class LootView(val league: String) extends View {
     subControls.append(elTabs)
     subControls.append(elChars)
 
+    val title="Refresh this stash tab / character inventory from pathofexile.com"
+
     //Buttons for stashed
     val tabBtnsFut = for {
       stis <- pc.Net.getStisAndStore(league)
     } yield {
       stis.foreach { sti =>
-        val button = jq(s"""<button>${sti.n}</button>""")
+        val button = jq(s"""<button title="$title">${sti.n}</button>""")
         button.css(obj[js.Any](
           color = "white",
           textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
@@ -158,7 +160,7 @@ class LootView(val league: String) extends View {
             updateContainer(conId, items)
           }
           //Filter the grid to show only that tab
-          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+//          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
         })
       }
     }
@@ -169,7 +171,7 @@ class LootView(val league: String) extends View {
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
-          val button = jq(s"""<button>${char.name}</button>""")
+          val button = jq(s"""<button title="$title">${char.name}</button>""")
           button.css(obj[js.Any](
             borderColor = "red"
           ))
@@ -185,7 +187,7 @@ class LootView(val league: String) extends View {
               updateContainer(conId, items)
             }
             //Filter the grid to show only that tab
-            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+//            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
           })
         }
       }
