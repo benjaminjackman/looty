@@ -19,7 +19,7 @@ object StoreMaster {
   def init(): Future[Unit] = {
     console.debug("Store Master Init")
     backingStore.getAll().map { allObjs =>
-      val dict = allObjs.asInstanceOf[js.Dictionary]
+      val dict = allObjs.asInstanceOf[js.Dictionary[js.Any]]
       Dictionary.propertiesOf(allObjs).iterator.foreach { key =>
         values(key) = dict(key)
       }
@@ -32,12 +32,12 @@ object StoreMaster {
     values.get(key).map(_.asInstanceOf[A])
   }
 
-  def set(key: String, value: js.Any) {
+  def set(key: String, value: js.Any): Future[Unit] = {
     values.put(key, value)
     backingStore.futSet(key, value)
   }
 
-  def clear(key: String) {
+  def clear(key: String): Future[Unit] = {
     values.remove(key)
     backingStore.futClear(key)
   }

@@ -8,8 +8,6 @@ import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
 import scala.Some
 import looty.model.parsers.ItemParser
-import scala.collection.mutable.ListBuffer
-
 
 //////////////////////////////////////////////////////////////
 // Copyright (c) 2013 Ben Jackman, Jeff Gomberg
@@ -31,6 +29,28 @@ class PoeCacher(account: String = "UnknownAccount!") {
   object Store {
     val store = StoreMaster
 
+    def clearLeague(league: String): Future[Unit] = {
+      val otherLeagueChars = for {
+        chars <- getChars.toList
+        char <- chars.toList
+        if char.league.toString =!= league
+      } yield {
+        char
+      }
+
+      val tabsToClear = for {
+        stis <- getStis(league).toList
+        sti <- stis.toList
+      } yield {
+        clearStashTab(league, sti.i.toInt)
+      }
+
+      JsFuture.sequence(
+        List(setChars(otherLeagueChars.toJsArray), clearStis(league)) :::
+            tabsToClear
+      ).map(x => Unit)
+    }
+
     def getChars = store.get[Characters](s"$account-characters")
     def setChars(chars: Characters) = store.set(s"$account-characters", chars)
 
@@ -39,9 +59,11 @@ class PoeCacher(account: String = "UnknownAccount!") {
 
     def getStis(league: String) = store.get[StashTabInfos](s"$account-$league-stis")
     def setStis(league: String, stis: StashTabInfos) = store.set(s"$account-$league-stis", stis)
+    def clearStis(league: String) = store.clear(s"$account-$league-stis")
 
     def getStashTab(league: String, tabIdx: Int) = store.get[StashTab](s"$account-$league-$tabIdx-stis")
     def setStashTab(league: String, tabIdx: Int, st: StashTab) = store.set(s"$account-$league-$tabIdx-stis", st)
+    def clearStashTab(league: String, tabIdx: Int) = store.clear(s"$account-$league-$tabIdx-stis")
   }
 
   object Net {

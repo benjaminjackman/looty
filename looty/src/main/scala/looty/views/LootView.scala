@@ -37,9 +37,9 @@ class LootView(val league: String) extends View {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
-  var grid     : js.Dynamic = null
-  var dataView : js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
-  var tabFilter = LootFilter.all
+  var grid    : js.Dynamic = null
+  var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  var tabFilter            = LootFilter.all
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
 
 
@@ -98,6 +98,8 @@ class LootView(val league: String) extends View {
   }
 
   private def appendControls(el: JQuery): Future[Unit] = {
+    val pc = new PoeCacher()
+
     el.empty()
     val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]<a>""")
     el.append(showHide)
@@ -117,10 +119,21 @@ class LootView(val league: String) extends View {
 
     val elTabs = jq("<div></div>")
     val elChars = jq("<div></div>")
+    val elClear = jq("<div></div>")
     subControls.append(elTabs)
     subControls.append(elChars)
+    subControls.append(elClear)
+    val clearBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
+    |have changed several tabs. This will take some time, as GGG throttles the number of requests made per minute
+    |to get this data.">Reload Everything For This League From Server</button>""".stripMargin)
+    elClear.append(clearBtn)
+    clearBtn.click { () =>
+      pc.Store.clearLeague(league).foreach { x =>
+        global.location.reload()
+      }
+    }
 
-    val pc = new PoeCacher()
+
 
     //Buttons for stashed
     val tabBtnsFut = for {
@@ -133,7 +146,7 @@ class LootView(val league: String) extends View {
           textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
           backgroundColor = sti.colour.toRgb
         ))
-        val conId : ContainerId = StashTabId((sti.i: Double).toInt)
+        val conId: ContainerId = StashTabId((sti.i: Double).toInt)
         buttons += conId -> button
         if (!containers.contains(conId)) button.css("border-color", "red")
         elTabs.append(button)
@@ -154,24 +167,26 @@ class LootView(val league: String) extends View {
       chars <- pc.Net.getCharsAndStore
     } yield {
       chars.foreach { char =>
-        val button = jq(s"""<button>${char.name}</button>""")
-        button.css(obj[js.Any](
-          borderColor = "red"
-        ))
-        button.data("charName", char.name)
-        val conId : ContainerId = InventoryId(char.name)
-        buttons += conId -> button
-        if (!containers.contains(conId)) button.css("border-color", "red")
-        elChars.append(button)
-        button.on("click", (a: js.Any) => {
-          //Refresh this tab
-          pc.Net.getInvAndStore(char.name).foreach { st =>
-            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
-            updateContainer(conId, items)
-          }
-          //Filter the grid to show only that tab
-          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
-        })
+        if (char.league.toString =?= league) {
+          val button = jq(s"""<button>${char.name}</button>""")
+          button.css(obj[js.Any](
+            borderColor = "red"
+          ))
+          button.data("charName", char.name)
+          val conId: ContainerId = InventoryId(char.name)
+          buttons += conId -> button
+          if (!containers.contains(conId)) button.css("border-color", "red")
+          elChars.append(button)
+          button.on("click", (a: js.Any) => {
+            //Refresh this tab
+            pc.Net.getInvAndStore(char.name).foreach { st =>
+              val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
+              updateContainer(conId, items)
+            }
+            //Filter the grid to show only that tab
+            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+          })
+        }
       }
     }
 
@@ -435,7 +450,11 @@ class LootView(val league: String) extends View {
       item.item.implicitModList.mkString("<br>"),
       item.item.explicitModList.mkString("<br>"),
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
-      flavorText
+      item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
+      flavorText,
+      if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else "Not Identified",
+      if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) "Corrupted" else "",
+      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else ""
     ).filter(_.nonEmpty)
     val h = s"""
     <div style="color:$color;padding:5px">

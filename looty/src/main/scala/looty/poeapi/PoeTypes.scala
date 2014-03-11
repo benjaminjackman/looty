@@ -190,7 +190,11 @@ object PoeTypes {
     val league               : js.String
     val name                 : js.String
     val typeLine             : js.String
-    val identified           : js.Boolean
+    val cosmeticMods         : Optional[js.Array[js.String]]
+    val identified           : Optional[js.Boolean]
+    val corrupted            : Optional[js.Boolean]
+    //Mirrored
+    val duplicated           : Optional[js.Boolean]
     val additionalProperties : Optional[js.Array[AdditionalProperty]]
     val sockets              : Optional[js.Array[Socket]]
     val properties           : Optional[js.Array[ItemProperty]]

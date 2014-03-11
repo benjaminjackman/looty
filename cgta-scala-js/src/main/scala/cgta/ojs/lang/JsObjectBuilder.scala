@@ -13,7 +13,7 @@ class JsObjectBuilder extends Dynamic {
     if (name != "apply") {
       sys.error("Call jsObj like this jsObj(x=1, y=2) which returns a javascript object that is {x:1,y:2}")
     }
-    val obj = js.Object().asInstanceOf[js.Dictionary]
+    val obj = js.Object().asInstanceOf[js.Dictionary[js.Any]]
     args.foreach { case (name, value) =>
       obj(name) = value
     }

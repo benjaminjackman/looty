@@ -183,6 +183,18 @@ object AffixesParser {
   plusTo("Evasion Rating")(_.plusTo.evasionRating += _)
   plusTo("Energy Shield")(_.plusTo.energyShield += _)
   plusTo("maximum Energy Shield")(_.plusTo.energyShield += _)
+  plusTo("Fire and Lightning Resistances") { (i, n) =>
+    i.plusTo.resistance.fire += n
+    i.plusTo.resistance.lightning += n
+  }
+  plusTo("Cold and Lightning Resistances") { (i, n) =>
+    i.plusTo.resistance.cold += n
+    i.plusTo.resistance.lightning += n
+  }
+  plusTo("Fire and Cold Resistances") { (i, n) =>
+    i.plusTo.resistance.fire += n
+    i.plusTo.resistance.cold += n
+  }
   plusTo("all Elemental Resistances") { (i, n) =>
     i.plusTo.resistance.fire += n
     i.plusTo.resistance.cold += n

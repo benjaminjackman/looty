@@ -56,6 +56,13 @@ object ComputedItemProps {
   case object TypeName extends ComputedItemPropCategory("type",
     "The name of the base item type")(_.typeName)
   add(TypeName)
+
+  case object Cosmetics extends ComputedItemPropString(
+    "cosm",
+    "A list of all cosmetic effects applied to the item"
+  )(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
+  add(Cosmetics)
+
   case object Sockets extends ComputedItemPropCategory("sockets",
     "The sockets sorted by number in group, then by color")(_.socketColors)
   add(Sockets)
@@ -80,6 +87,9 @@ object ComputedItemProps {
   case object Evasion extends ComputedItemPropPosNumber("EV",
     "Total Amount of Evasion from this item")(_.total.evasionRating)
   add(Evasion)
+  case object ArmourPlusEvasion extends ComputedItemPropPosNumber("AR+EV",
+    "Total Amount of Evasion and Armour from this item")(i => i.total.evasionRating + i.total.armour)
+  add(ArmourPlusEvasion)
   case object EnergyShield extends ComputedItemPropPosNumber("ES",
     "Total Amount of Energy Shield from this item")(_.total.energyShield)
   add(EnergyShield)
@@ -124,8 +134,6 @@ object ComputedItemProps {
   case object ManaLeech extends ComputedItemPropNegNumber("mleech",
     "Mana Leech from Physical Attack Damage")(_.leech.physical.mana)
   add(ManaLeech)
-
-
 
 
   case object Plus_Life extends ComputedItemPropPosNumber("+life",
@@ -235,7 +243,6 @@ object ComputedItemProps {
   case object Increased_GemLevelIntelligence extends ComputedItemPropPosNumber("+gInt",
     "Increased Intelligence Gem Level ")(_.gemLevel.attribute.intelligence)
   add(Increased_GemLevelIntelligence)
-
 
 
 }

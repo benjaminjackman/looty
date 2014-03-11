@@ -28,7 +28,7 @@ class TypeAExtensions[A](val a: A) extends AnyVal {
 
 class JsAnyExtensions(val a: js.Any) extends AnyVal {
   def toJsonString: js.String = js.JSON.stringify(a)
-  def asJsDic: js.Dictionary = a.asInstanceOf[js.Dictionary]
+  def asJsDic[A]: js.Dictionary[A] = a.asInstanceOf[js.Dictionary[A]]
   def asJsObj: js.Object = a.asInstanceOf[js.Object]
   def asJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
   def asJsStr: js.String = a.asInstanceOf[js.String]
@@ -72,6 +72,8 @@ trait JsExtensions {
 }
 
 class SeqExtensions[A](val xs: Iterable[A]) extends AnyVal {
+
+  def toJsArray = js.Array[A](xs.toSeq : _*)
 
   def minOpt[B >: A](implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.min[B])
   def maxOpt[B >: A](implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.max[B])

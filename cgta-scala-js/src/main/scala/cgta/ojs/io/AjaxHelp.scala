@@ -24,10 +24,7 @@ object AjaxHelp {
 
   def apply[A](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
     JsFuture.wrapPromisesAPlus[A] {
-      val req = js.Dictionary(
-        "url" -> url,
-        "type" -> requestType.toString
-      )
+      val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDic[String]
       data.foreach(data => req("data") = data)
       jQuery.ajax(req.asInstanceOf[JQueryAjaxSettings])
     }
