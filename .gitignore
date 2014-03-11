@@ -1,0 +1,8 @@
+.idea
+.idea_modules
+build/
+cgta-scala-js/
+looty/
+project/
+target/
+build.pem
