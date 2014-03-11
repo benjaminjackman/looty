@@ -289,8 +289,6 @@ class XpView extends View {
           "<th>Xp In Run</th>" +
           "<th>Xp/Hour</th>" +
           "<th>Time To Level</th>" +
-          """<th title="pronounced tit,el (things the programmer ancticipated yet lacked the grace to mention..huhhaw, i have gotten biscuit on my dress. redress. LET US REDRESS get your mouse off me creepo, this area contains the one and only patch notes easter egg essiison. essesiion. session. yerp. dingo. bate, my. ate. ter[[dfs TO REDDIT WITH LOVE AND PROCEMENT wit h a fatherly satifaction of being an older programmer at a youbg mans game and a chris wilson at a self reddit credditing dancfloor of aw3esome and too many drings on new years. etc. kiwis rule and so dsoes procurement. and this pogrom appearantly.]
-          '?">Smarmy Comment Area.</th>""" +
           "</thead>")
       $table.append("<tbody></tbody>")
       val $tbody = jq("tbody", el)
