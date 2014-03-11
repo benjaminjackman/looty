@@ -7,7 +7,7 @@
 
   "app": {
     "launch": {
-      "local_path": "looty-dev.html",
+      "local_path": "looty.html#/home",
       "container": "tab"
     }
   },
@@ -17,7 +17,7 @@
       "128" : "images/coin128.png"
     },
 
-  "update_url": "https://raw.github.com/benjaminjackman/looty/master/looty-updates.xml",
+
 
   "content_security_policy": "object-src 'self'; script-src 'self' 'unsafe-eval'",
 

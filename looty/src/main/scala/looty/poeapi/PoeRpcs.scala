@@ -8,6 +8,7 @@ import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsPromise}
 import cgta.ojs.io.AjaxHelp
 import scala.util.{Failure, Success}
+import looty.views.Alerter
 
 
 //////////////////////////////////////////////////////////////
@@ -95,13 +96,16 @@ object PoeRpcs {
         get[Any](qi.url, qi.params).onComplete {
           case Success(x) =>
             requestQueue = requestQueue.tail
+            Alerter.info("Downloaded some data from pathofexile.com")
             qi.promise.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             console.log("Throttled, cooling off ", qi.url, qi.params, msg)
+            Alerter.warn("Throttled by pathofexile.com, please wait for a minute or two for more data.")
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
             requestQueue = requestQueue.tail
+            Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
             qi.promise.failure(t)
             checkQueue()
 

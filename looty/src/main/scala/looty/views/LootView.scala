@@ -117,15 +117,12 @@ class LootView(val league: String) extends View {
       false
     }
 
-    val elTabs = jq("<div></div>")
-    val elChars = jq("<div></div>")
     val elClear = jq("<div></div>")
-    subControls.append(elTabs)
-    subControls.append(elChars)
     subControls.append(elClear)
+
     val clearBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
     |have changed several tabs. This will take some time, as GGG throttles the number of requests made per minute
-    |to get this data.">Reload Everything For This League From Server</button>""".stripMargin)
+    |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
     elClear.append(clearBtn)
     clearBtn.click { () =>
       pc.Store.clearLeague(league).foreach { x =>
@@ -133,7 +130,11 @@ class LootView(val league: String) extends View {
       }
     }
 
+    val elTabs = jq("<div></div>")
+    val elChars = jq("<div></div>")
 
+    subControls.append(elTabs)
+    subControls.append(elChars)
 
     //Buttons for stashed
     val tabBtnsFut = for {

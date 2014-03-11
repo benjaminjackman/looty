@@ -11,9 +11,12 @@ import org.scalajs.jquery.JQueryStatic
 
 object Alerter {
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-  def alert(msg: String) {
-    val el = jq("#alert")
+  def info(msg: String) { display("info", msg) }
+  def warn(msg: String) { display("warn", msg) }
+  def error(msg: String) { display("error", msg) }
+  private def display(cls: String, msg: String) {
+    val el = jq("#alerter")
     el.empty()
-    el.text(msg)
+    el.html(s"""<div class="$cls">$msg</div>""")
   }
 }

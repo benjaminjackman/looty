@@ -23,6 +23,21 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
+      #alerter .info {
+        background: green;
+        color: white;
+        font-weight: bold;
+      }
+      #alerter .warn {
+        background: yellow;
+        color: black;
+        font-weight: bold;
+      }
+      #alerter .error {
+        background: red;
+        color: white;
+        font-weight: bold;
+      }
     </style>
 
   <script type="text/javascript" src="jslib/d3.js"></script>
@@ -42,10 +57,15 @@
 </head>
 <body>
 
+<div id="alerter">
+  <div class="info">Extension loaded.</div>
+</div>
+
+
 <menu-bar>
   <menu-item><a href="#/home">Home</a></menu-item>
-  <menu-item><a href="#/wealth">Wealth</a></menu-item>
-  <menu-item><a href="#/refresh">Refresh</a></menu-item>
+  <!--<menu-item><a href="#/wealth">Wealth</a></menu-item>-->
+  <!--<menu-item><a href="#/refresh">Refresh</a></menu-item>-->
   <menu-item><a href="#/xp">XP</a></menu-item>
   <menu-item><a href="#/standard-grid">Standard</a></menu-item>
   <menu-item><a href="#/hardcore-grid">Hardcore</a></menu-item>
@@ -53,9 +73,6 @@
   <menu-item><a href="#/invasion-grid">Invasion</a></menu-item>
 </menu-bar>
 
-<div id="alert" style="color:red">
-
-</div>
 
 <div id="content">
   Welcome to Looty!

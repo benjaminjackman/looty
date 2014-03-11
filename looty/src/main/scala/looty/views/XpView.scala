@@ -186,7 +186,7 @@ class XpView extends View {
     runBtn.on("click", () => {
       console.log("I WAS CLICKED")
       if (curHist == null) {
-        Alerter.alert("Please select a character before pressing the start run button")
+        Alerter.error("Please select a character before pressing the start run button")
       } else {
         updateGemStatus()
         curHist.addRun()
