@@ -214,7 +214,7 @@ class LootView(val league: String) extends View {
   //  }
 
   private def appendGrid() {
-    def makeColumn(name: String, tooltip: String)(f: ComputedItem => js.Any) = {
+    def makeColumn(name: String, tooltip: String, width : Int)(f: ComputedItem => js.Any) = {
       val o = newObject
       o.id = name
       o.name = name
@@ -222,13 +222,14 @@ class LootView(val league: String) extends View {
       o.toolTip = tooltip
       o.sortable = true
       o.getter = f
+      if (width =?= -1) o.width = 60 else o.width = width
       o
     }
     val columns = js.Array[js.Dynamic]()
     var columnFilters = Map.empty[String, LootFilter]
 
     ComputedItemProps.all.foreach { p =>
-      val col = makeColumn(p.shortName, p.description)(p.getJs)
+      val col = makeColumn(p.shortName, p.description, p.width)(p.getJs)
       columns.push(col)
     }
 

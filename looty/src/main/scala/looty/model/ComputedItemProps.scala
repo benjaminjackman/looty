@@ -20,41 +20,49 @@ object ComputedItemProps {
   trait ComputedItemProp[A] {
     val shortName  : String
     val description: String
+    val width : Int
     def getJs(ci: ComputedItem): js.Any
   }
   class ComputedItemPropCategory(
     override val shortName: String,
-    override val description: String)(
+    override val description: String,
+    override val width: Int = -1)(
     val getter: ComputedItem => String) extends ComputedItemProp[String] {
     override def getJs(ci: ComputedItem): js.Any = getter(ci)
   }
   class ComputedItemPropString(
     override val shortName: String,
-    override val description: String)(
+    override val description: String,
+    override val width: Int = -1)(
     val getter: ComputedItem => String) extends ComputedItemProp[String] {
     override def getJs(ci: ComputedItem): js.Any = getter(ci)
   }
   class ComputedItemPropPosNumber(
     override val shortName: String,
-    override val description: String)(
+    override val description: String,
+    override val width: Int = -1)(
     val getter: ComputedItem => Double) extends ComputedItemProp[Double] {
     override def getJs(ci: ComputedItem): js.Any = getter(ci)
   }
   class ComputedItemPropNegNumber(
     override val shortName: String,
-    override val description: String)(
+    override val description: String,
+    override val width: Int = -1)(
     val getter: ComputedItem => Double) extends ComputedItemProp[Double] {
     override def getJs(ci: ComputedItem): js.Any = getter(ci)
   }
 
   case object Location extends ComputedItemPropCategory("loc",
-    "The name of the character / stash tab that contains the item.")(_.locAndCoords)
+    "The name of the character / stash tab that contains the item.",
+    130)(_.locAndCoords)
   add(Location)
   case object DisplayName extends ComputedItemPropString("name",
-    "The name of the item")(_.displayName)
+    "The name of the item",
+    160)(_.displayName)
   add(DisplayName)
   case object TypeName extends ComputedItemPropCategory("type",
-    "The name of the base item type")(_.typeName)
+    "The name of the base item type",
+    100)(_.typeName)
   add(TypeName)
 
   case object Cosmetics extends ComputedItemPropString(
@@ -64,7 +72,8 @@ object ComputedItemProps {
   add(Cosmetics)
 
   case object Sockets extends ComputedItemPropCategory("sockets",
-    "The sockets sorted by number in group, then by color")(_.socketColors)
+    "The sockets sorted by number in group, then by color",
+    120)(_.socketColors)
   add(Sockets)
 
   case object Quality extends ComputedItemPropPosNumber("qual",

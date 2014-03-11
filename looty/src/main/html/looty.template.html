@@ -8,21 +8,64 @@
 
 
     <style>
+      body {
+        background: black;
+        color: white;
+      }
+      a:visited {
+        color: cyan
+      }
+      a {
+        color: cyan
+      }
+
       .slick-headerrow-column {
         background: #87ceeb;
         text-overflow: clip;
-        -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
+
+      .slick-headerrow-column.ui-state-default{
+        padding: 1px;
+      }
+
 
       .slick-headerrow-column input {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
-        -moz-box-sizing: border-box;
         box-sizing: border-box;
       }
+      .slick-header-column.ui-state-default {
+          background:none ;
+          background-color: #505050 ;
+          color: #eeeeee;
+          /*border: none;*/
+          /*padding: 0;*/
+          /*text-shadow: none;*/
+          /*font-family: Arial, Verdana, Helvetica, sans-serif;*/
+          font-size: 12px;
+          /*height: 40px;*/
+          /*line-height: 40px;*/
+      }
+
+      .slick-row.ui-widget-content, .slick-cell {
+          background: none;
+        background-color: #505050 ;
+        color: #eeeeee;
+
+          /*background-color: #eeeeee;*/
+          /*color: #666666;*/
+          /*border: none;*/
+          /*border-bottom: solid 1px #ffffff;*/
+          font-size: 13px;
+          /*height: 60px;*/
+          /*line-height: 60px;*/
+          /*padding: 0 5px;*/
+      }
+
+
       #alerter .info {
         background: green;
         color: white;

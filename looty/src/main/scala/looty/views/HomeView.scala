@@ -20,7 +20,8 @@ class HomeView extends View {
       |so keep that in mind if things aren't showing up.<br>
       |This is a buggy alpha version<br>
       |source code available on <a href="https://github.com/benjaminjackman/looty">github</a>.<br>
-      |
+      |<br>
+      |<h3>Help and more info available <a href="http://blog.jackman.biz/looty">here</a> (eventually)<h3>
       |<br>
       """.stripMargin
     }
