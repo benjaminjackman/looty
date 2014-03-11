@@ -39,7 +39,9 @@ object LootyMain {
     val crossroads = global.crossroads
     val hasher = global.hasher
     crossroads.addRoute("home", () => setView(new HomeView))
-    crossroads.addRoute("grid", () => setView(new LootView(Leagues.Standard)))
+    for (league <- Leagues.all) {
+      crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
+    }
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("refresh", () => setView(new RefreshView))
     crossroads.addRoute("wealth", () => setView(new WealthView))

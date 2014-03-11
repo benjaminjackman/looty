@@ -23,11 +23,11 @@ object PoeTypes {
   object Leagues {
 
     val Standard   = "Standard"
-    val Domination = "Domination"
     val Hardcore   = "Hardcore"
-    val Nemesis    = "Nemesis"
+    val Ambush     = "Ambush"
+    val Invasion   = "Invasion"
 
-    val all = List(Standard, Domination, Hardcore, Nemesis)
+    val all = List(Standard, Hardcore, Ambush, Invasion)
   }
 
   trait CharacterInfo extends js.Object {
@@ -215,8 +215,8 @@ object PoeTypes {
     val colour: Optional[js.String]
 
     //Added by allItems
-    var inItem   : Optional[AnyItem]
-    var character: Optional[js.String]
+    var inItem    : Optional[AnyItem]
+    var character : Optional[js.String]
     var locationId: Optional[js.String]
 
   }
