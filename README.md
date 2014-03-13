@@ -16,8 +16,9 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 
 
 ## Developer Log
-2014.03.12 -- Worked on updating documentation, probably should have done that before the alpha post
-2014.03.11 -- Released Alpha 0.1.1 and published link to it on reddit.
+2014.03.12  -- [DEMO]     Working on abstracting on chrome specific parts so that a demo page can be made
+2014.03.12  -- [DOCS]     Worked on updating documentation, probably should have done that before the alpha post
+2014.03.11  -- [RELEASE] Released Alpha 0.1.1 and published link to it on reddit.
 
 ##Todo
 
@@ -40,17 +41,19 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Show how good an item is compared to the best in slot for the level compared to other items the player has
 - [ ] Allow users to save filter sets
 
+### Extensibility and compatability with other sites
+- [ ] Act as a secure API that can get data up to other sites and act as a Pseudo API until GGG makes one (if they do, *cough* item level *ahem* item uuids *ATAZIRIQUADSWTFCHOO* last mod time get-stash-items/{tabs:1} *hack*)
+- [ ] Provide CSV / Google Document export of items table
+- [ ] Upload builds / equipment to the http://poebuilds.com
+- [ ] Get stats for current character's build from http://poebuilds.com and use it to calculate actual dps and so on for a character with an item and for a skill
+
+
 ### Trading help
 - [ ] Templating to automatically create shop posts, via custom filters.
-
-### Extensibility and compatability with other sites
-- [ ] Upload builds / equipment to the http://poebuilds.com
-- [ ] Get stats from http://poebuilds.com and use it to calculate actual dps and so on for a character with an item and for a skill
-- [ ] Provide CSV / Google Document export of items table
-- [ ] User online tracking that can be sent to third party sites, to indicate that the user is able to trade
-- [ ] Integrate with other messaging platforms and provide those hooks up to trading sites (web-rtc?) to allow users to trade with each other
 - [ ] Search for similar items on http://poe.xy.is [reddit post](http://www.reddit.com/r/pathofexile/comments/1vodwm/faster_trading_with_poexyz/ceu9n5m)
-- [ ] Upload items / character info to user white-listed third party sites, to allow for other developers to make interfaces that don't require an extension to download data from http://pathofexile.com, not necessary if GGG provides an actual API to their site, which hopefully they will eventually do, and if they do, *cough* item level? *cough*
+- [ ] User online tracking that can be sent to third party sites, to indicate that the user is able to trade
+- [ ] Integrate with instant messaging platforms / chat rooms and provide those hooks up to trading sites (web-rtc?) to allow users to trade with each other
+
 
 ### Improved Program Logic
 - [ ] Smart detection of moved items

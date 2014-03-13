@@ -8,6 +8,8 @@ import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
+import looty.network.PoeCacher
+import looty.chrome.PoeCacherChrome
 
 
 //////////////////////////////////////////////////////////////
@@ -34,7 +36,7 @@ object LootyMain {
   }
 
 
-  def addRoutes() {
+  def addRoutes(implicit pc: PoeCacher) {
     console.debug("Adding routes")
     val crossroads = global.crossroads
     val hasher = global.hasher
@@ -43,7 +45,6 @@ object LootyMain {
       crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
     }
     crossroads.addRoute("xp", () => setView(new XpView))
-    crossroads.addRoute("refresh", () => setView(new RefreshView))
     crossroads.addRoute("wealth", () => setView(new WealthView))
     crossroads.routed.add(global.console.log, console)
     if (hasher.getURL().toString.endsWith("home")) {
@@ -65,12 +66,13 @@ object LootyMain {
 
   def main(args: Array[String]) {
 
-//    Blamo.kaboom()
+    //    Blamo.kaboom()
+    implicit val pc: PoeCacher = new PoeCacherChrome()
 
-        console.log("Starting looty!")
-        initComponents().foreach { _ =>
-          addRoutes()
-        }
+    console.log("Starting looty!")
+    initComponents().foreach { _ =>
+      addRoutes
+    }
   }
 
 

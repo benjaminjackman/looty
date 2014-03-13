@@ -36,7 +36,7 @@ case class MinMaxDamage(var min: Double, var max: Double) {
 //  }
 //}
 
-class ComputedItem(val item: AnyItem, val containerId : ContainerId, val locationName : String) {
+class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val locationName : String) {
   lazy val maxLinks: Int       = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
   lazy val score   : ItemScore = ItemScorer(this).getOrElse(ItemScore(Nil, 0))
 

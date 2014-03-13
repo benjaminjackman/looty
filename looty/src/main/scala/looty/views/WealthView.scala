@@ -2,8 +2,8 @@ package looty
 package views
 
 import org.scalajs.jquery.JQuery
-import looty.model.PoeCacher
 import looty.poeapi.PoeTypes.Leagues
+import looty.network.PoeCacher
 
 
 //////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@ import looty.poeapi.PoeTypes.Leagues
 //////////////////////////////////////////////////////////////
 
 
-class WealthView extends View {
+class WealthView(implicit val pc : PoeCacher) extends View {
 
   val valueMap = Map[String, Double](
     "Chromatic Orb" -> 1 / 17.0,
@@ -37,7 +37,6 @@ class WealthView extends View {
   )
 
   def start(el: JQuery): Unit = {
-    val pc = new PoeCacher()
     var tot = 0.0
     for {
       items <- pc.getAllItems(Leagues.Standard)

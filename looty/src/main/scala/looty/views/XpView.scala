@@ -2,11 +2,11 @@ package looty
 package views
 
 import org.scalajs.jquery.{JQuery, JQueryStatic}
-import looty.model.PoeCacher
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
 import cgta.ojs.io.{DurationText, StoreMaster}
 import looty.views.GemHistory.GemHistoryExtensions
+import looty.network.PoeCacher
 
 
 //////////////////////////////////////////////////////////////
@@ -150,10 +150,9 @@ class CharacterGemHistory private() extends js.Object {
   var runs     : js.Array[js.Number]  = ???
 }
 
-class XpView extends View {
+class XpView(implicit val pc : PoeCacher) extends View {
   //Get a poe cacher
   val jq                 : JQueryStatic        = global.jQuery.asInstanceOf[JQueryStatic]
-  val pc                                       = new PoeCacher()
   var curHist            : CharacterGemHistory = null
   var curGemHistory      : GemHistory          = null
   var runStartGemProgress: GemProgress         = null
@@ -250,7 +249,7 @@ class XpView extends View {
     //Update history with the new items
     curHist.nullSafe.foreach { hist =>
       val key = "gem-history-" + hist.character
-      pc.Net.getInvAndStore(hist.character).foreach { inv =>
+      pc.getInv(hist.character, forceNetRefresh = true).foreach { inv =>
       //Compare the gems to the other gems we have already for this character
         curHist.updateGems(inv.allItems(Some(hist.character)).filter(i => i.getXpProgress.isDefined))
         store.set(key, curHist)

@@ -1,32 +1,27 @@
 package looty
-package model
+package chrome
 
-import looty.poeapi.PoeRpcs
-import scala.concurrent.Future
-import looty.poeapi.PoeTypes._
-import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
-import scala.Some
+import scala.concurrent.Future
+import cgta.ojs.lang.JsFuture
+import looty.poeapi.PoeRpcs
+import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItem}
 import looty.model.parsers.ItemParser
+import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
+import looty.network.{PoeCacher}
+
 
 //////////////////////////////////////////////////////////////
-// Copyright (c) 2013 Ben Jackman, Jeff Gomberg
-// All Rights Reserved
-// please contact ben@jackman.biz or jeff@cgtanalytics.com
-// for licensing inquiries
-// Created by bjackman @ 12/11/13 12:37 AM
+// Created by bjackman @ 3/13/14 2:01 AM
 //////////////////////////////////////////////////////////////
 
-sealed trait ContainerId
-case class StashTabId(idx: Int) extends ContainerId
-case class InventoryId(character: String) extends ContainerId
 
 /**
  * This class will cache the data from the website in localstorage
  */
-class PoeCacher(account: String = "UnknownAccount!") {
+class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
 
-  object Store {
+  private object Store {
     val store = StoreMaster
 
     def clearLeague(league: String): Future[Unit] = {
@@ -66,7 +61,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
     def clearStashTab(league: String, tabIdx: Int) = store.clear(s"$account-$league-$tabIdx-stis")
   }
 
-  object Net {
+  private object Net {
     def getCharsAndStore = PoeRpcs.getCharacters() map { chars =>
       Store.setChars(chars)
       chars
@@ -89,36 +84,53 @@ class PoeCacher(account: String = "UnknownAccount!") {
   }
 
 
-  def getChars(): Future[Characters] = {
-    //Attempt to get get the chars from local storage, or else go out to the network and load
-    JsFuture.successful(Store.getChars) flatMap {
-      case Some(chars) => JsFuture(chars)
-      case None => Net.getCharsAndStore
+  override def getChars(forceNetRefresh: Boolean): Future[Characters] = {
+    if (forceNetRefresh) {
+      Net.getCharsAndStore
+    } else {
+      //Attempt to get get the chars from local storage, or else go out to the network and load
+      JsFuture.successful(Store.getChars) flatMap {
+        case Some(chars) => JsFuture(chars)
+        case None => Net.getCharsAndStore
+      }
+    }
+
+  }
+
+  override def getInv(char: String, forceNetRefresh: Boolean): Future[Inventory] = {
+    if (forceNetRefresh) {
+      Net.getInvAndStore(char)
+    } else {
+      JsFuture.successful(Store.getInv(char)) flatMap {
+        case Some(inv) => JsFuture(inv)
+        case None => Net.getInvAndStore(char)
+      }
     }
   }
 
-  def getInv(char: String): Future[Inventory] = {
-    JsFuture.successful(Store.getInv(char)) flatMap {
-      case Some(inv) => JsFuture(inv)
-      case None => Net.getInvAndStore(char)
+  override def getStashInfo(league: String, forceNetRefresh: Boolean): Future[StashTabInfos] = {
+    if (forceNetRefresh) {
+      Net.getStisAndStore(league)
+    } else {
+      JsFuture.successful(Store.getStis(league)) flatMap {
+        case Some(stis) => JsFuture(stis)
+        case None => Net.getStisAndStore(league)
+      }
     }
   }
 
-  def getStashInfo(league: String): Future[StashTabInfos] = {
-    JsFuture.successful(Store.getStis(league)) flatMap {
-      case Some(stis) => JsFuture(stis)
-      case None => Net.getStisAndStore(league)
+  override def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean = false): Future[StashTab] = {
+    if (forceNetRefresh) {
+      Net.getStashTabAndStore(league, tabIdx)
+    } else {
+      JsFuture.successful(Store.getStashTab(league, tabIdx)) flatMap {
+        case Some(st) => JsFuture(st)
+        case None => Net.getStashTabAndStore(league, tabIdx)
+      }
     }
   }
 
-  def getStashTab(league: String, tabIdx: Int): Future[StashTab] = {
-    JsFuture.successful(Store.getStashTab(league, tabIdx)) flatMap {
-      case Some(st) => JsFuture(st)
-      case None => Net.getStashTabAndStore(league, tabIdx)
-    }
-  }
-
-  def getAllStashTabs(league: String): Future[List[Future[(StashTabId, StashTab)]]] = {
+  private def getAllStashTabs(league: String): Future[List[Future[(StashTabId, StashTab)]]] = {
     getStashInfo(league).map { si =>
       si.toList.map { sti =>
         getStashTab(league, sti.i.toInt).map(StashTabId(sti.i.toInt) -> _) //.log("Got Stash Tab")
@@ -126,7 +138,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
     }
   }
 
-  def getAllInventories(league: String): Future[List[Future[(InventoryId, Inventory)]]] = {
+  private def getAllInventories(league: String): Future[List[Future[(InventoryId, Inventory)]]] = {
     getChars() map { chars =>
       chars.toList.filter(_.league.toString =?= league).map { char =>
         getInv(char.name).map(InventoryId(char.name) -> _)
@@ -134,7 +146,7 @@ class PoeCacher(account: String = "UnknownAccount!") {
     }
   }
 
-  def getAllItems(league: String): Future[List[ComputedItem]] = {
+  override def getAllItems(league: String): Future[List[ComputedItem]] = {
     for {
       yf <- for (conFuts <- getAllContainersFuture(league)) yield JsFuture.sequence(conFuts)
       y <- yf
@@ -143,15 +155,15 @@ class PoeCacher(account: String = "UnknownAccount!") {
     }
   }
 
-  def getAllContainersFuture(league: String): Future[List[Future[(ContainerId, List[ComputedItem])]]] = {
+
+  override def getAllContainersFuture(league: String): Future[List[Future[(LootContainerId, List[ComputedItem])]]] = {
     for {
       tabInfos <- getStashInfo(league)
       tabs <- getAllStashTabs(league)
       invs <- getAllInventories(league)
     } yield {
-      //TODO Remove take1
       val xs = for {
-        fut <- tabs //.take(1)
+        fut <- tabs
       } yield {
         for {
           (bagId, tab) <- fut
@@ -164,9 +176,8 @@ class PoeCacher(account: String = "UnknownAccount!") {
         }
       }
 
-      //TODO Remove take1
       val ys = for {
-        fut <- invs //.take(1)
+        fut <- invs
       } yield {
         for {
           (bagId, inv) <- fut
@@ -183,53 +194,5 @@ class PoeCacher(account: String = "UnknownAccount!") {
     }
   }
 
-  def basicRefresh(): Future[Any] = {
-    //Doesn't download anything that is already present
-    //Get all the character inventories
-    JsFuture.sequence(
-      List[Future[Any]](
-        getChars() flatMap { chars =>
-          JsFuture.sequence(chars.toList.map(char => getInv(char.name))).map(_ => Unit)
-        },
-        JsFuture.sequence[Any, List] {
-          Leagues.all.toList.map { league =>
-            getAllStashTabs(league)
-          }
-        }
-      )
-    )
-
-    //    for {
-    //      league <- Leagues.values.toList
-    //      si <- getStashInfo(league)
-    //      sti <- si.toList
-    //      idx = sti.i
-    //    } yield {
-    //      getStashTab(league, idx.toInt)
-    //    }
-
-
-    //    JsFuture.sequence(
-    //      List[Future[Any]](
-    //        getChars() flatMap { chars =>
-    //          JsFuture.sequence(chars.toList.map(char => getInv(char.name)))
-    //        },
-    //        //Get all the stash tabs for all the leagues, if you have a lot of
-    //        //tabs like i do this is going to take a while, as GGG throttles tab access.
-    //        for {
-    //          league <- Leagues.values.toList
-    //          si <- getStashInfo(league)
-    //          sti <- si.toList
-    //          idx <- sti.i
-    //          tab <- getStashTab(league, idx)
-    //        } yield {
-    //          Unit
-    //        }
-    //      ).flatten()
-    //    )
-
-
-  }
-
-
+  override def clearLeague(league: String): Future[Unit] = Store.clearLeague(league)
 }

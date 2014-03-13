@@ -4,7 +4,7 @@ package model.parsers
 import looty.poeapi.PoeTypes.AnyItem
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.AnyItem.FrameTypes
-import looty.model.{ContainerId, ComputedItem}
+import looty.model.{LootContainerId, ComputedItem}
 
 
 //////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ object ItemParser {
   var failCnt  = 0
   var parseCnt = 0
 
-  def parseItem(item: AnyItem, containerId : ContainerId, locationName : String): ComputedItem = {
+  def parseItem(item: AnyItem, containerId : LootContainerId, locationName : String): ComputedItem = {
     val ci = new ComputedItem(item, containerId, locationName)
     if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
     if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)

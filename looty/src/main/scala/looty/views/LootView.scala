@@ -3,11 +3,12 @@ package views
 
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{InventoryId, StashTabId, ContainerId, NamedItemProps, PoeCacher, ComputedItem}
+import looty.model.{StashTabId, InventoryId, LootContainerId, NamedItemProps, ComputedItem}
 import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
 import scala.concurrent.Future
 import looty.model.parsers.ItemParser
+import looty.network.{PoeCacher}
 
 
 //////////////////////////////////////////////////////////////
@@ -29,10 +30,10 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
 }
 
 
-class LootView(val league: String) extends View {
+class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
   val obj        = new JsObjectBuilder
-  var containers = immutable.Map.empty[ContainerId, List[ComputedItem]]
-  var buttons    = immutable.Map.empty[ContainerId, JQuery]
+  var containers = immutable.Map.empty[LootContainerId, List[ComputedItem]]
+  var buttons    = immutable.Map.empty[LootContainerId, JQuery]
 
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
@@ -49,9 +50,6 @@ class LootView(val league: String) extends View {
   }
 
   def addAllItems {
-    val items = new js.Array[ComputedItem]()
-    val pc = new PoeCacher()
-
     for {
       cons <- pc.getAllContainersFuture(league)
       conFut <- cons
@@ -62,7 +60,7 @@ class LootView(val league: String) extends View {
   }
 
 
-  def updateContainer(containerId: ContainerId, container: List[ComputedItem]) {
+  def updateContainer(containerId: LootContainerId, container: List[ComputedItem]) {
     dataView.beginUpdate()
     for {
       container <- containers.get(containerId)
@@ -98,7 +96,6 @@ class LootView(val league: String) extends View {
   }
 
   private def appendControls(el: JQuery): Future[Unit] = {
-    val pc = new PoeCacher()
 
     el.empty()
     val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]<a>""")
@@ -131,7 +128,7 @@ class LootView(val league: String) extends View {
     |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
 
     reloadAllBtn.click { () =>
-      pc.Store.clearLeague(league).foreach { x =>
+      pc.clearLeague(league).foreach { x =>
         global.location.reload()
       }
     }
@@ -149,7 +146,7 @@ class LootView(val league: String) extends View {
 
     //Buttons for characters
     val charBtnsFut = for {
-      chars <- pc.Net.getCharsAndStore
+      chars <- pc.getChars(forceNetRefresh= true)
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
@@ -158,13 +155,13 @@ class LootView(val league: String) extends View {
             borderColor = "red"
           ))
           button.data("charName", char.name)
-          val conId: ContainerId = InventoryId(char.name)
+          val conId: LootContainerId = InventoryId(char.name)
           buttons += conId -> button
           if (!containers.contains(conId)) button.css("border-color", "red")
           elChars.append(button)
           button.on("click", (a: js.Any) => {
             //Refresh this tab
-            pc.Net.getInvAndStore(char.name).foreach { st =>
+            pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
               val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
               updateContainer(conId, items)
             }
@@ -177,7 +174,7 @@ class LootView(val league: String) extends View {
 
     //Buttons for stash tabs
     val tabBtnsFut = for {
-      stis <- pc.Net.getStisAndStore(league)
+      stis <- pc.getStashInfo(league, forceNetRefresh = true)
     } yield {
       stis.foreach { sti =>
         val button = jq(s"""<button title="$title">${sti.n}</button>""")
@@ -186,13 +183,13 @@ class LootView(val league: String) extends View {
           textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
           backgroundColor = sti.colour.toRgb
         ))
-        val conId: ContainerId = StashTabId((sti.i: Double).toInt)
+        val conId: LootContainerId = StashTabId((sti.i: Double).toInt)
         buttons += conId -> button
         if (!containers.contains(conId)) button.css("border-color", "red")
         elTabs.append(button)
         button.on("click", (a: js.Any) => {
           //Refresh this tab
-          pc.Net.getStashTabAndStore(league, sti.i.toInt).foreach { st =>
+          pc.getStashTab(league, sti.i.toInt, forceNetRefresh = true).foreach { st =>
             val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
             updateContainer(conId, items)
           }

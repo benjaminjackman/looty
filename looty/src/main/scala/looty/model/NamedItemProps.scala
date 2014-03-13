@@ -66,7 +66,7 @@ object NamedItemProps {
   add(TypeName)
 
   case object Cosmetics extends ComputedItemPropString(
-    "cosm",
+    "cosmetics",
     "A list of all cosmetic effects applied to the item"
   )(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   add(Cosmetics)
