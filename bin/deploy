@@ -13,8 +13,8 @@ if [ ! -d "$DEPLOY_DIR" ]; then
   exit 2
 fi
 
-#sbt clean
-#sbt optimizeJS
+sbt clean
+sbt optimizeJS
 
 #Build and deploy the actual extension file
 rm -rf build
