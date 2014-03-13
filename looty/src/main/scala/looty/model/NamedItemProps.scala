@@ -67,13 +67,14 @@ object NamedItemProps {
 
   case object Cosmetics extends ComputedItemPropString(
     "cosmetics",
-    "A list of all cosmetic effects applied to the item"
+    "A list of all cosmetic effects applied to the item",
+    80
   )(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   add(Cosmetics)
 
   case object Sockets extends ComputedItemPropCategory("sockets",
     "The sockets sorted by number in group, then by color",
-    120)(_.socketColors)
+    100)(_.socketColors)
   add(Sockets)
 
   case object Quality extends ComputedItemPropPosNumber("qual",

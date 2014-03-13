@@ -98,7 +98,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
   private def appendControls(el: JQuery): Future[Unit] = {
 
     el.empty()
-    val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]<a>""")
+    val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]</a>""")
     el.append(showHide)
     var shown = true
     val subControls = jq("<div></div>")
@@ -111,8 +111,10 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
         shown = true
         subControls.show()
       }
+      autoSizeGridHeight()
       false
     }
+    showHide.trigger("click")
 
     val elClear = jq("<div></div>")
     subControls.append(elClear)
@@ -213,7 +215,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
       o.toolTip = tooltip
       o.sortable = true
       o.getter = f
-      if (width =?= -1) o.width = 60 else o.width = width
+      if (width =?= -1) o.width = 50 else o.width = width
       o
     }
 
@@ -274,16 +276,19 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
     addSort()
     addMouseover()
 
-    def resize() {
-      jq("#grid").css("height", global.window.innerHeight - 120)
-      grid.resizeCanvas()
-    }
 
-    jq(global.window).resize(() => resize())
-    resize()
+
+    jq(global.window).resize(() => autoSizeGridHeight())
 
     grid.init()
+    autoSizeGridHeight()
+  }
 
+  private def autoSizeGridHeight() {
+    val height = jq(global.window).height() - jq("#header").height() - jq("#controls").height() - 20
+    console.log("RESIZE: ", height.toJs)
+    jq("#grid").css("height", height)
+    grid.resizeCanvas()
   }
 
   object Filters {

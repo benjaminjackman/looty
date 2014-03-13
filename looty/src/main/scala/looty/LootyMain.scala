@@ -44,7 +44,7 @@ class LootyApp(demoMode: Boolean) {
     console.debug("Adding routes")
     val crossroads = global.crossroads
     val hasher = global.hasher
-    val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, only works in chrome."""
+    val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, if you like what you see."""
     crossroads.addRoute("home", () => setView(new HomeView(if(demoMode) demoBanner else "")))
     for (league <- Leagues.all) {
       if (demoMode) {
@@ -87,7 +87,7 @@ class LootyApp(demoMode: Boolean) {
 
 object LootyMain {
   def main(args: Array[String]) {
-    new LootyApp(demoMode = global.chrome.storage.isUndefined).start()
+    new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
   }
 }
 
