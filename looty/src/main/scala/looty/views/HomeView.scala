@@ -9,10 +9,12 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 
-class HomeView extends View {
+class HomeView(val banner: String) extends View {
   def start(el: JQuery) {
     el.html {
-      """<div class="home"><h2><img src="images/coin16.png">Welcome to <span style="color:gold">Looty!</span><img src="images/coin16.png"></h2>Version Alpha.<p>
+      """<div class="home">""" +
+      s"""<h1 style="color:red">$banner</h1>""" +
+      """<h2><img src="images/coin16.png">Welcome to <span style="color:gold">Looty!</span><img src="images/coin16.png"></h2>Version Alpha.<p>
       |<span style="color:gold">Looty</span> was created to make it easier to search inventories in Path of Exile.<br>
       |It provides a grid interface to search for items in different leagues.<br>
       |The XP view will attempt to predict when a gem will level up.<br>

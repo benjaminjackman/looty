@@ -17,8 +17,8 @@ object Build extends sbt.Build {
       case (in, out0) =>
         val content = IO.read(in)
         val outDir = out0.getParentFile
-        val Re = """.*/([^/]+)\.template\.html""".r
-        val basename = Re.findFirstMatchIn(in.getPath).get.group(1)
+        val regex = """.*/([^/]+)\.template\.html""".r
+        val basename = regex.findFirstMatchIn(in.getPath).get.group(1)
         //Make a dev version and a release version
         val devFile = outDir / (basename + "-dev.html")
         val releaseFile = outDir / (basename + ".html")

@@ -8,7 +8,7 @@ import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
 import scala.concurrent.Future
 import looty.model.parsers.ItemParser
-import looty.network.{PoeCacher}
+import looty.poeapi.PoeCacher
 
 
 //////////////////////////////////////////////////////////////

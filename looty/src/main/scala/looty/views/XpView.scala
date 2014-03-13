@@ -6,7 +6,7 @@ import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
 import cgta.ojs.io.{DurationText, StoreMaster}
 import looty.views.GemHistory.GemHistoryExtensions
-import looty.network.PoeCacher
+import looty.poeapi.PoeCacher
 
 
 //////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ class XpView(implicit val pc : PoeCacher) extends View {
   var curGemHistory      : GemHistory          = null
   var runStartGemProgress: GemProgress         = null
   var autoUpdateTimer    : js.Any              = null
-  val store                                    = StoreMaster
+//  val store                                    = StoreMaster
   val msPerHour                                = 60 * 60 * 1000
 
 
@@ -193,7 +193,7 @@ class XpView(implicit val pc : PoeCacher) extends View {
           curGemHistory = gem
           runStartGemProgress = gem.current
         }
-        save()
+//        save()
         display()
       }
     })
@@ -204,7 +204,7 @@ class XpView(implicit val pc : PoeCacher) extends View {
         Alerter.error("Please select a character before pressing the start run button")
       } else {
         updateGemStatus()
-        save()
+//        save()
         display()
       }
     })
@@ -212,27 +212,28 @@ class XpView(implicit val pc : PoeCacher) extends View {
   }
 
 
-  def save() {
-    if (curHist != null) {
-      val key = getKey(curHist.character)
-      store.set(key, curHist)
-    }
-  }
+//  def save() {
+//    if (curHist != null) {
+//      val key = getKey(curHist.character)
+//      store.set(key, curHist)
+//    }
+//  }
 
   def getKey(character: String) = {
     "gem-history-" + character
   }
 
-  def clearChar(c: CharacterInfo) {
-    val key = getKey(c.name)
-    store.clear(key)
-  }
+//  def clearChar(c: CharacterInfo) {
+//    val key = getKey(c.name)
+//    store.clear(key)
+//  }
 
   def setChar(info: CharacterInfo) {
     val character = info.name
     //Get the current history for this character.
     val key = getKey(character)
-    curHist = store.get(key).getOrElse(CharacterGemHistory.empty(character))
+//    curHist = store.get(key).getOrElse(CharacterGemHistory.empty(character))
+    curHist = CharacterGemHistory.empty(character)
     for {
       lastRunTime <- curHist.runs.lastOption
       (hist, prog) <- curHist.gemsAtTime(lastRunTime).maxByOpt(_._2.xpToGo)
@@ -241,7 +242,7 @@ class XpView(implicit val pc : PoeCacher) extends View {
       runStartGemProgress = prog
     }
     updateGemStatus()
-    save()
+//    save()
     display()
   }
 
@@ -252,7 +253,7 @@ class XpView(implicit val pc : PoeCacher) extends View {
       pc.getInv(hist.character, forceNetRefresh = true).foreach { inv =>
       //Compare the gems to the other gems we have already for this character
         curHist.updateGems(inv.allItems(Some(hist.character)).filter(i => i.getXpProgress.isDefined))
-        store.set(key, curHist)
+//        store.set(key, curHist)
         display()
       }
     }

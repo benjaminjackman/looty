@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd looty/target/scala-2.10/
+/usr/bin/python -m SimpleHTTPServer 8080

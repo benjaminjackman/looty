@@ -13,6 +13,10 @@ if [ ! -d "$DEPLOY_DIR" ]; then
   exit 2
 fi
 
+#sbt clean
+#sbt optimizeJS
+
+#Build and deploy the actual extension file
 rm -rf build
 mkdir build
 OUT="$(pwd)/build"
@@ -22,9 +26,15 @@ cp -r $SRC/images "$OUT"
 cp -r $SRC/jslib "$OUT"
 google-chrome --pack-extension=build --pack-extension-key=$HOME/looty.pem
 VERSION=$(jq -r .version build/manifest.json)
-# FNAME=looty-$VERSION.crx
-cp build.crx ../looty-deploy/looty-latest.crx
-cd ../looty-deploy 
-# git add $FNAME
+cp build.crx "$DEPLOY_DIR/looty-latest.crx"
+
+#Deploy the demo page
+rm -rf "$DEPLOY_DIR/demo"
+mkdir -p "$DEPLOY_DIR/demo"
+cp -r build/* "$DEPLOY_DIR/demo"
+cp -r $SRC/data "$DEPLOY_DIR/demo"
+
+#Push things up to github
+cd "$DEPLOY_DIR"
 git commit -a -m "Auto Commit of Latest Version $VERSION"
 git push origin HEAD

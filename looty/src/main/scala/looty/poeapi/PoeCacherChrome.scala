@@ -1,14 +1,12 @@
 package looty
-package chrome
+package poeapi
 
 import cgta.ojs.io.StoreMaster
 import scala.concurrent.Future
 import cgta.ojs.lang.JsFuture
-import looty.poeapi.PoeRpcs
 import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItem}
 import looty.model.parsers.ItemParser
 import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
-import looty.network.{PoeCacher}
 
 
 //////////////////////////////////////////////////////////////
@@ -130,69 +128,6 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
     }
   }
 
-  private def getAllStashTabs(league: String): Future[List[Future[(StashTabId, StashTab)]]] = {
-    getStashInfo(league).map { si =>
-      si.toList.map { sti =>
-        getStashTab(league, sti.i.toInt).map(StashTabId(sti.i.toInt) -> _) //.log("Got Stash Tab")
-      }
-    }
-  }
-
-  private def getAllInventories(league: String): Future[List[Future[(InventoryId, Inventory)]]] = {
-    getChars() map { chars =>
-      chars.toList.filter(_.league.toString =?= league).map { char =>
-        getInv(char.name).map(InventoryId(char.name) -> _)
-      }
-    }
-  }
-
-  override def getAllItems(league: String): Future[List[ComputedItem]] = {
-    for {
-      yf <- for (conFuts <- getAllContainersFuture(league)) yield JsFuture.sequence(conFuts)
-      y <- yf
-    } yield {
-      for ((conId, con) <- y; item <- con) yield item
-    }
-  }
-
-
-  override def getAllContainersFuture(league: String): Future[List[Future[(LootContainerId, List[ComputedItem])]]] = {
-    for {
-      tabInfos <- getStashInfo(league)
-      tabs <- getAllStashTabs(league)
-      invs <- getAllInventories(league)
-    } yield {
-      val xs = for {
-        fut <- tabs
-      } yield {
-        for {
-          (bagId, tab) <- fut
-        } yield {
-          bagId -> (for {
-            item <- tab.allItems(None)
-          } yield {
-            ItemParser.parseItem(item, bagId, tabInfos(bagId.idx).n)
-          })
-        }
-      }
-
-      val ys = for {
-        fut <- invs
-      } yield {
-        for {
-          (bagId, inv) <- fut
-        } yield {
-          bagId -> (for {
-            item <- inv.allItems(Some(bagId.character))
-          } yield {
-            ItemParser.parseItem(item, bagId, bagId.character)
-          })
-        }
-      }
-
-      xs ::: ys
-    }
-  }
 
   override def clearLeague(league: String): Future[Unit] = Store.clearLeague(league)
 }

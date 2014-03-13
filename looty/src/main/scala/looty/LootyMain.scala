@@ -1,15 +1,14 @@
 package looty
 
 import scala.scalajs.js
-import looty.views._
-import looty.mods.ModsCsvParser
+
 import scala.concurrent.Future
 import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
-import looty.network.PoeCacher
-import looty.chrome.PoeCacherChrome
+import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
+import looty.views.{WealthView, XpView, LootView, HomeView, View}
 
 
 //////////////////////////////////////////////////////////////
@@ -21,7 +20,12 @@ import looty.chrome.PoeCacherChrome
 //////////////////////////////////////////////////////////////
 
 
-object LootyMain {
+class LootyApp(demoMode: Boolean) {
+  implicit val pc: PoeCacher = {
+    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome()
+  }
+
+
   var curView: View = null
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
@@ -40,9 +44,15 @@ object LootyMain {
     console.debug("Adding routes")
     val crossroads = global.crossroads
     val hasher = global.hasher
-    crossroads.addRoute("home", () => setView(new HomeView))
+    val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, only works in chrome."""
+    crossroads.addRoute("home", () => setView(new HomeView(if(demoMode) demoBanner else "")))
     for (league <- Leagues.all) {
-      crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
+      if (demoMode) {
+        //Only have data for ambush
+        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Ambush)))
+      } else {
+        crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
+      }
     }
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("wealth", () => setView(new WealthView))
@@ -59,38 +69,25 @@ object LootyMain {
   }
 
   def initComponents(): Future[_] = {
-    //ModsCsvParser.init()
-    JsFuture.sequence(List(StoreMaster.init()))
+   //ModsCsvParser.init()
+    if (demoMode) {
+      JsFuture.successful()
+    } else {
+      JsFuture.sequence(List(StoreMaster.init()))
+    }
   }
 
-
-  def main(args: Array[String]) {
-
-    //    Blamo.kaboom()
-    implicit val pc: PoeCacher = new PoeCacherChrome()
-
-    console.log("Starting looty!")
+  def start() {
+    console.log(s"Starting Looty in ${if (demoMode) "Demo" else "Extension"}")
     initComponents().foreach { _ =>
       addRoutes
     }
   }
-
-
 }
 
-//object Blamo {
-//  def set[A](x: A) {}
-//  def get[A](): Option[A] = Some(1).asInstanceOf[Option[A]]
-//  def kaboom() {
-//    get() match {
-//      case Some(x) => set(x)
-//        //Emits:
-//        //var x2 = ScalaJS.as.scala_Some(x1);
-//        //var x = ScalaJS.as.scala_Nothing(x2.x__O());
-//        //this.set__O__V(x);
-//        //The following exception then is thrown:
-//        //Uncaught TypeError: Object #<Object> has no method 'scala_Nothing'
-//      case _ =>
-//    }
-//  }
-//}
+object LootyMain {
+  def main(args: Array[String]) {
+    new LootyApp(demoMode = global.chrome.storage.isUndefined).start()
+  }
+}
+

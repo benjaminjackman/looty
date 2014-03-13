@@ -3,7 +3,7 @@ package views
 
 import org.scalajs.jquery.JQuery
 import looty.poeapi.PoeTypes.Leagues
-import looty.network.PoeCacher
+import looty.poeapi.PoeCacher
 
 
 //////////////////////////////////////////////////////////////

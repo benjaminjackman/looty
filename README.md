@@ -1,6 +1,10 @@
 Looty
 =====
-An Google Chrome extension for Path of Exile that makes inventory searching fun!
+A Google Chrome extension for Path of Exile that makes inventory searching fun!
+
+[Homepage / Download Page](http://blog.jackman.biz/looty)
+
+[Demo](http://blog.jackman.biz/looty/demo/looty.html#/home)
 
 Built using [ScalaJs](http://www.scala-js.org/)
 
@@ -16,14 +20,13 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 
 
 ## Developer Log
-2014.03.12  -- [DEMO]     Working on abstracting on chrome specific parts so that a demo page can be made
+2014.03.13  -- [DEMO]    [v0.1.2] Working on abstracting on chrome specific parts and made a [demo page](http://blog.jackman.biz/looty/demo/looty.html#/home).
 2014.03.12  -- [DOCS]     Worked on updating documentation, probably should have done that before the alpha post
 2014.03.11  -- [RELEASE] Released Alpha 0.1.1 and published link to it on reddit.
 
 ##Todo
 
 ### For pure love of the loot
-- [ ] Display Item pictures in item details
 - [ ] Collectors view for Uniques (grayed out pictures for Uniques not obtained)
 - [ ] Trophy room that allows for displaying epic items. With categories (Best DPS Item, Highest Score By Slot)
 
