@@ -16,7 +16,7 @@ class TypeAExtensions[A](val a: A) extends AnyVal {
   def nullSafe: Option[A] = if (a == null || a.isInstanceOf[js.Undefined]) None else Some(a)
   def =?=[B](b: B)(implicit e: B =:= A) = a == b
   def =!=[B](b: B)(implicit e: B =:= A) = a != b
-  def toJs(implicit aToJs: A => js.Any): js.Any = aToJs(a)
+  def toJs[B <: js.Any](implicit aToJs: A => B): B = aToJs(a)
   //From orange
   def oIf[B](p: A => Boolean, t: A => B, f: A => B): B = if (p(a)) t(a) else f(a)
   def oEffect(f: A => Unit): A = { f(a); a }

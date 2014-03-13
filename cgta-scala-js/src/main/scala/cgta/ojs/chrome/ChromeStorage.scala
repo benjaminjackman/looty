@@ -58,12 +58,6 @@ trait ChromeStorageLocal extends js.Object {
   def set(items: js.Any) = ???
   def set(items: js.Any, cb: js.Function0[Unit]) = ???
 
-  //    def get(key: js.String) = ???
-  //    def get(key: js.String, cb: js.Dynamic => Unit) = ???
-  //
-  //    def get(keys: js.Array[js.String]) = ???
-  //    def get(keys: js.Array[js.String], cb: js.Dynamic => Unit) = ???
-
   def get(cb: js.Function1[js.Any, Unit])
 
   def get(keys: js.Any) = ???

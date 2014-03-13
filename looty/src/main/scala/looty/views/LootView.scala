@@ -3,7 +3,7 @@ package views
 
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{InventoryId, StashTabId, ContainerId, ComputedItemProps, PoeCacher, ComputedItem}
+import looty.model.{InventoryId, StashTabId, ContainerId, NamedItemProps, PoeCacher, ComputedItem}
 import scala.collection.immutable
 import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
 import scala.concurrent.Future
@@ -120,50 +120,32 @@ class LootView(val league: String) extends View {
     val elClear = jq("<div></div>")
     subControls.append(elClear)
 
-    val clearBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
+    val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">All Tabs</button>""")
+    showAllBtn.click { () =>
+      tabFilter = LootFilter.all
+      Filters.refresh()
+    }
+
+    val reloadAllBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
     |have changed several tabs. This will take some time, as GGG throttles the number of requests made per minute
     |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
-    elClear.append(clearBtn)
-    clearBtn.click { () =>
+
+    reloadAllBtn.click { () =>
       pc.Store.clearLeague(league).foreach { x =>
         global.location.reload()
       }
     }
 
+    elClear.append(reloadAllBtn)
+
     val elTabs = jq("<div></div>")
     val elChars = jq("<div></div>")
 
-    subControls.append(elTabs)
+    subControls.append(showAllBtn)
     subControls.append(elChars)
+    subControls.append(elTabs)
 
-    val title="Refresh this stash tab / character inventory from pathofexile.com"
-
-    //Buttons for stashed
-    val tabBtnsFut = for {
-      stis <- pc.Net.getStisAndStore(league)
-    } yield {
-      stis.foreach { sti =>
-        val button = jq(s"""<button title="$title">${sti.n}</button>""")
-        button.css(obj[js.Any](
-          color = "white",
-          textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
-          backgroundColor = sti.colour.toRgb
-        ))
-        val conId: ContainerId = StashTabId((sti.i: Double).toInt)
-        buttons += conId -> button
-        if (!containers.contains(conId)) button.css("border-color", "red")
-        elTabs.append(button)
-        button.on("click", (a: js.Any) => {
-          //Refresh this tab
-          pc.Net.getStashTabAndStore(league, sti.i.toInt).foreach { st =>
-            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
-            updateContainer(conId, items)
-          }
-          //Filter the grid to show only that tab
-//          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
-        })
-      }
-    }
+    val title = "Refresh this stash tab / character inventory from pathofexile.com, and then show only this tab."
 
     //Buttons for characters
     val charBtnsFut = for {
@@ -187,36 +169,46 @@ class LootView(val league: String) extends View {
               updateContainer(conId, items)
             }
             //Filter the grid to show only that tab
-//            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
           })
         }
+      }
+    }
+
+    //Buttons for stash tabs
+    val tabBtnsFut = for {
+      stis <- pc.Net.getStisAndStore(league)
+    } yield {
+      stis.foreach { sti =>
+        val button = jq(s"""<button title="$title">${sti.n}</button>""")
+        button.css(obj[js.Any](
+          color = "white",
+          textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
+          backgroundColor = sti.colour.toRgb
+        ))
+        val conId: ContainerId = StashTabId((sti.i: Double).toInt)
+        buttons += conId -> button
+        if (!containers.contains(conId)) button.css("border-color", "red")
+        elTabs.append(button)
+        button.on("click", (a: js.Any) => {
+          //Refresh this tab
+          pc.Net.getStashTabAndStore(league, sti.i.toInt).foreach { st =>
+            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
+            updateContainer(conId, items)
+          }
+          //Filter the grid to show only that tab
+          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+        })
       }
     }
 
     JsFuture.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
   }
 
-  //  private def showAnyItems(xs: List[AnyItem], location: String) {
-  //    val items = new js.Array[ComputedItem]()
-  //    for {
-  //      item <- xs
-  //    } {
-  //      val ci = ItemParser.parseItem(item)
-  //      ci.location = location
-  //      items.push(ci)
-  //    }
-  //    showComputedItems(items)
-  //  }
-
-  //  private def showComputedItems(xs: js.Array[ComputedItem]) {
-  //    console.log("SETTING ITEMS", xs)
-  //    dataView.setItems(xs)
-  //    grid.invalidate()
-  //    grid.render()
-  //  }
+  val columns = js.Array[js.Dynamic]()
 
   private def appendGrid() {
-    def makeColumn(name: String, tooltip: String, width : Int)(f: ComputedItem => js.Any) = {
+    def makeColumn(name: String, tooltip: String, width: Int)(f: ComputedItem => js.Any) = {
       val o = newObject
       o.id = name
       o.name = name
@@ -227,15 +219,80 @@ class LootView(val league: String) extends View {
       if (width =?= -1) o.width = 60 else o.width = width
       o
     }
-    val columns = js.Array[js.Dynamic]()
-    var columnFilters = Map.empty[String, LootFilter]
 
-    ComputedItemProps.all.foreach { p =>
+
+
+    NamedItemProps.all.foreach { p =>
       val col = makeColumn(p.shortName, p.description, p.width)(p.getJs)
       columns.push(col)
     }
 
-    def setFilter(colId: String, text: String) {
+
+    val options = {
+      val o = newObject
+      o.enableCellNavigation = true
+      o.enableColumnReorder = false
+      o.multiColumnSort = true
+      o.showHeaderRow = true
+      o.headerRowHeight = 30
+      o.explicitInitialization = true
+      o.dataItemColumnValueExtractor = (item: ComputedItem, column: js.Dynamic) => {
+        column.getter(item.asInstanceOf[js.Any])
+      }
+      o
+    }
+
+
+
+    grid = js.Dynamic.newInstance(global.Slick.Grid)("#grid", dataView, columns, options)
+
+    dataView.onRowCountChanged.subscribe(() => {
+      grid.updateRowCount()
+      grid.render()
+    })
+
+    dataView.onRowsChanged.subscribe((e: js.Dynamic, args: js.Dynamic) => {
+      grid.invalidateRows(args.rows)
+      grid.render()
+    })
+
+    Filters.refresh()
+
+    grid.onHeaderRowCellRendered.subscribe((e: js.Dynamic, args: js.Dynamic) => {
+      jq(args.node).empty()
+      val el = jq("<input type='text'>")
+          .data("columnId", args.column.id)
+
+      Filters.columnFilters.get(args.column.id.asJsStr).foreach { fil =>
+        el.`val`(fil.text)
+      }
+
+      el.on("keyup", () => {
+        Filters.set(args.column.id.toString, el.`val`().toString)
+        dataView.refresh()
+      })
+      el.appendTo(args.node)
+    })
+
+    addSort()
+    addMouseover()
+
+    def resize() {
+      jq("#grid").css("height", global.window.innerHeight - 120)
+      grid.resizeCanvas()
+    }
+
+    jq(global.window).resize(() => resize())
+    resize()
+
+    grid.init()
+
+  }
+
+  object Filters {
+    var columnFilters = Map.empty[String, LootFilter]
+
+    def set(colId: String, text: String) {
       val col = columns.find(_.id == colId.toJs).get
       if (text.trim.isEmpty) {
         columnFilters -= colId
@@ -273,72 +330,17 @@ class LootView(val league: String) extends View {
       }
     }
 
-    val options = {
-      val o = newObject
-      o.enableCellNavigation = true
-      o.enableColumnReorder = false
-      o.multiColumnSort = true
-      o.showHeaderRow = true
-      o.headerRowHeight = 30
-      o.explicitInitialization = true
-      o.dataItemColumnValueExtractor = (item: ComputedItem, column: js.Dynamic) => {
-        column.getter(item.asInstanceOf[js.Any])
-      }
-      o
-    }
-
-    def filter(item: ComputedItem): js.Boolean = {
-      columnFilters.forall { case (colId, fil) =>
-        fil.allows(item)
-      } && tabFilter.allows(item)
-    }
-
-
-    grid = js.Dynamic.newInstance(global.Slick.Grid)("#grid", dataView, columns, options)
-
-    dataView.onRowCountChanged.subscribe(() => {
-      grid.updateRowCount()
-      grid.render()
-    })
-
-    dataView.onRowsChanged.subscribe((e: js.Dynamic, args: js.Dynamic) => {
-      grid.invalidateRows(args.rows)
-      grid.render()
-    })
-
-    dataView.setFilter(filter _)
-
-    grid.onHeaderRowCellRendered.subscribe((e: js.Dynamic, args: js.Dynamic) => {
-      jq(args.node).empty()
-      val el = jq("<input type='text'>")
-          .data("columnId", args.column.id)
-
-      columnFilters.get(args.column.id.asJsStr).foreach { fil =>
-        el.`val`(fil.text)
+    def refresh() {
+      def filter(item: ComputedItem): js.Boolean = {
+        (columnFilters.forall { case (colId, fil) =>
+          fil.allows(item)
+        } && tabFilter.allows(item)).toJs
       }
 
-      el.on("keyup", () => {
-        setFilter(args.column.id.toString, el.`val`().toString)
-        dataView.refresh()
-      })
-      el.appendTo(args.node)
-    })
-
-    addSort()
-    addMouseover()
-    //addFiltering()
-
-    def resize() {
-      jq("#grid").css("height", global.window.innerHeight - 120)
-      grid.resizeCanvas()
+      dataView.setFilter(filter _)
     }
-
-    jq(global.window).resize(() => resize())
-    resize()
-
-    grid.init()
-
   }
+
 
   private def addSort() {
     grid.onSort.subscribe((e: js.Dynamic, args: js.Dynamic) => {

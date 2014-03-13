@@ -12,7 +12,7 @@ import scala.scalajs.js
 //////////////////////////////////////////////////////////////
 
 
-object ComputedItemProps {
+object NamedItemProps {
   val _all = new js.Array[ComputedItemProp[_]]()
   lazy val all = _all.toList
 
