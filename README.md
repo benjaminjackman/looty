@@ -37,6 +37,8 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Custom Calculated Columns
 - [ ] Add / Remove Columns
 - [ ] Multi-Select Rows with Ctrl (useful for other features)
+- [ ] Label items with colors (how can this persist across item moves?)
+- [ ] Create an inventory view that shows item by color for help organizing / garbage collecting items
 - [ ] Recipes (Chaos for set etc, not sure if GGG frowns on this or not)
 - [ ] Give the players a playing mode (via the leveling screen) and let them mark certain stash tabs as auto-refresh then auto-watch those tabs and make sounds when an item is looted and identified that passes certain filters.
 - [ ] Custom Filter sets (can be tied to store pages)
