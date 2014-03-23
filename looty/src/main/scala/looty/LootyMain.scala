@@ -3,12 +3,12 @@ package looty
 import scala.scalajs.js
 
 import scala.concurrent.Future
-import cgta.ojs.io.StoreMaster
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
 import looty.views.{WealthView, XpView, LootView, HomeView, View}
 import scala.scalajs.js.annotation.JSExport
+import looty.chrome.StoreMaster
 
 
 //////////////////////////////////////////////////////////////

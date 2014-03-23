@@ -1,12 +1,10 @@
 package looty
 package poeapi
 
-import cgta.ojs.io.StoreMaster
 import scala.concurrent.Future
 
-import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItem}
-import looty.model.parsers.ItemParser
 import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
+import looty.chrome.StoreMaster
 
 
 //////////////////////////////////////////////////////////////

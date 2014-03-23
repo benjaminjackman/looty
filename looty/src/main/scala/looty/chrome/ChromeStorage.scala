@@ -1,4 +1,4 @@
-package cgta.ojs
+package looty
 package chrome
 
 import scala.scalajs.js.annotation.JSName

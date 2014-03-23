@@ -1,19 +1,19 @@
-package cgta.ojs
-package io
+package looty
+package chrome
 
-import scala.concurrent.{ExecutionContext, Future}
-import cgta.ojs.chrome.ChromeStorage
 import scala.scalajs.js
+import scala.concurrent.{Future, ExecutionContext}
 import scala.scalajs.js.Dictionary
 
 
 //////////////////////////////////////////////////////////////
-// Created by bjackman @ 12/31/13 1:18 PM
+// Created by bjackman @ 3/23/14 1:53 AM
 //////////////////////////////////////////////////////////////
 
 
 object StoreMaster {
   private val backingStore = ChromeStorage.local
+
   private val values = scala.collection.mutable.Map.empty[String, js.Any]
 
 
