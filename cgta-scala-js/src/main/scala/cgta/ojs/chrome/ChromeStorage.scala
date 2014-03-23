@@ -3,8 +3,8 @@ package chrome
 
 import scala.scalajs.js.annotation.JSName
 import scala.scalajs.js
-import scala.concurrent.Future
-import cgta.ojs.lang.JsPromise
+import scala.concurrent.{Promise, Future}
+
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/11/13 12:49 AM
@@ -15,13 +15,13 @@ import cgta.ojs.lang.JsPromise
 object ChromeStorageLocal {
   implicit class LocalExt(val x: ChromeStorageLocal) extends AnyVal {
     def getAll(): Future[js.Any] = {
-      val p = JsPromise[js.Any]
+      val p = Promise[js.Any]
       x.get((o: js.Any) => p.success(o))
       p.future
     }
 
     def futGet[B](key: js.String): Future[Option[B]] = {
-      val p = JsPromise[Option[B]]()
+      val p = Promise[Option[B]]()
       def setPromise(kv: js.Any) {
         p.success(kv.asJsDic[B](key).nullSafe)
       }
@@ -29,7 +29,7 @@ object ChromeStorageLocal {
       p.future
     }
     def futSet(key: js.String, value: js.Any): Future[Unit] = {
-      val p = JsPromise[Unit]()
+      val p = Promise[Unit]()
       def setPromise() {
         p.success(Unit)
       }
@@ -39,7 +39,7 @@ object ChromeStorageLocal {
       p.future
     }
     def futClear(key: js.String): Future[Unit] = {
-      val p = JsPromise[Unit]()
+      val p = Promise[Unit]()
       def clearPromise() {
         p.success(Unit)
       }

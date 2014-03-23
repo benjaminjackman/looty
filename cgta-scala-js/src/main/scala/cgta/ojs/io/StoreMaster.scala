@@ -1,7 +1,7 @@
 package cgta.ojs
 package io
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import cgta.ojs.chrome.ChromeStorage
 import scala.scalajs.js
 import scala.scalajs.js.Dictionary
@@ -16,7 +16,8 @@ object StoreMaster {
   private val backingStore = ChromeStorage.local
   private val values = scala.collection.mutable.Map.empty[String, js.Any]
 
-  def init(): Future[Unit] = {
+
+  def init()(implicit context: ExecutionContext): Future[Unit] = {
     console.debug("Store Master Init")
     backingStore.getAll().map { allObjs =>
       val dict = allObjs.asInstanceOf[js.Dictionary[js.Any]]

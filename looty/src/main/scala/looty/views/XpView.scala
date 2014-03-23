@@ -4,7 +4,7 @@ package views
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
-import cgta.ojs.io.{DurationText, StoreMaster}
+import cgta.ojs.io.DurationText
 import looty.views.GemHistory.GemHistoryExtensions
 import looty.poeapi.PoeCacher
 
@@ -12,6 +12,8 @@ import looty.poeapi.PoeCacher
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/31/13 2:11 PM
 //////////////////////////////////////////////////////////////
+
+
 object GemProgress {
   def fromItem(item: AnyItem): Option[GemProgress] = {
     val time = new js.Date().getTime()

@@ -3,7 +3,6 @@ package looty
 import scala.scalajs.js
 
 import scala.concurrent.Future
-import cgta.ojs.lang.JsFuture
 import cgta.ojs.io.StoreMaster
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
@@ -68,12 +67,13 @@ class LootyApp(demoMode: Boolean) {
     hasher.init()
   }
 
+
   def initComponents(): Future[_] = {
    //ModsCsvParser.init()
     if (demoMode) {
-      JsFuture.successful()
+      Future.successful()
     } else {
-      JsFuture.sequence(List(StoreMaster.init()))
+      Future.sequence(List(StoreMaster.init()))
     }
   }
 

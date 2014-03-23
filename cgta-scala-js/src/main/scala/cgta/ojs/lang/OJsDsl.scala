@@ -2,7 +2,7 @@ package cgta.ojs
 package lang
 
 import scala.scalajs.js
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 
 //////////////////////////////////////////////////////////////
@@ -18,29 +18,19 @@ trait OJsDsl extends JsExtensions {
   val undefined = global.undefined
 
   def newObject = js.Object().asInstanceOf[js.Dynamic]
-  def debugger = js.eval("debugger")
 
-  //Converts a callback style into a future
-  //el.on("click", (x) => console.log(x))
-  //decant(el.on("click", _)).onSuccess(console.log(_))
-  def decant1[A](cb0: ((A) => Unit) => Unit): Future[A] = {
-    val p = JsPromise[A]()
-    def cb(a: A) {
-      p.success(a)
+  implicit object QueueExecutionContext extends ExecutionContext {
+
+    def execute(runnable: Runnable) = {
+      val lambda: js.Function = () =>
+        try {runnable.run()} catch {case t: Throwable => reportFailure(t)}
+      js.Dynamic.global.setTimeout(lambda, 0)
     }
-    cb0(cb)
-    p.future
-  }
-  def decant0(cb0: (() => Unit) => Unit): Future[Unit] = {
-    val p = JsPromise[Unit]()
-    def cb() {
-      p.success(Unit)
-    }
-    cb0(cb)
-    p.future
+
+    def reportFailure(t: Throwable) =
+      Console.err.println("Failure in async execution: " + t)
+
   }
 
-
-  implicit val jsExecutionContext = JsFuture.InternalCallbackExecutor
 
 }
