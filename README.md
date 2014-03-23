@@ -34,6 +34,9 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Custom and better default item scoring options [reddit post](http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/)
 - [ ] Show reason for score in the item detail.
 - [x] Load StashTab on click
+- [ ] Ability to click on a row and label the item in that row
+- [ ] Column for recipes for an item (chromatics mostly)
+- [ ] Recipes view
 - [ ] Custom Calculated Columns
 - [ ] Add / Remove Columns
 - [ ] Multi-Select Rows with Ctrl (useful for other features)
@@ -66,6 +69,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Handle when stash tabs are re-ordered
 - [ ] Allow users to upload items whose affixes failed to parse
 - [ ] Or maybe make affix parsers configurable
+- [ ] Better refresh logic, remove only stash tabs might be left behind after a refresh
 
 ### User Help
 - [x] Messaging Area To Help players understand what is going on as it loads

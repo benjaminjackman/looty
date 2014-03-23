@@ -51,9 +51,8 @@ object ItemScorer {
     fscore1("60%+ evasion")(_.increased.evasion >= 60)
     fscore1("60%+ energyShield")(_.increased.energyShield >= 60)
 
-    fscore1("1000+ evasion")(_.properties.evasionRating >= 1000)
     fscore1("200+ energy shield")(_.properties.energyShield >= 200)
-    fscore1("1000+ armour")(_.properties.armour >= 1000)
+    fscore1("1000+ armour + evasion")(i => i.properties.evasionRating + i.properties.armour >= 1000)
 
     fscore1("200+ armour belt")(_.slots.isBelt, _.plusTo.armour >= 200)
 
