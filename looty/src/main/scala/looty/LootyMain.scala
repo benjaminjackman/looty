@@ -9,6 +9,7 @@ import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
 import looty.views.{WealthView, XpView, LootView, HomeView, View}
+import scala.scalajs.js.annotation.JSExport
 
 
 //////////////////////////////////////////////////////////////
@@ -29,7 +30,6 @@ class LootyApp(demoMode: Boolean) {
   var curView: View = null
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-
 
   def setView(v: View) {
     curView.nullSafe.foreach {_.stop()}
@@ -85,8 +85,10 @@ class LootyApp(demoMode: Boolean) {
   }
 }
 
+@JSExport
 object LootyMain {
-  def main(args: Array[String]) {
+  @JSExport
+  def main() {
     new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
   }
 }
