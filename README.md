@@ -72,6 +72,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Better refresh logic, remove only stash tabs might be left behind after a refresh
 
 ### User Help
+- [ ] Simplify Demo Home Page to be a lot more like http://haste-lang.org/
 - [x] Messaging Area To Help players understand what is going on as it loads
 - [ ] Tutorial video on searches operators within the boxes
 - [ ] Add feedback / suggestion options inside of the extension itself
