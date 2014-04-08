@@ -34,7 +34,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ### Loot Management
 - [ ] Require ctrl to show tooltips (fph suggestion)
 - [ ] Add / Remove Columns (prioritized for fph)
-- [ ] Odd / even row colors (fph)
+- [x] Odd / even row colors (fph)
 - [ ] Custom and better default item scoring options [reddit post](http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/)
 - [ ] Show reason for score in the item detail.
 - [x] Load StashTab on click
