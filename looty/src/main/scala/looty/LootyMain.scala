@@ -9,6 +9,7 @@ import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
 import looty.views.{WealthView, XpView, LootView, HomeView, View}
 import scala.scalajs.js.annotation.JSExport
 import looty.chrome.StoreMaster
+import scala.util.Try
 
 
 //////////////////////////////////////////////////////////////
@@ -44,7 +45,9 @@ class LootyApp(demoMode: Boolean) {
     val crossroads = global.crossroads
     val hasher = global.hasher
     val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, if you like what you see."""
-    crossroads.addRoute("home", () => setView(new HomeView(if(demoMode) demoBanner else "")))
+    val banner = if (demoMode) demoBanner else ""
+    val version = if (demoMode) "Demo" else Try(global.chrome.app.getDetails().version.asInstanceOf[String]).getOrElse("Unknown")
+    crossroads.addRoute("home", () => setView(new HomeView(banner = banner, version = version)))
     for (league <- Leagues.all) {
       if (demoMode) {
         //Only have data for ambush
@@ -69,7 +72,7 @@ class LootyApp(demoMode: Boolean) {
 
 
   def initComponents(): Future[_] = {
-   //ModsCsvParser.init()
+    //ModsCsvParser.init()
     if (demoMode) {
       Future.successful()
     } else {
