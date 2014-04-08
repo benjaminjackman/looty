@@ -30,7 +30,11 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Collectors view for Uniques (grayed out pictures for Uniques not obtained)
 - [ ] Trophy room that allows for displaying epic items. With categories (Best DPS Item, Highest Score By Slot)
 
+
 ### Loot Management
+- [ ] Require ctrl to show tooltips (fph suggestion)
+- [ ] Add / Remove Columns (prioritized for fph)
+- [ ] Odd / even row colors (fph)
 - [ ] Custom and better default item scoring options [reddit post](http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/)
 - [ ] Show reason for score in the item detail.
 - [x] Load StashTab on click
@@ -38,7 +42,6 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 - [ ] Column for recipes for an item (chromatics mostly)
 - [ ] Recipes view
 - [ ] Custom Calculated Columns
-- [ ] Add / Remove Columns
 - [ ] Multi-Select Rows with Ctrl (useful for other features)
 - [ ] Label items with colors (how can this persist across item moves?)
 - [ ] Create an inventory view that shows item by color for help organizing / garbage collecting items
