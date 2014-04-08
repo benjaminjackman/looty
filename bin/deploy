@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eax
 
 
 if [ "$0" != "bin/deploy" ]; then
@@ -17,6 +17,10 @@ sbt clean
 sbt optimizeJS
 
 #Build and deploy the actual extension file
+if [ -f "build.crx" ]; then 
+  rm build.crx
+fi
+
 rm -rf build
 mkdir build
 OUT="$(pwd)/build"
