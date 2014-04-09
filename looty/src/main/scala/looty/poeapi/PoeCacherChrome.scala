@@ -1,12 +1,10 @@
 package looty
 package poeapi
 
-import cgta.ojs.io.StoreMaster
 import scala.concurrent.Future
-import cgta.ojs.lang.JsFuture
-import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItem}
-import looty.model.parsers.ItemParser
+
 import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
+import looty.chrome.StoreMaster
 
 
 //////////////////////////////////////////////////////////////
@@ -38,7 +36,7 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
         clearStashTab(league, sti.i.toInt)
       }
 
-      JsFuture.sequence(
+      Future.sequence(
         List(setChars(otherLeagueChars.toJsArray), clearStis(league)) :::
             tabsToClear
       ).map(x => Unit)
@@ -87,8 +85,8 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
       Net.getCharsAndStore
     } else {
       //Attempt to get get the chars from local storage, or else go out to the network and load
-      JsFuture.successful(Store.getChars) flatMap {
-        case Some(chars) => JsFuture(chars)
+      Future.successful(Store.getChars) flatMap {
+        case Some(chars) => Future(chars)
         case None => Net.getCharsAndStore
       }
     }
@@ -99,8 +97,8 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
     if (forceNetRefresh) {
       Net.getInvAndStore(char)
     } else {
-      JsFuture.successful(Store.getInv(char)) flatMap {
-        case Some(inv) => JsFuture(inv)
+      Future.successful(Store.getInv(char)) flatMap {
+        case Some(inv) => Future(inv)
         case None => Net.getInvAndStore(char)
       }
     }
@@ -110,8 +108,8 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
     if (forceNetRefresh) {
       Net.getStisAndStore(league)
     } else {
-      JsFuture.successful(Store.getStis(league)) flatMap {
-        case Some(stis) => JsFuture(stis)
+      Future.successful(Store.getStis(league)) flatMap {
+        case Some(stis) => Future(stis)
         case None => Net.getStisAndStore(league)
       }
     }
@@ -121,8 +119,8 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
     if (forceNetRefresh) {
       Net.getStashTabAndStore(league, tabIdx)
     } else {
-      JsFuture.successful(Store.getStashTab(league, tabIdx)) flatMap {
-        case Some(st) => JsFuture(st)
+      Future.successful(Store.getStashTab(league, tabIdx)) flatMap {
+        case Some(st) => Future(st)
         case None => Net.getStashTabAndStore(league, tabIdx)
       }
     }

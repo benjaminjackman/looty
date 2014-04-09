@@ -5,7 +5,7 @@ import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.model.{StashTabId, InventoryId, LootContainerId, NamedItemProps, ComputedItem}
 import scala.collection.immutable
-import cgta.ojs.lang.{JsFuture, JsObjectBuilder}
+import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
 import looty.model.parsers.ItemParser
 import looty.poeapi.PoeCacher
@@ -201,7 +201,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
       }
     }
 
-    JsFuture.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
+    Future.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
   }
 
   val columns = js.Array[js.Dynamic]()

@@ -72,15 +72,14 @@ object Build extends sbt.Build {
   lazy val csjs = pject("cgta-scala-js")
 
   lazy val looty = pject("looty").settings(
-    unmanagedSources in(Compile, ScalaJSKeys.packageJS) += baseDirectory.value / "js" / "startup.js",
     resourceGenerators in Compile <+= generateHtml,
     resourceGenerators in Compile <+= copyAll).dependsOn(csjs)
 
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
 
   object Libs {
-    val jQuery = "org.scala-lang.modules.scalajs" %% "scalajs-jquery" % "0.1-SNAPSHOT"
-    val dom = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.1-SNAPSHOT"
+    val jQuery = "org.scala-lang.modules.scalajs" %% "scalajs-jquery" % "0.3"
+    val dom = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.3"
     //    lazy val dom    = RootProject(file("../scala-js-dom"))
     //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }

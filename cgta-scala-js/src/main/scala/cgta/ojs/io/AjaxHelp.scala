@@ -3,8 +3,8 @@ package io
 
 import org.scalajs.jquery.{JQueryAjaxSettings, JQueryStatic}
 import scala.scalajs.js
-import cgta.ojs.lang.{JsFuture, JsPromise}
 import scala.concurrent.Future
+import cgta.ojs.lang.JsPromises
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/9/13 11:15 PM
@@ -23,7 +23,7 @@ object AjaxHelp {
   }
 
   def apply[A](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
-    JsFuture.wrapPromisesAPlus[A] {
+    JsPromises.wrap[A] {
       val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDic[String]
       data.foreach(data => req("data") = data)
       jQuery.ajax(req.asInstanceOf[JQueryAjaxSettings])

@@ -4,7 +4,6 @@ package poeapi
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
 import looty.model.{InventoryId, StashTabId, LootContainerId, ComputedItem}
-import cgta.ojs.lang.JsFuture
 import looty.model.parsers.ItemParser
 
 //////////////////////////////////////////////////////////////
@@ -41,7 +40,7 @@ trait PoeCacher {
 
   def getAllItems(league: String): Future[List[ComputedItem]] = {
     for {
-      yf <- for (conFuts <- getAllContainersFuture(league)) yield JsFuture.sequence(conFuts)
+      yf <- for (conFuts <- getAllContainersFuture(league)) yield Future.sequence(conFuts)
       y <- yf
     } yield {
       for ((conId, con) <- y; item <- con) yield item

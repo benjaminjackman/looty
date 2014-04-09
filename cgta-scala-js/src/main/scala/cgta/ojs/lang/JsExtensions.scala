@@ -2,7 +2,7 @@ package cgta.ojs
 package lang
 
 import scala.scalajs.js
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Promise, Future}
 import scala.util.{Failure, Success}
 import scala.collection.mutable.ArrayBuffer
 
@@ -37,8 +37,8 @@ class JsAnyExtensions(val a: js.Any) extends AnyVal {
 }
 
 class JsFutureExtensions[A](val f: Future[A]) extends AnyVal {
-  def log(prefix: String = null): Future[A] = {
-    val p = JsPromise[A]()
+  def log(prefix: String = null)(implicit executor: ExecutionContext): Future[A] = {
+    val p = Promise[A]()
     f.onComplete {
       case Success(x) =>
         if (prefix != null) console.log(prefix, x) else console.log(x.nullSafe.map(_.toString).getOrElse(""), x)
