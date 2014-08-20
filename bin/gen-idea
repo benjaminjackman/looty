@@ -1,8 +1,8 @@
 #!/bin/bash -eax
 
 #Clean things out
-rm .idea/libraries/*
-rm .idea_modules/*
+rm -f .idea/libraries/*
+rm -f .idea_modules/*
 
 #Obviously gen the idea files
 sbt gen-idea

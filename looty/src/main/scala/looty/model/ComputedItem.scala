@@ -15,7 +15,7 @@ import looty.model.WeaponTypes.WeaponType
 
 
 case class MinMaxDamage(var min: Double, var max: Double) {
-  def avg = min + max / 2.0
+  def avg = (min + max) / 2.0
   def +=(min: Double, max: Double) {
     this.min += min
     this.max += max
