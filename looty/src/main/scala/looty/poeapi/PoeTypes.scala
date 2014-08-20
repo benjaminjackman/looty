@@ -24,10 +24,12 @@ object PoeTypes {
 
     val Standard   = "Standard"
     val Hardcore   = "Hardcore"
-    val Ambush     = "Ambush"
-    val Invasion   = "Invasion"
+//    val Ambush     = "Ambush"
+//    val Invasion   = "Invasion"
+    val Beyond = "Beyond"
+    val Rampage = "Rampage"
 
-    val all = List(Standard, Hardcore, Ambush, Invasion)
+    val all = List(Standard, Hardcore, Beyond, Rampage)
   }
 
   trait CharacterInfo extends js.Object {

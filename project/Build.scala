@@ -37,18 +37,25 @@ object Build extends sbt.Build {
         List(devFile, releaseFile)
 
     }
-    Seq[File]()
+    Seq[File](outMappings.map(_._1): _*)
   }
 
   val copyAll = Def.task {
     val outDir = (crossTarget in Compile).value
 
     IO.copyFile((resourceDirectory in Compile).value / "manifest.json", outDir / "manifest.json")
+    IO.copyFile((sourceDirectory in Compile).value / "html" / "popup.html", outDir / "popup.html")
     IO.copyDirectory((resourceDirectory in Compile).value / "images", outDir / "images")
     IO.copyDirectory((resourceDirectory in Compile).value / "data", outDir / "data")
     IO.copyDirectory((baseDirectory in Compile).value / "jslib", outDir / "jslib")
 
-    Seq[File]()
+    Seq[File](
+      (resourceDirectory in Compile).value / "manifest.json",
+      (sourceDirectory in Compile).value / "html" / "popup.html",
+      (resourceDirectory in Compile).value / "images",
+      (resourceDirectory in Compile).value / "data",
+      (baseDirectory in Compile).value / "jslib"
+    )
 
   }
 
@@ -79,7 +86,7 @@ object Build extends sbt.Build {
 
   object Libs {
     val jQuery = "org.scala-lang.modules.scalajs" %% "scalajs-jquery" % "0.3"
-    val dom = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.3"
+    val dom    = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.3"
     //    lazy val dom    = RootProject(file("../scala-js-dom"))
     //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }

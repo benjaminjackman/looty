@@ -1,0 +1,44 @@
+#!/bin/bash -eax
+
+
+if [ "$0" != "bin/deploy" ]; then
+  echo "Please run from the root of the looty project folder"
+  exit 1
+fi
+
+DEPLOY_DIR=../looty-deploy
+
+if [ ! -d "$DEPLOY_DIR" ]; then
+  echo "Need to have a ../looty-deploy directory relative to the looty checkout"
+  exit 2
+fi
+
+sbt clean
+sbt optimizeJS
+
+#Build and deploy the actual extension file
+if [ -f "build.crx" ]; then 
+  rm build.crx
+fi
+
+rm -rf build
+mkdir build
+OUT="$(pwd)/build"
+SRC=looty/target/scala-2.10
+cp "$SRC/looty.html" "$SRC/looty-opt.js" "$SRC/manifest.json" "$OUT"
+cp -r $SRC/images "$OUT"
+cp -r $SRC/jslib "$OUT"
+google-chrome --pack-extension=build --pack-extension-key=$HOME/looty.pem
+VERSION=$(jq -r .version build/manifest.json)
+cp build.crx "$DEPLOY_DIR/looty-latest.crx"
+
+#Deploy the demo page
+rm -rf "$DEPLOY_DIR/demo"
+mkdir -p "$DEPLOY_DIR/demo"
+cp -r build/* "$DEPLOY_DIR/demo"
+cp -r $SRC/data "$DEPLOY_DIR/demo"
+
+#Push things up to github
+cd "$DEPLOY_DIR"
+git commit -a -m "Auto Commit of Latest Version $VERSION"
+git push origin HEAD

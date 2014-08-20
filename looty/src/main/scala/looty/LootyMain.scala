@@ -50,8 +50,7 @@ class LootyApp(demoMode: Boolean) {
     crossroads.addRoute("home", () => setView(new HomeView(banner = banner, version = version)))
     for (league <- Leagues.all) {
       if (demoMode) {
-        //Only have data for ambush
-        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Ambush)))
+        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Beyond)))
       } else {
         crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
       }
