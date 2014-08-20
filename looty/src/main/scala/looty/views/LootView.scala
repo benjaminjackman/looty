@@ -451,7 +451,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
       item.item.name.toString,
       item.item.typeLine.toString,
       s"Location: ${item.locAndCoords}",
-      "Sockets: " + item.socketColors,
+      if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
       properties,
       requirements,
       item.item.descrText.toOption.map(_.toString).getOrElse(""),

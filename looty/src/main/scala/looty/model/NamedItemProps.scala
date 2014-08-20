@@ -20,7 +20,7 @@ object NamedItemProps {
   trait ComputedItemProp[A] {
     val shortName  : String
     val description: String
-    val width : Int
+    val width      : Int
     def getJs(ci: ComputedItem): js.Any
   }
   class ComputedItemPropCategory(
@@ -76,6 +76,13 @@ object NamedItemProps {
     "The sockets sorted by number in group, then by color",
     100)(_.socketColors)
   add(Sockets)
+
+  case object Misc extends ComputedItemPropPosNumber("misc",
+    "For gems the gem level, " +
+      "for currency the number of items in the stack, " +
+      "for socketed items the total number of sockets, " +
+      "for maps the map level")(_.misc)
+  add(Misc)
 
   case object Quality extends ComputedItemPropPosNumber("qual",
     "The quality of the item")(_.properties.quality)

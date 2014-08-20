@@ -168,6 +168,20 @@ object PoeTypes {
         }).headOption
       }
 
+      def getMapLevel: Option[Int] = {
+        (for {
+          props <- x.properties.toOption.toList
+          prop <- props.toList.find(_.name.toString == "Map Level").toList
+          lvss <- prop.values.toList
+          lv <- lvss.toList.headOption
+          l = lv.toString.toInt
+        } yield {
+          l
+        }).headOption
+      }
+
+
+
       def getLocationId: String = {
         val i = if (x.inItem.isEmpty) x else x.inItem.get
         var res = s"l:${i.league}"
@@ -177,6 +191,18 @@ object PoeTypes {
         if (i.y.nonEmpty) res += s";y:${i.y}"
         if (x.inItem.nonEmpty) res += s";s:${x.socket}"
         res
+      }
+
+      def getCountInStack: Option[Int] = {
+        (for {
+          props <- x.properties.toOption.toList
+          prop <- props.toList.find(_.name.toString == "Stack Size").toList
+          lvss <- prop.values.toList
+          lv <- lvss.toList.headOption
+          l = lv.toString.takeWhile(c => c >= '0' && c <= '9').toInt
+        } yield {
+          l
+        }).headOption
       }
     }
   }

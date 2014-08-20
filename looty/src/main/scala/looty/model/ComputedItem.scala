@@ -108,6 +108,19 @@ class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val loc
 
   var sockets: List[List[String]] = Nil
   lazy val socketColors = sockets.map(_.mkString("-")).mkString(" ")
+  lazy val socketCnt: Int = sockets.map(_.size).sum
+  lazy val maxLink = sockets.map(_.size).maxOpt.getOrElse(0)
+  lazy val propLevel: Int = item.getLevel.getOrElse(0)
+  lazy val mapLevel: Int = item.getMapLevel.getOrElse(0)
+  lazy val countInStack: Int = item.getCountInStack.getOrElse(0)
+
+  lazy val misc : Double = {
+    if (countInStack > 0) countInStack
+    else if (socketCnt > 0) socketCnt
+    else if (propLevel > 0) propLevel
+    else if (mapLevel > 0) mapLevel
+    else 0.0
+  }
 
   object requirements {
     var level     = 0.0
