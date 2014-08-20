@@ -21,7 +21,6 @@ class HomeView(val banner : String, val version : String) extends View {
       |The XP view will attempt to predict when a gem will level up.<br>
       |GGG seems to only refresh items and gem information when a character changes zones,
       |so keep that in mind if things aren't showing up.<br>
-      |This is a buggy alpha version<br>
       |source code available on <a href="https://github.com/benjaminjackman/looty">github</a>.<br>
       |<h3>Help and more info available <a href="http://blog.jackman.biz/looty">here</a> (eventually)</h3>
       |<h4> Tips & Tricks & Miscellaneous Details </h4>
@@ -48,7 +47,6 @@ class HomeView(val banner : String, val version : String) extends View {
       |<li>Entering .-.-.-. in the sockets column will match all four link+ socketed items</li>
       |<li>Entering B-B-G-R in the sockets column will match all four link+ socketed items, that have 2 blues linked with a green and red. </li>
       |<li>The UI is dark so that you can leave it up on a second monitor while you play.</li>
-      |<li>This is just an alpha so a lot of affixes aren't parsed yet.</li>
       |<li>The score field was roughly based on <a href="http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/">this</a> reddit post</li>
       |<li>Looty was written in <a href="http://www.scala-js.org/">ScalaJs</a></li>
       |</ul>
