@@ -2,9 +2,7 @@ Looty
 =====
 A Google Chrome extension for Path of Exile that makes inventory searching fun!
 
-[Homepage / Download Page](http://blog.jackman.biz/looty)
-
-[Demo](http://blog.jackman.biz/looty/demo/looty.html#/home)
+Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/looty/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en&gl=US)
 
 Built using [ScalaJs](http://www.scala-js.org/)
 
