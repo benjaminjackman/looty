@@ -31,9 +31,9 @@ class HomeView(val banner : String, val version : String) extends View {
       |<li>Try starting the search with &gt; or &lt; or =</li>
       |<li>The search is not case sensitive.</li>
       |<li>If the first term isn't an operator, then it defaults to regular expression search.</li>
-      |<li>Spaces between words are treated as an or, so only word has to match to return a result.</li>
+      |<li>Spaces between words are treated as an 'OR', so only one word has to match to return a result.</li>
       |<li>If you need to search for a space just use a \s instead.</li>
-      |<li>For example brass maul, will match 'brass maul' and 'spiny maul' </li>
+      |<li>For example brass maul, will match 'brass maul' and 'spiny maul' and 'brass monkey'</li>
       |<li>Whereas brass\smaul will match only 'brass maul'.</li>
       |</ul>
       |</li>
