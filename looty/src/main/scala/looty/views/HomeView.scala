@@ -59,6 +59,16 @@ class HomeView(val banner : String, val version : String) extends View {
       |</div>
       |<div>
       |<h3> Version History</h3><br>
+      |0.2.1.1 <br>
+      |<ul>
+      |<li>
+      |Added a misc column that will show: <br>
+      | count of items in stack / mapLevel / gemLevel / Total #Sockets <br>
+      | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvnq3h">hih0</a><br>
+      | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvfh33">Sirais</a><br>
+      | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvo798">tokyotapes</a><br>
+      |</li>
+      |</ul>
       |0.2.1 <br>
       |<ul>
       |<li>
