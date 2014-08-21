@@ -21,12 +21,19 @@ object ItemParser {
 
   def parseItem(item: AnyItem, containerId : LootContainerId, locationName : String): ComputedItem = {
     val ci = new ComputedItem(item, containerId, locationName)
-    if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
-    if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)
-    if (ci.isEquippable || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
-    if (ci.isEquippable || ci.item.isGem) parseRequirements(ci)
-    if (ci.isEquippable) parseTypeLine(ci)
-    if (ci.isEquippable) parseSockets(ci)
+    try {
+      if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
+      if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)
+      if (ci.isEquippable || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
+      if (ci.isEquippable || ci.item.isGem) parseRequirements(ci)
+      if (ci.isEquippable) parseTypeLine(ci)
+      if (ci.isEquippable) parseSockets(ci)
+
+    } catch {
+      case e : Throwable =>
+        console.error("Unable To Parse Properties for item", item)
+        e.printStackTrace()
+    }
     ci
   }
 

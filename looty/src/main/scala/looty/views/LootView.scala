@@ -88,36 +88,37 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
   private def setHtml(el: JQuery): Future[Unit] = {
     el.empty()
+    el.append("""<div id="menubar2"></div>""")
     el.append("""<div id="controls"></div>""")
     el.append("""<div id="grid"></div>""")
     el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
     appendGrid()
+    appendMenubar2Item(el = jq("#menubar2"), toggled = jq("#controls"), name = "controls")
     appendControls(jq("#controls"))
   }
 
-  private def appendControls(el: JQuery): Future[Unit] = {
-
-    el.empty()
-    val showHide = jq("""<a href="javascript:void(0)">[ show/hide controls ]</a>""")
+  private def appendMenubar2Item(el: JQuery, toggled : JQuery, name : String) = {
+    val showHide = jq(s"""<a href="javascript:void(0)">[ $name ]</a>""")
     el.append(showHide)
     var shown = true
-    val subControls = jq("<div></div>")
-    el.append(subControls)
     showHide.click { () =>
       if (shown) {
         shown = false
-        subControls.hide()
+        toggled.hide()
       } else {
         shown = true
-        subControls.show()
+        toggled.show()
       }
       autoSizeGridHeight()
       false
     }
     showHide.trigger("click")
+  }
+
+  private def appendControls(el: JQuery): Future[Unit] = {
 
     val elClear = jq("<div></div>")
-    subControls.append(elClear)
+    el.append(elClear)
 
     val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">All Tabs</button>""")
     showAllBtn.click { () =>
@@ -140,9 +141,9 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     val elTabs = jq("<div></div>")
     val elChars = jq("<div></div>")
 
-    subControls.append(showAllBtn)
-    subControls.append(elChars)
-    subControls.append(elTabs)
+    el.append(showAllBtn)
+    el.append(elChars)
+    el.append(elTabs)
 
     val title = "Refresh this stash tab / character inventory from pathofexile.com, and then show only this tab."
 

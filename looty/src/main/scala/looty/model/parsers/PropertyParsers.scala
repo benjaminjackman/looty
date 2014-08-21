@@ -61,7 +61,7 @@ object PropertyParsers {
 
   def prunePercent(dstr: String): Double = {
     //Chop of the % symbol
-    dstr.substring(0, dstr.length - 1).toDouble
+    dstr.replaceAll("%","").toDouble
   }
 
   WeaponTypes.all.foreach { slot =>
@@ -85,7 +85,7 @@ object PropertyParsers {
   named("Quality")((i, p) => i.properties.quality = prunePercent(p.firstValue))
   named("Critical Strike Chance")((i, p) => i.properties.criticalStrikeChance = prunePercent(p.firstValue))
   named("Attacks per Second")((i, p) => i.properties.attacksPerSecond = p.firstValue.toDouble)
-  named("Chance to Block")((i, p) => i.properties.chanceToBlock = p.firstValue.toDouble)
+  named("Chance to Block")((i, p) => i.properties.chanceToBlock = prunePercent(p.firstValue))
 
 
   named("Stack Size") { (i, p) =>
