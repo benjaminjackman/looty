@@ -1,9 +1,8 @@
 package looty
 package chrome
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.scalajs.js
-import scala.concurrent.{Future, ExecutionContext}
-import scala.scalajs.js.Dictionary
 
 
 //////////////////////////////////////////////////////////////
@@ -21,7 +20,8 @@ object StoreMaster {
     console.debug("Store Master Init")
     backingStore.getAll().map { allObjs =>
       val dict = allObjs.asInstanceOf[js.Dictionary[js.Any]]
-      Dictionary.propertiesOf(allObjs).iterator.foreach { key =>
+      val obj = allObjs.asInstanceOf[js.Object]
+      js.Object.properties(obj).iterator.foreach { key =>
         values(key) = dict(key)
       }
       console.debug("Store Master Complete")

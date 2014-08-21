@@ -30,7 +30,7 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
 }
 
 
-class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
+class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val obj        = new JsObjectBuilder
   var containers = immutable.Map.empty[LootContainerId, List[ComputedItem]]
   var buttons    = immutable.Map.empty[LootContainerId, JQuery]
@@ -148,7 +148,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
 
     //Buttons for characters
     val charBtnsFut = for {
-      chars <- pc.getChars(forceNetRefresh= true)
+      chars <- pc.getChars(forceNetRefresh = true)
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
@@ -260,7 +260,7 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
     grid.onHeaderRowCellRendered.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       jq(args.node).empty()
       val el = jq("<input type='text'>")
-          .data("columnId", args.column.id)
+        .data("columnId", args.column.id)
 
       Filters.columnFilters.get(args.column.id.asJsStr).foreach { fil =>
         el.`val`(fil.text)
@@ -407,11 +407,13 @@ class LootView(val league: String)(implicit val pc : PoeCacher) extends View {
 
 
   def showItemDetail(
-    top: Option[js.Number],
-    right: Option[js.Number],
-    bottom: Option[js.Number],
-    left: Option[js.Number],
+    top: Option[js.prim.Number],
+    right: Option[js.prim.Number],
+    bottom: Option[js.prim.Number],
+    left: Option[js.prim.Number],
     item: ComputedItem) {
+
+    println("##ITEM DETAIL", top, right, bottom, left)
 
     val d = jq("#itemdetail")
     d.show()

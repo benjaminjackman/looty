@@ -27,8 +27,11 @@ trait OJsDsl extends JsExtensions {
       js.Dynamic.global.setTimeout(lambda, 0)
     }
 
-    def reportFailure(t: Throwable) =
+    def reportFailure(t: Throwable) {
       Console.err.println("Failure in async execution: " + t)
+      t.printStackTrace()
+    }
+
 
   }
 

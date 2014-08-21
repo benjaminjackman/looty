@@ -67,7 +67,7 @@ object PoeRpcs {
     val jQuery = global.jQuery.asInstanceOf[JQueryStatic]
     AjaxHelp(url, AjaxHelp.HttpRequestTypes.Post, params.nullSafe.map(s => jQuery.param(s))).flatMap { res: js.Any =>
       res match {
-        case x: js.Boolean =>
+        case x: js.prim.Boolean =>
           //GGG sends back "false" when the parameters aren't valid
           Future.failed(BadParameters(s"called $url with ${JSON.stringify(params)}"))
         case res => res.asInstanceOf[js.Dynamic].error.nullSafe match {

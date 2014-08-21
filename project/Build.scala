@@ -23,10 +23,7 @@ object Build extends sbt.Build {
         val devFile = outDir / (basename + "-dev.html")
         val releaseFile = outDir / (basename + ".html")
 
-        val devScripts = """<script type="text/javascript" src="looty-extdeps.js"></script>
-                           |<script type="text/javascript" src="looty-intdeps.js"></script>
-                           |<script type="text/javascript" src="looty.js"></script>""".stripMargin
-
+        val devScripts = """<script type="text/javascript" src="looty-fastopt.js"></script>""".stripMargin
         val releaseScripts = """<script type="text/javascript" src="looty-opt.js"></script>"""
 
         val devOut = content.replace("<!-- insert scalajs -->", devScripts)
@@ -85,8 +82,8 @@ object Build extends sbt.Build {
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
 
   object Libs {
-    val jQuery = "org.scala-lang.modules.scalajs" %% "scalajs-jquery" % "0.3"
-    val dom    = "org.scala-lang.modules.scalajs" %% "scalajs-dom" % "0.3"
+    val jQuery = "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6"
+    val dom    = "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
     //    lazy val dom    = RootProject(file("../scala-js-dom"))
     //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }

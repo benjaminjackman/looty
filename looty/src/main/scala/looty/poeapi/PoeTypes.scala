@@ -137,6 +137,8 @@ object PoeTypes {
         }
       }
 
+      def isDigit(c : Char) : Boolean = c >= '0' && c <= '9'
+
       //(Y experience points, Z needed for next level)
       def getXpProgress: Option[(Int, Long, Long)] = {
         (for {
@@ -162,7 +164,7 @@ object PoeTypes {
           prop <- props.toList.find(_.name.toString == "Level").toList
           lvss <- prop.values.toList
           lv <- lvss.toList.headOption
-          l = lv.toString.toInt
+          l = lv.toString.trim.takeWhile(isDigit).toInt
         } yield {
           l
         }).headOption
@@ -174,7 +176,7 @@ object PoeTypes {
           prop <- props.toList.find(_.name.toString == "Map Level").toList
           lvss <- prop.values.toList
           lv <- lvss.toList.headOption
-          l = lv.toString.toInt
+          l = lv.toString.trim.takeWhile(isDigit).toInt
         } yield {
           l
         }).headOption
@@ -199,7 +201,7 @@ object PoeTypes {
           prop <- props.toList.find(_.name.toString == "Stack Size").toList
           lvss <- prop.values.toList
           lv <- lvss.toList.headOption
-          l = lv.toString.takeWhile(c => c >= '0' && c <= '9').toInt
+          l = lv.toString.trim.takeWhile(isDigit).toInt
         } yield {
           l
         }).headOption

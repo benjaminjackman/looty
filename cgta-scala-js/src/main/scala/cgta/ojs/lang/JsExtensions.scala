@@ -17,6 +17,7 @@ class TypeAExtensions[A](val a: A) extends AnyVal {
   def =?=[B](b: B)(implicit e: B =:= A) = a == b
   def =!=[B](b: B)(implicit e: B =:= A) = a != b
   def toJs[B <: js.Any](implicit aToJs: A => B): B = aToJs(a)
+  def toJsAny: js.Any = a.asInstanceOf[js.Any]
   //From orange
   def oIf[B](p: A => Boolean, t: A => B, f: A => B): B = if (p(a)) t(a) else f(a)
   def oEffect(f: A => Unit): A = { f(a); a }
@@ -32,7 +33,7 @@ class JsAnyExtensions(val a: js.Any) extends AnyVal {
   def asJsObj: js.Object = a.asInstanceOf[js.Object]
   def asJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
   def asJsStr: js.String = a.asInstanceOf[js.String]
-  def asJsNum: js.Number = a.asInstanceOf[js.Number]
+  def asJsNum: js.prim.Number = a.asInstanceOf[js.Number]
   def isUndefined: Boolean = a.isInstanceOf[js.Undefined]
 }
 

@@ -31,7 +31,7 @@ object AffixesParser2 {
 
 
   trait AffixParser {
-    def parse(s: js.String, i: ProperItem): Boolean
+    def parse(s: js.prim.String, i: ProperItem): Boolean
   }
 
   trait RegexAffixParser extends AffixParser {
@@ -39,8 +39,8 @@ object AffixesParser2 {
   }
 
   trait BinaryAffixParser extends AffixParser {
-    def str: js.String
-    def parse(s: js.String, i: ProperItem): Boolean = if (s =?= str) {
+    def str: js.prim.String
+    def parse(s: js.prim.String, i: ProperItem): Boolean = if (s =?= str) {
       process(i)
       true
     } else {
@@ -50,7 +50,7 @@ object AffixesParser2 {
   }
 
   trait RegexAffixParser1 extends RegexAffixParser {
-    override def parse(s: js.String, i: ProperItem): Boolean = {
+    override def parse(s: js.prim.String, i: ProperItem): Boolean = {
       s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
         case null => false
         case x :: y :: zs =>
@@ -64,7 +64,7 @@ object AffixesParser2 {
 
 
   trait RegexAffixParser2 extends RegexAffixParser {
-    override def parse(s: js.String, i: ProperItem): Boolean = {
+    override def parse(s: js.prim.String, i: ProperItem): Boolean = {
       s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
         case null => false
         case x :: y :: z :: zs =>
@@ -79,7 +79,7 @@ object AffixesParser2 {
   def simple0(s: js.String)(f: ProperItem => ProperItemProp0) {
     add {
       new BinaryAffixParser {
-        def str: js.String = s
+        def str: js.prim.String = s
         def process(i: ProperItem): Unit = f(i)(i)
       }
     }

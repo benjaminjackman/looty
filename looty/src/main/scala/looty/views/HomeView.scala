@@ -57,6 +57,11 @@ class HomeView(val banner : String, val version : String) extends View {
       |</div>
       |<div>
       |<h3> Version History</h3><br>
+      |0.2.1.3 <br>
+      | Fixed bug with max level gems causing parse errors
+      | Upgrade to ScalaJs 0.5.3
+      |0.2.1.2 <br>
+      | Fixed google analytics script errors
       |0.2.1.1 <br>
       |<ul>
       |<li>

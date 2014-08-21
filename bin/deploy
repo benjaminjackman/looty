@@ -13,7 +13,7 @@ if [ ! -d "$DEPLOY_DIR" ]; then
 fi
 
 sbt clean
-sbt optimizeJS
+sbt fullOptJS 
 
 rm -rf build
 mkdir build

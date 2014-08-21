@@ -11,7 +11,6 @@ import scala.concurrent.{Promise, Future}
 //////////////////////////////////////////////////////////////
 
 
-
 object ChromeStorageLocal {
   implicit class LocalExt(val x: ChromeStorageLocal) extends AnyVal {
     def getAll(): Future[js.Any] = {
@@ -52,20 +51,19 @@ object ChromeStorageLocal {
 
 trait ChromeStorageLocal extends js.Object {
   val QUOTA_BYTES: js.Number = ???
-  def clear() = ???
-  def clear(cb: js.Function0[Unit]) = ???
+  def clear(): Unit = ???
+  def clear(cb: js.Function0[Unit]): Unit = ???
 
-  def set(items: js.Any) = ???
-  def set(items: js.Any, cb: js.Function0[Unit]) = ???
+  def set(items: js.Any): Unit = ???
+  def set(items: js.Any, cb: js.Function0[Unit]): Unit = ???
 
-  def get(cb: js.Function1[js.Any, Unit])
+  def get(cb: js.Function1[js.Any, Unit]): Unit = ???
 
-  def get(keys: js.Any) = ???
-  def get(keys: js.Any, cb: js.Function1[js.Any, Unit]) = ???
+  def get(keys: js.Any): Unit = ???
+  def get(keys: js.Any, cb: js.Function1[js.Any, Unit]): Unit = ???
 
-  def remove(keys: js.Any, cb: js.Function0[Unit]) = ???
+  def remove(keys: js.Any, cb: js.Function0[Unit]): Unit = ???
 }
-
 
 
 @JSName("chrome.storage")
