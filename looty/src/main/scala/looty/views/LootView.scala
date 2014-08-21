@@ -93,7 +93,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     el.append("""<div id="grid"></div>""")
     el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
     appendGrid()
-    appendMenubar2Item(el = jq("#menubar2"), toggled = jq("#controls"), name = "controls")
+    appendMenubar2Item(el = jq("#menubar2"), toggled = jq("#controls"), name = "Controls")
     appendControls(jq("#controls"))
   }
 

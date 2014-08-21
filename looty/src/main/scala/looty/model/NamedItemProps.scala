@@ -23,13 +23,6 @@ object NamedItemProps {
     val width      : Int
     def getJs(ci: ComputedItem): js.Any
   }
-  class ComputedItemPropCategory(
-    override val shortName: String,
-    override val description: String,
-    override val width: Int = -1)(
-    val getter: ComputedItem => String) extends ComputedItemProp[String] {
-    override def getJs(ci: ComputedItem): js.Any = getter(ci)
-  }
   class ComputedItemPropString(
     override val shortName: String,
     override val description: String,
@@ -52,15 +45,19 @@ object NamedItemProps {
     override def getJs(ci: ComputedItem): js.Any = getter(ci)
   }
 
-  case object Location extends ComputedItemPropCategory("loc",
+  case object Location extends ComputedItemPropString("loc",
     "The name of the character / stash tab that contains the item.",
     130)(_.locAndCoords)
   add(Location)
+  case object Rarity extends ComputedItemPropString("rarity",
+    "Rarity of the item.",
+    60)(_.item.getFrameType.name)
+  add(Rarity)
   case object DisplayName extends ComputedItemPropString("name",
     "The name of the item",
     160)(_.displayName)
   add(DisplayName)
-  case object TypeName extends ComputedItemPropCategory("type",
+  case object TypeName extends ComputedItemPropString("type",
     "The name of the base item type",
     100)(_.typeName)
   add(TypeName)
@@ -72,7 +69,7 @@ object NamedItemProps {
   )(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   add(Cosmetics)
 
-  case object Sockets extends ComputedItemPropCategory("sockets",
+  case object Sockets extends ComputedItemPropString("sockets",
     "The sockets sorted by number in group, then by color",
     100)(_.socketColors)
   add(Sockets)
