@@ -1,9 +1,11 @@
 package looty
 package views
 
+import looty.model.ComputedItemProps.ComputedItemProp
+import looty.views.LootView.{Columns, ControlPane, Controls}
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{StashTabId, InventoryId, LootContainerId, NamedItemProps, ComputedItem}
+import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItemProps, ComputedItem}
 import scala.collection.immutable
 import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
@@ -29,6 +31,82 @@ case class LootFilter(text: String, p: ComputedItem => Boolean) {
   }
 }
 
+object LootView {
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+
+  class ControlPane(val name: String) {
+    lazy val el = jq("""<div style="display:none"></div>""")
+    def toggle() {
+      if (el.is(":visible")) {
+        el.hide()
+      } else {
+        el.show()
+      }
+    }
+  }
+
+  class Controls(gOnClick: () => Unit) {
+    lazy val el   = jq("""<div id="controls"></div>""")
+    lazy val menu = {
+      val m = jq("<div></div>")
+      el.append(m)
+      m
+    }
+    var panes: List[ControlPane] = Nil
+    def add(text: String)(onClick: => Unit) {
+      val m = jq(s"""<a href="javascript:void(0)">[$text]</a>""")
+      m.on("click", () => {
+        onClick
+        gOnClick()
+        false
+      })
+      menu.append(m)
+    }
+    def add(pane: ControlPane) {
+      val m = jq(s"""<a href="javascript:void(0)">[${pane.name}]</a>""")
+      m.on("click", () => {
+        panes.filterNot(_ =?= pane).foreach(_.el.hide())
+        pane.toggle()
+        gOnClick()
+        false
+      })
+      menu.append(m)
+      el.append(pane.el)
+      panes :+= pane
+    }
+  }
+
+  class Column(val p: ComputedItemProp[_]) {
+    def id = p.shortName
+    lazy val slick = makeColumn(p.shortName, p.description, p.width)(p.getJs)
+
+    def makeColumn(name: String, tooltip: String, width: Int)(f: ComputedItem => js.Any) = {
+      val o = newObject
+      o.id = name
+      o.name = name
+      o.field = name
+      o.toolTip = tooltip
+      o.sortable = true
+      o.getter = f
+      if (width =?= -1) o.width = 50 else o.width = width
+      o
+    }
+  }
+
+  class Columns {
+    val all    = ComputedItemProps.all.map(new Column(_))
+    val allMap = immutable.Map(all.map(c => c.id -> c): _*)
+
+    var visible: List[Column] = all
+    def getJsArray(): js.Array[js.Dynamic] = {
+      val cols = js.Array[js.Dynamic]()
+      visible.foreach(c => cols.push(c.slick))
+      cols
+    }
+    def get(id: String): Column = allMap(id)
+  }
+}
+
 
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val obj        = new JsObjectBuilder
@@ -38,9 +116,10 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
+  val columns              = new Columns
   var grid    : js.Dynamic = null
   var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
-  var tabFilter            = LootFilter.all
+
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
 
 
@@ -87,42 +166,40 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   def stop() {}
 
   private def setHtml(el: JQuery): Future[Unit] = {
-    el.empty()
-    el.append("""<div id="menubar2"></div>""")
-    el.append("""<div id="controls"></div>""")
+    val controls = new Controls(() => autoSizeGridHeight())
+
+    el.append(controls.el)
     el.append("""<div id="grid"></div>""")
-    el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
     appendGrid()
-    appendMenubar2Item(el = jq("#menubar2"), toggled = jq("#controls"), name = "Controls")
-    appendControls(jq("#controls"))
-  }
-
-  private def appendMenubar2Item(el: JQuery, toggled : JQuery, name : String) = {
-    val showHide = jq(s"""<a href="javascript:void(0)">[ $name ]</a>""")
-    el.append(showHide)
-    var shown = true
-    showHide.click { () =>
-      if (shown) {
-        shown = false
-        toggled.hide()
-      } else {
-        shown = true
-        toggled.show()
-      }
-      autoSizeGridHeight()
-      false
+    el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
+    val (refreshEl, fut) = createRefreshPane()
+    controls.add("Clear") {
+      Filters.clear()
+      Filters.refresh()
     }
-    showHide.trigger("click")
+    controls.add {
+      val p = new ControlPane("Refresh")
+      p.el.append(refreshEl)
+      p
+    }
+    controls.add {
+      val p = new ControlPane("Columns")
+      p.el.append(createColumnsPane())
+      p
+    }
+    fut
   }
 
-  private def appendControls(el: JQuery): Future[Unit] = {
+
+  private def createRefreshPane(): (JQuery, Future[Unit]) = {
+    val el = jq("<div></div>")
 
     val elClear = jq("<div></div>")
     el.append(elClear)
 
     val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">All Tabs</button>""")
     showAllBtn.click { () =>
-      tabFilter = LootFilter.all
+      Filters.tabFilter = LootFilter.all
       Filters.refresh()
     }
 
@@ -149,7 +226,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
     //Buttons for characters
     val charBtnsFut = for {
-      chars <- pc.getChars(forceNetRefresh = true)
+      chars <- pc.getChars(forceNetRefresh = false)
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
@@ -169,7 +246,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
               updateContainer(conId, items)
             }
             //Filter the grid to show only that tab
-            tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+            Filters.tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
           })
         }
       }
@@ -177,7 +254,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
     //Buttons for stash tabs
     val tabBtnsFut = for {
-      stis <- pc.getStashInfo(league, forceNetRefresh = true)
+      stis <- pc.getStashInfo(league, forceNetRefresh = false)
     } yield {
       stis.foreach { sti =>
         val button = jq(s"""<button title="$title">${sti.n}</button>""")
@@ -197,36 +274,37 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
             updateContainer(conId, items)
           }
           //Filter the grid to show only that tab
-          tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+          Filters.tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
         })
       }
     }
 
-    Future.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
+    el -> Future.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
   }
 
-  val columns = js.Array[js.Dynamic]()
+  private def createColumnsPane(): JQuery = {
+    val el = jq("<div></div>")
+    val cels = columns.all.map { c =>
+      val title = c.p.description
+      val cel = jq(s"""<div style="display:inline-block" title="$title"></div>""")
+      cel.append(s"<span>${c.id}</span>")
+      val tog = jq("<a href='javascript:void(0)'>[on]</a>")
+      tog.on("click", () => {
+
+      })
+      cel.append(tog)
+      cel
+    }
+    val celCon = jq("<div></div>")
+    cels.foreach { c =>
+      celCon.append(c)
+      celCon.append("|")
+    }
+    el.append(celCon)
+    el
+  }
 
   private def appendGrid() {
-    def makeColumn(name: String, tooltip: String, width: Int)(f: ComputedItem => js.Any) = {
-      val o = newObject
-      o.id = name
-      o.name = name
-      o.field = name
-      o.toolTip = tooltip
-      o.sortable = true
-      o.getter = f
-      if (width =?= -1) o.width = 50 else o.width = width
-      o
-    }
-
-
-
-    NamedItemProps.all.foreach { p =>
-      val col = makeColumn(p.shortName, p.description, p.width)(p.getJs)
-      columns.push(col)
-    }
-
 
     val options = {
       val o = newObject
@@ -242,9 +320,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       o
     }
 
-
-
-    grid = js.Dynamic.newInstance(global.Slick.Grid)("#grid", dataView, columns, options)
+    grid = js.Dynamic.newInstance(global.Slick.Grid)("#grid", dataView, columns.getJsArray(), options)
 
     dataView.onRowCountChanged.subscribe(() => {
       grid.updateRowCount()
@@ -260,7 +336,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
     grid.onHeaderRowCellRendered.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       jq(args.node).empty()
-      val el = jq("<input type='text'>")
+      val el = jq("<input class='header-filter' type='text'>")
         .data("columnId", args.column.id)
 
       Filters.columnFilters.get(args.column.id.asJsStr).foreach { fil =>
@@ -268,7 +344,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       }
 
       el.on("keyup", () => {
-        Filters.set(args.column.id.toString, el.`val`().toString)
+        Filters.add(args.column.id.toString, el.`val`().toString)
         dataView.refresh()
       })
       el.appendTo(args.node)
@@ -276,9 +352,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
     addSort()
     addMouseover()
-
-
-
     jq(global.window).resize(() => autoSizeGridHeight())
 
     grid.init()
@@ -286,23 +359,30 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   }
 
   private def autoSizeGridHeight() {
-    val height = jq(global.window).height() - jq("#header").height() - jq("#controls").height() - 20
+    val height = jq(global.window).height() - jq("#header").height() - jq("#controls").height() - 40
     console.log("RESIZE: ", height.toJs)
     jq("#grid").css("height", height)
     grid.resizeCanvas()
   }
 
-  object Filters {
-    var columnFilters = Map.empty[String, LootFilter]
 
-    def set(colId: String, text: String) {
-      val col = columns.find(_.id == colId.toJs).get
+  object Filters {
+    def clear() {
+      jq(".header-filter").`val`("")
+      columnFilters = Map.empty[String, LootFilter]
+      tabFilter = LootFilter.all
+    }
+    var columnFilters = Map.empty[String, LootFilter]
+    var tabFilter     = LootFilter.all
+
+    def add(colId: String, text: String) {
+      val col = columns.get(colId)
       if (text.trim.isEmpty) {
         columnFilters -= colId
       } else {
         def numFilter(n: String)(p: (Double, Double) => Boolean) = {
           val x = n.toDouble
-          LootFilter(text, i => p(col.getter(i.asInstanceOf[js.Any]).toString.toDouble, x))
+          LootFilter(text, i => p(col.p.getJs(i).toString.toDouble, x))
         }
         val GT = ">(.*)".r
         val GTE = ">=(.*)".r
@@ -321,7 +401,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
             case s =>
               val toks = s.split(" ")
               LootFilter(text, (i) => {
-                val value = col.getter(i.asInstanceOf[js.Any]).toString.toLowerCase
+                val value = col.p.getJs(i).toString.toLowerCase
                 toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
               })
           }
@@ -413,8 +493,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     bottom: Option[js.prim.Number],
     left: Option[js.prim.Number],
     item: ComputedItem) {
-
-    println("##ITEM DETAIL", top, right, bottom, left)
 
     val d = jq("#itemdetail")
     d.show()
