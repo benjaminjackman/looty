@@ -3,7 +3,7 @@ package views
 
 import looty.model.ComputedItemProps.ComputedItemProp
 import looty.views.LootView.{Column, Columns, ControlPane, Controls}
-import org.scalajs.jquery.{JQuery, JQueryStatic}
+import org.scalajs.jquery.{JQueryEventObject, JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItemProps, ComputedItem}
 import scala.collection.immutable
@@ -20,9 +20,71 @@ import looty.poeapi.PoeCacher
 // for licensing inquiries
 // Created by bjackman @ 12/9/13 11:17 PM
 //////////////////////////////////////////////////////////////
+import scala.language.postfixOps
+
+object Saver {
+  val localStorage = global.localStorage
+  val prefix       = "LOOTVIEW-SAVE-COLUMNS:"
+
+  def delete(name :String) {
+    localStorage.removeItem(prefix + name)
+  }
+
+  def save(name: String, cols: Vector[Column], columnFilters: Option[Vector[LootFilter]]) {
+    if (name.isEmpty) {
+      Alerter.error("Hey fella, you have to type a name in the name box!")
+      return
+    } else if (name.length > 50) {
+      Alerter.error("Hey fella, names are limited to 50 characters!")
+      return
+    }
+    val k = prefix + name.take(50)
+
+    val data = js.Dynamic.literal()
+    data.cols = cols.map(_.id).toJsArray
+    columnFilters.foreach { filters =>
+      data.columnFilters = filters.filter(_.col.isDefined).map { filter =>
+        val fd = js.Dynamic.literal()
+        fd.text = filter.text
+        fd.col = filter.col.get.id
+        fd
+      } toJsArray
+    }
+    val json = global.JSON.stringify(data).toString
+    localStorage.setItem(k, json)
+  }
+
+  def load(name: String)(getCol: String => Option[Column]): Option[(Vector[Column], Option[Vector[LootFilter]])] = {
+    val k = prefix + name
+    localStorage.getItem(k).nullSafe.map { json =>
+      val data = global.JSON.parse(json)
+      val cols = data.cols.asJsArr[String].toVector.flatMap(c => getCol(c.toString))
+      val filters = if (!data.columnFilters.isUndefined) {
+        Some {
+          data.columnFilters.asJsArr[js.Dynamic].toVector.flatMap { f =>
+            getCol(f.col.toString).map { col =>
+              val text = f.text.toString
+              LootFilter.parse(text, col)
+            }
+          }
+        }
+      } else {
+        None
+      }
+      cols -> filters
+    }
+  }
+
+  def getAllNames: Vector[String] = {
+    val sz = localStorage.length.asInstanceOf[Int]
+    val keys = (0 until sz) map (i => localStorage.key(i).toString) filter (_.startsWith(prefix))
+    val names = keys map (_.drop(prefix.length))
+    names.toVector
+  }
+}
 
 object LootFilter {
-  def all = LootFilter("All", None,  _ => true)
+  def all = LootFilter("All", None, _ => true)
   def parse(text: String, col: Column): LootFilter = {
     def numFilter(n: String)(p: (Double, Double) => Boolean) = {
       val x = n.toDouble
@@ -51,12 +113,12 @@ object LootFilter {
       }
     } catch {
       case e: Throwable =>
-        LootFilter(text, Some(col),  i => true)
+        LootFilter(text, Some(col), i => true)
     }
   }
 }
 
-case class LootFilter(text: String, col : Option[Column], p: ComputedItem => Boolean) {
+case class LootFilter(text: String, col: Option[Column], p: ComputedItem => Boolean) {
   def allows(i: ComputedItem): Boolean = {
     try p(i) catch {case e: Throwable => false}
   }
@@ -173,7 +235,7 @@ object LootView {
       visible.foreach(c => cols.push(c.slick))
       cols
     }
-    def get(id: String): Column = allMap(id)
+    def get(id: String): Option[Column] = allMap.get(id)
 
 
   }
@@ -209,6 +271,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
         }, 50)
       }
     }
+    autoSizeGridHeight()
   }
 
   def addAllItems {
@@ -422,20 +485,58 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     //Load / Save Stuff
     val loadSaveDiv = jq("<div></div>")
     locally {
+      val loadDiv = jq("""<span></span>""")
+      def refreshLoadDiv() {
+        loadDiv.empty()
+        Saver.getAllNames.sortBy(_.toUpperCase).foreach { name =>
+          val el = jq(s"""<a href="javascript:void(0)" title="Load this saved item, shift clicking gives the option to erase it."></a>""")
+          el.text(s"[$name]")
+          el.on("click", { (e: JQueryEventObject) =>
+            if (e.asJsDyn.shiftKey.asInstanceOf[js.Boolean]) {
+              Saver.delete(name)
+              refreshLoadDiv()
+            } else {
+              Saver.load(name)(colId => columns.get(colId)) foreach {
+                case (cols, colFilters) =>
+                  columns.all.foreach(_.hide())
+                  cols.foreach(_.show())
+                  colFilters.foreach { colFilters =>
+                    Filters.clear()
+                    colFilters.foreach { colFilter =>
+                      Filters.addColFilter(colFilter)
+                    }
+                    Filters.refresh()
+                  }
+              }
+            }
+            false
+          }: js.Function)
+          loadDiv.append(el)
+        }
+      }
       val saveName = jq("""<input type="text" placeholder="save name" width="20"></input>""")
       val saveBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns">[Save]</a>""")
       val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns as well as any filters that are currently active">[Save+Filters]</a>""")
       saveBtn.on("click", () => {
-        saveName.`val`()
+        val name = saveName.`val`().toString
+        Saver.save(name, columns.visible, None)
+        refreshLoadDiv()
+        false
       })
       saveWithFiltersBtn.on("click", () => {
-        saveName.`val`()
+        val name = saveName.`val`().toString
+        Saver.save(name, columns.visible, columnFilters = Some(Filters.columnFilters.values.toVector))
+        refreshLoadDiv()
+        false
       })
+      refreshLoadDiv()
       loadSaveDiv.append(showAll)
       loadSaveDiv.append(hideAll)
       loadSaveDiv.append(saveName)
       loadSaveDiv.append(saveBtn)
       loadSaveDiv.append(saveWithFiltersBtn)
+      loadSaveDiv.append(" Load: ")
+      loadSaveDiv.append(loadDiv)
       el.append(loadSaveDiv)
     }
 
@@ -513,12 +614,16 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     var columnFilters = Map.empty[String, LootFilter]
     var tabFilter     = LootFilter.all
 
+    def addColFilter(filter: LootFilter) {
+      columnFilters += filter.col.get.id -> filter
+    }
+
     def add(colId: String, text: String) {
       val col = columns.get(colId)
       if (text.trim.isEmpty) {
         columnFilters -= colId
       } else {
-        val fil = LootFilter.parse(text, col)
+        val fil = LootFilter.parse(text, col.get)
         columnFilters += colId -> fil
       }
     }

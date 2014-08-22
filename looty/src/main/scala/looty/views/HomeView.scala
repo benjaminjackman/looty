@@ -52,9 +52,6 @@ class HomeView(val banner : String, val version : String) extends View {
       |</ul>
       |<br>
       |<br>
-      |<div style="display:inline-block;color:gold">
-      |<div style="display:inline-block;-webkit-transform:scaleX(-1);transform:scaleX(-1)"><a href="http://www.gnu.org/licenses/gpl-2.0.html">©</a></div>&nbsp;Benjamin Jackman 2014
-      |</div>
       |<div>
       |<h3> Version History</h3><br>
       |0.2.1.4 <br>
