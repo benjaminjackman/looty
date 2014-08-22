@@ -3,7 +3,7 @@ package poeapi
 
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
-import looty.model.{InventoryId, StashTabId, LootContainerId, ComputedItem}
+import looty.model.{InventoryId, StashTabIdx, LootContainerId, ComputedItem}
 import looty.model.parsers.ItemParser
 
 //////////////////////////////////////////////////////////////
@@ -22,10 +22,10 @@ trait PoeCacher {
   def clearLeague(league: String): Future[Unit]
 
 
-  private def getAllStashTabs(league: String): Future[List[Future[(StashTabId, StashTab)]]] = {
+  private def getAllStashTabs(league: String): Future[List[Future[(StashTabIdx, StashTab)]]] = {
     getStashInfo(league).map { si =>
       si.toList.map { sti =>
-        getStashTab(league, sti.i.toInt).map(StashTabId(sti.i.toInt) -> _) //.log("Got Stash Tab")
+        getStashTab(league, sti.i.toInt).map(StashTabIdx(sti.i.toInt) -> _) //.log("Got Stash Tab")
       }
     }
   }

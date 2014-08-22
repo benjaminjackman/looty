@@ -2,10 +2,10 @@ package looty
 package views
 
 import looty.model.ComputedItemProps.ComputedItemProp
-import looty.views.LootView.{Column, Columns, ControlPane, Controls}
+import looty.views.LootView.{Container, Containers, Column, Columns, ControlPane, Controls}
 import org.scalajs.jquery.{JQueryEventObject, JQuery, JQueryStatic}
 import scala.scalajs.js
-import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItemProps, ComputedItem}
+import looty.model.{StashTabIdx, InventoryId, LootContainerId, ComputedItemProps, ComputedItem}
 import scala.collection.immutable
 import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
@@ -26,11 +26,16 @@ object Saver {
   val localStorage = global.localStorage
   val prefix       = "LOOTVIEW-SAVE-COLUMNS:"
 
-  def delete(name :String) {
+  def delete(name: String) {
     localStorage.removeItem(prefix + name)
   }
 
-  def save(name: String, cols: Vector[Column], columnFilters: Option[Vector[LootFilter]]) {
+  def save(
+    name: String,
+    cols: Vector[Column],
+    columnFilters: Option[Vector[LootFilterColumn]],
+    containerFilters: Option[Vector[LootContainerId]]
+    ) {
     if (name.isEmpty) {
       Alerter.error("Hey fella, you have to type a name in the name box!")
       return
@@ -43,10 +48,17 @@ object Saver {
     val data = js.Dynamic.literal()
     data.cols = cols.map(_.id).toJsArray
     columnFilters.foreach { filters =>
-      data.columnFilters = filters.filter(_.col.isDefined).map { filter =>
+      data.columnFilters = filters.map { filter =>
         val fd = js.Dynamic.literal()
         fd.text = filter.text
-        fd.col = filter.col.get.id
+        fd.col = filter.col.id
+        fd
+      } toJsArray
+    }
+    containerFilters.foreach { filters =>
+      data.containerFilters = filters.map { containerId =>
+        val fd = js.Dynamic.literal()
+        fd.encoded = containerId.encode
         fd
       } toJsArray
     }
@@ -54,24 +66,34 @@ object Saver {
     localStorage.setItem(k, json)
   }
 
-  def load(name: String)(getCol: String => Option[Column]): Option[(Vector[Column], Option[Vector[LootFilter]])] = {
+  def load(name: String)(getCol: String => Option[Column]):
+  Option[(Vector[Column], Option[Vector[LootFilterColumn]], Option[Vector[LootContainerId]])] = {
     val k = prefix + name
     localStorage.getItem(k).nullSafe.map { json =>
       val data = global.JSON.parse(json)
       val cols = data.cols.asJsArr[String].toVector.flatMap(c => getCol(c.toString))
-      val filters = if (!data.columnFilters.isUndefined) {
+      val columnFilters = if (!data.columnFilters.isUndefined) {
         Some {
           data.columnFilters.asJsArr[js.Dynamic].toVector.flatMap { f =>
             getCol(f.col.toString).map { col =>
               val text = f.text.toString
-              LootFilter.parse(text, col)
+              LootFilterColumn.parse(text, col)
             }
           }
         }
       } else {
         None
       }
-      cols -> filters
+      val containerFilters = if (!data.containerFilters.isUndefined) {
+        Some {
+          data.containerFilters.asJsArr[js.Dynamic].toVector.flatMap { con =>
+            LootContainerId.parse(con.encoded.toString)
+          }
+        }
+      } else {
+        None
+      }
+      (cols, columnFilters, containerFilters)
     }
   }
 
@@ -84,11 +106,21 @@ object Saver {
 }
 
 object LootFilter {
-  def all = LootFilter("All", None, _ => true)
-  def parse(text: String, col: Column): LootFilter = {
+  def all = new LootFilter {
+    override def allows(i: ComputedItem): Boolean = true
+  }
+}
+
+trait LootFilter {
+  def allows(i: ComputedItem): Boolean
+}
+
+object LootFilterColumn {
+
+  def parse(text: String, col: Column): LootFilterColumn = {
     def numFilter(n: String)(p: (Double, Double) => Boolean) = {
       val x = n.toDouble
-      LootFilter(text, Some(col), i => p(col.p.getJs(i).toString.toDouble, x))
+      LootFilterColumn(text, col, i => p(col.p.getJs(i).toString.toDouble, x))
     }
     val GT = ">(.*)".r
     val GTE = ">=(.*)".r
@@ -103,26 +135,28 @@ object LootFilter {
         case LTE(n) if n.nonEmpty => numFilter(n)(_ <= _)
         case LT(n) if n.nonEmpty => numFilter(n)(_ < _)
         case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
-        case "" => LootFilter(text, Some(col), i => true)
+        case "" => LootFilterColumn(text, col, i => true)
         case s =>
           val toks = s.split(" ")
-          LootFilter(text, Some(col), (i) => {
+          LootFilterColumn(text, col, (i) => {
             val value = col.p.getJs(i).toString.toLowerCase
             toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
           })
       }
     } catch {
       case e: Throwable =>
-        LootFilter(text, Some(col), i => true)
+        LootFilterColumn(text, col, i => true)
     }
   }
 }
 
-case class LootFilter(text: String, col: Option[Column], p: ComputedItem => Boolean) {
+case class LootFilterColumn(text: String, col: Column, p: ComputedItem => Boolean) {
   def allows(i: ComputedItem): Boolean = {
     try p(i) catch {case e: Throwable => false}
   }
 }
+
+//case class LootFilterContainer(id: LootContainerId)
 
 object LootView {
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
@@ -236,21 +270,100 @@ object LootView {
       cols
     }
     def get(id: String): Option[Column] = allMap.get(id)
+  }
 
+  class Container(val id: LootContainerId, html: JQuery, initialVisible: Boolean, refreshFn: () => Unit) {
+
+    private var _items = Vector.empty[ComputedItem]
+    def items = _items
+    def setItems(items: Vector[ComputedItem]) {
+      html.removeClass("loading")
+      _items = items
+    }
+    def refresh() {
+      html.addClass("loading")
+      refreshFn()
+    }
+
+
+    val vis   = "visible-loot-container"
+    val invis = "invisible-loot-container"
+
+    private var listeners = Vector.empty[Boolean => Unit]
+    private var _visible  = initialVisible
+
+    private def refreshHtml() {
+      if (visible) {
+        html.addClass(vis).removeClass(invis)
+      } else {
+        html.addClass(invis).removeClass(vis)
+      }
+
+    }
+
+    private def changed() {
+      refreshHtml()
+      listeners.foreach(_(_visible))
+    }
+
+    def visible = _visible
+
+    def hide() {
+      _visible = false
+      changed()
+    }
+    def show() {
+      _visible = true
+      changed()
+    }
+    def toggle() {
+      _visible = !_visible
+      changed()
+    }
+
+    def onChange(f: Boolean => Unit) {
+      listeners :+= f
+    }
+  }
+
+  class Containers {
+    var _containers = Vector.empty[Container]
+    var _allMap     = Map.empty[LootContainerId, Container]
+    def all = _containers
+    def addContainer(c: Container) {
+      _containers :+= c
+      _allMap += c.id -> c
+      c.onChange(v => conChanged(c))
+    }
+    def get(id: LootContainerId): Option[Container] = _allMap.get(id)
+
+    private def conChanged(c: Container) {
+      changed(c)
+    }
+
+    private var listeners = Vector.empty[Container => Unit]
+    def onChange(f: (Container) => Unit) {
+      listeners :+= f
+    }
+    private def changed(c: Container) {
+      listeners.foreach(_(c))
+    }
 
   }
 }
 
 
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
-  val obj        = new JsObjectBuilder
-  var containers = immutable.Map.empty[LootContainerId, List[ComputedItem]]
-  var buttons    = immutable.Map.empty[LootContainerId, JQuery]
+  val obj = new JsObjectBuilder
+  //  var containers = immutable.Map.empty[LootContainerId, List[ComputedItem]]
+  //  var buttons    = immutable.Map.empty[LootContainerId, JQuery]
 
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
+
   val columns              = new Columns
+  val containers           = new Containers
   var grid    : js.Dynamic = null
   var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
 
@@ -258,6 +371,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
 
   var colChangePending = false
+  var conChangePending = false
 
   def start(el: JQuery) {
     console.log("Starting Grid View")
@@ -271,8 +385,19 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
         }, 50)
       }
     }
-    autoSizeGridHeight()
+    containers.onChange { (c) =>
+      Filters.setContainer(c.id, visible = c.visible)
+      if (!conChangePending) {
+        conChangePending = true
+        global.setTimeout(() => {
+          Filters.refresh()
+          conChangePending = false
+        }, 50)
+      }
+      autoSizeGridHeight()
+    }
   }
+
 
   def addAllItems {
     for {
@@ -285,23 +410,18 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   }
 
 
-  def updateContainer(containerId: LootContainerId, container: List[ComputedItem]) {
+  def updateContainer(containerId: LootContainerId, items: List[ComputedItem]) {
     dataView.beginUpdate()
     for {
       container <- containers.get(containerId)
-      item <- container
-      locId <- item.item.locationId.toOption
+      oldItem <- container.items
+      locId <- oldItem.item.locationId.toOption
     } {
       dataView.deleteItem(locId)
     }
-    containers += containerId -> container
-    //    buttons.get(containerId).foreach(_.css("border-color", ""))
-    buttons.get(containerId) match {
-      case Some(btn) => btn.removeClass("loading")
-      case None => console.error("No button for container", containerId)
-    }
+    containers.get(containerId).foreach(_.setItems(items.toVector))
     for {
-      item <- container
+      item <- items
     } {
       dataView.addItem(item.asInstanceOf[js.Any])
     }
@@ -324,7 +444,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       Filters.refresh()
     }
     controls.add {
-      val p = new ControlPane("Refresh")
+      val p = new ControlPane("Tabs")
       p.el.append(refreshEl)
       p
     }
@@ -340,14 +460,19 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   private def createRefreshPane(): (JQuery, Future[Unit]) = {
     val el = jq("<div></div>")
 
-    val elClear = jq("<div></div>")
-    el.append(elClear)
-
-    val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">Show All Tabs</button>""")
+    val showAllBtn = jq("""<a href="javascript:void(0)" title="Will show all inventories and stash tabs">[Show All]</a>""")
     showAllBtn.click { () =>
-      Filters.tabFilter = LootFilter.all
+      containers.all.foreach(_.show())
       Filters.refresh()
+      false
     }
+    val hideAllBtn = jq("""<a href="javascript:void(0)" title="Will Hide all inventories and stash tabs">[Hide All]</a>""")
+    hideAllBtn.click { () =>
+      containers.all.foreach(_.hide())
+      Filters.refresh()
+      false
+    }
+
 
     val reloadAllBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
     |have changed several tabs. This will take some time, as GGG throttles the number of requests made per minute
@@ -364,16 +489,41 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       }
     }
 
-    elClear.append(reloadAllBtn)
 
-    val elTabs = jq("<div></div>")
-    val elChars = jq("<div></div>")
+    val reloadVisibleBtn = jq("""<button title="Connects to GGG servers and refreshes the visible tabs">Refresh Visible</button>""")
+    reloadVisibleBtn.on("click", () => {
+      containers.all.filter(_.visible).foreach(_.refresh())
+    })
 
-    el.append(showAllBtn)
+
+
+    val elChars = jq("<div>Characters: </div>")
+    val elTabs = jq("<div>Tabs: </div>")
+
     el.append(elChars)
     el.append(elTabs)
+    el.append(showAllBtn)
+    el.append(hideAllBtn)
+    el.append(reloadVisibleBtn)
+    el.append(reloadAllBtn)
+
 
     val title = "Refresh this stash tab / character inventory from pathofexile.com, and then show only this tab."
+
+    def addCon(conId: LootContainerId, button: JQuery, el: JQuery)(refreshFn: => Unit) {
+      val con = new Container(conId, button, initialVisible = true, refreshFn = () => refreshFn)
+      button.addClass("loading")
+      button.addClass("visible-loot-container")
+      containers.addContainer(con)
+      Filters.setContainer(con.id, visible = con.visible)
+      el.append(button)
+      el.append(" ")
+      button.on("click", (a: js.Any) => {
+        //Filter the grid to show only that tab
+        con.toggle()
+        false
+      })
+    }
 
     //Buttons for characters
     val charBtnsFut = for {
@@ -381,21 +531,17 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
-          val button = jq(s"""<a title="$title" href="javascript:void(0)">[${char.name}]</a> """)
+          val button = jq(s"""<a title="$title" href="javascript:void(0)">${char.name}</a>""")
           button.data("charName", char.name)
+
           val conId: LootContainerId = InventoryId(char.name)
-          buttons += conId -> button
-          if (!containers.contains(conId)) button.addClass("loading")
-          elChars.append(button)
-          button.on("click", (a: js.Any) => {
-            //Refresh this tab
+
+          addCon(conId, button, elChars) {
             pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
               val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
               updateContainer(conId, items)
             }
-            //Filter the grid to show only that tab
-            Filters.tabFilter = LootFilter("Only One Tab", None, _.containerId =?= conId)
-          })
+          }
         }
       }
     }
@@ -405,25 +551,20 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       stis <- pc.getStashInfo(league, forceNetRefresh = false)
     } yield {
       stis.foreach { sti =>
-        val button = jq(s"""<button title="$title">${sti.n}</button>""")
-        button.css(obj[js.Any](
-          color = "white",
-          textShadow = "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black",
-          backgroundColor = sti.colour.toRgb
-        ))
-        val conId: LootContainerId = StashTabId((sti.i: Double).toInt)
-        buttons += conId -> button
-        if (!containers.contains(conId)) button.addClass("loading")
-        elTabs.append(button)
-        button.on("click", (a: js.Any) => {
-          //Refresh this tab
+        val index = sti.i
+        val button = jq(s"""<a class="tab-btn" href="javascript:void(0)" title="${title + s" the index of this tab is: $index"}"></a>""")
+        button.text(sti.n)
+        button.css("textShadow", "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black")
+        button.css("backgroundColor", sti.colour.toRgb)
+
+        val conId: LootContainerId = StashTabIdx((sti.i: Double).toInt)
+
+        addCon(conId, button, elTabs) {
           pc.getStashTab(league, sti.i.toInt, forceNetRefresh = true).foreach { st =>
             val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
             updateContainer(conId, items)
           }
-          //Filter the grid to show only that tab
-          Filters.tabFilter = LootFilter("Only One Tab", None, _.containerId =?= conId)
-        })
+        }
       }
     }
 
@@ -461,13 +602,12 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
       grpDiv.append(grpOn)
       grpDiv.append(grpOff)
-      grpDiv.append(s"""<span style="color:pink">$groupName</span>:""")
+      grpDiv.append(s"""<span style="color:pink">$groupName:</span>""")
 
       group.foreach { c =>
         val colDiv = jq(s"""<div style="display:inline-block" title="${c.p.description}"></div>""")
-        colDiv.append(s"<span>${c.id}</span>")
-        val onSpan = "<span style=\"color:#00FF00\">[on]</span>"
-        val offSpan = "<span style=\"color:#FF0000\">[off]</span>"
+        val onSpan = s"""<span>${c.id}</span><span style="color:#00FF00">[on]</span>"""
+        val offSpan = s"""<span>${c.id}</span><span style="color:#FF0000">[off]</span>"""
         val curSpan = if (c.visible) onSpan else offSpan
         val tog = jq(s"""<a href='javascript:void(0)'>$curSpan</a>&nbsp;&nbsp;&nbsp;""")
         tog.on("click", () => {
@@ -497,13 +637,20 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
               refreshLoadDiv()
             } else {
               Saver.load(name)(colId => columns.get(colId)) foreach {
-                case (cols, colFilters) =>
+                case (cols, colFilters, conIds) =>
                   columns.all.foreach(_.hide())
                   cols.foreach(_.show())
                   colFilters.foreach { colFilters =>
-                    Filters.clear()
+                    Filters.clearColumnFilters()
                     colFilters.foreach { colFilter =>
                       Filters.addColFilter(colFilter)
+                    }
+                    Filters.refresh()
+                  }
+                  conIds.foreach { conIds =>
+                    containers.all.foreach(_.hide())
+                    conIds.foreach { conId =>
+                      containers.get(conId).foreach(_.show())
                     }
                     Filters.refresh()
                   }
@@ -519,13 +666,18 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns as well as any filters that are currently active">[Save+Filters]</a>""")
       saveBtn.on("click", () => {
         val name = saveName.`val`().toString
-        Saver.save(name, columns.visible, None)
+        Saver.save(name, columns.visible, None, None)
         refreshLoadDiv()
         false
       })
       saveWithFiltersBtn.on("click", () => {
         val name = saveName.`val`().toString
-        Saver.save(name, columns.visible, columnFilters = Some(Filters.columnFilters.values.toVector))
+        Saver.save(
+          name,
+          columns.visible,
+          columnFilters = Some(Filters.columnFilters.values.toVector),
+          containerFilters = Some(Filters.containerFilters.toVector)
+        )
         refreshLoadDiv()
         false
       })
@@ -606,16 +758,36 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
 
   object Filters {
-    def clear() {
-      jq(".header-filter").`val`("")
-      columnFilters = Map.empty[String, LootFilter]
-      tabFilter = LootFilter.all
-    }
-    var columnFilters = Map.empty[String, LootFilter]
-    var tabFilter     = LootFilter.all
+    //    def isVisible(id: LootContainerId) = {
+    //      containerFilters(id)
+    //    }
 
-    def addColFilter(filter: LootFilter) {
-      columnFilters += filter.col.get.id -> filter
+    def setContainer(id: LootContainerId, visible: Boolean) {
+      if (visible) {
+        containerFilters += id
+      } else {
+        containerFilters -= id
+      }
+    }
+
+    def clearColumnFilters() {
+      jq(".header-filter").`val`("")
+      columnFilters = Map.empty[String, LootFilterColumn]
+    }
+
+    def clearContainerFilters() {
+      containerFilters = Set.empty
+    }
+
+    def clear() {
+      clearColumnFilters()
+      clearContainerFilters()
+    }
+    var columnFilters    = Map.empty[String, LootFilterColumn]
+    var containerFilters = Set.empty[LootContainerId]
+
+    def addColFilter(filter: LootFilterColumn) {
+      columnFilters += filter.col.id -> filter
     }
 
     def add(colId: String, text: String) {
@@ -623,18 +795,21 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       if (text.trim.isEmpty) {
         columnFilters -= colId
       } else {
-        val fil = LootFilter.parse(text, col.get)
+        val fil = LootFilterColumn.parse(text, col.get)
         columnFilters += colId -> fil
       }
     }
 
+
     def refresh() {
       def filter(item: ComputedItem): js.Boolean = {
-        (columnFilters.forall { case (colId, fil) =>
+        def columnsAllows = columnFilters.forall { case (colId, fil) =>
           fil.allows(item)
-        } && tabFilter.allows(item)).toJs
-      }
+        }
+        def containerAllows = containerFilters(item.containerId)
 
+        (columnsAllows && containerAllows).toJs
+      }
       dataView.setFilter(filter _)
     }
   }

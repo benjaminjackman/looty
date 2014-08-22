@@ -6,8 +6,28 @@ package looty.model
 //////////////////////////////////////////////////////////////
 
 
-sealed trait LootContainerId
-case class InventoryId(character: String) extends LootContainerId
-case class StashTabId(idx: Int) extends LootContainerId
+object LootContainerId {
+  val iPrefix = "InventoryId:"
+  val sPrefix = "StashTabIdx:"
+  def parse(s: String): Option[LootContainerId] = {
+    if (s.startsWith(iPrefix)) {
+      Some(InventoryId(s.drop(iPrefix.length)))
+    } else if (s.startsWith(sPrefix)) {
+      Some(StashTabIdx(s.drop(sPrefix.length).toInt))
+    } else {
+      None
+    }
+  }
+}
+
+sealed trait LootContainerId {
+  def encode : String
+}
+case class InventoryId(character: String) extends LootContainerId {
+  override def encode = LootContainerId.iPrefix + character
+}
+case class StashTabIdx(idx: Int) extends LootContainerId {
+  override def encode = LootContainerId.sPrefix + idx
+}
 
 case class LootContainer(id: LootContainerId, items: List[ComputedItem])

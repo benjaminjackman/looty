@@ -16,22 +16,26 @@ object Alerter {
     "Alright you asked for it",
     "Take a nap this is going to take a while",
     "Stop moving your tabs!",
-    "Reticulating splines",
-    "You know you can press the buttons under refresh to refresh tabs invidually right? Oh you didn't? Well maybe next try that out."
+    "Reticulating splines"
   )
 
   val noReloadMsgs = List(
-    "You chose wisely friend, had you said yes, I would've bitten your ear off.",
-    "Please ask G.G.G. add Item Levels in the item descriptions, they say it confuses noobs, noobs, more like boobs hahahahahahahahahahahahahahahahahaha.",
+    "You chose wisely my friend, had you said yes, I would've bitten your ear off.",
+    "Please ask G.G.G. to add Item Levels in the item descriptions, they say it confuses noobs, noobs, more like boobs " + "hee ha ho " * 5 + " Who programmed me to laugh like this ... and why?",
     "Pan flute music is where it's at woooo hoooo doooo dooot poooot poooot",
     "Buy the new radioactive uranium microtransactions, make your character grow and glow",
     "Frank Stallone",
-    "A dingo ate my baby kiwi",
+    "A dingo ate my baby kiwi, hey that's not even accurate ... or funny!",
+    "Fun fact: Kiwi meat tastes like shoe polish",
+    "DUN DUN DUN",
+    "WAH WAH",
+    "Daaaanger Zone!",
     "You could say that Path of exile is the kiwi fruit of grinding gears games labors. you could say that. Then you go die.",
-    "go go go go go go",
+    "GO! "*25,
     "A wise decision, for as the correct choice holds life, the incorrect choice holds endless server reload time",
     "Kaom can cut through a hot knife with butter",
     "In Wraeclast ground burns you!",
+    "Moon sugar and skooma? AAAAAhhhhhhhhh",
     "Stay out of my fishing hole!"
 
   )
