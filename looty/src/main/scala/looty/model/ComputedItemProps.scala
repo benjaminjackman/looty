@@ -13,12 +13,14 @@ import scala.scalajs.js
 
 
 object ComputedItemProps {
-  val _all = new js.Array[ComputedItemProp[_]]()
-  lazy val all = _all.toList
+  private var _all = Vector.empty[ComputedItemProp[_]]
+  def all = _all
 
   def add(p: ComputedItemProp[_]) = {
-    ??? //TODO VERIFY NO DUPLICATE NAMES / SHORTNAMES
-    _all.push(p)
+    if (all.exists(_.fullName == p.fullName) || all.exists(_.shortName == p.shortName)) {
+      sys.error(s"Duplicate name for property: ${p.shortName} ${p.fullName}")
+    }
+    _all :+= p
   }
   class ComputedItemProp[A](
     val shortName: String,
@@ -28,27 +30,26 @@ object ComputedItemProps {
     val getJs: ComputedItem => js.Any,
     private var desc: String = "") {
 
+    def description = desc
+
     private[ComputedItemProps] def ?=(d: String) {
       desc = d
     }
   }
 
-  //  class ComputedItemPropPosNumber(
-  //    override val shortName: String,
-  //    override val description: String,
-  //    override val width: Int = -1)(
-  //    val getter: ComputedItem => Double) extends ComputedItemProp[Double] {
-  //    override def getJs(ci: ComputedItem): js.Any = getter(ci)
-  //  }
-  //  class ComputedItemPropNegNumber(
-  //    override val shortName: String,
-  //    override val description: String,
-  //    override val width: Int = -1)(
-  //    val getter: ComputedItem => Double) extends ComputedItemProp[Double] {
-  //    override def getJs(ci: ComputedItem): js.Any = getter(ci)
-  //  }
-
-  val General = "General"
+  val General      = "General"
+  val Defensive    = "Defensive"
+  val Attack       = "Attack"
+  val Dps          = "Dps"
+  val Requirements = "Requirements"
+  val Efficiency   = "Efficiency"
+  val Regen        = "Regen"
+  val Attributes   = "Attributes"
+  val Resists      = "Resists"
+  val Crit         = "Crit"
+  val Spells       = "Spells"
+  val Elemental    = "Elemental"
+  val Gems         = "Gems"
 
   def str(
     fullName: String,
@@ -67,204 +68,196 @@ object ComputedItemProps {
     res
   }
 
+  def pno(
+    fullName: String,
+    shortName: String,
+    width: Int = 50)(
+    groups: String*)(
+    f: ComputedItem => Double): ComputedItemProp[Double] = {
+    val res = new ComputedItemProp[Double](
+      shortName = shortName,
+      fullName = fullName,
+      width = width,
+      groups = groups.toSet,
+      getJs = (i) => f(i)
+    )
+    add(res)
+    res
+  }
+
+  def nno(
+    fullName: String,
+    shortName: String,
+    width: Int = 50)(
+    groups: String*)(
+    f: ComputedItem => Double): ComputedItemProp[Double] = {
+    val res = new ComputedItemProp[Double](
+      shortName = shortName,
+      fullName = fullName,
+      width = width,
+      groups = groups.toSet,
+      getJs = (i) => f(i)
+    )
+    add(res)
+    res
+  }
+
+  //General
   val Location    = str("Location", "loc", 130)(General)(_.locAndCoords)
   val Rarity      = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
   val DisplayName = str("DisplayName", "name", 160)(General)(_.displayName)
   val TypeName    = str("TypeName", "type", 100)(General)(_.typeName)
   val Cosmetics   = str("Cosmetics", "cosmetics", 80)(General)(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   val Sockets     = str("Sockets", "sockets", 100)(General)(_.socketColors)
-
+  val Misc        = pno("Misc", "misc")(General)(_.misc)
+  val Quality     = pno("Quality", "qual")(General)(_.properties.quality)
+  val Score       = pno("Score", "score")(General)(_.score.score)
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
   TypeName ?= "The name of the base item type"
   Cosmetics ?= "A list of all cosmetic effects applied to the item"
   Sockets ?= "The sockets sorted by number in group, then by color"
-//
-//
-//  case object Misc extends ComputedItemPropPosNumber("misc",
-//    "For gems the gem level, " +
-//      "for currency the number of items in the stack, " +
-//      "for socketed items the total number of sockets, " +
-//      "for maps the map level")(_.misc)
-//  add(Misc)
-//
-//  case object Quality extends ComputedItemPropPosNumber("qual",
-//    "The quality of the item")(_.properties.quality)
-//  add(Quality)
-//  case object Score extends ComputedItemPropPosNumber("score",
-//    "An experimental score assigned to assess the desirability of the item")(_.score.score)
-//  add(Score)
-//
-//  case object Dps_Total extends ComputedItemPropPosNumber("dps",
-//    "The total (physical + elemental) damage per second")(_.total.dps.round)
-//  add(Dps_Total)
-//  case object AttacksPerSecond extends ComputedItemPropPosNumber("aps",
-//    "Number of attacks per second")(_.properties.attacksPerSecond)
-//  add(AttacksPerSecond)
-//
-//  case object Armour extends ComputedItemPropPosNumber("AR",
-//    "Total Amount of Armour from this item")(_.total.armour)
-//  add(Armour)
-//  case object Evasion extends ComputedItemPropPosNumber("EV",
-//    "Total Amount of Evasion from this item")(_.total.evasionRating)
-//  add(Evasion)
-//  case object ArmourPlusEvasion extends ComputedItemPropPosNumber("AR+EV",
-//    "Total Amount of Evasion and Armour from this item")(i => i.total.evasionRating + i.total.armour)
-//  add(ArmourPlusEvasion)
-//  case object EnergyShield extends ComputedItemPropPosNumber("ES",
-//    "Total Amount of Energy Shield from this item")(_.total.energyShield)
-//  add(EnergyShield)
-//
-//  case object Dps_Physical extends ComputedItemPropPosNumber("pDps",
-//    "Physical damage per second, or Avg Physical Damage for non weapon items")(_.total.perElementDps.physical.round)
-//  add(Dps_Physical)
-//  case object Dps_Fire extends ComputedItemPropPosNumber("fDps",
-//    "Fire damage per second, or Avg Fire Damage for non weapon items")(_.total.perElementDps.fire.round)
-//  add(Dps_Fire)
-//  case object Dps_Cold extends ComputedItemPropPosNumber("cDps",
-//    "Cold damage per second, or Avg Cold Damage for non weapon items")(_.total.perElementDps.cold.round)
-//  add(Dps_Cold)
-//  case object Dps_Lightning extends ComputedItemPropPosNumber("lDps",
-//    "Lightning damage per second, or Avg Lightning Damage for non weapon items")(_.total.perElementDps.lightning.round)
-//  add(Dps_Lightning)
-//  case object Dps_Chaos extends ComputedItemPropPosNumber("xDps",
-//    "Chaos damage per second, or Avg Chaos Damage for non weapon items")(_.total.perElementDps.chaos.round)
-//  add(Dps_Chaos)
-//
-//  case object MagicFind extends ComputedItemPropPosNumber("mf",
-//    "Total of Increased Item Rarity and Increased Item Quantity")(_.magicFind)
-//  add(MagicFind)
-//
-//  case object Required_Level extends ComputedItemPropNegNumber("rlvl",
-//    "The level required to equip the item")(_.requirements.level)
-//  add(Required_Level)
-//  case object Required_Dex extends ComputedItemPropNegNumber("rDex",
-//    "The dexterity required to equip the item")(_.requirements.attribute.dexterity)
-//  add(Required_Dex)
-//  case object Required_Str extends ComputedItemPropNegNumber("rStr",
-//    "The strength required to equip the item")(_.requirements.attribute.strength)
-//  add(Required_Str)
-//  case object Required_Int extends ComputedItemPropNegNumber("rInt",
-//    "The intelligence required to equip the item")(_.requirements.attribute.intelligence)
-//  add(Required_Int)
-//
-//  case object LifeLeech extends ComputedItemPropNegNumber("lleech",
-//    "Life Leech from Physical Attack Damage")(_.leech.physical.life)
-//  add(LifeLeech)
-//
-//  case object ManaLeech extends ComputedItemPropNegNumber("mleech",
-//    "Mana Leech from Physical Attack Damage")(_.leech.physical.mana)
-//  add(ManaLeech)
-//
-//
-//  case object Plus_Life extends ComputedItemPropPosNumber("+life",
-//    "Adds this amount of life")(_.plusTo.lifeAndMana.life)
-//  add(Plus_Life)
-//  case object Plus_Mana extends ComputedItemPropPosNumber("+mana",
-//    "Adds this amount of mana")(_.plusTo.lifeAndMana.mana)
-//  add(Plus_Mana)
-//  case object Plus_Dex extends ComputedItemPropPosNumber("+dex",
-//    "Adds this amount of dex")(_.plusTo.attribute.dexterity)
-//  add(Plus_Dex)
-//  case object Plus_Str extends ComputedItemPropPosNumber("+str",
-//    "Adds this amount of str")(_.plusTo.attribute.strength)
-//  add(Plus_Str)
-//  case object Plus_Int extends ComputedItemPropPosNumber("+int",
-//    "Adds this amount of int")(_.plusTo.attribute.intelligence)
-//  add(Plus_Int)
-//
-//  case object Plus_Total_Resist extends ComputedItemPropPosNumber("+ΣRes",
-//    "The total amount of resistance")(_.plusTo.totalResistance)
-//  add(Plus_Total_Resist)
-//  case object Plus_Fire_Resist extends ComputedItemPropPosNumber("+fRes",
-//    "The amount of fire resistance")(_.plusTo.resistance.fire)
-//  add(Plus_Fire_Resist)
-//  case object Plus_Cold_Resist extends ComputedItemPropPosNumber("+cRes",
-//    "The amount of cold resistance")(_.plusTo.resistance.cold)
-//  add(Plus_Cold_Resist)
-//  case object Plus_Lightning_Resist extends ComputedItemPropPosNumber("+lRes",
-//    "The amount of lightning resistance")(_.plusTo.resistance.lightning)
-//  add(Plus_Lightning_Resist)
-//  case object Plus_Chaos_Resist extends ComputedItemPropPosNumber("+xRes",
-//    "The amount of chaos resistance")(_.plusTo.resistance.chaos)
-//  add(Plus_Chaos_Resist)
-//
-//  case object Increased_CritChance extends ComputedItemPropPosNumber("+%crit",
-//    "Increased Critical Strike Chance")(_.properties.criticalStrikeChance)
-//  add(Increased_CritChance)
-//
-//  case object Increased_CritChanceSpells extends ComputedItemPropPosNumber("+%spCrit",
-//    "Increased Critical Strike Chance For Spells")(i => i.increased.globalCriticalStrikeChance + i.increased.criticalStrikeChanceForSpells)
-//  add(Increased_CritChanceSpells)
-//
-//  case object Increased_GlobalCritChance extends ComputedItemPropPosNumber("+%gcc",
-//    "Increased Global Critical Strike Chance")(_.increased.globalCriticalStrikeChance)
-//  add(Increased_GlobalCritChance)
-//
-//  case object Increased_GlobalCritMult extends ComputedItemPropPosNumber("+%gcm",
-//    "Increased Global Critical Strike Multiplier")(_.increased.globalCriticalStrikeMultiplier)
-//  add(Increased_GlobalCritMult)
-//
-//  case object Increased_ProjectileSpeed extends ComputedItemPropPosNumber("+%projSpeed",
-//    "Increased Projectile Speed")(_.increased.projectileSpeed)
-//  add(Increased_ProjectileSpeed)
-//
-//  case object Increased_MoveSpeed extends ComputedItemPropPosNumber("+%move",
-//    "Increased Movement Speed")(_.increased.movementSpeed)
-//  add(Increased_MoveSpeed)
-//
-//  case object Increased_ManaRegen extends ComputedItemPropPosNumber("+%mareg",
-//    "Increased Mana Regeneration Rate")(_.increased.manaRegenerationRate)
-//  add(Increased_ManaRegen)
-//
-//
-//  case object Increased_SpellDamage extends ComputedItemPropPosNumber("+%spelDmg",
-//    "Increased Spell Damage")(_.increased.spellDamage)
-//  add(Increased_SpellDamage)
-//  case object Increased_ElementalDamage extends ComputedItemPropPosNumber("+%eleDmg",
-//    "Increased Elemental Damage")(_.increased.elementalDamage)
-//  add(Increased_ElementalDamage)
-//  case object Increased_FireDamage extends ComputedItemPropPosNumber("+%fDmg",
-//    "Increased Fire Damage + Elemental Damage")(_.increased.damage.fire)
-//  add(Increased_FireDamage)
-//  case object Increased_ColdDamage extends ComputedItemPropPosNumber("+%cDmg",
-//    "Increased Cold Damage + Elemental Damage")(_.increased.damage.cold)
-//  add(Increased_ColdDamage)
-//  case object Increased_LightningDamage extends ComputedItemPropPosNumber("+%lDmg",
-//    "Increased Lightning Damage + Elemental Damage")(_.increased.damage.lightning)
-//  add(Increased_LightningDamage)
-//
-//  case object Increased_GemLevelBow extends ComputedItemPropPosNumber("+gBow",
-//    "Increased Bow Gem Level ")(_.gemLevel.bow)
-//  add(Increased_GemLevelBow)
-//  case object Increased_GemLevelMinion extends ComputedItemPropPosNumber("+gMinion",
-//    "Increased Minion Gem Level ")(_.gemLevel.minion)
-//  add(Increased_GemLevelMinion)
-//  case object Increased_GemLevelMelee extends ComputedItemPropPosNumber("+gMelee",
-//    "Increased Melee Gem Level ")(_.gemLevel.melee)
-//  add(Increased_GemLevelMelee)
-//  case object Increased_GemLevelAny extends ComputedItemPropPosNumber("+gAny",
-//    "Increased Any Gem Level ")(_.gemLevel.any)
-//  add(Increased_GemLevelAny)
-//  case object Increased_GemLevelFire extends ComputedItemPropPosNumber("+gFir",
-//    "Increased Fire Gem Level ")(_.gemLevel.element.fire)
-//  add(Increased_GemLevelFire)
-//  case object Increased_GemLevelCold extends ComputedItemPropPosNumber("+gCol",
-//    "Increased Cold Gem Level ")(_.gemLevel.element.cold)
-//  add(Increased_GemLevelCold)
-//  case object Increased_GemLevelLightning extends ComputedItemPropPosNumber("+gLig",
-//    "Increased Lightning Gem Level ")(_.gemLevel.element.lightning)
-//  add(Increased_GemLevelLightning)
-//  case object Increased_GemLevelStrength extends ComputedItemPropPosNumber("+gStr",
-//    "Increased Strength Gem Level ")(_.gemLevel.attribute.strength)
-//  add(Increased_GemLevelStrength)
-//  case object Increased_GemLevelDexterity extends ComputedItemPropPosNumber("+gDex",
-//    "Increased Dexterity Gem Level ")(_.gemLevel.attribute.dexterity)
-//  add(Increased_GemLevelDexterity)
-//  case object Increased_GemLevelIntelligence extends ComputedItemPropPosNumber("+gInt",
-//    "Increased Intelligence Gem Level ")(_.gemLevel.attribute.intelligence)
-//  add(Increased_GemLevelIntelligence)
+  Misc ?= "Gem level / Items in Stack / # of Sockets /  Map Level"
+  Quality ?= "The quality of the item"
+  Score ?= "An experimental score assigned to assess the desirability of the item"
+
+  //Defensive
+  val Armour            = pno("Armour", "AR")(Defensive)(_.total.armour)
+  val Evasion           = pno("Evasion", "EV")(Defensive)(_.total.evasionRating)
+  val ArmourPlusEvasion = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
+  val EnergyShield      = pno("EnergyShield", "ES")(Defensive)(_.total.energyShield)
+  Armour ?= "Armour"
+  Evasion ?= "Evasion"
+  ArmourPlusEvasion ?= "ArmourPlusEvasion"
+  EnergyShield ?= "EnergyShield"
+
+  //Attack
+  val AttacksPerSecond = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
+  val DpsTotal         = pno("DpsTotal", "dps")(Attack, Dps)(_.total.dps.round)
+  val DpsPhysical      = pno("DpsPhysical", "pDps")(Attack, Dps)(_.total.perElementDps.physical.round)
+  val DpsFire          = pno("DpsFire", "fDps")(Attack, Dps)(_.total.perElementDps.fire.round)
+  val DpsCold          = pno("DpsCold", "cDps")(Attack, Dps)(_.total.perElementDps.cold.round)
+  val DpsLightning     = pno("DpsLightning", "lDps")(Attack, Dps)(_.total.perElementDps.lightning.round)
+  val DpsChaos         = pno("DpsChaos", "xDps")(Attack, Dps)(_.total.perElementDps.chaos.round)
+  AttacksPerSecond ?= "AttacksPerSecond"
+  DpsTotal ?= "Total Dps or Average Damage for Non-Weapons"
+  DpsPhysical ?= "Physical Dps or Average Damage for Non-Weapons"
+  DpsFire ?= "Fire Dps or Average Damage for Non-Weapons"
+  DpsCold ?= "Cold Dps or Average Damage for Non-Weapons"
+  DpsLightning ?= "Lightning Dps or Average Damage for Non-Weapons"
+  DpsChaos ?= "Chaos Dps or Average Damage for Non-Weapons"
+
+  //Requirements
+  val RequiredLevel = nno("RequiredLevel", "rLvl")(Requirements)(_.requirements.level)
+  val RequiredDex   = nno("RequiredDex", "rDex")(Requirements)(_.requirements.attribute.dexterity)
+  val RequiredStr   = nno("RequiredStr", "rStr")(Requirements)(_.requirements.attribute.strength)
+  val RequiredInt   = nno("RequiredInt", "rInt")(Requirements)(_.requirements.attribute.intelligence)
+  RequiredLevel ?= "Level Required to Equip the Item"
+  RequiredDex ?= "Dex Required to Equip the Item"
+  RequiredStr ?= "Str Required to Equip the Item"
+  RequiredInt ?= "Int Required to Equip the Item"
+
+  //Efficiency
+  val MagicFind                = pno("MagicFind", "mf")(Efficiency)(_.magicFind)
+  val IncreasedMoveSpeed       = pno("IncreasedMoveSpeed", "+%move")(Efficiency)(_.increased.movementSpeed)
+  val IncreasedProjectileSpeed = pno("IncreasedProjectileSpeed", "+%projSpeed")(Efficiency)(_.increased.projectileSpeed)
+
+  MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
+  IncreasedMoveSpeed ?= "Increased Movement Speed"
+  IncreasedProjectileSpeed ?= "Increased Projectile Speed"
+
+  //Regen
+  val LifeLeech          = pno("LifeLeech", "lleech")(Regen)(_.leech.physical.life)
+  val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
+  val IncreasedManaRegen = pno("IncreasedManaRegen", "+%mareg")(Regen)(_.increased.manaRegenerationRate)
+  LifeLeech ?= "Life Leech from Physical Attack Damage"
+  ManaLeech ?= "Mana Leech from Physical Attack Damage"
+  IncreasedManaRegen ?= "Increased Mana Regeneration Rate"
+
+  //Attributes
+  val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndMana.life)
+  val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndMana.mana)
+  val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
+  val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
+  val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
+  PlusLife ?= "Adds this amount of life"
+  PlusMana ?= "Adds this amount of mana"
+  PlusDex ?= "Adds this amount of dex"
+  PlusStr ?= "Adds this amount of str"
+  PlusInt ?= "Adds this amount of int"
+
+  //Resists
+  val PlusTotalResist     = pno("PlusTotalResist", "+SRes")(Resists)(_.plusTo.totalResistance)
+  val PlusMaxResist       = pno("PlusMaxResist", "+MRes")(Resists)(_.plusTo.maxResistance)
+  val PlusFireResist      = pno("PlusFireResist", "+fRes")(Resists)(_.plusTo.resistance.fire)
+  val PlusColdResist      = pno("PlusColdResist", "+cRes")(Resists)(_.plusTo.resistance.cold)
+  val PlusLightningResist = pno("PlusLightningResist", "+lRes")(Resists)(_.plusTo.resistance.lightning)
+  val PlusChaosResist     = pno("PlusChaosResist", "+xRes")(Resists)(_.plusTo.resistance.chaos)
+  PlusTotalResist ?= "The total amount of resistance"
+  PlusMaxResist ?= "The highest amount of resistance"
+  PlusFireResist ?= "The amount of fire resistance"
+  PlusColdResist ?= "The amount of cold resistance"
+  PlusLightningResist ?= "The amount of lightning resistance"
+  PlusChaosResist ?= "The amount of chaos resistance"
+
+  //Crit
+  val IncreasedCritChance       = pno("IncreasedCritChance", "+%crit")(Crit)(_.properties.criticalStrikeChance)
+  val IncreasedCritChanceSpells = pno("IncreasedCritChanceSpells", "+%spCrit")(Crit)(i => i.increased.globalCriticalStrikeChance + i.increased.criticalStrikeChanceForSpells)
+  val IncreasedGlobalCritChance = pno("IncreasedGlobalCritChance", "+%gcc")(Crit)(_.increased.globalCriticalStrikeChance)
+  val IncreasedGlobalCritMult   = pno("IncreasedGlobalCritMult", "+%gcm")(Crit)(_.increased.globalCriticalStrikeMultiplier)
+  IncreasedCritChance ?= "Increased Critical Strike Chance"
+  IncreasedCritChanceSpells ?= "Increased Critical Strike Chance For Spells"
+  IncreasedGlobalCritChance ?= "Increased Global Critical Strike Chance"
+  IncreasedGlobalCritMult ?= "Increased Global Critical Strike Multiplier"
+
+  //Spells
+  val IncreasedSpellDamage          = pno("IncreasedSpellDamage", "+%spDmg")(Spells)(_.increased.spellDamage)
+  val IncreasedElementalSpellDamage = pno("IncreasedElementalSpellDamage", "+%spElDmg")(Spells)(_.increasedSpell.elemental)
+  val IncreasedFireSpellDamage      = pno("IncreasedFireSpellDamage", "+%spFDmg")(Spells)(_.increasedSpell.elements.fire)
+  val IncreasedColdSpellDamage      = pno("IncreasedColdSpellDamage", "+%spCDmg")(Spells)(_.increasedSpell.elements.cold)
+  val IncreasedLightningSpellDamage = pno("IncreasedLightningSpellDamage", "+%spLDmg")(Spells)(_.increasedSpell.elements.lightning)
+  val IncreasedChaosSpellDamage     = pno("IncreasedChaosSpellDamage", "+%spXDmg")(Spells)(_.increasedSpell.elements.lightning)
+  IncreasedSpellDamage ?= "Increased Spell Damage"
+  IncreasedElementalSpellDamage ?= "Increased Elemental Damage + Spell Damage"
+  IncreasedFireSpellDamage ?= "Increased Fire Damage + Elemental Damage + Spell Damage"
+  IncreasedColdSpellDamage ?= "Increased Cold Damage + Elemental Damage + Spell Damage"
+  IncreasedLightningSpellDamage ?= "Increased Lightning Damage + Elemental Damage + Spell Damage"
+  IncreasedChaosSpellDamage ?= "Increased Chaos Damage + Spell Damage"
+
+  //Elemental
+  val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(Elemental)(_.increased.elementalDamage)
+  val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(Elemental)(_.increased.damage.fire)
+  val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(Elemental)(_.increased.damage.cold)
+  val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(Elemental)(_.increased.damage.lightning)
+  val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(Elemental)(_.increased.damage.chaos)
+  IncreasedElementalDamage ?= "Increased Elemental Damage"
+  IncreasedFireDamage ?= "Increased Fire Damage + Elemental Damage"
+  IncreasedColdDamage ?= "Increased Cold Damage + Elemental Damage"
+  IncreasedLightningDamage ?= "Increased Lightning Damage + Elemental Damage"
+  IncreasedChaosDamage ?= "Increased Chaos Damage"
+
+  //Gems
+  val IncreasedGemLevelBow          = pno("IncreasedGemLevelBow", "+gBow")(Gems)(_.gemLevel.bow)
+  val IncreasedGemLevelMinion       = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.gemLevel.minion)
+  val IncreasedGemLevelMelee        = pno("IncreasedGemLevelMelee", "+gMelee")(Gems)(_.gemLevel.melee)
+  val IncreasedGemLevelAny          = pno("IncreasedGemLevelAny", "+gAny")(Gems)(_.gemLevel.any)
+  val IncreasedGemLevelFire         = pno("IncreasedGemLevelFire", "+gFir")(Gems)(_.gemLevel.element.fire)
+  val IncreasedGemLevelCold         = pno("IncreasedGemLevelCold", "+gCol")(Gems)(_.gemLevel.element.cold)
+  val IncreasedGemLevelLightning    = pno("IncreasedGemLevelLightning", "+gLig")(Gems)(_.gemLevel.element.lightning)
+  val IncreasedGemLevelStrength     = pno("IncreasedGemLevelStrength", "+gStr")(Gems)(_.gemLevel.attribute.strength)
+  val IncreasedGemLevelDexterity    = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.gemLevel.attribute.dexterity)
+  val IncreasedGemLevelIntelligence = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.gemLevel.attribute.intelligence)
+  IncreasedGemLevelBow ?= "Increased Bow Gem Level "
+  IncreasedGemLevelMinion ?= "Increased Minion Gem Level "
+  IncreasedGemLevelMelee ?= "Increased Melee Gem Level "
+  IncreasedGemLevelAny ?= "Increased Any Gem Level "
+  IncreasedGemLevelFire ?= "Increased Fire Gem Level "
+  IncreasedGemLevelCold ?= "Increased Cold Gem Level "
+  IncreasedGemLevelLightning ?= "Increased Lightning Gem Level "
+  IncreasedGemLevelStrength ?= "Increased Strength Gem Level "
+  IncreasedGemLevelDexterity ?= "Increased Dexterity Gem Level "
+  IncreasedGemLevelIntelligence ?= "Increased Intelligence Gem Level "
 
 
 }

@@ -36,7 +36,7 @@ case class MinMaxDamage(var min: Double, var max: Double) {
 //  }
 //}
 
-class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val locationName : String) {
+class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val locationName: String) {
   lazy val maxLinks: Int       = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
   lazy val score   : ItemScore = ItemScorer(this).getOrElse(ItemScore(Nil, 0))
 
@@ -52,7 +52,7 @@ class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val loc
   }
 
   //This location includes coordinates
-  def locAndCoords = s"${locationName} x:${item.x.toOption.map(_+1).getOrElse("")} y:${item.y.toOption.map(_+1).getOrElse("")}"
+  def locAndCoords = s"${locationName} x:${item.x.toOption.map(_ + 1).getOrElse("")} y:${item.y.toOption.map(_ + 1).getOrElse("")}"
 
   def typeName = {
     if (slots.isAmulet) "Amulet"
@@ -101,20 +101,31 @@ class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val loc
     var elementalDamage                = 0.0
   }
 
+  object increasedSpell {
+    def elemental = increased.spellDamage + increased.elementalDamage
+    val elements = new Elements[Double] {
+      override def physical: Double = increased.spellDamage + increased.damage.physical
+      override def fire: Double = increased.spellDamage + increased.damage.fire
+      override def cold: Double = increased.spellDamage + increased.damage.cold
+      override def chaos: Double = increased.spellDamage + increased.damage.lightning
+      override def lightning: Double = increased.spellDamage + increased.damage.chaos
+    }
+  }
+
   object reduced {
     var attributeRequirements = 0.0
     var enemyStunThreshold    = 0.0
   }
 
   var sockets: List[List[String]] = Nil
-  lazy val socketColors = sockets.map(_.mkString("-")).mkString(" ")
-  lazy val socketCnt: Int = sockets.map(_.size).sum
-  lazy val maxLink = sockets.map(_.size).maxOpt.getOrElse(0)
-  lazy val propLevel: Int = item.getLevel.getOrElse(0)
-  lazy val mapLevel: Int = item.getMapLevel.getOrElse(0)
+  lazy val socketColors      = sockets.map(_.mkString("-")).mkString(" ")
+  lazy val socketCnt   : Int = sockets.map(_.size).sum
+  lazy val maxLink           = sockets.map(_.size).maxOpt.getOrElse(0)
+  lazy val propLevel   : Int = item.getLevel.getOrElse(0)
+  lazy val mapLevel    : Int = item.getMapLevel.getOrElse(0)
   lazy val countInStack: Int = item.getCountInStack.getOrElse(0)
 
-  lazy val misc : Double = {
+  lazy val misc: Double = {
     if (countInStack > 0) countInStack
     else if (socketCnt > 0) socketCnt
     else if (propLevel > 0) propLevel
@@ -133,6 +144,7 @@ class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val loc
     val attribute  = Attributes mutable 0.0
     val resistance = Elements mutable 0.0
     def totalResistance = resistance.all.sum
+    def maxResistance = resistance.all.max
     val lifeAndMana    = LifeAndMana mutable 0.0
     var accuracyRating = 0.0
     var evasionRating  = 0.0
@@ -174,7 +186,7 @@ class ComputedItem(val item: AnyItem, val containerId : LootContainerId, val loc
     def evasionRating = properties.evasionRating.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
     def energyShield = properties.energyShield.oIf(_ == 0.0, x => plusTo.energyShield, x => x)
     def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 *
-        properties.criticalStrikeChance
+      properties.criticalStrikeChance
 
 
   }

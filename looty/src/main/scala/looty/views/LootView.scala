@@ -2,7 +2,7 @@ package looty
 package views
 
 import looty.model.ComputedItemProps.ComputedItemProp
-import looty.views.LootView.{Columns, ControlPane, Controls}
+import looty.views.LootView.{Column, Columns, ControlPane, Controls}
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 import scala.scalajs.js
 import looty.model.{StashTabId, InventoryId, LootContainerId, ComputedItemProps, ComputedItem}
@@ -22,10 +22,41 @@ import looty.poeapi.PoeCacher
 //////////////////////////////////////////////////////////////
 
 object LootFilter {
-  def all = LootFilter("All", _ => true)
+  def all = LootFilter("All", None,  _ => true)
+  def parse(text: String, col: Column): LootFilter = {
+    def numFilter(n: String)(p: (Double, Double) => Boolean) = {
+      val x = n.toDouble
+      LootFilter(text, Some(col), i => p(col.p.getJs(i).toString.toDouble, x))
+    }
+    val GT = ">(.*)".r
+    val GTE = ">=(.*)".r
+    val LT = "<(.*)".r
+    val LTE = "<=(.*)".r
+    val EQ = "=(.*)".r
+
+    try {
+      text.trim match {
+        case GTE(n) if n.nonEmpty => numFilter(n)(_ >= _)
+        case GT(n) if n.nonEmpty => numFilter(n)(_ > _)
+        case LTE(n) if n.nonEmpty => numFilter(n)(_ <= _)
+        case LT(n) if n.nonEmpty => numFilter(n)(_ < _)
+        case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
+        case "" => LootFilter(text, Some(col), i => true)
+        case s =>
+          val toks = s.split(" ")
+          LootFilter(text, Some(col), (i) => {
+            val value = col.p.getJs(i).toString.toLowerCase
+            toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
+          })
+      }
+    } catch {
+      case e: Throwable =>
+        LootFilter(text, Some(col),  i => true)
+    }
+  }
 }
 
-case class LootFilter(text: String, p: ComputedItem => Boolean) {
+case class LootFilter(text: String, col : Option[Column], p: ComputedItem => Boolean) {
   def allows(i: ComputedItem): Boolean = {
     try p(i) catch {case e: Throwable => false}
   }
@@ -91,19 +122,60 @@ object LootView {
       if (width =?= -1) o.width = 50 else o.width = width
       o
     }
+
+    private var listeners = Vector.empty[Boolean => Unit]
+    private var _visible  = true
+    private def changed() {
+      listeners.foreach(_(_visible))
+    }
+
+    def visible = _visible
+
+    def hide() {
+      _visible = false
+      changed()
+    }
+    def show() {
+      _visible = true
+      changed()
+    }
+    def toggle() {
+      _visible = !_visible
+      changed()
+    }
+
+    def onChange(f: Boolean => Unit) {
+      listeners :+= f
+    }
   }
 
   class Columns {
     val all    = ComputedItemProps.all.map(new Column(_))
     val allMap = immutable.Map(all.map(c => c.id -> c): _*)
 
-    var visible: List[Column] = all
+    def visible = all.filter(_.visible)
+    all.foreach(c => c.onChange(v => colChanged(c)))
+
+    private def colChanged(c: Column) {
+      changed()
+    }
+
+    private var listeners = Vector.empty[() => Unit]
+    def onChange(f: () => Unit) {
+      listeners :+= f
+    }
+    private def changed() {
+      listeners.foreach(_())
+    }
+
     def getJsArray(): js.Array[js.Dynamic] = {
       val cols = js.Array[js.Dynamic]()
       visible.foreach(c => cols.push(c.slick))
       cols
     }
     def get(id: String): Column = allMap(id)
+
+
   }
 }
 
@@ -123,9 +195,20 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
 
 
+  var colChangePending = false
+
   def start(el: JQuery) {
     console.log("Starting Grid View")
     setHtml(el).foreach(x => addAllItems)
+    columns.onChange { () =>
+      if (!colChangePending) {
+        colChangePending = true
+        global.setTimeout(() => {
+          grid.setColumns(columns.getJsArray())
+          colChangePending = false
+        }, 50)
+      }
+    }
   }
 
   def addAllItems {
@@ -151,7 +234,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     containers += containerId -> container
     //    buttons.get(containerId).foreach(_.css("border-color", ""))
     buttons.get(containerId) match {
-      case Some(btn) => btn.css("border-color", "")
+      case Some(btn) => btn.removeClass("loading")
       case None => console.error("No button for container", containerId)
     }
     for {
@@ -173,7 +256,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     appendGrid()
     el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
     val (refreshEl, fut) = createRefreshPane()
-    controls.add("Clear") {
+    controls.add("Clear Filters") {
       Filters.clear()
       Filters.refresh()
     }
@@ -197,7 +280,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     val elClear = jq("<div></div>")
     el.append(elClear)
 
-    val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">All Tabs</button>""")
+    val showAllBtn = jq("""<button title="Will show all inventories and stash tabs">Show All Tabs</button>""")
     showAllBtn.click { () =>
       Filters.tabFilter = LootFilter.all
       Filters.refresh()
@@ -208,8 +291,13 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
 
     reloadAllBtn.click { () =>
-      pc.clearLeague(league).foreach { x =>
-        global.location.reload()
+      if (global.confirm("Are you sure? This might take some time").asInstanceOf[Boolean]) {
+        pc.clearLeague(league).foreach { x =>
+          global.location.reload()
+        }
+        Alerter.reloadMsg()
+      } else {
+        Alerter.noReloadMsg()
       }
     }
 
@@ -230,14 +318,11 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     } yield {
       chars.foreach { char =>
         if (char.league.toString =?= league) {
-          val button = jq(s"""<button title="$title">${char.name}</button>""")
-          button.css(obj[js.Any](
-            borderColor = "red"
-          ))
+          val button = jq(s"""<a title="$title" href="javascript:void(0)">[${char.name}]</a> """)
           button.data("charName", char.name)
           val conId: LootContainerId = InventoryId(char.name)
           buttons += conId -> button
-          if (!containers.contains(conId)) button.css("border-color", "red")
+          if (!containers.contains(conId)) button.addClass("loading")
           elChars.append(button)
           button.on("click", (a: js.Any) => {
             //Refresh this tab
@@ -246,7 +331,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
               updateContainer(conId, items)
             }
             //Filter the grid to show only that tab
-            Filters.tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+            Filters.tabFilter = LootFilter("Only One Tab", None, _.containerId =?= conId)
           })
         }
       }
@@ -265,7 +350,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
         ))
         val conId: LootContainerId = StashTabId((sti.i: Double).toInt)
         buttons += conId -> button
-        if (!containers.contains(conId)) button.css("border-color", "red")
+        if (!containers.contains(conId)) button.addClass("loading")
         elTabs.append(button)
         button.on("click", (a: js.Any) => {
           //Refresh this tab
@@ -274,7 +359,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
             updateContainer(conId, items)
           }
           //Filter the grid to show only that tab
-          Filters.tabFilter = LootFilter("Only One Tab", _.containerId =?= conId)
+          Filters.tabFilter = LootFilter("Only One Tab", None, _.containerId =?= conId)
         })
       }
     }
@@ -283,24 +368,77 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   }
 
   private def createColumnsPane(): JQuery = {
-    val el = jq("<div></div>")
-    val cels = columns.all.map { c =>
-      val title = c.p.description
-      val cel = jq(s"""<div style="display:inline-block" title="$title"></div>""")
-      cel.append(s"<span>${c.id}</span>")
-      val tog = jq("<a href='javascript:void(0)'>[on]</a>")
-      tog.on("click", () => {
-
+    val el = jq("""<div id="columns-controls"></div>""")
+    val showAll = jq("<a href='javascript:void(0)'>[All +]</a>")
+    showAll.on("click", () => {
+      columns.all.foreach(_.show())
+      false
+    })
+    val hideAll = jq("<a href='javascript:void(0)'>[All -]</a>")
+    hideAll.on("click", () => {
+      columns.all.foreach(_.hide())
+      false
+    })
+    val grouped = columns.all.groupBy(_.p.groups.head)
+    val groups = columns.all.map(_.p.groups.head).distinct
+    groups.foreach { groupName =>
+      val group = grouped(groupName)
+      val grpDiv = jq(s"""<div></div>""")
+      val grpOn = jq("<a href='javascript:void(0)'>[+]</a>")
+      grpOn.on("click", () => {
+        group.foreach(_.show())
+        false
       })
-      cel.append(tog)
-      cel
+
+      val grpOff = jq("<a href='javascript:void(0)'>[-]</a>")
+      grpOff.on("click", () => {
+        group.foreach(_.hide())
+        false
+      })
+
+      grpDiv.append(grpOn)
+      grpDiv.append(grpOff)
+      grpDiv.append(s"""<span style="color:pink">$groupName</span>:""")
+
+      group.foreach { c =>
+        val colDiv = jq(s"""<div style="display:inline-block" title="${c.p.description}"></div>""")
+        colDiv.append(s"<span>${c.id}</span>")
+        val onSpan = "<span style=\"color:#00FF00\">[on]</span>"
+        val offSpan = "<span style=\"color:#FF0000\">[off]</span>"
+        val curSpan = if (c.visible) onSpan else offSpan
+        val tog = jq(s"""<a href='javascript:void(0)'>$curSpan</a>&nbsp;&nbsp;&nbsp;""")
+        tog.on("click", () => {
+          c.toggle()
+          false
+        })
+        c.onChange(isOn => tog.html(if (isOn) onSpan else offSpan))
+        colDiv.append(tog)
+        grpDiv.append(colDiv)
+      }
+
+      el.append(grpDiv)
     }
-    val celCon = jq("<div></div>")
-    cels.foreach { c =>
-      celCon.append(c)
-      celCon.append("|")
+
+    //Load / Save Stuff
+    val loadSaveDiv = jq("<div></div>")
+    locally {
+      val saveName = jq("""<input type="text" placeholder="save name" width="20"></input>""")
+      val saveBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns">[Save]</a>""")
+      val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns as well as any filters that are currently active">[Save+Filters]</a>""")
+      saveBtn.on("click", () => {
+        saveName.`val`()
+      })
+      saveWithFiltersBtn.on("click", () => {
+        saveName.`val`()
+      })
+      loadSaveDiv.append(showAll)
+      loadSaveDiv.append(hideAll)
+      loadSaveDiv.append(saveName)
+      loadSaveDiv.append(saveBtn)
+      loadSaveDiv.append(saveWithFiltersBtn)
+      el.append(loadSaveDiv)
     }
-    el.append(celCon)
+
     el
   }
 
@@ -380,35 +518,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       if (text.trim.isEmpty) {
         columnFilters -= colId
       } else {
-        def numFilter(n: String)(p: (Double, Double) => Boolean) = {
-          val x = n.toDouble
-          LootFilter(text, i => p(col.p.getJs(i).toString.toDouble, x))
-        }
-        val GT = ">(.*)".r
-        val GTE = ">=(.*)".r
-        val LT = "<(.*)".r
-        val LTE = "<=(.*)".r
-        val EQ = "=(.*)".r
-
-        val fil = try {
-          text.trim match {
-            case GTE(n) if n.nonEmpty => numFilter(n)(_ >= _)
-            case GT(n) if n.nonEmpty => numFilter(n)(_ > _)
-            case LTE(n) if n.nonEmpty => numFilter(n)(_ <= _)
-            case LT(n) if n.nonEmpty => numFilter(n)(_ < _)
-            case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
-            case "" => LootFilter(text, i => true)
-            case s =>
-              val toks = s.split(" ")
-              LootFilter(text, (i) => {
-                val value = col.p.getJs(i).toString.toLowerCase
-                toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
-              })
-          }
-        } catch {
-          case e: Throwable =>
-            LootFilter(text, i => true)
-        }
+        val fil = LootFilter.parse(text, col)
         columnFilters += colId -> fil
       }
     }
