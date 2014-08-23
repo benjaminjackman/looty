@@ -166,6 +166,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     def totalResistance = resistance.all.sum
     def maxResistance = resistance.all.max
     val lifeAndMana    = LifeAndMana mutable 0.0
+    lazy val lifeAndManaWithStrInt = lifeAndMana.map2(_ + plusTo.attribute.strength * .5, _ + plusTo.attribute.intelligence * .5)
     var accuracyRating = 0.0
     var evasionRating  = 0.0
     var armour         = 0.0
@@ -205,6 +206,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     def armour = properties.armour.oIf(_ == 0.0, x => plusTo.armour, x => x)
     def evasionRating = properties.evasionRating.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
     def energyShield = properties.energyShield.oIf(_ == 0.0, x => plusTo.energyShield, x => x)
+    def globalEnergyShield = increased.maximumEnergyShield + plusTo.attribute.intelligence * .2
     def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 *
       properties.criticalStrikeChance
 

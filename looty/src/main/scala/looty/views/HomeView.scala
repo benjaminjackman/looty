@@ -54,6 +54,16 @@ class HomeView(val banner : String, val version : String) extends View {
       |<br>
       |<div>
       |<h3> Version History</h3><br>
+      |<h4>0.2.1.9</h4>
+      | <ul>
+      | <li>
+      | Numeric columns don't require operators (e.g. < <= etc) anymore. Those operators can still be used however they should filter
+      | as a min or max automatically. For example typing 50 in the pDps column will only show items with a pDps greater than or equal to 50.
+      | while typing it into the rLvl column (RequiredLevel) will show items that require at most level 50.
+      |</li>
+      | <li>Strength and Int Bonuses are now applied to life / mana</li>
+      | <li>increased cast speed, accuracy and max energy shield all have columns</li>
+      |</ul>
       |<h4>0.2.1.8</h4>
       | shift click to refresh a tab / character <br>
       | more descriptive types <br>

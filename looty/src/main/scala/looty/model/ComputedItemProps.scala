@@ -129,14 +129,16 @@ object ComputedItemProps {
   Score ?= "An experimental score assigned to assess the desirability of the item"
 
   //Defensive
-  val Armour            = pno("Armour", "AR")(Defensive)(_.total.armour)
-  val Evasion           = pno("Evasion", "EV")(Defensive)(_.total.evasionRating)
-  val ArmourPlusEvasion = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
-  val EnergyShield      = pno("EnergyShield", "ES")(Defensive)(_.total.energyShield)
+  val Armour                   = pno("Armour", "AR")(Defensive)(_.total.armour)
+  val Evasion                  = pno("Evasion", "EV")(Defensive)(_.total.evasionRating)
+  val ArmourPlusEvasion        = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
+  val EnergyShield             = pno("EnergyShield", "ES")(Defensive)(_.total.energyShield)
+  val IncreasedMaxEnergyShield = pno("IncreasedMaxEnergyShield", "+%ES")(Defensive)(_.total.globalEnergyShield)
   Armour ?= "Armour"
   Evasion ?= "Evasion"
-  ArmourPlusEvasion ?= "ArmourPlusEvasion"
-  EnergyShield ?= "EnergyShield"
+  ArmourPlusEvasion ?= "Armour + Evasion"
+  EnergyShield ?= "Energy Shield"
+  IncreasedMaxEnergyShield ?= "Increased Max Energy Shield"
 
   //Attack
   val AttacksPerSecond = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
@@ -168,6 +170,7 @@ object ComputedItemProps {
   val MagicFind                = pno("MagicFind", "mf")(Efficiency)(_.magicFind)
   val IncreasedMoveSpeed       = pno("IncreasedMoveSpeed", "+%move")(Efficiency)(_.increased.movementSpeed)
   val IncreasedProjectileSpeed = pno("IncreasedProjectileSpeed", "+%projSpeed")(Efficiency)(_.increased.projectileSpeed)
+  val Accuracy                 = pno("Accuracy", "+%acc")(Efficiency)(_.increased.accuracyRating)
 
   MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
   IncreasedMoveSpeed ?= "Increased Movement Speed"
@@ -182,13 +185,13 @@ object ComputedItemProps {
   IncreasedManaRegen ?= "Increased Mana Regeneration Rate"
 
   //Attributes
-  val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndMana.life)
-  val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndMana.mana)
+  val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
+  val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndManaWithStrInt.mana)
   val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
   val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
   val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
-  PlusLife ?= "Adds this amount of life"
-  PlusMana ?= "Adds this amount of mana"
+  PlusLife ?= "Adds this amount of life (includes strength bonus)"
+  PlusMana ?= "Adds this amount of mana (includes intelligence bonus)"
   PlusDex ?= "Adds this amount of dex"
   PlusStr ?= "Adds this amount of str"
   PlusInt ?= "Adds this amount of int"
@@ -218,12 +221,14 @@ object ComputedItemProps {
   IncreasedGlobalCritMult ?= "Increased Global Critical Strike Multiplier"
 
   //Spells
+  val IncreasedCastSpeed            = pno("IncreasedCastSpeed", "+%cast")(Spells)(_.increased.castSpeed)
   val IncreasedSpellDamage          = pno("IncreasedSpellDamage", "+%spDmg")(Spells)(_.increased.spellDamage)
   val IncreasedElementalSpellDamage = pno("IncreasedElementalSpellDamage", "+%spElDmg")(Spells)(_.increasedSpell.elemental)
   val IncreasedFireSpellDamage      = pno("IncreasedFireSpellDamage", "+%spFDmg")(Spells)(_.increasedSpell.elements.fire)
   val IncreasedColdSpellDamage      = pno("IncreasedColdSpellDamage", "+%spCDmg")(Spells)(_.increasedSpell.elements.cold)
   val IncreasedLightningSpellDamage = pno("IncreasedLightningSpellDamage", "+%spLDmg")(Spells)(_.increasedSpell.elements.lightning)
   val IncreasedChaosSpellDamage     = pno("IncreasedChaosSpellDamage", "+%spXDmg")(Spells)(_.increasedSpell.elements.lightning)
+  IncreasedCastSpeed ?= "Increased Cast Speed"
   IncreasedSpellDamage ?= "Increased Spell Damage"
   IncreasedElementalSpellDamage ?= "Increased Elemental Damage + Spell Damage"
   IncreasedFireSpellDamage ?= "Increased Fire Damage + Elemental Damage + Spell Damage"

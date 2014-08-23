@@ -11,6 +11,11 @@ package looty.model
 
 
 object LifeAndMana {
+  def apply[A](l : A, m : A) = new LifeAndMana[A] {
+    override def life: A = l
+    override def mana: A = m
+  }
+
   def of[A](a: => A) = new LifeAndMana[A] {
     val life: A = a
     val mana: A = a
@@ -36,6 +41,8 @@ object LifeAndMana {
 trait LifeAndMana[A] {
   def life: A
   def mana: A
+
+  def map2[B](fl : A => B, fm : A => B) = LifeAndMana(fl(life), fm(mana))
 
   def apply(name: String): A = name match {
     case LifeAndMana.life => life
