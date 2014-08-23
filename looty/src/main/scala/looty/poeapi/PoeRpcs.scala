@@ -1,6 +1,9 @@
 package looty
 package poeapi
 
+import cgta.ojs.io.AjaxHelp.HttpRequestTypes
+import cgta.ojs.io.AjaxHelp.HttpRequestTypes.HttpRequestType
+
 import scala.scalajs.js
 import org.scalajs.jquery.JQueryStatic
 import scala.concurrent.{Promise, Future}
@@ -23,8 +26,17 @@ object PoeRpcs {
 
   import PoeTypes._
 
+
   def getCharacters(): Future[Characters] = {
     enqueue[js.Array[CharacterInfo]](url = "http://www.pathofexile.com/character-window/get-characters", params = null)
+  }
+
+  def getPassiveSkills(character: String): Future[js.Dynamic] = {
+    enqueue[js.Dynamic](
+      url = s"http://www.pathofexile.com/character-window/get-passive-skills?character=$character",
+      params = null,
+      reqType = HttpRequestTypes.Get
+    )
   }
 
   def getCharacterInventory(character: String): Future[Inventory] = {
@@ -56,16 +68,16 @@ object PoeRpcs {
   //We send all rpc calls through a queue, since GGG throttles
   //the calls to their api we will need to re-attempt certain
   //calls on throttle failures
-  def enqueue[A](url: String, params: js.Any): Future[A] = {
-    val qi = QueueItem(url, params)
+  def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Post): Future[A] = {
+    val qi = QueueItem(url, params, reqType)
     requestQueue = requestQueue.enqueue(qi)
     scheduleQueueCheck(wasThrottled = false)
     qi.promise.future.asInstanceOf[Future[A]]
   }
 
-  def get[A](url: String, params: js.Any): Future[A] = {
+  def get[A](url: String, params: js.Any, reqType: HttpRequestType): Future[A] = {
     val jQuery = global.jQuery.asInstanceOf[JQueryStatic]
-    AjaxHelp(url, AjaxHelp.HttpRequestTypes.Post, params.nullSafe.map(s => jQuery.param(s))).flatMap { res: js.Any =>
+    AjaxHelp(url, reqType, params.nullSafe.map(s => jQuery.param(s))).flatMap { res: js.Any =>
       res match {
         case x: js.prim.Boolean =>
           //GGG sends back "false" when the parameters aren't valid
@@ -92,7 +104,7 @@ object PoeRpcs {
     willCheckQueue = false
     requestQueue.headOption match {
       case Some(qi) =>
-        get[Any](qi.url, qi.params).onComplete {
+        get[Any](qi.url, qi.params, qi.requestType).onComplete {
           case Success(x) =>
             requestQueue = requestQueue.tail
             Alerter.info("Downloaded some data from pathofexile.com")
@@ -113,7 +125,7 @@ object PoeRpcs {
     }
   }
 
-  private case class QueueItem(url: String, params: js.Any) {
+  private case class QueueItem(url: String, params: js.Any, requestType: AjaxHelp.HttpRequestTypes.HttpRequestType) {
     val promise = Promise[Any]()
   }
 
