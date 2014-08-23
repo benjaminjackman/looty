@@ -54,13 +54,17 @@ class HomeView(val banner : String, val version : String) extends View {
       |<br>
       |<div>
       |<h3> Version History</h3><br>
+      |0.2.1.5 <br>
+      | Add / Remove / Save Columns + Filters  <br>
+      | Add / Remove / Refresh Tabs  <br>
+      | PoeBuilder Integration  <br>
       |0.2.1.4 <br>
-      | Fixed bug with Block % not parsing correctly
+      | Fixed bug with Block % not parsing correctly <br>
       |0.2.1.3 <br>
-      | Fixed bug with max level gems causing parse errors
-      | Upgrade to ScalaJs 0.5.3
+      | Fixed bug with max level gems causing parse errors <br>
+      | Upgrade to ScalaJs 0.5.3 <br>
       |0.2.1.2 <br>
-      | Fixed google analytics script errors
+      | Fixed google analytics script errors <br>
       |0.2.1.1 <br>
       |<ul>
       |<li>

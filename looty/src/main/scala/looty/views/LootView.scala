@@ -776,7 +776,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     }
 
     def clearContainerFilters() {
-      containerFilters = Set.empty
+      containers.all.foreach(_.show())
     }
 
     def clear() {
