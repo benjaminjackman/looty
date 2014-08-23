@@ -71,22 +71,26 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   def locAndCoords = s"${locationName} x:${item.x.toOption.map(_ + 1).getOrElse("")} y:${item.y.toOption.map(_ + 1).getOrElse("")}"
 
   def typeName = {
-    if (slots.isAmulet) "Amulet"
-    else if (slots.isRing) "Ring"
-    else if (slots.isHelmet) "Helmet"
-    else if (slots.isChest) "Chest"
-    else if (slots.isGloves) "Gloves"
-    else if (slots.isBoots) "Boots"
-    else if (slots.isBelt) "Belt"
-    else if (slots.isShield) "Shield"
+    if (slots.isAmulet) "Jewelry Amulet"
+    else if (slots.isRing) "Jewelry Ring"
+    else if (slots.isHelmet) "Arm Helmet"
+    else if (slots.isChest) "Arm Chest"
+    else if (slots.isGloves) "Arm Gloves"
+    else if (slots.isBoots) "Arm Boots"
+    else if (slots.isBelt) "Arm Belt"
+    else if (slots.isShield) "Arm Shield"
     else if (slots.isQuiver) "Quiver"
     else if (slots.isFlask) "Flask"
-    else if (slots.isWeapon) properties.weaponType.toShortString
+    else if (slots.isWeapon) "Wep " + properties.weaponType.toShortString
     else if (item.isCurrency) "Currency"
-    else if (item.isGem) "Gem"
+    else if (item.isSupportGem) "Support Gem"
+    else if (item.isSkillGem) "Skill Gem"
     else if (item.isMap) "Map"
     else if (item.isQuest) "QuestItem"
-    else "UNKNOWN ITEM TYPE"
+    else {
+      console.warn("Unknown Item Type", item)
+      "UNKNOWN"
+    }
   }
 
   object increased {

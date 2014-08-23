@@ -549,7 +549,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     el.append(reloadAllBtn)
 
 
-    val title = "Refresh this stash tab / character inventory from pathofexile.com, and then show only this tab."
+    val title = "Show / hide this tab. Shift-Click to refresh it."
 
     def addCon(conId: LootContainerId, button: JQuery, el: JQuery)(refreshFn: => Unit) {
       val con = new Container(conId, button, initialVisible = true, refreshFn = () => refreshFn)
@@ -559,9 +559,13 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       Filters.setContainer(con.id, visible = con.visible)
       el.append(button)
       el.append(" ")
-      button.on("click", (a: js.Any) => {
+      button.on("click", (e: js.Dynamic) => {
         //Filter the grid to show only that tab
-        con.toggle()
+        if (e.shiftKey.asInstanceOf[js.Boolean]) {
+          con.refresh()
+        } else {
+          con.toggle()
+        }
         false
       })
     }

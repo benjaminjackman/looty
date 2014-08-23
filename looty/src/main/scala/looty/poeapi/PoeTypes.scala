@@ -117,6 +117,8 @@ object PoeTypes {
 
     implicit class AnyItemExtensions(val x: AnyItem) extends AnyVal {
       def isGem = x.getFrameType == FrameTypes.gem
+      def isSupportGem = isGem && x.descrText.toOption.exists(_ contains "This is a Support Gem")
+      def isSkillGem = isGem && !isSupportGem
       def isCurrency = x.getFrameType == FrameTypes.currency
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")

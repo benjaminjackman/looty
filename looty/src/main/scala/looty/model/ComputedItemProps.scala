@@ -71,7 +71,7 @@ object ComputedItemProps {
   def pno(
     fullName: String,
     shortName: String,
-    width: Int = 50)(
+    width: Int = 60)(
     groups: String*)(
     f: ComputedItem => Double): ComputedItemProp[Double] = {
     val res = new ComputedItemProp[Double](
@@ -88,7 +88,7 @@ object ComputedItemProps {
   def nno(
     fullName: String,
     shortName: String,
-    width: Int = 50)(
+    width: Int = 60)(
     groups: String*)(
     f: ComputedItem => Double): ComputedItemProp[Double] = {
     val res = new ComputedItemProp[Double](
