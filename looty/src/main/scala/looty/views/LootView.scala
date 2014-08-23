@@ -22,151 +22,9 @@ import looty.poeapi.PoeCacher
 //////////////////////////////////////////////////////////////
 import scala.language.postfixOps
 
-object Saver {
-  val localStorage = global.localStorage
-  val colPrefix    = "LOOTVIEW-SAVE-COLUMNS:"
-  val itemPrefix   = "LOOTVIEW-SAVE-ITEM:"
 
-  def delete(name: String) {
-    localStorage.removeItem(colPrefix + name)
-  }
 
-  def saveItemInfo(item: ComputedItem, key: String, text: String) {
-    item.forumLocationName match {
-      case None => Alerter.warn("This item doesn't have a valid forum location name, it's probably a gem in another item, or currently equipped. These items aren't saveable.")
-      case Some(loc) =>
-    }
-  }
 
-  def loadItemInfo(item: ComputedItem, key: String): Option[String] = {
-    ???
-  }
-
-  def save(
-    name: String,
-    cols: Vector[Column],
-    columnFilters: Option[Vector[LootFilterColumn]],
-    containerFilters: Option[Vector[LootContainerId]]
-  ) {
-    if (name.isEmpty) {
-      Alerter.error("Hey fella, you have to type a name in the name box!")
-      return
-    } else if (name.length > 50) {
-      Alerter.error("Hey fella, names are limited to 50 characters!")
-      return
-    }
-    val k = colPrefix + name.take(50)
-
-    val data = js.Dynamic.literal()
-    data.cols = cols.map(_.id).toJsArray
-    columnFilters.foreach { filters =>
-      data.columnFilters = filters.map { filter =>
-        val fd = js.Dynamic.literal()
-        fd.text = filter.text
-        fd.col = filter.col.id
-        fd
-      } toJsArray
-    }
-    containerFilters.foreach { filters =>
-      data.containerFilters = filters.map { containerId =>
-        val fd = js.Dynamic.literal()
-        fd.encoded = containerId.encode
-        fd
-      } toJsArray
-    }
-    val json = global.JSON.stringify(data).toString
-    localStorage.setItem(k, json)
-  }
-
-  def load(name: String)(getCol: String => Option[Column]):
-  Option[(Vector[Column], Option[Vector[LootFilterColumn]], Option[Vector[LootContainerId]])] = {
-    val k = colPrefix + name
-    localStorage.getItem(k).nullSafe.map { json =>
-      val data = global.JSON.parse(json)
-      val cols = data.cols.asJsArr[String].toVector.flatMap(c => getCol(c.toString))
-      val columnFilters = if (!data.columnFilters.isUndefined) {
-        Some {
-          data.columnFilters.asJsArr[js.Dynamic].toVector.flatMap { f =>
-            getCol(f.col.toString).map { col =>
-              val text = f.text.toString
-              LootFilterColumn.parse(text, col)
-            }
-          }
-        }
-      } else {
-        None
-      }
-      val containerFilters = if (!data.containerFilters.isUndefined) {
-        Some {
-          data.containerFilters.asJsArr[js.Dynamic].toVector.flatMap { con =>
-            LootContainerId.parse(con.encoded.toString)
-          }
-        }
-      } else {
-        None
-      }
-      (cols, columnFilters, containerFilters)
-    }
-  }
-
-  def getAllNames: Vector[String] = {
-    val sz = localStorage.length.asInstanceOf[Int]
-    val keys = (0 until sz) map (i => localStorage.key(i).toString) filter (_.startsWith(colPrefix))
-    val names = keys map (_.drop(colPrefix.length))
-    names.toVector
-  }
-}
-
-object LootFilter {
-  def all = new LootFilter {
-    override def allows(i: ComputedItem): Boolean = true
-  }
-}
-
-trait LootFilter {
-  def allows(i: ComputedItem): Boolean
-}
-
-object LootFilterColumn {
-
-  def parse(text: String, col: Column): LootFilterColumn = {
-    def numFilter(n: String)(p: (Double, Double) => Boolean) = {
-      val x = n.toDouble
-      LootFilterColumn(text, col, i => p(col.getJs(i).toString.toDouble, x))
-    }
-    val GT = ">(.*)".r
-    val GTE = ">=(.*)".r
-    val LT = "<(.*)".r
-    val LTE = "<=(.*)".r
-    val EQ = "=(.*)".r
-
-    try {
-      text.trim match {
-        case GTE(n) if n.nonEmpty => numFilter(n)(_ >= _)
-        case GT(n) if n.nonEmpty => numFilter(n)(_ > _)
-        case LTE(n) if n.nonEmpty => numFilter(n)(_ <= _)
-        case LT(n) if n.nonEmpty => numFilter(n)(_ < _)
-        case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
-        case "" => LootFilterColumn(text, col, i => true)
-        case s =>
-          val toks = s.split(" ")
-          LootFilterColumn(text, col, (i) => {
-            val value = col.getJs(i).toString.toLowerCase
-            toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
-          })
-      }
-    } catch {
-      case e: Throwable =>
-        LootFilterColumn(text, col, i => true)
-    }
-  }
-}
-
-case class LootFilterColumn(text: String, col: Column, p: ComputedItem => Boolean) {
-  def allows(i: ComputedItem): Boolean = {
-    try p(i) catch {case e: Throwable => false}
-  }
-}
 
 //case class LootFilterContainer(id: LootContainerId)
 
@@ -216,15 +74,18 @@ object LootView {
   }
 
   object Column {
-    def apply(p: ComputedItemProp[_]) = new Column(
-      shortName = p.shortName,
-      fullName = p.fullName,
-      description = p.description,
-      width = p.width,
-      groups = p.groups,
-      getJs = p.getJs,
-      setJs = None
-    )
+    def apply(p: ComputedItemProp[_]) = {
+      new Column(
+        shortName = p.shortName,
+        fullName = p.fullName,
+        description = p.description,
+        width = p.width,
+        groups = p.groups,
+        defaultNumFilter = p.defaultNumFilter,
+        getJs = p.getJs,
+        setJs = None
+      )
+    }
   }
 
   class Column(
@@ -233,6 +94,7 @@ object LootView {
     val description: String,
     val width: Int,
     val groups: Vector[String],
+    val defaultNumFilter: Option[NumFilter],
     val getJs: (ComputedItem) => js.Any,
     val setJs: Option[String => Unit]) {
     def id = shortName

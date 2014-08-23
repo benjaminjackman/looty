@@ -1,5 +1,7 @@
 package looty.model
 
+import looty.views.NumFilter
+
 import scala.scalajs.js
 
 
@@ -27,6 +29,7 @@ object ComputedItemProps {
     val fullName: String,
     val width: Int,
     val groups: Vector[String],
+    val defaultNumFilter: Option[NumFilter],
     val getJs: ComputedItem => js.Any,
     private var desc: String = "") {
 
@@ -62,6 +65,7 @@ object ComputedItemProps {
       fullName = fullName,
       width = width,
       groups = groups.distinct.toVector,
+      defaultNumFilter = None,
       getJs = (i) => f(i)
     )
     add(res)
@@ -79,6 +83,7 @@ object ComputedItemProps {
       fullName = fullName,
       width = width,
       groups = groups.distinct.toVector,
+      defaultNumFilter = Some(NumFilter(_ >= _)),
       getJs = (i) => f(i)
     )
     add(res)
@@ -96,6 +101,7 @@ object ComputedItemProps {
       fullName = fullName,
       width = width,
       groups = groups.distinct.toVector,
+      defaultNumFilter = Some(NumFilter(_ <= _)),
       getJs = (i) => f(i)
     )
     add(res)
