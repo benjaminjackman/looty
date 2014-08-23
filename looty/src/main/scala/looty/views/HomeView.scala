@@ -54,18 +54,20 @@ class HomeView(val banner : String, val version : String) extends View {
       |<br>
       |<div>
       |<h3> Version History</h3><br>
-      |0.2.1.5 <br>
+      |<h4>0.2.1.6</h4>
+      | Fixed sizing issue with PoeBuilder Page <br>
+      |<h4>0.2.1.5</h4>
       | Add / Remove / Save Columns + Filters  <br>
       | Add / Remove / Refresh Tabs  <br>
       | PoeBuilder Integration  <br>
-      |0.2.1.4 <br>
+      |<h4>0.2.1.4</h4>
       | Fixed bug with Block % not parsing correctly <br>
-      |0.2.1.3 <br>
+      |<h4>0.2.1.3</h4>
       | Fixed bug with max level gems causing parse errors <br>
       | Upgrade to ScalaJs 0.5.3 <br>
-      |0.2.1.2 <br>
+      |<h4>0.2.1.2</h4>
       | Fixed google analytics script errors <br>
-      |0.2.1.1 <br>
+      |<h4>0.2.1.1</h4>
       |<ul>
       |<li>
       |Added a misc column that will show: <br>
@@ -75,7 +77,7 @@ class HomeView(val banner : String, val version : String) extends View {
       | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvo798">tokyotapes</a><br>
       |</li>
       |</ul>
-      |0.2.1 <br>
+      |<h4>0.2.1</h4>
       |<ul>
       |<li>
       |Fixed DPS Bug <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjveud4">SoulProxy</a><br>
