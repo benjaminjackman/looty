@@ -26,7 +26,7 @@ object ComputedItemProps {
     val shortName: String,
     val fullName: String,
     val width: Int,
-    val groups: Set[String],
+    val groups: Vector[String],
     val getJs: ComputedItem => js.Any,
     private var desc: String = "") {
 
@@ -61,7 +61,7 @@ object ComputedItemProps {
       shortName = shortName,
       fullName = fullName,
       width = width,
-      groups = groups.toSet,
+      groups = groups.distinct.toVector,
       getJs = (i) => f(i)
     )
     add(res)
@@ -78,7 +78,7 @@ object ComputedItemProps {
       shortName = shortName,
       fullName = fullName,
       width = width,
-      groups = groups.toSet,
+      groups = groups.distinct.toVector,
       getJs = (i) => f(i)
     )
     add(res)
@@ -95,7 +95,7 @@ object ComputedItemProps {
       shortName = shortName,
       fullName = fullName,
       width = width,
-      groups = groups.toSet,
+      groups = groups.distinct.toVector,
       getJs = (i) => f(i)
     )
     add(res)

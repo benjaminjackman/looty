@@ -51,6 +51,22 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     n
   }
 
+  def forumLocationName = {
+    //[linkItem location="Stash4" league="Rampage" x="0" y="0"]
+    //[linkItem location="MainInventory" character="frostlarr" x="0" y="2"]
+
+    for (x <- item.x.toOption; y <- item.y.toOption) yield {
+      containerId match {
+        case InventoryId(char) =>
+          s"""[linkItem location="MainInventory" character="$char" x="$x" y="$y"]"""
+        case StashTabIdx(idx) =>
+          val league = item.league
+          s"""[linkItem location="Stash${idx + 1}" league="$league" x="$x" y="$y"]"""
+      }
+    }
+
+  }
+
   //This location includes coordinates
   def locAndCoords = s"${locationName} x:${item.x.toOption.map(_ + 1).getOrElse("")} y:${item.y.toOption.map(_ + 1).getOrElse("")}"
 

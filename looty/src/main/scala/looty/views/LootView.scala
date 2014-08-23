@@ -24,10 +24,22 @@ import scala.language.postfixOps
 
 object Saver {
   val localStorage = global.localStorage
-  val prefix       = "LOOTVIEW-SAVE-COLUMNS:"
+  val colPrefix    = "LOOTVIEW-SAVE-COLUMNS:"
+  val itemPrefix   = "LOOTVIEW-SAVE-ITEM:"
 
   def delete(name: String) {
-    localStorage.removeItem(prefix + name)
+    localStorage.removeItem(colPrefix + name)
+  }
+
+  def saveItemInfo(item: ComputedItem, key: String, text: String) {
+    item.forumLocationName match {
+      case None => Alerter.warn("This item doesn't have a valid forum location name, it's probably a gem in another item, or currently equipped. These items aren't saveable.")
+      case Some(loc) =>
+    }
+  }
+
+  def loadItemInfo(item: ComputedItem, key: String): Option[String] = {
+    ???
   }
 
   def save(
@@ -35,7 +47,7 @@ object Saver {
     cols: Vector[Column],
     columnFilters: Option[Vector[LootFilterColumn]],
     containerFilters: Option[Vector[LootContainerId]]
-    ) {
+  ) {
     if (name.isEmpty) {
       Alerter.error("Hey fella, you have to type a name in the name box!")
       return
@@ -43,7 +55,7 @@ object Saver {
       Alerter.error("Hey fella, names are limited to 50 characters!")
       return
     }
-    val k = prefix + name.take(50)
+    val k = colPrefix + name.take(50)
 
     val data = js.Dynamic.literal()
     data.cols = cols.map(_.id).toJsArray
@@ -68,7 +80,7 @@ object Saver {
 
   def load(name: String)(getCol: String => Option[Column]):
   Option[(Vector[Column], Option[Vector[LootFilterColumn]], Option[Vector[LootContainerId]])] = {
-    val k = prefix + name
+    val k = colPrefix + name
     localStorage.getItem(k).nullSafe.map { json =>
       val data = global.JSON.parse(json)
       val cols = data.cols.asJsArr[String].toVector.flatMap(c => getCol(c.toString))
@@ -99,8 +111,8 @@ object Saver {
 
   def getAllNames: Vector[String] = {
     val sz = localStorage.length.asInstanceOf[Int]
-    val keys = (0 until sz) map (i => localStorage.key(i).toString) filter (_.startsWith(prefix))
-    val names = keys map (_.drop(prefix.length))
+    val keys = (0 until sz) map (i => localStorage.key(i).toString) filter (_.startsWith(colPrefix))
+    val names = keys map (_.drop(colPrefix.length))
     names.toVector
   }
 }
@@ -120,7 +132,7 @@ object LootFilterColumn {
   def parse(text: String, col: Column): LootFilterColumn = {
     def numFilter(n: String)(p: (Double, Double) => Boolean) = {
       val x = n.toDouble
-      LootFilterColumn(text, col, i => p(col.p.getJs(i).toString.toDouble, x))
+      LootFilterColumn(text, col, i => p(col.getJs(i).toString.toDouble, x))
     }
     val GT = ">(.*)".r
     val GTE = ">=(.*)".r
@@ -139,7 +151,7 @@ object LootFilterColumn {
         case s =>
           val toks = s.split(" ")
           LootFilterColumn(text, col, (i) => {
-            val value = col.p.getJs(i).toString.toLowerCase
+            val value = col.getJs(i).toString.toLowerCase
             toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
           })
       }
@@ -203,9 +215,28 @@ object LootView {
     }
   }
 
-  class Column(val p: ComputedItemProp[_]) {
-    def id = p.shortName
-    lazy val slick = makeColumn(p.shortName, p.description, p.width)(p.getJs)
+  object Column {
+    def apply(p: ComputedItemProp[_]) = new Column(
+      shortName = p.shortName,
+      fullName = p.fullName,
+      description = p.description,
+      width = p.width,
+      groups = p.groups,
+      getJs = p.getJs,
+      setJs = None
+    )
+  }
+
+  class Column(
+    val shortName: String,
+    val fullName: String,
+    val description: String,
+    val width: Int,
+    val groups: Vector[String],
+    val getJs: (ComputedItem) => js.Any,
+    val setJs: Option[String => Unit]) {
+    def id = shortName
+    lazy val slick = makeColumn(shortName, description, width)(getJs)
 
     def makeColumn(name: String, tooltip: String, width: Int)(f: ComputedItem => js.Any) = {
       val o = newObject
@@ -244,9 +275,19 @@ object LootView {
       listeners :+= f
     }
   }
+  //Location is StashX where X = index + 1
+  //So first tab is Stash2
+  //I think the hideouts have sometihng to do wit this
+  //[linkItem location="Stash4" league="Rampage" x="0" y="0"]
+  //[linkItem location="MainInventory" character="frostlarr" x="0" y="2"]
+
+
+  object EditableColumns {
+    val all = Nil //??? //new Column()
+  }
 
   class Columns {
-    val all    = ComputedItemProps.all.map(new Column(_))
+    val all    = ComputedItemProps.all.map(Column(_)) ++ EditableColumns.all
     val allMap = immutable.Map(all.map(c => c.id -> c): _*)
 
     def visible = all.filter(_.visible)
@@ -583,8 +624,8 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       columns.all.foreach(_.hide())
       false
     })
-    val grouped = columns.all.groupBy(_.p.groups.head)
-    val groups = columns.all.map(_.p.groups.head).distinct
+    val grouped = columns.all.groupBy(_.groups.head)
+    val groups = columns.all.map(_.groups.head).distinct
     groups.foreach { groupName =>
       val group = grouped(groupName)
       val grpDiv = jq(s"""<div></div>""")
@@ -605,7 +646,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       grpDiv.append(s"""<span style="color:pink">$groupName:</span>""")
 
       group.foreach { c =>
-        val colDiv = jq(s"""<div style="display:inline-block" title="${c.p.description}"></div>""")
+        val colDiv = jq(s"""<div style="display:inline-block" title="${c.description}"></div>""")
         val onSpan = s"""<span>${c.id}</span><span style="color:#00FF00">[on]</span>"""
         val offSpan = s"""<span>${c.id}</span><span style="color:#FF0000">[off]</span>"""
         val curSpan = if (c.visible) onSpan else offSpan
@@ -626,6 +667,10 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     val loadSaveDiv = jq("<div></div>")
     locally {
       val loadDiv = jq("""<span></span>""")
+      val saveName = jq("""<input type="text" placeholder="save name" width="20"></input>""")
+      val saveBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns">[Save]</a>""")
+      val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns as well as any filters that are currently active">[Save+Filters]</a>""")
+
       def refreshLoadDiv() {
         loadDiv.empty()
         Saver.getAllNames.sortBy(_.toUpperCase).foreach { name =>
@@ -636,6 +681,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
               Saver.delete(name)
               refreshLoadDiv()
             } else {
+              saveName.`val`(name)
               Saver.load(name)(colId => columns.get(colId)) foreach {
                 case (cols, colFilters, conIds) =>
                   columns.all.foreach(_.hide())
@@ -661,9 +707,8 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
           loadDiv.append(el)
         }
       }
-      val saveName = jq("""<input type="text" placeholder="save name" width="20"></input>""")
-      val saveBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns">[Save]</a>""")
-      val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" title="Saves the currently visible columns as well as any filters that are currently active">[Save+Filters]</a>""")
+
+
       saveBtn.on("click", () => {
         val name = saveName.`val`().toString
         Saver.save(name, columns.visible, None, None)
@@ -706,7 +751,18 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       o.headerRowHeight = 30
       o.explicitInitialization = true
       o.dataItemColumnValueExtractor = (item: ComputedItem, column: js.Dynamic) => {
-        column.getter(item.asInstanceOf[js.Any])
+        val v = column.getter(item.asInstanceOf[js.Any])
+        val vAny = v.asInstanceOf[js.Any]
+        if (vAny.isInstanceOf[js.Number]) {
+          val d = vAny.asInstanceOf[js.Number]
+          if (d == 0.0) {
+            ""
+          } else {
+            v
+          }
+        } else {
+          v
+        }
       }
       o
     }

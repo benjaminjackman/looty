@@ -3,6 +3,8 @@ package views
 
 import org.scalajs.jquery.JQueryStatic
 
+import scala.scalajs.js
+
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 1/1/14 1:58 PM
@@ -10,6 +12,10 @@ import org.scalajs.jquery.JQueryStatic
 
 
 object Alerter {
+
+  def randomItem[A](xs: Seq[A]) : A = {
+    xs(getRandomInt(0, xs.size))
+  }
 
   val reloadMsgs = List(
     "This is going to take forever. Thanks, Obama!",
@@ -19,6 +25,21 @@ object Alerter {
     "Reticulating splines"
   )
 
+  val llamas = {
+    val msgs = List(
+      "5000 looting llama llama  llamas!",
+      "zoooot",
+      "uhh ree buh! uhh ree buh!",
+      "on delay! on delay! on delay!",
+      "wooot wooot",
+      "zzpapappa ",
+      "wooooooooooooooooooo!",
+      "pheeeeeee!"
+    )
+
+    "Llama mode activated! " + (0 until 100).map(x => randomItem(msgs)).mkString(" ") + "PHEW! I SURE HOPE THAT WAS WORTH IT."
+   }
+
   val noReloadMsgs = List(
     "You chose wisely my friend, had you said yes, I would've bitten your ear off.",
     "Please ask G.G.G. to add Item Levels in the item descriptions, they say it confuses noobs, noobs, more like boobs " + "hee ha ho " * 5 + " Who programmed me to laugh like this ... and why?",
@@ -27,11 +48,12 @@ object Alerter {
     "Frank Stallone",
     "A dingo ate my baby kiwi, hey that's not even accurate ... or funny!",
     "Fun fact: Kiwi meat tastes like shoe polish",
+    llamas,
     "DUN DUN DUN",
     "WAH WAH",
-    "Daaaanger Zone!",
+    "Danger zone!",
     "You could say that Path of exile is the kiwi fruit of grinding gears games labors. you could say that. Then you go die.",
-    "GO! "*25,
+    "GO! " * 25,
     "A wise decision, for as the correct choice holds life, the incorrect choice holds endless server reload time",
     "Kaom can cut through a hot knife with butter",
     "In Wraeclast ground burns you!",
@@ -51,32 +73,44 @@ object Alerter {
   }
 
   // Returns a random integer between min (included) and max (excluded)
-  def getRandomInt(min : Int, max : Int) : Int = {
+  def getRandomInt(min: Int, max: Int): Int = {
     (math.floor(math.random * (max - min)) + min).toInt
   }
 
   lazy val speaker = {
     global.meSpeak.loadConfig("jslib/mespeak/mespeak_config.json")
-    global.meSpeak.loadVoice("jslib/mespeak/voices/en/en.json")
+    global.meSpeak.loadVoice("jslib/mespeak/voices/en/en-us.json")
     global.meSpeak
   }
 
-  def speak(msg : String) {
+  def stopSpeak(msg: String) {
+    speaker.stop()
     speaker.speak(msg)
   }
 
 
-  def infoSpeak(msg : String) {
+  def infoSpeak(msg: String) {
     info(msg)
-    speak(msg)
+    stopSpeak(msg)
   }
 
   def reloadMsg() {
-    infoSpeak(reloadMsgs(getRandomInt(0, reloadMsgs.size)))
+    val msg = randomItem(reloadMsgs)
+    infoSpeak(msg)
   }
 
   def noReloadMsg() {
-    infoSpeak(noReloadMsgs(getRandomInt(0, noReloadMsgs.size)))
+    val msg = randomItem(noReloadMsgs)
+    if (msg.contains("llama")) {
+      jq("body").addClass("llama-mode")
+      info("LLAMA MODE!!!!")
+      speaker.stop()
+      speaker.speak(llamas, js.Dynamic.literal(pitch = 800, speed = 300))
+    } else {
+      jq("body").removeClass("llama-mode")
+      infoSpeak(msg)
+    }
+
   }
 
 }

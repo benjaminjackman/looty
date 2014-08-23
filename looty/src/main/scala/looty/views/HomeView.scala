@@ -54,6 +54,8 @@ class HomeView(val banner : String, val version : String) extends View {
       |<br>
       |<div>
       |<h3> Version History</h3><br>
+      |<h4>0.2.1.7</h4>
+      | Show empty cells instead of zeros <br>
       |<h4>0.2.1.6</h4>
       | Fixed sizing issue with PoeBuilder Page <br>
       |<h4>0.2.1.5</h4>
