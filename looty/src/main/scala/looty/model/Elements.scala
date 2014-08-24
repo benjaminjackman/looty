@@ -61,7 +61,7 @@ trait Elements[A] {
   }
 }
 
-class MutableElements[A] extends Elements[A] with StringAccess[A] {
+class MutableElements[A] extends Elements[A] with Accessible[String, A] {
   private var _physical : A = _
   private var _fire     : A = _
   private var _cold      : A = _

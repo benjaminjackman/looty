@@ -663,6 +663,10 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       el.appendTo(args.node)
     })
 
+    grid.onClick.subscribe { (e : js.Any, args : js.Dynamic) =>
+      console.log("GRIDMINI CLICK", args, dataView.getItem(args.row))
+    }
+
     addSort()
     addMouseover()
     jq(global.window).resize(() => autoSizeGridHeight())
@@ -864,8 +868,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     """
 
     d.html(h)
-
-    console.log(item)
   }
 }
 

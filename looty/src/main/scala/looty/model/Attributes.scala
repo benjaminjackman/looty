@@ -1,5 +1,7 @@
 package looty.model
 
+import looty.model.SocketColors.SocketColor
+
 
 //////////////////////////////////////////////////////////////
 // Copyright (c) 2013 Ben Jackman, Jeff Gomberg
@@ -23,17 +25,21 @@ object Attributes {
     res
   }
 
-  def calculatedWith[A](f: String => A) = new Attributes[A] {
-    def strength: A = f(Attributes.strength)
-    def dexterity: A = f(Attributes.dexterity)
-    def intelligence: A = f(Attributes.intelligence)
+  def calculatedWith[A](f: Attribute => A) = new Attributes[A] {
+    def strength: A = f(Attributes.Str)
+    def dexterity: A = f(Attributes.Str)
+    def intelligence: A = f(Attributes.Str)
   }
 
-  val strength     = "strength"
-  val dexterity    = "dexterity"
-  val intelligence = "intelligence"
+  sealed abstract class Attribute(val name : String, val color : SocketColor) {
+    def cap = name.capitalize
+  }
+  case object Str extends Attribute("strength", SocketColors.Red)
+  case object Dex extends Attribute("dexterity", SocketColors.Green)
+  case object Int extends Attribute("intelligence", SocketColors.Blue)
 
-  def all = List(strength, dexterity, intelligence)
+
+  def all = List(Str, Dex, Int)
 
 }
 trait Attributes[A] {
@@ -41,13 +47,15 @@ trait Attributes[A] {
   def dexterity: A
   def intelligence: A
 
-  def apply(name: String): A = name match {
-    case Attributes.strength => strength
-    case Attributes.dexterity => dexterity
-    case Attributes.intelligence => intelligence
+  def toMap: Map[Attributes.Attribute, A] = Map(Attributes.all.map(a => a -> apply(a)): _*)
+
+  def apply(name: Attributes.Attribute): A = name match {
+    case Attributes.Str => strength
+    case Attributes.Dex => dexterity
+    case Attributes.Int => intelligence
   }
 }
-class MutableAttributes[A] extends Attributes[A] with StringAccess[A] {
+class MutableAttributes[A] extends Attributes[A] with Accessible[Attributes.Attribute, A] {
   private var _strength    : A = _
   private var _dexterity   : A = _
   private var _intelligence: A = _
@@ -63,10 +71,10 @@ class MutableAttributes[A] extends Attributes[A] with StringAccess[A] {
 
   def all = Attributes.all.map(this(_))
 
-  def update(name: String, value: A) = name match {
-    case Attributes.strength => _strength = value
-    case Attributes.dexterity => _dexterity = value
-    case Attributes.intelligence => _intelligence = value
+  def update(name: Attributes.Attribute, value: A) = name match {
+    case Attributes.Str => _strength = value
+    case Attributes.Dex => _dexterity = value
+    case Attributes.Int => _intelligence = value
   }
 
 }

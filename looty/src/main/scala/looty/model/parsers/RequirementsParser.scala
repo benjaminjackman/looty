@@ -27,7 +27,7 @@ object RequirementsParser {
         case "Str" | "Strength" => ci.requirements.attribute.strength = getReq
         case "Int" | "Intelligence" => ci.requirements.attribute.intelligence = getReq
         case "Dex" | "Dexterity" => ci.requirements.attribute.dexterity = getReq
-        case x => //console.log("No match" + x, ci)
+        case x => console.log("No Requirements match" + x, ci)
       }
     }
     false

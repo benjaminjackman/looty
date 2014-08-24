@@ -49,7 +49,7 @@ trait LifeAndMana[A] {
     case LifeAndMana.mana => mana
   }
 }
-class MutableLifeAndMana[A] extends LifeAndMana[A] with StringAccess[A] {
+class MutableLifeAndMana[A] extends LifeAndMana[A] with Accessible[String, A] {
   private var _life: A = _
   private var _mana: A = _
 

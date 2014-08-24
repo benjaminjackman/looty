@@ -126,8 +126,8 @@ object ModsCsvParser {
 
     //Mods for attributes
     for (attribute <- Attributes.all) {
-      val Attribute = attribute
-      addMod(s"$Attribute increase", s"Additional $Attribute", P.plusTo(Attribute)(_.plusTo.attributes(attribute)))
+      val attrStr = attribute.name
+      addMod(s"$attrStr increase", s"Additional $attrStr", P.plusTo(attribute.name)(_.plusTo.attributes(attribute)))
     }
 
     //Spell Damage

@@ -70,7 +70,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   //This location includes coordinates
   def locAndCoords = s"${locationName} x:${item.x.toOption.map(_ + 1).getOrElse("")} y:${item.y.toOption.map(_ + 1).getOrElse("")}"
 
-  def typeName = {
+  lazy val typeName = {
     if (slots.isAmulet) "Jewelry Amulet"
     else if (slots.isRing) "Jewelry Ring"
     else if (slots.isHelmet) "Arm Helmet"
@@ -87,10 +87,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isSkillGem) "Skill Gem"
     else if (item.isMap) "Map"
     else if (item.isQuest) "QuestItem"
-    else {
-      console.warn("Unknown Item Type", item)
-      "UNKNOWN"
-    }
+    else "UNKNOWN"
   }
 
   object increased {
@@ -138,7 +135,19 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   var sockets: List[List[String]] = Nil
-  lazy val socketColors      = sockets.map(_.mkString("-")).mkString(" ")
+  lazy val socketColors      = {
+    if (sockets.nonEmpty) {
+      sockets.map(_.mkString("-")).mkString(" ")
+    } else if (item.isGem) {
+      requirements.attribute.toMap.toList.filter(_._2 > 0).maxByOpt(_._2).map(_._1.color) match {
+        case Some(color) => color.toOneLetter
+        case None => "?"
+      }
+    } else {
+      ""
+    }
+
+  }
   lazy val socketCnt   : Int = sockets.map(_.size).sum
   lazy val maxLink           = sockets.map(_.size).maxOpt.getOrElse(0)
   lazy val propLevel   : Int = item.getLevel.getOrElse(0)
@@ -165,7 +174,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     val resistance = Elements mutable 0.0
     def totalResistance = resistance.all.sum
     def maxResistance = resistance.all.max
-    val lifeAndMana    = LifeAndMana mutable 0.0
+    val lifeAndMana = LifeAndMana mutable 0.0
     lazy val lifeAndManaWithStrInt = lifeAndMana.map2(_ + plusTo.attribute.strength * .5, _ + plusTo.attribute.intelligence * .5)
     var accuracyRating = 0.0
     var evasionRating  = 0.0

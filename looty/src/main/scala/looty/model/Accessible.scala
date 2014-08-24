@@ -10,13 +10,13 @@ package looty.model
 //////////////////////////////////////////////////////////////
 
 
-object StringAccess {
-  implicit class NumberExtensions(val x: StringAccess[Double]) extends AnyVal {
-    def +=(name: String, a: Double) = x(name) = x(name) + a
+object Accessible {
+  implicit class NumberExtensions[B](val x: Accessible[B, Double]) extends AnyVal {
+    def +=(key: B, a: Double) = x(key) = x(key) + a
   }
 }
 
-trait StringAccess[A] {
-  def apply(x: String): A
-  def update(x: String, a: A)
+trait Accessible[B, A] {
+  def apply(x: B): A
+  def update(x: B, a: A)
 }
