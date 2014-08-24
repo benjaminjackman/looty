@@ -177,6 +177,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     val lifeAndMana = LifeAndMana mutable 0.0
     lazy val lifeAndManaWithStrInt = lifeAndMana.map2(_ + plusTo.attribute.strength * .5, _ + plusTo.attribute.intelligence * .5)
     var accuracyRating = 0.0
+    lazy val accuracyRatingWithDex = accuracyRating + plusTo.attribute.dexterity * 2
     var evasionRating  = 0.0
     var armour         = 0.0
     var energyShield   = 0.0

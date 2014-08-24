@@ -138,7 +138,7 @@ object ComputedItemProps {
   Evasion ?= "Evasion"
   ArmourPlusEvasion ?= "Armour + Evasion"
   EnergyShield ?= "Energy Shield"
-  IncreasedMaxEnergyShield ?= "Increased Max Energy Shield"
+  IncreasedMaxEnergyShield ?= "Increased Max Energy Shield Includes Intelligence Bonus"
 
   //Attack
   val AttacksPerSecond = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
@@ -175,6 +175,7 @@ object ComputedItemProps {
   MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
   IncreasedMoveSpeed ?= "Increased Movement Speed"
   IncreasedProjectileSpeed ?= "Increased Projectile Speed"
+  Accuracy ?= "Increased Accuracy Rating, includes Dexterity Bonus"
 
   //Regen
   val LifeLeech          = pno("LifeLeech", "lleech")(Regen)(_.leech.physical.life)
