@@ -10,15 +10,18 @@ import org.scalajs.jquery.JQuery
 
 
 class HomeView(val banner: String, val version: String) extends View {
+
   def versionHistory = """
 # Version History
 
-## 0.2.1.10
+## 0.2.1.10 (2014-08-25)
 * Rewrote Gem XP Tracker. Try it out and let me know what you guys think!
 * Using select2 menus on the datagrids for user defined views (saveable sets of columns / filters)
 * Added ACE / vm.js (for custom scores, not yet implemented)
+* Added dexerity bonus to accuracy rating column.
+* Added socket color of gems into the sockets column.
 
-## 0.2.1.9
+## 0.2.1.9 (2014-08-23)
 * Numeric columns don't require operators (e.g. < <= etc) anymore. Those operators can still be used however they should filter as a min or max automatically. For example typing 50 in the pDps column will only show items with a pDps greater than or equal to 50. while typing it into the rLvl column (RequiredLevel) will show items that require at most level 50.
 * Strength and Int Bonuses are now applied to life / mana  (thanks to sundrino for the suggestion)
 * Increased cast speed, accuracy and max energy shield all have columns
@@ -58,6 +61,8 @@ class HomeView(val banner: String, val version: String) extends View {
 
 ## 0.2.0 (2014-08-19)
 * Chrome Web Store Release
+
+The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html) source code is on [github](https://github.com/benjaminjackman/looty) There is a [README](https://github.com/benjaminjackman/looty/blob/master/README.md), as well as an [issue tracker](https://github.com/benjaminjackman/looty/issues), feel free to post bugs, questions, or feature requests there. I am also have a public [trello board](https://trello.com/b/xr7dx96M/looty) for tracking progress on tasks I am actively working on.
 
    """
 
