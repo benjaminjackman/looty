@@ -119,7 +119,8 @@ object PoeTypes {
       def isGem = x.getFrameType == FrameTypes.gem
       def isSupportGem = isGem && x.support
       def isSkillGem = isGem && !isSupportGem
-      def isCurrency = x.getFrameType == FrameTypes.currency
+      def isHideoutItem = explicitModList.contains("Creates an object in your hideout")
+      def isCurrency = x.getFrameType == FrameTypes.currency && !isHideoutItem
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")

@@ -87,6 +87,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (slots.isQuiver) "Quiver"
     else if (slots.isFlask) "Flask"
     else if (slots.isWeapon) "Wep " + properties.weaponType.toShortString
+    else if (item.isHideoutItem) "Hideout"
     else if (item.isCurrency) "Currency"
     else if (item.isSupportGem) "Support Gem"
     else if (item.isSkillGem) "Skill Gem"
