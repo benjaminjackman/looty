@@ -141,7 +141,7 @@ object PoeTypes {
 
       def isDigit(c : Char) : Boolean = c >= '0' && c <= '9'
 
-      //(Y experience points, Z needed for next level)
+      //(X level, Y experience points, Z needed for next level)
       def getXpProgress: Option[(Int, Long, Long)] = {
         (for {
           ps <- x.additionalProperties.toOption.toList

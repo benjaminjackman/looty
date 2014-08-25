@@ -1,11 +1,11 @@
 package looty
 package views
 
-import org.scalajs.jquery.{JQuery, JQueryStatic}
+import org.scalajs.jquery.JQuery
+
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
 import cgta.ojs.io.DurationText
-import looty.views.GemHistory.GemHistoryExtensions
 import looty.poeapi.PoeCacher
 
 
@@ -14,255 +14,85 @@ import looty.poeapi.PoeCacher
 //////////////////////////////////////////////////////////////
 
 
-object GemProgress {
-  def fromItem(item: AnyItem): Option[GemProgress] = {
-    val time = new js.Date().getTime()
-    item.getXpProgress.map { case (l, c, n) =>
-      apply(time = time.toLong, level = l, xpGained = c, xpForLevelUp = n)
-    }
-  }
-
-  def apply(time: Long, level: Int, xpGained: Long, xpForLevelUp: Long) = {
-    val x = newObject
-    x.time = time
-    x.level = level
-    x.xpGained = xpGained
-    x.xpForLevelUp = xpForLevelUp
-    x.asInstanceOf[GemProgress]
-  }
-
-  implicit class GemProgressExtensions(val x: GemProgress) extends AnyVal {
-    def progress: Double = x.xpGained / x.xpForLevelUp
-    def xpToGo: Double = x.xpForLevelUp - x.xpGained
-  }
-}
-
-class GemProgress private() extends js.Object {
-  val time        : js.Number = ???
-  val level       : js.Number = ???
-  val xpGained    : js.Number = ???
-  val xpForLevelUp: js.Number = ???
-}
-
 object GemId {
   def fromItem(item: AnyItem): Option[GemId] = {
     for {inventoryId <- item.inItem.toOption.flatMap(_.inventoryId.toOption)
          socket <- item.socket.toOption
     } yield {
-      apply(
+      GemId(
+        name = item.typeLine,
         inventoryId = inventoryId,
-        socket = socket,
-        name = item.typeLine
+        socket = socket
       )
     }
   }
-
-  def apply(inventoryId: js.String, socket: js.Number, name: js.String) = {
-    val x = newObject
-    x.inventoryId = inventoryId
-    x.socket = socket
-    x.name = name
-    x.asInstanceOf[GemId]
-  }
-
-  implicit class GemIdExtensions(val x: GemId) extends AnyVal {
-    def equiv(that: GemId): Boolean =
-      x.inventoryId == that.inventoryId &&
-          x.socket == that.socket &&
-          x.name == that.name
-
-  }
-}
-class GemId private() extends js.Object {
-  val inventoryId: js.String = ???
-  val socket     : js.Number = ???
-  val name       : js.String = ???
 }
 
-object GemHistory {
-  def empty(id: GemId) = {
-    val x = newObject
-    x.id = id
-    x.gemProgressions = new js.Array()
-    x.runs = new js.Array()
-    x.asInstanceOf[GemHistory]
-  }
-  implicit class GemHistoryExtensions(val x: GemHistory) extends AnyVal {
-    def add(g: AnyItem) = {
-      GemProgress.fromItem(g).foreach { gp =>
-        if (x.gemProgressions.isUndefined) x.gemProgressions = new js.Array()
-        x.gemProgressions.push(gp)
-      }
-    }
-    def current = x.gemProgressions.last
-    def forTime(time: js.Number): Option[GemProgress] = {
-      x.gemProgressions.toList.takeWhile(_.time <= time).lastOption
-    }
-    def xpToGo = x.current.xpToGo
-
-  }
+case class GemId(
+  name: String,
+  inventoryId: String,
+  socket: Double) extends Ordered[GemId] {
+  override def compare(that: GemId): Int = implicitly[Ordering[(String, String, Double)]].compare(tupled, that.tupled)
+  def tupled = (name, inventoryId, socket)
 }
 
-class GemHistory private() extends js.Object {
-
-
-  val id             : GemId                 = ???
-  var gemProgressions: js.Array[GemProgress] = ???
-  val runs           : js.Array[js.Number]   = ???
-}
-object CharacterGemHistory {
-  def empty(character: js.String) = {
-    val x = newObject
-    x.character = character
-    x.gems = new js.Array[GemHistory]()
-    x.runs = new js.Array[js.Number]()
-    x.asInstanceOf[CharacterGemHistory]
-  }
-
-  implicit class CharacterGemHistoryExtensions(val x: CharacterGemHistory) extends AnyVal {
-    def updateGems(gems: List[AnyItem]) = {
-      val oldGems = x.gems.toList
-      val newGems = new js.Array[GemHistory]()
-      for {gem <- gems
-           id <- GemId.fromItem(gem)
-      } {
-        val oldGem = oldGems.find(_.id.equiv(id))
-        val hist = oldGem.getOrElse(GemHistory.empty(id))
-        hist.add(gem)
-        newGems.push(hist)
-      }
-      x.gems = newGems
-    }
-    def addRun() = {
-      if (x.runs.isUndefined) {
-        x.runs = new js.Array()
-      }
-      x.runs.push(new js.Date().getTime())
-    }
-    def getGemWithMostXpToGoToNextLevel() = x.gems.toList.maxByOpt(_.current.xpToGo)
-    def gemsAtTime(utcMs: js.Number): List[(GemHistory, GemProgress)] =
-      x.gems.toList.map(x => x.forTime(utcMs).toList.map(x -> _)).flatten
-  }
-}
-
-class CharacterGemHistory private() extends js.Object {
-
-  val character: js.String            = ???
-  var gems     : js.Array[GemHistory] = ???
-  var runs     : js.Array[js.Number]  = ???
-}
-
-class XpView(implicit val pc : PoeCacher) extends View {
-  //Get a poe cacher
-  val jq                 : JQueryStatic        = global.jQuery.asInstanceOf[JQueryStatic]
-  var curHist            : CharacterGemHistory = null
-  var curGemHistory      : GemHistory          = null
-  var runStartGemProgress: GemProgress         = null
-  var autoUpdateTimer    : js.Any              = null
-//  val store                                    = StoreMaster
-  val msPerHour                                = 60 * 60 * 1000
-
-
-  def start(el: JQuery) {
-    //Clear the view
-
-    val btns = jq("""<div id="btns"></div>""")
-    el.append(btns)
-    val sessionBtns = el.append("""<div id="session-btns"></div>""")
-    el.append("""<div id="xp-info">Please select a character</div>""")
-    //Add a list of buttons one per character
+object GemCheckpoint {
+  def fromItem(item: AnyItem): Option[GemCheckpoint] = {
     for {
-      chars <- pc.getChars()
-      char <- chars
-    } {
-      val btn = jq(s"""<button>${char.name}</button>""")
-      btns.append(btn)
-      btn.on("click", (e: js.Any) => {
-        setChar(char)
-      })
-    }
-
-    val startRunBtn = jq("<button>Start Run</button>")
-    sessionBtns.append(startRunBtn)
-    startRunBtn.on("click", () => {
-      console.log("I WAS CLICKED")
-      if (curHist == null) {
-        Alerter.error("Please select a character before pressing the start run button")
-      } else {
-        updateGemStatus()
-        curHist.addRun()
-        curHist.getGemWithMostXpToGoToNextLevel().foreach { gem =>
-          curGemHistory = gem
-          runStartGemProgress = gem.current
-        }
-//        save()
-        display()
-      }
-    })
-    val updateRunBtn = jq("<button>Update Run</button>")
-    sessionBtns.append(updateRunBtn)
-    updateRunBtn.on("click", () => {
-      if (curHist == null) {
-        Alerter.error("Please select a character before pressing the start run button")
-      } else {
-        updateGemStatus()
-//        save()
-        display()
-      }
-    })
-
-  }
-
-
-//  def save() {
-//    if (curHist != null) {
-//      val key = getKey(curHist.character)
-//      store.set(key, curHist)
-//    }
-//  }
-
-  def getKey(character: String) = {
-    "gem-history-" + character
-  }
-
-//  def clearChar(c: CharacterInfo) {
-//    val key = getKey(c.name)
-//    store.clear(key)
-//  }
-
-  def setChar(info: CharacterInfo) {
-    val character = info.name
-    //Get the current history for this character.
-    val key = getKey(character)
-//    curHist = store.get(key).getOrElse(CharacterGemHistory.empty(character))
-    curHist = CharacterGemHistory.empty(character)
-    for {
-      lastRunTime <- curHist.runs.lastOption
-      (hist, prog) <- curHist.gemsAtTime(lastRunTime).maxByOpt(_._2.xpToGo)
-    } {
-      curGemHistory = hist
-      runStartGemProgress = prog
-    }
-    updateGemStatus()
-//    save()
-    display()
-  }
-
-  def updateGemStatus() {
-    //Update history with the new items
-    curHist.nullSafe.foreach { hist =>
-      val key = "gem-history-" + hist.character
-      pc.getInv(hist.character, forceNetRefresh = true).foreach { inv =>
-      //Compare the gems to the other gems we have already for this character
-        curHist.updateGems(inv.allItems(Some(hist.character)).filter(i => i.getXpProgress.isDefined))
-//        store.set(key, curHist)
-        display()
-      }
+      id <- GemId.fromItem(item)
+      (lvl, tot, forLvl) <- item.getXpProgress
+    } yield {
+      GemCheckpoint(
+        id = id,
+        level = lvl,
+        xpTotal = tot,
+        xpForLevel = forLvl)
     }
   }
+}
+
+case class GemCheckpoint(
+  id: GemId,
+  level: Int,
+  xpTotal: Long,
+  xpForLevel: Long) {
+  def progressPct = xpTotal.toDouble / xpForLevel
+  def xpRemaining = xpForLevel - xpTotal
+  def xpTotalLevelRemaining = {
+    import looty.views.CheckpointFmts._
+    val t = format(xpTotal)
+    val l = format(xpForLevel)
+    val r = format(xpRemaining)
+    s"$t/$l($r)"
+  }
+}
+
+case class GemCheckpointDelta(
+  elapsedMs: Long,
+  older: GemCheckpoint,
+  newer: GemCheckpoint) {
+  def xpGained: Long = newer.xpTotal - older.xpTotal
+  def xpPerHour: Double = xpPerMs * CheckpointFmts.msPerHour
+  def xpPerMs: Double = xpGained.toDouble / elapsedMs
+  def msToLevel: Long = (newer.xpRemaining / xpPerMs).toLong
+  def runsToLevel: Double = newer.xpRemaining / xpGained.toDouble
+}
+
+object Checkpoint {
+  def fromItems(utcMs: Long, items: Seq[AnyItem]): Checkpoint = {
+    val gems = items.flatMap(GemCheckpoint.fromItem).toVector
+    Checkpoint(utcMs, gems)
+  }
+}
+
+case class Checkpoint(utcMs: Long, gems: Vector[GemCheckpoint]) {
+  def replacing(older: Checkpoint) = CheckpointDelta(older = older, newer = this)
+}
+
+object CheckpointFmts {
+  val msPerHour = 60 * 60 * 1000
 
   val fmt = global.d3.format(",f")
-
   def format(d: Double): String = {
     fmt(d.toJs).toString
   }
@@ -271,84 +101,166 @@ class XpView(implicit val pc : PoeCacher) extends View {
     fmt2(d.toJs).toString
   }
 
-  def display() {
-    val el = jq("#xp-info")
-    el.empty()
-    curHist.nullSafe.foreach { hist =>
-      el.append(s"<div>Character: ${hist.character}</div>")
-      el.append(s"""<table border="1"></table>""")
-      val $table = jq("table", el)
-      $table.append("<thead>" +
-          "<th>Name</th>" +
-          "<th>Level</th>" +
-          "<th>Progress</th>" +
-          "<th>Xp Gained</th>" +
-          "<th>Xp Next Level</th>" +
-          "<th>Xp To Go</th>" +
-          "<th>Time in run</th>" +
-          "<th>Xp In Run</th>" +
-          "<th>Xp/Hour</th>" +
-          "<th>Time To Level</th>" +
-          "</thead>")
-      $table.append("<tbody></tbody>")
-      val $tbody = jq("tbody", el)
-      hist.gems.toList.sortBy(_.xpToGo).foreach { gem =>
-        $tbody.append(s"<tr>" +
-            s"<td>${gem.id.name}</td>" +
-            s"<td>${gem.current.level}</td>" +
-            f"<td>${format2(gem.current.progress * 100)}</td>" +
-            s"<td>${format(gem.current.xpGained)}</td>" +
-            s"<td>${format(gem.current.xpForLevelUp)}</td>" +
-            s"<td>${format(gem.current.xpToGo)}</td>" +
-            s"<td>${timeInRun.map(t => DurationText.durationMs(t.toLong, 3)).getOrElse("press the start run button")}</td>" +
-            s"<td>${xpInRun.map(format).getOrElse("press the start run button")}</td>" +
-            s"<td>${xpPerMs.map(x => format(x * msPerHour)).getOrElse("press the start run button")}</td>" +
-            s"<td>${msToLevel(gem).map(x => DurationText.durationMs((x).toLong, showFields = 2)).getOrElse("press the start run button")}</td>" +
-            s"</tr>")
-      }
+}
+
+case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
+  def elapsedMs = newer.utcMs - older.utcMs
+  def changedGems: Vector[GemCheckpointDelta] = {
+    val elapsedMs = newer.utcMs - older.utcMs
+    newer.gems
+      .flatMap(g => older.gems.find(_.id =?= g.id).map(o => GemCheckpointDelta(elapsedMs, older = o, newer = g)))
+      .sortBy(cp => (cp.newer.xpRemaining, cp.newer.id))
+  }
+  //  def removedGems = ???
+  //  def addedGems = ???
+
+  def toHtml: JQuery = {
+    import looty.views.CheckpointFmts._
+    val $html = jq("""<div></div>""")
+
+    val $summary = jq("""<div></div>""")
+    val startStr = js.Dynamic.newInstance(global.Date)(older.utcMs).toString
+    val endStr = js.Dynamic.newInstance(global.Date)(newer.utcMs).toString
+    val elapsedMsStr = DurationText.durationMs(elapsedMs, 2)
+    val totalXpStr = format(changedGems.map(_.xpGained).sum)
+    $summary.append(s"""Start: $startStr End: $endStr Elapsed: $elapsedMsStr Total Xp: $totalXpStr""")
+    $html.append($summary)
+
+    val $table = jq("""<table border="1"></table>""")
+    $html.append($table)
+
+    $table.append("<thead>" +
+      "<th>Name</th>" +
+      "<th>Level</th>" +
+      "<th>Xp Total/Level(Remaining)</th>" +
+      "<th>Progress%</th>" +
+      "<th>Xp In Run</th>" +
+      "<th>Xp/Hour</th>" +
+      "<th>Time To Level</th>" +
+      "<th>Runs To Level</th>" +
+      "</thead>")
+    val $tbody = jq("<tbody></tbody>")
+    $table.append($tbody)
+    changedGems.foreach { gem =>
+      $tbody.append(s"<tr>" +
+        s"<td>${gem.newer.id}</td>" +
+        s"<td>${gem.newer.level}</td>" +
+        s"<td>${gem.newer.xpTotalLevelRemaining}</td>" +
+        s"<td>${format2(gem.newer.progressPct * 100)}</td>" +
+        s"<td>${format(gem.xpGained)}</td>" +
+        s"<td>${format(gem.xpPerHour)}</td>" +
+        s"<td>${DurationText.durationMs(gem.msToLevel, 2)}</td>" +
+        s"<td>${format2(gem.runsToLevel)}</td>" +
+        s"</tr>")
+    }
+
+    $html
+  }
+}
+case class Session(character: CharacterInfo, checkpoints: Vector[Checkpoint]) {
+  def addItems(items: Seq[AnyItem]): Session = {
+    val nowUtcMs = js.Dynamic.newInstance(global.Date)().getTime().asInstanceOf[Double]
+    val checkpoint = Checkpoint.fromItems(nowUtcMs.toLong, items)
+    this.copy(character, checkpoints :+ checkpoint)
+  }
+}
+
+
+class XpView(implicit val pc: PoeCacher) extends View {
+  var curChar   : Option[CharacterInfo] = None
+  var curSession: Option[Session]       = None
+
+  def start(el: JQuery) {
+    el.append("<h2>Gem XP Tracker</h2>")
+    el.append("Please note that the Path of Exile API only provides updates your inventory after you change zones. " +
+      "Therefore the suggested way to use this tool is to: <br>" +
+      "0. Play Path of Exile in a way that makes alt-tabbing easy (windowed full screen works well for me), or have this open on a second machine / monitor.<br>" +
+      "1. Select the character you want to track<br>" +
+      "2. Press 'New Session'.<br>" +
+      "3. Just before you go on your run press 'Add Checkpoint'<br>" +
+      "4. Do your run and don't move around any gems / items you have equipped. Gems are compared by location.<br>" +
+      "5. After you have completed your run and have changed zones press 'Add Checkpoint'<br>" +
+      "6. Goto 3, repeat until you've earned enough win that you can pay to lose.<br>" +
+      "You can add as many checkpoint as you like.<br>" +
+      "Currently the information is not saved, however in the future the plan is to save it and " +
+      "notes you record in a journal. For now just use it as a fun way to see how fast you are progressing.")
+    val btns = jq("""<div id="btns"></div>""")
+    el.append(btns)
+    //Add a list of buttons one per character
+    for {
+      chars <- pc.getChars()
+      char <- chars.sortBy(_.name.toUpperCase())
+    } {
+      val btn = jq(s"""<button>${char.name}</button>""")
+      btns.append(btn)
+      btn.on("click", (e: js.Any) => {
+        setChar(char)
+        display()
+      })
+    }
+
+    val sessionBtns = el.append("""<div id="session-btns"></div>""")
+    val startSessionBtn = jq("""<button title="Starts a session">New Session</button>""")
+    sessionBtns.append(startSessionBtn)
+    startSessionBtn.on("click", () => {tryBeginSession()})
+    val addCheckpointBtn = jq("""<button title="Adds a point of interest in the session">Add Checkpoint</button>""")
+    sessionBtns.append(addCheckpointBtn)
+    addCheckpointBtn.on("click", () => {tryAddCheckpoint()})
+    el.append("""<div id="xp-session"></div>""")
+  }
+
+  def tryBeginSession() {
+    curChar match {
+      case None => Alerter.error("Please select a character.")
+      case Some(char) =>
+        curSession = Some(Session(char, Vector.empty))
+        tryAddCheckpoint()
     }
   }
 
-  def timeInRun = for {
-    startProgress <- runStartGemProgress.nullSafe
-  } yield {
-    val time = new js.Date().getTime()
-    time - startProgress.time: Double
+  def tryAddCheckpoint() {
+    curSession match {
+      case None => Alerter.error("Please press start session button.")
+      case Some(session) =>
+        pc.getInv(session.character.name, forceNetRefresh = true).foreach { inv =>
+          //Compare the gems to the other gems we have already for this character
+          curSession = Some(session.addItems(inv.allItems(Some(session.character.name))))
+          display()
+        }
+
+    }
   }
 
-  def xpInRun = for {
-    gemHistory <- curGemHistory.nullSafe
-    startProgress <- runStartGemProgress.nullSafe
-    curProgress = gemHistory.current
-  } yield {
-    (curProgress.xpGained - startProgress.xpGained).toDouble
+  def display() {
+    val el = jq("#xp-session")
+    el.empty()
+    curSession.foreach { session =>
+      el.append(s"""<h2></h2>""").text(session.character.name)
+      if (session.checkpoints.size >= 2) {
+        session.checkpoints.sliding(2).map(w => CheckpointDelta(w(0), w(1))).toList.reverse.foreach { delta =>
+          el.append(delta.toHtml)
+        }
+      } else if (session.checkpoints.size == 1) {
+        el.append("<br>Press add checkpoint to add another checkpoint.<br>")
+      } else {
+        el.append("<br>Press new session when ready to begin.<br>")
+      }
+
+    }
   }
 
-  def xpPerMs: Option[Double] = for {
-    gemHistory <- curGemHistory.nullSafe
-    startProgress <- runStartGemProgress.nullSafe
-    curProgress = gemHistory.current
-  } yield {
-    val time = new js.Date().getTime()
-    val msElapsed: Double = time - startProgress.time
-    val xpGainedInRun: Double = curProgress.xpGained - startProgress.xpGained
-    xpGainedInRun / msElapsed
+  def clear() {
+    curChar = None
+    curSession = None
   }
 
-
-  def msToLevel(gem: GemHistory): Option[Double] = for {
-    rate <- xpPerMs
-    if rate >= 0
-  } yield {
-    console.log("mstogo", gem.current.xpToGo.toJs, rate.toJs)
-    gem.current.xpToGo / rate
+  def setChar(info: CharacterInfo) {
+    clear()
+    curChar = Some(info)
   }
 
   def stop() {
-    //Kill the timer if it exists
-    autoUpdateTimer.nullSafe.foreach { autoUpdateTimer =>
-      global.clearInterval(autoUpdateTimer)
-    }
+
   }
 
 

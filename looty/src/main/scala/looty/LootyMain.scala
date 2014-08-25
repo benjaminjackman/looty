@@ -1,5 +1,7 @@
 package looty
 
+import looty.vmjs.Vm
+
 import scala.scalajs.js
 
 import scala.concurrent.Future
@@ -93,6 +95,10 @@ object LootyMain {
   @JSExport
   def main() {
     new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+//    console.log("HEELLLOOO")
+//    Vm.practice()
+//    console.log("EEXXXX")
   }
+
 }
 

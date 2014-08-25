@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Looty!",
-  "version": "0.2.1.9",
+  "version": "0.2.1.10",
 
   "description": "Looty! A Datagrid interface to Path of Exile Inventories.",
 
@@ -16,7 +16,7 @@
     "default_popup" : "popup.html"
   },
 
-  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com",
+  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'",
 
   "permissions": ["http://www.pathofexile.com/*", "http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
 }

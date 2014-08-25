@@ -1,4 +1,5 @@
 import cgta.ojs.lang.OJsDsl
+import org.scalajs.jquery.JQueryStatic
 
 //////////////////////////////////////////////////////////////
 // Copyright (c) 2013 Ben Jackman, Jeff Gomberg
@@ -9,5 +10,5 @@ import cgta.ojs.lang.OJsDsl
 //////////////////////////////////////////////////////////////
 
 package object looty extends OJsDsl {
-
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 }

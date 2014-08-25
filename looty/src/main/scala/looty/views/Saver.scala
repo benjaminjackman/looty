@@ -1,19 +1,10 @@
 package looty
 package views
 
-import looty.model.{ComputedItem, LootContainerId}
-import looty.views.LootView.Column
+import looty.model.LootContainerId
+import looty.views.loot.{Column, LootFilterColumn}
 
 import scala.scalajs.js
-
-
-//////////////////////////////////////////////////////////////
-// Copyright (c) 2014 Ben Jackman, Jeff Gomberg
-// All Rights Reserved
-// please contact ben@jackman.biz or jeff@cgtanalytics.com
-// for licensing inquiries
-// Created by bjackman @ 8/23/14 4:29 PM
-//////////////////////////////////////////////////////////////
 import scala.language.postfixOps
 
 object Saver {
@@ -24,17 +15,17 @@ object Saver {
   def delete(name: String) {
     localStorage.removeItem(colPrefix + name)
   }
-
-  def saveItemInfo(item: ComputedItem, key: String, text: String) {
-    item.forumLocationName match {
-      case None => Alerter.warn("This item doesn't have a valid forum location name, it's probably a gem in another item, or currently equipped. These items aren't saveable.")
-      case Some(loc) =>
-    }
-  }
-
-  def loadItemInfo(item: ComputedItem, key: String): Option[String] = {
-    ???
-  }
+//
+//  def saveItemInfo(item: ComputedItem, key: String, text: String) {
+//    item.forumLocationName match {
+//      case None => Alerter.warn("This item doesn't have a valid forum location name, it's probably a gem in another item, or currently equipped. These items aren't saveable.")
+//      case Some(loc) =>
+//    }
+//  }
+//
+//  def loadItemInfo(item: ComputedItem, key: String): Option[String] = {
+//    ???
+//  }
 
   def save(
     name: String,
@@ -108,5 +99,9 @@ object Saver {
     val keys = (0 until sz) map (i => localStorage.key(i).toString) filter (_.startsWith(colPrefix))
     val names = keys map (_.drop(colPrefix.length))
     names.toVector
+  }
+
+  def on(prefix: String, f: (String, String) => Unit) {
+
   }
 }

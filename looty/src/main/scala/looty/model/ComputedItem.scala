@@ -37,8 +37,13 @@ case class MinMaxDamage(var min: Double, var max: Double) {
 //}
 
 class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val locationName: String) {
-  lazy val maxLinks: Int       = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
-  lazy val score   : ItemScore = ItemScorer(this).getOrElse(ItemScore(Nil, 0))
+  lazy val maxLinks: Int = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
+
+
+  object Scores {
+    lazy val default: ItemScore = ItemScorer(ComputedItem.this).getOrElse(ItemScore(Nil, 0))
+    lazy val custom : ItemScore = ItemScorer(ComputedItem.this).getOrElse(ItemScore(Nil, 0))
+  }
 
   def maxResist = plusTo.resistance.all.max
   def magicFind = increased.quantityOfItemsFound + increased.rarityOfItemsFound
@@ -178,9 +183,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     lazy val lifeAndManaWithStrInt = lifeAndMana.map2(_ + plusTo.attribute.strength * .5, _ + plusTo.attribute.intelligence * .5)
     var accuracyRating = 0.0
     lazy val accuracyRatingWithDex = accuracyRating + plusTo.attribute.dexterity * 2
-    var evasionRating  = 0.0
-    var armour         = 0.0
-    var energyShield   = 0.0
+    var evasionRating = 0.0
+    var armour        = 0.0
+    var energyShield  = 0.0
   }
 
   object leech {var physical = LifeAndMana mutable 0.0}

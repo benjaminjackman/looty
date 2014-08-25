@@ -1,8 +1,7 @@
 package looty
-package views
+package views.loot
 
 import looty.model.ComputedItem
-import looty.views.LootView.Column
 
 
 //////////////////////////////////////////////////////////////

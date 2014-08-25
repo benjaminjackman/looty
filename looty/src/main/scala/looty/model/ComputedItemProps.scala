@@ -1,6 +1,6 @@
 package looty.model
 
-import looty.views.NumFilter
+import looty.views.loot.NumFilter
 
 import scala.scalajs.js
 
@@ -41,6 +41,7 @@ object ComputedItemProps {
   }
 
   val General      = "General"
+  val Scores       = "Score"
   val Defensive    = "Defensive"
   val Attack       = "Attack"
   val Dps          = "Dps"
@@ -117,7 +118,6 @@ object ComputedItemProps {
   val Sockets     = str("Sockets", "sockets", 100)(General)(_.socketColors)
   val Misc        = pno("Misc", "misc")(General)(_.misc)
   val Quality     = pno("Quality", "qual")(General)(_.properties.quality)
-  val Score       = pno("Score", "score")(General)(_.score.score)
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
@@ -126,7 +126,12 @@ object ComputedItemProps {
   Sockets ?= "The sockets sorted by number in group, then by color"
   Misc ?= "Gem level / Items in Stack / # of Sockets /  Map Level"
   Quality ?= "The quality of the item"
-  Score ?= "An experimental score assigned to assess the desirability of the item"
+
+  //Score
+  val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
+  val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
+  DefaultScore ?= "An experimental score assigned to assess the desirability of the item"
+  CustomScore ?= "The result of the user definable score"
 
   //Defensive
   val Armour                   = pno("Armour", "AR")(Defensive)(_.total.armour)
@@ -148,6 +153,7 @@ object ComputedItemProps {
   val DpsCold          = pno("DpsCold", "cDps")(Attack, Dps)(_.total.perElementDps.cold.round)
   val DpsLightning     = pno("DpsLightning", "lDps")(Attack, Dps)(_.total.perElementDps.lightning.round)
   val DpsChaos         = pno("DpsChaos", "xDps")(Attack, Dps)(_.total.perElementDps.chaos.round)
+  val IncreasedAccuracy                 = pno("IncreasedAccuracy", "+%acc")(Efficiency)(_.increased.accuracyRating)
   AttacksPerSecond ?= "AttacksPerSecond"
   DpsTotal ?= "Total Dps or Average Damage for Non-Weapons"
   DpsPhysical ?= "Physical Dps or Average Damage for Non-Weapons"
@@ -155,6 +161,8 @@ object ComputedItemProps {
   DpsCold ?= "Cold Dps or Average Damage for Non-Weapons"
   DpsLightning ?= "Lightning Dps or Average Damage for Non-Weapons"
   DpsChaos ?= "Chaos Dps or Average Damage for Non-Weapons"
+  IncreasedAccuracy ?= "Increased Accuracy Rating, includes Dexterity Bonus"
+
 
   //Requirements
   val RequiredLevel = nno("RequiredLevel", "rLvl")(Requirements)(_.requirements.level)
@@ -170,12 +178,10 @@ object ComputedItemProps {
   val MagicFind                = pno("MagicFind", "mf")(Efficiency)(_.magicFind)
   val IncreasedMoveSpeed       = pno("IncreasedMoveSpeed", "+%move")(Efficiency)(_.increased.movementSpeed)
   val IncreasedProjectileSpeed = pno("IncreasedProjectileSpeed", "+%projSpeed")(Efficiency)(_.increased.projectileSpeed)
-  val Accuracy                 = pno("Accuracy", "+%acc")(Efficiency)(_.increased.accuracyRating)
 
   MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
   IncreasedMoveSpeed ?= "Increased Movement Speed"
   IncreasedProjectileSpeed ?= "Increased Projectile Speed"
-  Accuracy ?= "Increased Accuracy Rating, includes Dexterity Bonus"
 
   //Regen
   val LifeLeech          = pno("LifeLeech", "lleech")(Regen)(_.leech.physical.life)
