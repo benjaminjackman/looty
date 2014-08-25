@@ -111,6 +111,9 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         |<br>
         |<div>
         |<h3> Version History</h3><br>
+        |<h4>0.2.1.11</h4>
+        | Linked to reddit feedback thread
+        | Hideout items are given their own type (let me know if some aren't it's a bug and i'll fix it!)
         |<h4>0.2.1.10</h4>
         | Rewrote Gem XP Tracker. Try it out and let me know what you guys think!<br>
         | Using select2 menus on the datagrids for views (and split the source into multiple files it was getting fat)<br>

@@ -13,7 +13,8 @@ import scala.scalajs.js
 
 object Alerter {
 
-  def randomItem[A](xs: Seq[A]) : A = {
+
+  def randomItem[A](xs: Seq[A]): A = {
     xs(getRandomInt(0, xs.size))
   }
 
@@ -38,7 +39,7 @@ object Alerter {
     )
 
     "Llama mode activated! " + (0 until 100).map(x => randomItem(msgs)).mkString(" ") + "PHEW! I SURE HOPE THAT WAS WORTH IT."
-   }
+  }
 
   val noReloadMsgs = List(
     "You chose wisely my friend, had you said yes, I would've bitten your ear off.",
@@ -59,8 +60,8 @@ object Alerter {
     "In Wraeclast ground burns you!",
     "Moon sugar and skooma? AAAAAhhhhhhhhh",
     "Stay out of my fishing hole!"
-
   )
+
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   def info(msg: String) { display("info", msg) }
@@ -71,6 +72,12 @@ object Alerter {
     el.empty()
     el.html(s"""<div class="$cls">$msg</div>""")
   }
+
+  private val feedback_0_2_1_10 = "http://www.reddit.com/r/pathofexile/comments/2ek6da/tools_looty_stash_searching_and_gem_xp_tracking/"
+  private def redditLink(msg: String) = s"""<a target="_blank" href="$feedback_0_2_1_10">$msg</a>"""
+
+  def featuresDate = "August 25, Version 10"
+  def featuresLink(msg: String) = redditLink(msg: String)
 
   // Returns a random integer between min (included) and max (excluded)
   def getRandomInt(min: Int, max: Int): Int = {

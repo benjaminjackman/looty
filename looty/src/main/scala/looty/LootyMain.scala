@@ -8,7 +8,7 @@ import scala.concurrent.Future
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
-import looty.views.{PoeBuilderView, WealthView, XpView, LootView, HomeView, View}
+import looty.views.{Alerter, PoeBuilderView, WealthView, XpView, LootView, HomeView, View}
 import scala.util.Try
 import scala.scalajs.js.annotation.JSExport
 import looty.chrome.StoreMaster
@@ -95,9 +95,7 @@ object LootyMain {
   @JSExport
   def main() {
     new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-//    console.log("HEELLLOOO")
-//    Vm.practice()
-//    console.log("EEXXXX")
+    Alerter.info(s"Looty Loaded! ${Alerter.featuresDate}: Please stop by ${Alerter.featuresLink("here")} to learn about the latest features!")
   }
 
 }

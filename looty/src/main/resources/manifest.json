@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Looty!",
-  "version": "0.2.1.10",
+  "version": "0.2.1.11",
 
   "description": "Looty! A Datagrid interface to Path of Exile Inventories.",
 
