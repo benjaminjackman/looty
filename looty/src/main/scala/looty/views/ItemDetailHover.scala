@@ -46,8 +46,8 @@ class ItemDetailHover {
       Some(global.window.innerWidth.asInstanceOf[Double] - x + 10) -> None
     }
 
-
-    el.show()
+    el1.hide()
+    el2.hide()
     def cssValueOf(x: Option[Double]): js.Any = x.map(x => x: js.Any).getOrElse[js.Any]("")
     el.css("top", cssValueOf(top))
     el.css("right", cssValueOf(right))
@@ -61,6 +61,7 @@ class ItemDetailHover {
       }
     }
 
+    el.show()
   }
 
   def displayItem(item: ComputedItem, el: JQuery) {
@@ -117,6 +118,7 @@ class ItemDetailHover {
         """
     el.attr("class", s"item-detail frame-type-$frameTypeName")
     el.html(h)
+    el.show()
   }
 
   def hide() = el.hide()

@@ -14,13 +14,18 @@ class HomeView(val banner: String, val version: String) extends View {
   def versionHistory = """
 # Version History
 
-## 0.2.1.12 (2014-08-26)
-* Upgrades pane (side by side + grid comparisons to help finding upgrades to items)
-* Helvetica, Arial, Sans Serif
-* Numeric column width back to 50px to fit more stuff on the screen.
-* Added 1H/2H prefix to all weapons types (Except bows) for easier searching
+## 0.2.1.13 (2014-08-26)
+* Fixed: Secondary Item wasn't being hidden.
+* Fixed: Upgrade view didn't show deltas when changing between items of the same type (e.g. Ring/Ring2)
 
-## 0.2.1.11 (2014-08-25)
+## 0.2.1.12 (2014-08-26)
+* New: Upgrades pane. Select a character and click on a slot and Looty will show how every item across all your stash tabs compares to the item you have equipped at that slot. This should make finding gear upgrades a snap when leveling!
+* Enhancement: Images in item detail hovers
+* Enhancement: font-face = Helvetica, Arial, Sans Serif, bask in the glorious the xheight.
+* Change: Numeric column width back to 50px to fit more stuff on the screen.
+* Enhancement: Added 1H/2H prefix to all weapons types (Except bows) for easier searching
+
+ ## 0.2.1.11 (2014-08-25)
 * Added messages linking to feature page on reddit
 
 ## 0.2.1.10 (2014-08-24)

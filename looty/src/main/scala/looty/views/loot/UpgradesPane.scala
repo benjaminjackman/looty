@@ -103,7 +103,7 @@ class UpgradesPane(
     dollEl.append(clrBtn)
     clrBtn.on("click", () => {
       itemDetailHover.setSecondItem(None)
-      setUpgradeItemFn( None)
+      setUpgradeItemFn(None)
       false
     })
 

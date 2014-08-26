@@ -30,11 +30,13 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val upgradesPane    = new UpgradesPane(league, itemDetailHover, setUpgradeItem, setLvlFilter)
 
   def setUpgradeItem(item: Option[ComputedItem]) {
+    upgradeItem = item
     item.foreach { item =>
       setFilter(ComputedItemProps.TypeName.shortName, item.typeName.replaceAll(" ", "."))
     }
-    upgradeItem = item
     dataView.refresh()
+    grid.invalidateAllRows()
+    grid.render()
   }
 
   def setLvlFilter(lvl: Int) {
