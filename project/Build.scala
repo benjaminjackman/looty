@@ -69,7 +69,7 @@ object Build extends sbt.Build {
       // Continuation plugin
       autoCompilerPlugins := true,
       libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
-      libraryDependencies ++= Seq(Libs.jQuery, Libs.dom),
+      libraryDependencies ++= Seq(Libs.jQuery, Libs.dom, Libs.async),
       scalacOptions += "-P:continuations:enable"
     )
 
@@ -84,6 +84,8 @@ object Build extends sbt.Build {
   object Libs {
     val jQuery = "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6"
     val dom    = "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
+    val async  = "org.scala-lang.modules" %% "scala-async" % "0.9.2"
+
     //    lazy val dom    = RootProject(file("../scala-js-dom"))
     //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }

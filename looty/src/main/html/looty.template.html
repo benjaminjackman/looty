@@ -1,201 +1,263 @@
 <!DOCTYPE html>
 <html ng-app>
 <head>
-    <title>Looty!</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" href="jslib/slickgrid/css/smoothness/jquery-ui-1.8.16.custom.css"/>
-    <link rel="stylesheet" href="jslib/slickgrid/slick.grid.css"/>
+<title>Looty!</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<link rel="stylesheet" href="jslib/slickgrid/css/smoothness/jquery-ui-1.8.16.custom.css"/>
+<link rel="stylesheet" href="jslib/slickgrid/slick.grid.css"/>
 
 
-    <style>
+<style>
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
 
-        iframe.poebuilder {
-            /*position: absolute;*/
-            display: block;
-            /*left: 0px;*/
-            width: 100%;
-            /*top: 0px;*/
-            height: 90%;
-            /*min-height: 100%;*/
-        }
+#item-details {
+    max-width: 900px;
+    position: fixed;
+    z-index: 100;
+    overflow: hidden;
+}
 
-        #content {
-            height: 100%;
-        }
+.item-detail {
+    float:left;
+    max-width: 400px;
+    color: white;
+    border-width: 4px;
+    border-style: solid;
+    border-color: white;
+    border-radius: 10px;
+    opacity: .9;
+    background-color: black;
+}
 
-        body {
-            background: #151515;
-            color: #08b2ee;
-        }
+.item-detail.unknown {
+    border-color: rgb(128, 128, 128);
+    font-color: rgb(128, 128, 128);
+}
 
-        body div.home {
-            display: inline-block;
-            max-width: 600px;
-        }
+.item-detail.frame-type-normal {
+    border-color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+}
 
-        a:visited {
-            color: cyan;
-        }
+.item-detail.frame-type-magic {
+    border-color: rgb(128, 128, 255);
+    color: rgb(128, 128, 255);
+}
 
-        a:hover {
-            color: yellow;
-        }
+.item-detail.frame-type-rare {
+    border-color: rgb(255, 255, 0);
+    color: rgb(255, 255, 0);
+}
 
-        a {
-            color: cyan;
-            text-decoration: none;
-        }
+.item-detail.frame-type-unique {
+    border-color: rgb(192, 64, 64);
+    color: rgb(192, 64, 64);
+}
 
-        .visible-loot-container {
-            border-color: #00A0FF;
-            border-width: 2px;
-            border-style: solid;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border-radius: 2px;
-        }
+.item-detail.frame-type-gem {
+    border-color: rgb(0, 192, 192);
+    color: rgb(0, 192, 192);
+}
 
-        .invisible-loot-container {
-            border-color: gold;
-            border-width: 2px;
-            border-style: dotted;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border-radius: 2px;
-        }
+.item-detail.frame-type-currency {
+    border-color: rgb(165, 146, 99);
+    color: rgb(165, 146, 99);
+}
 
-        .tab-btn {
-            color: white;
-        }
+.item-detail.frame-type-quest {
+    border-color: rgb(0, 255, 0);
+    color: rgb(0, 255, 0);
+}
 
-        a.loading {
-            color: red;
-        }
+iframe.poebuilder {
+    /*position: absolute;*/
+    display: block;
+    /*left: 0px;*/
+    width: 100%;
+    /*top: 0px;*/
+    height: 90%;
+    /*min-height: 100%;*/
+}
 
-        .slick-headerrow-column {
-            background: #87ceeb;
-            text-overflow: clip;
-            box-sizing: border-box;
-        }
+#content {
+    height: 100%;
+}
 
-        .slick-headerrow-column.ui-state-default {
-            padding: 1px;
-        }
+body {
+    background: #151515;
+    color: #08b2ee;
+}
 
-        .slick-headerrow-column input {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-        }
+body div.home {
+    display: inline-block;
+    max-width: 600px;
+}
 
-        .slick-header-column.ui-state-default {
-            background: none;
-            background-color: #505050;
-            color: #eeeeee;
-            /*border: none;*/
-            /*padding: 0;*/
-            /*text-shadow: none;*/
-            /*font-family: Arial, Verdana, Helvetica, sans-serif;*/
-            font-size: 9px;
-            /*height: 40px;*/
-            /*line-height: 40px;*/
-        }
+a:visited {
+    color: cyan;
+}
 
-        .slick-row.ui-widget-content.odd, .slick-cell {
-            background-color: #202020;
-        }
+a:hover {
+    color: yellow;
+}
 
-        .slick-row.ui-widget-content.even, .slick-cell {
-            background-color: #505050;
-        }
+a {
+    color: cyan;
+    text-decoration: none;
+}
 
-        .slick-row.ui-widget-content, .slick-cell {
-            background: none;
+.visible-loot-container {
+    border-color: #00A0FF;
+    border-width: 2px;
+    border-style: solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 2px;
+}
 
-            color: #eeeeee;
+.invisible-loot-container {
+    border-color: gold;
+    border-width: 2px;
+    border-style: dotted;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 2px;
+}
 
-            /*background-color: #eeeeee;*/
-            /*color: #666666;*/
-            /*border: none;*/
-            /*border-bottom: solid 1px #ffffff;*/
-            font-size: 13px;
-            /*height: 60px;*/
-            /*line-height: 60px;*/
-            /*padding: 0 5px;*/
-        }
+.tab-btn {
+    color: white;
+}
 
-        #alerter .info {
-            background: green;
-            color: white;
-            font-weight: bold;
-        }
+a.loading {
+    color: red;
+}
 
-        #alerter .warn {
-            background: yellow;
-            color: black;
-            font-weight: bold;
-        }
+.slick-headerrow-column {
+    background: #87ceeb;
+    text-overflow: clip;
+    box-sizing: border-box;
+}
 
-        #alerter .warn a {
-            color: blue;
-            text-decoration: underline;
-        }
+.slick-headerrow-column.ui-state-default {
+    padding: 1px;
+}
 
-        #alerter .warn a:hover {
-            color: pink;
-        }
+.slick-headerrow-column input {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
 
-        #alerter .error {
-            background: red;
-            color: white;
-            font-weight: bold;
-        }
+.slick-header-column.ui-state-default {
+    background: none;
+    background-color: #505050;
+    color: #eeeeee;
+    /*border: none;*/
+    /*padding: 0;*/
+    /*text-shadow: none;*/
+    /*font-family: Arial, Verdana, Helvetica, sans-serif;*/
+    font-size: 9px;
+    /*height: 40px;*/
+    /*line-height: 40px;*/
+}
 
-        @-webkit-keyframes llama-mode {
-            0% {
-                background-color: Yellow;
-                opacity: 1;
-            }
-            22% {
-                background-color: Yellow;
-            }
-            77% {
-                background-color: Red;
-            }
-            100% {
-                background-color: #777;
-            }
-        }
+.slick-row.ui-widget-content.odd, .slick-cell {
+    background-color: #202020;
+}
 
-        .llama-mode {
-            -webkit-animation-name: llama-mode;
-            -webkit-animation-duration: 100ms;
-            -webkit-animation-iteration-count: infinite;
-            -webkit-animation-timing-function: ease-in-out;
-        }
-    </style>
+.slick-row.ui-widget-content.even, .slick-cell {
+    background-color: #505050;
+}
 
-    <script type="text/javascript" src="jslib/d3.js"></script>
-    <script type="text/javascript" src="jslib/jquery.js"></script>
-    <script type="text/javascript" src="jslib/jquery-migrate.js"></script>
-    <script type="text/javascript" src="jslib/react-with-addons.js"></script>
-    <script type="text/javascript" src="jslib/signals.js"></script>
-    <script type="text/javascript" src="jslib/crossroads.js"></script>
-    <script type="text/javascript" src="jslib/hasher.js"></script>
-    <script type="text/javascript" src="jslib/mespeak/mespeak.full.js"></script>
-    <script type="text/javascript" src="jslib/esprima.js"></script>
-    <script type="text/javascript" src="jslib/vm.js"></script>
-    <script type="text/javascript" src="jslib/ace/ace.js" charset="utf-8"></script>
-    <link href="jslib/select2/select2.css" rel="stylesheet">
-    <script type="text/javascript" src="jslib/select2/select2.js"></script>
+.slick-row.ui-widget-content, .slick-cell {
+    background: none;
 
-    <script type="text/javascript" src="jslib/slickgrid/lib/jquery.event.drag-2.0.min.js"></script>
-    <script type="text/javascript" src="jslib/slickgrid/lib/jquery.event.drop-2.0.min.js"></script>
-    <script type="text/javascript" src="jslib/slickgrid/slick.core.js"></script>
-    <script type="text/javascript" src="jslib/slickgrid/slick.grid.js"></script>
-    <script type="text/javascript" src="jslib/slickgrid/slick.dataview.js"></script>
+    color: #eeeeee;
+
+    /*background-color: #eeeeee;*/
+    /*color: #666666;*/
+    /*border: none;*/
+    /*border-bottom: solid 1px #ffffff;*/
+    font-size: 13px;
+    /*height: 60px;*/
+    /*line-height: 60px;*/
+    /*padding: 0 5px;*/
+}
+
+#alerter .info {
+    background: green;
+    color: white;
+    font-weight: bold;
+}
+
+#alerter .warn {
+    background: yellow;
+    color: black;
+    font-weight: bold;
+}
+
+#alerter .warn a {
+    color: blue;
+    text-decoration: underline;
+}
+
+#alerter .warn a:hover {
+    color: pink;
+}
+
+#alerter .error {
+    background: red;
+    color: white;
+    font-weight: bold;
+}
+
+@-webkit-keyframes llama-mode {
+    0% {
+        background-color: Yellow;
+        opacity: 1;
+    }
+    22% {
+        background-color: Yellow;
+    }
+    77% {
+        background-color: Red;
+    }
+    100% {
+        background-color: #777;
+    }
+}
+
+.llama-mode {
+    -webkit-animation-name: llama-mode;
+    -webkit-animation-duration: 100ms;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: ease-in-out;
+}
+</style>
+
+<script type="text/javascript" src="jslib/d3.js"></script>
+<script type="text/javascript" src="jslib/jquery.js"></script>
+<script type="text/javascript" src="jslib/jquery-migrate.js"></script>
+<script type="text/javascript" src="jslib/react-with-addons.js"></script>
+<script type="text/javascript" src="jslib/signals.js"></script>
+<script type="text/javascript" src="jslib/crossroads.js"></script>
+<script type="text/javascript" src="jslib/hasher.js"></script>
+<script type="text/javascript" src="jslib/mespeak/mespeak.full.js"></script>
+<script type="text/javascript" src="jslib/esprima.js"></script>
+<script type="text/javascript" src="jslib/vm.js"></script>
+<script type="text/javascript" src="jslib/ace/ace.js" charset="utf-8"></script>
+<link href="jslib/select2/select2.css" rel="stylesheet">
+<script type="text/javascript" src="jslib/select2/select2.js"></script>
+
+<script type="text/javascript" src="jslib/slickgrid/lib/jquery.event.drag-2.0.min.js"></script>
+<script type="text/javascript" src="jslib/slickgrid/lib/jquery.event.drop-2.0.min.js"></script>
+<script type="text/javascript" src="jslib/slickgrid/slick.core.js"></script>
+<script type="text/javascript" src="jslib/slickgrid/slick.grid.js"></script>
+<script type="text/javascript" src="jslib/slickgrid/slick.dataview.js"></script>
 
 </head>
 <body>

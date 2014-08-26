@@ -37,7 +37,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     val O = js.Dynamic.literal
 
     val loadSel = loadDiv.asJsDyn.select2(O(
-      width = 120,
+      width = 180,
       placeholder = "Name",
       query = { (q: js.Dynamic) =>
         val names = Saver.getAllNames

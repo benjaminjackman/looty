@@ -1,11 +1,11 @@
 package looty
 package views
 
-import looty.views.loot.{ColumnsPane, Columns, Containers, Filters}
+import looty.views.loot.{UpgradesPane, ColumnsPane, Columns, Containers, Filters}
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
-import looty.model.{ComputedItem, LootContainerId}
+import looty.model.{ComputedItemProps, ComputedItem, LootContainerId}
 import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
 import looty.poeapi.PoeCacher
@@ -13,23 +13,48 @@ import looty.poeapi.PoeCacher
 import scala.language.postfixOps
 
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
-  val obj = new JsObjectBuilder
-  var grid    : js.Dynamic = null
-  var dataView: js.Dynamic = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  val obj                               = new JsObjectBuilder
+  var grid       : js.Dynamic           = null
+  var dataView   : js.Dynamic           = js.Dynamic.newInstance(global.Slick.Data.DataView)()
+  var upgradeItem: Option[ComputedItem] = None
+  var filterInputEls                    = Map.empty[String, JQuery]
 
-  val columns    = new Columns
-  val containers = new Containers
-  val filters    = new Filters(containers, columns, (f: (ComputedItem => Boolean)) => dataView.setFilter(f))
-  val refreshPane = new RefreshPane(league, containers, filters, updateContainer)
-  val loadSavePane = new LoadSavePane(columns, containers, filters)
-  val columnsPane = new ColumnsPane(columns)
+
+  val columns         = new Columns
+  val containers      = new Containers
+  val filters         = new Filters(containers, columns, (f: (ComputedItem => Boolean)) => dataView.setFilter(f))
+  val refreshPane     = new RefreshPane(league, containers, filters, updateContainer)
+  val loadSavePane    = new LoadSavePane(columns, containers, filters)
+  val columnsPane     = new ColumnsPane(columns)
+  val itemDetailHover = new ItemDetailHover()
+  val upgradesPane    = new UpgradesPane(league, itemDetailHover, setUpgradeItem, setLvlFilter)
+
+  def setUpgradeItem(item: Option[ComputedItem]) {
+    item.foreach { item =>
+      setFilter(ComputedItemProps.TypeName.shortName, item.typeName.replaceAll(" ", "."))
+    }
+    upgradeItem = item
+    dataView.refresh()
+  }
+
+  def setLvlFilter(lvl: Int) {
+    setFilter(ComputedItemProps.RequiredLevel.shortName, lvl.toString)
+  }
+
+  def setFilter(id: String, v: String) {
+    filterInputEls.get(id).foreach { el =>
+      filters.add(id, v)
+      el.`val`(v)
+    }
+    filters.refresh()
+  }
 
 
   dataView.setIdGetter { (d: ComputedItem) => d.item.locationId.get}
 
 
-  var colChangePending = false
-  var conChangePending = false
+  var colChangePending  = false
+  var conChangePending  = false
   var resizeGridPending = false
 
   def start(el: JQuery) {
@@ -72,7 +97,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   }
 
 
-
   def addAllItems {
     for {
       cons <- pc.getAllContainersFuture(league)
@@ -111,11 +135,16 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     el.append(controls.el)
     el.append("""<div id="grid"></div>""")
     appendGrid()
-    el.append("""<div id="itemdetail" style="z-index:100;color:white;background-color:black;opacity:.9;display:none;position:fixed;left:50px;top:100px">SAMPLE DATA<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a</div>""")
+    el.append(itemDetailHover.el)
     val (refreshEl, fut) = refreshPane.start()
     controls.add("Clear Filters") {
       filters.clear()
       filters.refresh()
+    }
+    controls.add {
+      val p = new ControlPane("Upgrades")
+      p.el.append(upgradesPane.start())
+      p
     }
     controls.add {
       val p = new ControlPane("Tabs")
@@ -131,9 +160,33 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       val p = loadSavePane.start()
       p
     }
+
     fut
   }
 
+  private def renderCell(item: ComputedItem, column: js.Dynamic) = {
+    val v = column.getter(item.asInstanceOf[js.Any]).asInstanceOf[js.Any]
+    v match {
+      case v: js.prim.Number =>
+        val dbl = v.toDouble
+        upgradeItem match {
+          case Some(item) => column.getter(item.asInstanceOf[js.Any]).asInstanceOf[js.Any] match {
+            case v: js.prim.Number =>
+              val diff = dbl - v
+              if (diff > 0) {
+                math.round(diff).toDouble
+              } else if (diff == 0.0 && dbl == 0.0) {
+                ""
+              } else {
+                diff
+              }
+            case _ => if (dbl == 0.0) "" else dbl
+          }
+          case None => if (dbl == 0.0) "" else dbl
+        }
+      case v => v
+    }
+  }
 
   private def appendGrid() {
 
@@ -146,18 +199,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       o.headerRowHeight = 30
       o.explicitInitialization = true
       o.dataItemColumnValueExtractor = (item: ComputedItem, column: js.Dynamic) => {
-        val v = column.getter(item.asInstanceOf[js.Any])
-        val vAny = v.asInstanceOf[js.Any]
-        if (vAny.isInstanceOf[js.Number]) {
-          val d = vAny.asInstanceOf[js.Number]
-          if (d == 0.0) {
-            ""
-          } else {
-            v
-          }
-        } else {
-          v
-        }
+        renderCell(item, column)
       }
       o
     }
@@ -180,6 +222,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       jq(args.node).empty()
       val el = jq("<input class='header-filter' type='text'>")
         .data("columnId", args.column.id)
+      filterInputEls += args.column.id.asJsStr -> el
 
       filters.columnFilters.get(args.column.id.asJsStr).foreach { fil =>
         el.`val`(fil.text)
@@ -193,7 +236,8 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     })
 
     grid.onClick.subscribe { (e: js.Any, args: js.Dynamic) =>
-      console.log("GRIDMINI CLICK", args, dataView.getItem(args.row))
+      val item: ComputedItem = dataView.getItem(args.row).asInstanceOf[ComputedItem]
+      console.log("GRIDMINI CLICK", args, item, item.item.inventoryId)
     }
 
     addSort()
@@ -203,7 +247,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     grid.init()
     autoSizeGridHeight()
   }
-
 
 
   private def addSort() {
@@ -246,94 +289,20 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     grid.onMouseEnter.subscribe((e: js.Dynamic, args: js.Any) => {
       val row = grid.getCellFromEvent(e).row
       if (row.nullSafe.isDefined) {
-        val (top, bottom) = if (e.clientY / global.window.innerHeight < .5) {
-          Some(e.clientY.asJsNum + 10) -> None
-        } else {
-          None -> Some(global.window.innerHeight - e.clientY + 10)
-        }
-
-        val (right, left) = if (e.clientX / global.window.innerWidth < .5) {
-          None -> Some(e.clientX.asJsNum + 10)
-        } else {
-          Some(global.window.innerWidth - e.clientX + 10) -> None
-        }
-
-        val item = grid.getDataItem(row).asInstanceOf[ComputedItem]
-        showItemDetail(top, right, bottom, left, item)
+        itemDetailHover.setFirstItem(Some(grid.getDataItem(row).asInstanceOf[ComputedItem]))
+        itemDetailHover.show(
+          x = e.clientX.asInstanceOf[js.Number],
+          y = e.clientY.asInstanceOf[js.Number],
+          compare = true
+        )
       }
     })
     grid.onMouseLeave.subscribe((e: js.Dynamic, args: js.Any) => {
-      jq("#itemdetail").hide()
+      itemDetailHover.hide()
     })
   }
 
 
-  def showItemDetail(
-    top: Option[js.prim.Number],
-    right: Option[js.prim.Number],
-    bottom: Option[js.prim.Number],
-    left: Option[js.prim.Number],
-    item: ComputedItem) {
-
-    val d = jq("#itemdetail")
-    d.show()
-    d.css("top", top.getOrElse("".toJs))
-    d.css("right", right.getOrElse("".toJs))
-    d.css("bottom", bottom.getOrElse("".toJs))
-    d.css("left", left.getOrElse("".toJs))
-    val color = item.item.getFrameType.color
-    def requirements = {
-      val xs = for {
-        rs <- item.item.requirements.toOption.toList
-        r <- rs.toList
-        n <- r.name.toOption.toList
-        vs <- r.values.toList
-      } yield {
-        s"$n ${vs(0).toString}"
-      }
-      xs.oIf(_.nonEmpty, _ => xs.mkString("Requires ", ", ", ""), _ => "")
-    }
-    def properties = {
-      (for {
-        props <- item.item.properties.toOption.toList
-        prop <- props.toList
-      } yield {
-        val vs = for {
-          v <- prop.values.toList
-        } yield {
-          v(0)
-        }
-        prop.name + " " + vs.mkString("")
-      }).mkString("<br>")
-    }
-    def flavorText = {
-      item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
-    }
-    val sections = List(
-      item.item.name.toString,
-      item.item.typeLine.toString,
-      s"Location: ${item.locAndCoords}",
-      if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
-      properties,
-      requirements,
-      item.item.descrText.toOption.map(_.toString).getOrElse(""),
-      item.item.implicitModList.mkString("<br>"),
-      item.item.explicitModList.mkString("<br>"),
-      item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
-      item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
-      flavorText,
-      if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else "Not Identified",
-      if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) "Corrupted" else "",
-      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else ""
-    ).filter(_.nonEmpty)
-    val h = s"""
-    <div style="color:$color;padding:5px">
-    ${sections.mkString("<hr>")}
-    </div>
-    """
-
-    d.html(h)
-  }
 }
 
 

@@ -11,7 +11,7 @@ object LootContainerId {
   val sPrefix = "StashTabIdx:"
   def parse(s: String): Option[LootContainerId] = {
     if (s.startsWith(iPrefix)) {
-      Some(InventoryId(s.drop(iPrefix.length)))
+      Some(CharInvId(s.drop(iPrefix.length)))
     } else if (s.startsWith(sPrefix)) {
       Some(StashTabIdx(s.drop(sPrefix.length).toInt))
     } else {
@@ -23,7 +23,7 @@ object LootContainerId {
 sealed trait LootContainerId {
   def encode : String
 }
-case class InventoryId(character: String) extends LootContainerId {
+case class CharInvId(character: String) extends LootContainerId {
   override def encode = LootContainerId.iPrefix + character
 }
 case class StashTabIdx(idx: Int) extends LootContainerId {

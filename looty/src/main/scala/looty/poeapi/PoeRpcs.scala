@@ -31,8 +31,8 @@ object PoeRpcs {
     enqueue[js.Array[CharacterInfo]](url = "http://www.pathofexile.com/character-window/get-characters", params = null)
   }
 
-  def getPassiveSkills(character: String): Future[js.Dynamic] = {
-    enqueue[js.Dynamic](
+  def getPassiveSkills(character: String): Future[PassivesTree] = {
+    enqueue[PassivesTree](
       url = s"http://www.pathofexile.com/character-window/get-passive-skills?character=$character",
       params = null,
       reqType = HttpRequestTypes.Get

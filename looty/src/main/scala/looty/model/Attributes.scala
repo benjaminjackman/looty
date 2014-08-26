@@ -13,6 +13,12 @@ import looty.model.SocketColors.SocketColor
 
 
 object Attributes {
+  def apply[A](str: A, dex: A, int: A) = new Attributes[A] {
+    override val strength    : A = str
+    override val intelligence: A = dex
+    override val dexterity   : A = int
+  }
+
   def of[A](a: => A) = new Attributes[A] {
     val strength    : A = a
     val dexterity   : A = a
@@ -31,7 +37,7 @@ object Attributes {
     def intelligence: A = f(Attributes.Str)
   }
 
-  sealed abstract class Attribute(val name : String, val color : SocketColor) {
+  sealed abstract class Attribute(val name: String, val color: SocketColor) {
     def cap = name.capitalize
   }
   case object Str extends Attribute("strength", SocketColors.Red)
@@ -54,6 +60,12 @@ trait Attributes[A] {
     case Attributes.Dex => dexterity
     case Attributes.Int => intelligence
   }
+
+  def reduceWith[B, C](that: Attributes[B])(f: (A, B) => C): Attributes[C] = Attributes[C](
+    str = f(this.strength, that.strength),
+    dex = f(this.dexterity, that.dexterity),
+    int = f(this.intelligence, that.intelligence)
+  )
 }
 class MutableAttributes[A] extends Attributes[A] with Accessible[Attributes.Attribute, A] {
   private var _strength    : A = _

@@ -2,7 +2,7 @@ package looty
 package views
 
 import looty.model.parsers.ItemParser
-import looty.model.{StashTabIdx, InventoryId, ComputedItem, LootContainerId}
+import looty.model.{StashTabIdx, CharInvId, ComputedItem, LootContainerId}
 import looty.poeapi.PoeCacher
 
 import looty.views.loot.{Filters, Containers, Container}
@@ -119,7 +119,7 @@ class RefreshPane(league: String,
           val button = jq(s"""<a title="$title" href="javascript:void(0)">${char.name}</a>""")
           button.data("charName", char.name)
 
-          val conId: LootContainerId = InventoryId(char.name)
+          val conId: LootContainerId = CharInvId(char.name)
 
           addCon(conId, button, elChars) {
             pc.getInv(char.name, forceNetRefresh = true).foreach { st =>

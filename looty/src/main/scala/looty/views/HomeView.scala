@@ -14,7 +14,16 @@ class HomeView(val banner: String, val version: String) extends View {
   def versionHistory = """
 # Version History
 
-## 0.2.1.10 (2014-08-25)
+## 0.2.1.12 (2014-08-26)
+* Upgrades pane (side by side + grid comparisons to help finding upgrades to items)
+* Helvetica, Arial, Sans Serif
+* Numeric column width back to 50px to fit more stuff on the screen.
+* Added 1H/2H prefix to all weapons types (Except bows) for easier searching
+
+## 0.2.1.11 (2014-08-25)
+* Added messages linking to feature page on reddit
+
+## 0.2.1.10 (2014-08-24)
 * Rewrote Gem XP Tracker. Try it out and let me know what you guys think!
 * Using select2 menus on the datagrids for user defined views (saveable sets of columns / filters)
 * Added ACE / vm.js (for custom scores, not yet implemented)
@@ -109,64 +118,10 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         |</ul>
         |<br>
         |<br>
-        |<div>
-        |<h3> Version History</h3><br>
-        |<h4>0.2.1.11</h4>
-        | Linked to reddit feedback thread
-        | Hideout items are given their own type (let me know if some aren't it's a bug and i'll fix it!)
-        |<h4>0.2.1.10</h4>
-        | Rewrote Gem XP Tracker. Try it out and let me know what you guys think!<br>
-        | Using select2 menus on the datagrids for views (and split the source into multiple files it was getting fat)<br>
-        | Added ACE / vm.js (for custom scores, not yet implemented)<br>
-        |<h4>0.2.1.9</h4>
-        | <ul>
-        | <li>
-        | Numeric columns don't require operators (e.g. < <= etc) anymore. Those operators can still be used however they should filter
-        | as a min or max automatically. For example typing 50 in the pDps column will only show items with a pDps greater than or equal to 50.
-        | while typing it into the rLvl column (RequiredLevel) will show items that require at most level 50.
-        |</li>
-        | <li>Strength and Int Bonuses are now applied to life / mana</li>
-        | <li>increased cast speed, accuracy and max energy shield all have columns</li>
-        |</ul>
-        |<h4>0.2.1.8</h4>
-        | shift click to refresh a tab / character <br>
-        | more descriptive types <br>
-        | larger column headers / smaller fonts <br>
-        |<h4>0.2.1.7</h4>
-        | Show empty cells instead of zeros <br>
-        |<h4>0.2.1.6</h4>
-        | Fixed sizing issue with PoeBuilder Page <br>
-        |<h4>0.2.1.5</h4>
-        | Add / Remove / Save Columns + Filters  <br>
-        | Add / Remove / Refresh Tabs  <br>
-        | PoeBuilder Integration  <br>
-        |<h4>0.2.1.4</h4>
-        | Fixed bug with Block % not parsing correctly <br>
-        |<h4>0.2.1.3</h4>
-        | Fixed bug with max level gems causing parse errors <br>
-        | Upgrade to ScalaJs 0.5.3 <br>
-        |<h4>0.2.1.2</h4>
-        | Fixed google analytics script errors <br>
-        |<h4>0.2.1.1</h4>
-        |<ul>
-        |<li>
-        |Added a misc column that will show: <br>
-        | count of items in stack / mapLevel / gemLevel / Total #Sockets <br>
-        | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvnq3h">hih0</a><br>
-        | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvfh33">Sirais</a><br>
-        | <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjvo798">tokyotapes</a><br>
-        |</li>
-        |</ul>
-        |<h4>0.2.1</h4>
-        |<ul>
-        |<li>
-        |Fixed DPS Bug <a href="http://www.reddit.com/r/pathofexile/comments/2e22kc/tools_looty_020_now_available_in_the_chrome_web/cjveud4">SoulProxy</a><br>
-        |</li>
-        |</ul>
-        |</div>
         |</div>
         """.stripMargin
     }
+    val ta = el.append(s"""<textarea rows="60" cols="120" readonly>$versionHistory</textarea>""")
   }
 
   def stop() {}

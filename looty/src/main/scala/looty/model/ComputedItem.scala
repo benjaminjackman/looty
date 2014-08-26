@@ -62,7 +62,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
     for (x <- item.x.toOption; y <- item.y.toOption) yield {
       containerId match {
-        case InventoryId(char) =>
+        case CharInvId(char) =>
           s"""[linkItem location="MainInventory" character="$char" x="$x" y="$y"]"""
         case StashTabIdx(idx) =>
           val league = item.league
@@ -211,7 +211,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   object total {
-    def dps: Double = perElementDps.all.sum
+    lazy val dps = perElementDps.all.sum
     val perElementDps = Elements calculatedWith { element =>
       if (slots.isWeapon) {
         properties.damages(element).avg * properties.attacksPerSecond

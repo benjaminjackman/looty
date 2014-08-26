@@ -1,6 +1,9 @@
 package looty
 package poeapi
 
+import looty.model.InventoryIds
+import looty.model.InventoryIds.InventoryId
+
 import scala.scalajs.js
 import cgta.ojs.lang.Optional
 
@@ -30,6 +33,10 @@ object PoeTypes {
     val Rampage = "Rampage"
 
     val all = List(Standard, Hardcore, Beyond, Rampage)
+  }
+
+  trait PassivesTree extends js.Object {
+    val hashes : js.Array[Int]
   }
 
   trait CharacterInfo extends js.Object {
@@ -138,6 +145,10 @@ object PoeTypes {
         } else {
           FrameTypes.all(ft)
         }
+      }
+
+      def getInventoryId : Option[InventoryId] = {
+        x.inventoryId.toOption.flatMap(iid=>InventoryIds.fromItem(iid, x.x.toOption.map(_.toInt).getOrElse(0)))
       }
 
       def isDigit(c : Char) : Boolean = c >= '0' && c <= '9'
