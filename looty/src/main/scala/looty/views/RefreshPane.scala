@@ -131,8 +131,8 @@ class RefreshPane(league: String,
       }
     }
     
-    //Force a refreh
-    pc.getChars(forceNetRefresh = true)
+//    //Force a refreh
+//    pc.getChars(forceNetRefresh = true)
 
     //Buttons for stash tabs
     val tabBtnsFut = for {

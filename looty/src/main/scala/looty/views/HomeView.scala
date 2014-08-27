@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.17 (2014-08-27)
+* Fixed: really this time, refreshing stash tabs was messed up on new installs.
+
 ## 0.2.1.16 (2014-08-27)
 * Fixed: refreshing stash tabs was messed up on new installs.
 
