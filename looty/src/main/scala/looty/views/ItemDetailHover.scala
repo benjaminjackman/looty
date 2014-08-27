@@ -49,10 +49,13 @@ class ItemDetailHover {
     el1.hide()
     el2.hide()
     def cssValueOf(x: Option[Double]): js.Any = x.map(x => x: js.Any).getOrElse[js.Any]("")
-    el.css("top", cssValueOf(top))
-    el.css("right", cssValueOf(right))
-    el.css("bottom", cssValueOf(bottom))
-    el.css("left", cssValueOf(left))
+//    el.css("top", cssValueOf(top))
+//    el.css("right", cssValueOf(right))
+//    el.css("bottom", cssValueOf(bottom))
+//    el.css("left", cssValueOf(left))
+
+    el.css("top", 0)
+    el.css("right", 0)
 
     firstItem.foreach { item =>
       displayItem(item, el1)
@@ -100,7 +103,7 @@ class ItemDetailHover {
       if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
       properties,
       requirements,
-      item.item.descrText.toOption.map(_.toString).getOrElse(""),
+      //      item.item.descrText.toOption.map(_.toString).getOrElse(""),
       item.item.implicitModList.mkString("<br>"),
       item.item.explicitModList.mkString("<br>"),
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
@@ -116,11 +119,53 @@ class ItemDetailHover {
         ${sections.mkString("<hr>")}
         </div>
         """
-    el.attr("class", s"item-detail frame-type-$frameTypeName")
+    el.attr("class", s"item-card frame-type-$frameTypeName")
     el.html(h)
+    render(item, el)
     el.show()
   }
 
-  def hide() = el.hide()
+  implicit class StringExtensions(s: String) {
+    def h: JQuery = {
+      val tag :: classes = s.split("\\.").toList
+      val el = jq(s"<$tag></$tag>")
+      classes.foreach(el.addClass(_))
+      el
+    }
+  }
+
+
+  implicit class JQueryExtensions(el: JQuery) {
+    def /(that: JQuery): JQuery = { el.append(that); that }
+    def /!(that: JQuery): JQuery = { el.append(that); el }
+    def |(at: (String, String)): JQuery = { el.attr(at._1, at._2); el }
+    def text(txt: String): JQuery = { el.text(txt); el }
+  }
+
+  def render(item: ComputedItem, el: JQuery): JQuery = {
+    val frameTypeName = item.item.getFrameType.name
+    el.empty()
+    val locGrid = {
+      List.tabulate(12, 12) { (x, y) =>
+        val el = "div".h
+
+        el
+      }
+    }
+    def name = item.item.name.oIf(_.isEmpty, x => item.item.typeLine, x => x)
+    el.attr("class", s"item-card frame-type-$frameTypeName")
+    el / "div.ic-title-line".h /!
+      ("div.ic-title".h text name) /!
+      ("div.ic-icon".h text "♞") /!
+      "div".h.css("clear", "both")
+    el / "div.ic-imgs".h /!
+      ("div.ic-img".h /! ("img".h | "src" -> item.item.icon)) /!
+      ("div.ic-loc".h /! locGrid)
+
+  }
+
+  def hide() = {
+    //el.hide()
+  }
 
 }

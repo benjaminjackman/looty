@@ -19,54 +19,105 @@ body {
     overflow: hidden;
 }
 
-.item-detail {
+.item-card {
     float:left;
     max-width: 400px;
+    width: 300px;
+    height: 450px;
     color: white;
-    border-width: 4px;
+    border-width: 5px;
     border-style: solid;
     border-color: white;
-    border-radius: 10px;
+    /*border-radius: 10px;*/
     opacity: .9;
     background-color: black;
 }
 
-.item-detail.unknown {
+.item-card .ic-title-line {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    height: 50px;
+    width: 280px;
+}
+
+.item-card .ic-title {
+    float:left;
+}
+.item-card .ic-icon {
+    float:right;
+}
+
+.clear-both {
+  clear: both;
+}
+
+
+.item-card .ic-imgs {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    height: 150px;
+    width: 300px;
+}
+
+.item-card .ic-img {
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    height: 150px;
+    width: 150px;
+    background-color: gray;
+}
+
+.item-card .ic-img img {
+    zoom: 2;
+    display: block;
+    margin: auto;
+    max-height: 100%;
+    max-width: 100%;
+    height: auto;
+    width: auto;
+}
+
+
+
+.item-card.unknown {
     border-color: rgb(128, 128, 128);
     font-color: rgb(128, 128, 128);
 }
 
-.item-detail.frame-type-normal {
+.item-card.frame-type-normal {
     border-color: rgb(255, 255, 255);
     color: rgb(255, 255, 255);
 }
 
-.item-detail.frame-type-magic {
+.item-card.frame-type-magic {
     border-color: rgb(128, 128, 255);
     color: rgb(128, 128, 255);
 }
 
-.item-detail.frame-type-rare {
+.item-card.frame-type-rare {
     border-color: rgb(255, 255, 0);
     color: rgb(255, 255, 0);
 }
 
-.item-detail.frame-type-unique {
+.item-card.frame-type-unique {
     border-color: rgb(192, 64, 64);
     color: rgb(192, 64, 64);
 }
 
-.item-detail.frame-type-gem {
+.item-card.frame-type-gem {
     border-color: rgb(0, 192, 192);
     color: rgb(0, 192, 192);
 }
 
-.item-detail.frame-type-currency {
+.item-card.frame-type-currency {
     border-color: rgb(165, 146, 99);
     color: rgb(165, 146, 99);
 }
 
-.item-detail.frame-type-quest {
+.item-card.frame-type-quest {
     border-color: rgb(0, 255, 0);
     color: rgb(0, 255, 0);
 }
@@ -242,6 +293,7 @@ a.loading {
 <script type="text/javascript" src="jslib/d3.js"></script>
 <script type="text/javascript" src="jslib/jquery.js"></script>
 <script type="text/javascript" src="jslib/jquery-migrate.js"></script>
+<script type="text/javascript" src="jslib/jquery.fittext.js"></script>
 <script type="text/javascript" src="jslib/react-with-addons.js"></script>
 <script type="text/javascript" src="jslib/signals.js"></script>
 <script type="text/javascript" src="jslib/crossroads.js"></script>
