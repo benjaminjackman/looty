@@ -14,6 +14,9 @@ class HomeView(val banner: String, val version: String) extends View {
   def versionHistory = """
 # Version History
 
+## 0.2.1.14 (2014-08-26)
+* Fixed: Refresh player data automatically on PoeBuilder view and LootGrids.
+
 ## 0.2.1.13 (2014-08-26)
 * Fixed: Secondary Item wasn't being hidden.
 * Fixed: Upgrade view didn't show deltas when changing between items of the same type (e.g. Ring/Ring2)
@@ -25,7 +28,7 @@ class HomeView(val banner: String, val version: String) extends View {
 * Change: Numeric column width back to 50px to fit more stuff on the screen.
 * Enhancement: Added 1H/2H prefix to all weapons types (Except bows) for easier searching
 
- ## 0.2.1.11 (2014-08-25)
+## 0.2.1.11 (2014-08-25)
 * Added messages linking to feature page on reddit
 
 ## 0.2.1.10 (2014-08-24)

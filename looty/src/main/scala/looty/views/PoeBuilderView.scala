@@ -40,6 +40,7 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
       })
     }
 
+    pc.getChars(forceNetRefresh = true)
 
     el.append(btnsDiv)
     el.append(iframe)
