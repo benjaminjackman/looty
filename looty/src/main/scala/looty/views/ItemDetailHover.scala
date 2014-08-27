@@ -29,30 +29,15 @@ class ItemDetailHover {
   def setSecondItem(item: Option[ComputedItem]) { secondItem = item }
 
 
+
+
   def show(
     x: Double,
     y: Double,
     compare: Boolean) {
 
-    val (top, bottom) = if (y / global.window.innerHeight < .5) {
-      Some(y + 10) -> None
-    } else {
-      None -> Some(global.window.innerHeight.asInstanceOf[Double] - y + 10)
-    }
-
-    val (right, left) = if (x / global.window.innerWidth < .5) {
-      None -> Some(x + 10)
-    } else {
-      Some(global.window.innerWidth.asInstanceOf[Double] - x + 10) -> None
-    }
-
     el1.hide()
     el2.hide()
-    def cssValueOf(x: Option[Double]): js.Any = x.map(x => x: js.Any).getOrElse[js.Any]("")
-    el.css("top", cssValueOf(top))
-    el.css("right", cssValueOf(right))
-    el.css("bottom", cssValueOf(bottom))
-    el.css("left", cssValueOf(left))
 
     firstItem.foreach { item =>
       displayItem(item, el1)
@@ -61,7 +46,24 @@ class ItemDetailHover {
       }
     }
 
+    positionFrame(x, y)
+
     el.show()
+  }
+
+  def positionFrame(x: Double, y: Double) {
+    val yRat = y / global.window.innerHeight
+    val h = el.height()
+    val top = Some(y-yRat*h)
+    val (right, left) = if (x / global.window.innerWidth < .5) {
+      None -> Some(x + 10)
+    } else {
+      Some(global.window.innerWidth.asInstanceOf[Double] - x + 10) -> None
+    }
+    def cssValueOf(x: Option[Double]): js.Any = x.map(x => x: js.Any).getOrElse[js.Any]("")
+    el.css("top", cssValueOf(top))
+    el.css("right", cssValueOf(right))
+    el.css("left", cssValueOf(left))
   }
 
   def displayItem(item: ComputedItem, el: JQuery) {

@@ -13,8 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.15 (2014-08-27)
+* Significantly improved Y layout location logic for item-detail hover.
 
-## 0.2.1.14 (2014-08-26)
+ ## 0.2.1.14 (2014-08-26)
 * Fixed: Refresh player data automatically on PoeBuilder view and LootGrids.
 
 ## 0.2.1.13 (2014-08-26)
