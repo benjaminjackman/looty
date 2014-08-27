@@ -34,6 +34,7 @@ object Build extends sbt.Build {
         List(devFile, releaseFile)
 
     }
+
     Seq[File](outMappings.map(_._1): _*)
   }
 
@@ -46,7 +47,7 @@ object Build extends sbt.Build {
     IO.copyDirectory((resourceDirectory in Compile).value / "data", outDir / "data")
     IO.copyDirectory((baseDirectory in Compile).value / "jslib", outDir / "jslib")
 
-    Seq[File](
+    val out = Seq[File](
       (resourceDirectory in Compile).value / "manifest.json",
       (sourceDirectory in Compile).value / "html" / "popup.html",
       (resourceDirectory in Compile).value / "images",
@@ -54,6 +55,7 @@ object Build extends sbt.Build {
       (baseDirectory in Compile).value / "jslib"
     )
 
+    out
   }
 
 
@@ -77,6 +79,7 @@ object Build extends sbt.Build {
 
   lazy val looty = pject("looty").settings(
     resourceGenerators in Compile <+= generateHtml,
+    watchSources += (sourceDirectory in Compile).value / "html",
     resourceGenerators in Compile <+= copyAll).dependsOn(csjs)
 
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
