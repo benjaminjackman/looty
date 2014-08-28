@@ -31,6 +31,7 @@ class JsAnyExtensions(val a: js.Any) extends AnyVal {
   def toJsonString: js.String = js.JSON.stringify(a)
   def asJsDic[A]: js.Dictionary[A] = a.asInstanceOf[js.Dictionary[A]]
   def asJsArr[A]: js.Array[A] = a.asInstanceOf[js.Array[A]]
+  def asJsBool: js.Boolean = a.asInstanceOf[js.Boolean]
   def asJsObj: js.Object = a.asInstanceOf[js.Object]
   def asJsDyn: js.Dynamic = a.asInstanceOf[js.Dynamic]
   def asJsStr: js.String = a.asInstanceOf[js.String]

@@ -237,9 +237,13 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       el.appendTo(args.node)
     })
 
-    grid.onClick.subscribe { (e: js.Any, args: js.Dynamic) =>
+    grid.onClick.subscribe { (e: js.Dynamic, args: js.Dynamic) =>
       val item: ComputedItem = dataView.getItem(args.row).asInstanceOf[ComputedItem]
-      console.log("GRIDMINI CLICK", args, item, item.item.inventoryId)
+      if (e.shiftKey.asJsBool) {
+        refreshPane.refreshContainer(item.containerId)
+      }
+
+      console.log(e, "GRIDMINI CLICK", args, item, item.item.inventoryId)
     }
 
     addSort()

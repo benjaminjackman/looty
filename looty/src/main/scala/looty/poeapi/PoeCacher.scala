@@ -2,7 +2,7 @@ package looty
 package poeapi
 
 import scala.concurrent.Future
-import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
+import looty.poeapi.PoeTypes.{ItemContainer, StashTab, StashTabInfos, Inventory, Characters}
 import looty.model.{CharInvId, StashTabIdx, LootContainerId, ComputedItem}
 import looty.model.parsers.ItemParser
 
@@ -20,6 +20,13 @@ trait PoeCacher {
   def getStashInfo(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]
   def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean = false): Future[StashTab]
   def clearLeague(league: String): Future[Unit]
+
+  def getContainer(league : String, conId : LootContainerId) : Future[ItemContainer] = {
+    conId match {
+      case CharInvId(name) => getInv(name, forceNetRefresh = true)
+      case StashTabIdx(idx) => getStashTab(league, idx, forceNetRefresh = true)
+    }
+  }
 
 
   private def getAllStashTabs(league: String): Future[List[Future[(StashTabIdx, StashTab)]]] = {

@@ -4,6 +4,7 @@ package views
 import looty.model.parsers.ItemParser
 import looty.model.{StashTabIdx, CharInvId, ComputedItem, LootContainerId}
 import looty.poeapi.PoeCacher
+import looty.poeapi.PoeTypes.StashTabInfo
 
 import looty.views.loot.{Filters, Containers, Container}
 import org.scalajs.jquery.{JQuery, JQueryStatic}
@@ -27,6 +28,94 @@ class RefreshPane(league: String,
   implicit pc: PoeCacher) {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+  val elChars = jq("<div>Characters: </div>")
+  val elTabs = jq("<div>Tabs: </div>")
+  var buttons = Map.empty[LootContainerId, (JQuery, Option[StashTabInfo])]
+
+
+  def refreshContainer(conId: LootContainerId) {
+    buttons.get(conId).foreach {
+      case (btn, Some(sti)) =>
+        pc.getStashTab(league, conId.asInstanceOf[StashTabIdx].idx, forceNetRefresh = true).foreach { st =>
+          val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
+          updateContainer(conId, items)
+        }
+      case (btn, None) =>
+        val char = conId.asInstanceOf[CharInvId].character
+        pc.getInv(char, forceNetRefresh = true).foreach { st =>
+          val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char)
+          updateContainer(conId, items)
+        }
+
+    }
+  }
+
+  def addCharBtns(): Future[Unit] = {
+    for {
+      chars <- pc.getChars(forceNetRefresh = false)
+    } yield {
+      chars.sortBy(_.name.toUpperCase()).foreach { char =>
+        if (char.league.toString =?= league) {
+          val conId: LootContainerId = CharInvId(char.name)
+          val button = jq(s"""<a title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
+          button.data("charName", char.name)
+
+          buttons += conId -> (button -> None)
+
+          addCon(conId, button, elChars) {
+            pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
+              val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
+              updateContainer(conId, items)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  def addTabBtns(): Future[Unit] = {
+    for {
+      stis <- pc.getStashInfo(league, forceNetRefresh = false)
+    } yield {
+      stis.foreach { sti =>
+        val index = sti.i
+        val conId: LootContainerId = StashTabIdx((sti.i: Double).toInt)
+        val button = jq(s"""<a class="tab-btn" href="javascript:void(0)" title="${refreshBtnTitle + s" the index of this tab is: $index"}"></a>""")
+        button.text(sti.n)
+        button.css("textShadow", "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black")
+        button.css("backgroundColor", sti.colour.toRgb)
+        buttons += conId -> (button -> Some(sti))
+
+        addCon(conId, button, elTabs) {
+          pc.getStashTab(league, sti.i.toInt, forceNetRefresh = true).foreach { st =>
+            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
+            updateContainer(conId, items)
+          }
+        }
+      }
+    }
+  }
+
+  val refreshBtnTitle = "Show / hide this tab. Shift-Click to refresh it."
+
+  def addCon(conId: LootContainerId, button: JQuery, el: JQuery)(refreshFn: => Unit) {
+    val con = new Container(conId, button, initialVisible = true, refreshFn = () => refreshFn)
+    button.addClass("loading")
+    button.addClass("visible-loot-container")
+    containers.addContainer(con)
+    filters.setContainer(con.id, visible = con.visible)
+    el.append(button)
+    el.append(" ")
+    button.on("click", (e: js.Dynamic) => {
+      //Filter the grid to show only that tab
+      if (e.shiftKey.asInstanceOf[js.Boolean]) {
+        con.refresh()
+      } else {
+        con.toggle()
+      }
+      false
+    })
+  }
 
 
   def start(): (JQuery, Future[Unit]) = {
@@ -77,8 +166,6 @@ class RefreshPane(league: String,
 
 
 
-    val elChars = jq("<div>Characters: </div>")
-    val elTabs = jq("<div>Tabs: </div>")
 
     el.append("Click to select/unselect characters/tabs. Shift+Click will reload them from the server.<br>")
     el.append(showAllBtn)
@@ -89,73 +176,8 @@ class RefreshPane(league: String,
     el.append(reloadAllBtn)
 
 
-    val title = "Show / hide this tab. Shift-Click to refresh it."
 
-    def addCon(conId: LootContainerId, button: JQuery, el: JQuery)(refreshFn: => Unit) {
-      val con = new Container(conId, button, initialVisible = true, refreshFn = () => refreshFn)
-      button.addClass("loading")
-      button.addClass("visible-loot-container")
-      containers.addContainer(con)
-      filters.setContainer(con.id, visible = con.visible)
-      el.append(button)
-      el.append(" ")
-      button.on("click", (e: js.Dynamic) => {
-        //Filter the grid to show only that tab
-        if (e.shiftKey.asInstanceOf[js.Boolean]) {
-          con.refresh()
-        } else {
-          con.toggle()
-        }
-        false
-      })
-    }
 
-    //Buttons for characters
-    val charBtnsFut = for {
-      chars <- pc.getChars(forceNetRefresh = false)
-    } yield {
-      chars.sortBy(_.name.toUpperCase()).foreach { char =>
-        if (char.league.toString =?= league) {
-          val button = jq(s"""<a title="$title" href="javascript:void(0)">${char.name}</a>""")
-          button.data("charName", char.name)
-
-          val conId: LootContainerId = CharInvId(char.name)
-
-          addCon(conId, button, elChars) {
-            pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
-              val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
-              updateContainer(conId, items)
-            }
-          }
-        }
-      }
-    }
-    
-//    //Force a refreh
-//    pc.getChars(forceNetRefresh = true)
-
-    //Buttons for stash tabs
-    val tabBtnsFut = for {
-      stis <- pc.getStashInfo(league, forceNetRefresh = false)
-    } yield {
-      stis.foreach { sti =>
-        val index = sti.i
-        val button = jq(s"""<a class="tab-btn" href="javascript:void(0)" title="${title + s" the index of this tab is: $index"}"></a>""")
-        button.text(sti.n)
-        button.css("textShadow", "-1px 0 black, 0 1px black, 1px 0 black, 0 -1px black")
-        button.css("backgroundColor", sti.colour.toRgb)
-
-        val conId: LootContainerId = StashTabIdx((sti.i: Double).toInt)
-
-        addCon(conId, button, elTabs) {
-          pc.getStashTab(league, sti.i.toInt, forceNetRefresh = true).foreach { st =>
-            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
-            updateContainer(conId, items)
-          }
-        }
-      }
-    }
-
-    el -> Future.sequence(List(tabBtnsFut, charBtnsFut)).map(x => Unit)
+    el -> Future.sequence(List(addCharBtns(), addTabBtns())).map(x => Unit)
   }
 }
