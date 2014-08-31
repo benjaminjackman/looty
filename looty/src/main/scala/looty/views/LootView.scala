@@ -149,7 +149,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       p
     }
     controls.add {
-      val p = new ControlPane("Tabs")
+      val p = new ControlPane("Refresh/Tabs")
       p.el.append(refreshEl)
       p
     }

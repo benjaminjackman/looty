@@ -73,11 +73,14 @@ object Alerter {
     el.html(s"""<div class="$cls">$msg</div>""")
   }
 
-  private val feedback_0_2_1_10 = "http://www.reddit.com/r/pathofexile/comments/2ek6da/tools_looty_stash_searching_and_gem_xp_tracking/"
-  private def redditLink(msg: String) = s"""<a target="_blank" href="$feedback_0_2_1_10">$msg</a>"""
+//  private val feedback_0_2_1_10 = "http://www.reddit.com/r/pathofexile/comments/2ek6da/tools_looty_stash_searching_and_gem_xp_tracking/"
+//  private def redditLink(msg: String) = s"""<a target="_blank" href="$feedback_0_2_1_10">$msg</a>"""
 
-  def featuresDate = "August 25, Version 10"
-  def featuresLink(msg: String) = redditLink(msg: String)
+
+  private val mainGGGUrl = "http://www.pathofexile.com/forum/view-thread/832233"
+  private def mainGGGLink(msg: String) = s"""<a target="_blank" href="$mainGGGUrl">$msg</a>"""
+
+  def featuresLink(msg: String) = mainGGGLink(msg: String)
 
   // Returns a random integer between min (included) and max (excluded)
   def getRandomInt(min: Int, max: Int): Int = {

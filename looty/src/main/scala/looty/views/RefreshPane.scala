@@ -167,7 +167,7 @@ class RefreshPane(league: String,
 
 
 
-    el.append("Click to select/unselect characters/tabs. Shift+Click will reload them from the server.<br>")
+    el.append("Click to select/unselect characters/tabs. Shift+Click will refresh them from the server.<br>")
     el.append(showAllBtn)
     el.append(hideAllBtn)
     el.append(elChars)

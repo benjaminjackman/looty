@@ -2,6 +2,7 @@ package looty
 
 import looty.vmjs.Vm
 
+import scala.annotation.meta.field
 import scala.scalajs.js
 
 import scala.concurrent.Future
@@ -95,7 +96,7 @@ object LootyMain {
   @JSExport
   def main() {
     new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-    Alerter.info(s"Looty Loaded! ${Alerter.featuresDate}: Please stop by ${Alerter.featuresLink("here")} to learn about the latest features!")
+    Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Looty is free, open source software.")
   }
 
 }

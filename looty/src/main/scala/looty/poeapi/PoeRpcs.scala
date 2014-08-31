@@ -107,12 +107,12 @@ object PoeRpcs {
         get[Any](qi.url, qi.params, qi.requestType).onComplete {
           case Success(x) =>
             requestQueue = requestQueue.tail
-            Alerter.info(s"Downloaded some data from pathofexile.com! Check out the info on the newest features as of ${Alerter.featuresDate} ${Alerter.featuresLink("here")}!")
+            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! Feedback and suggestions are very welcome!")
             qi.promise.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             console.log("Throttled, cooling off ", qi.url, qi.params, msg)
-            Alerter.warn(s"""Throttled by pathofexile.com, while you wait <a target="_blank" href="http://i.imgur.com/AmvBbcz.jpg">why not</a> stop by ${Alerter.featuresLink("here")} and learn about the latest features of (${Alerter.featuresDate})?""")
+            Alerter.warn(s"""Throttled by pathofexile.com, while you wait why not stop by ${Alerter.featuresLink("here")} and leave some feedback and help other players discover the tool!""")
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
             requestQueue = requestQueue.tail
