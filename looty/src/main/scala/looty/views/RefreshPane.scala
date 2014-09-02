@@ -4,13 +4,14 @@ package views
 import looty.model.parsers.ItemParser
 import looty.model.{StashTabIdx, CharInvId, ComputedItem, LootContainerId}
 import looty.poeapi.PoeCacher
-import looty.poeapi.PoeTypes.StashTabInfo
+import looty.poeapi.PoeTypes.{CharacterInfo, StashTabInfo}
 
 import looty.views.loot.{Filters, Containers, Container}
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 import scala.concurrent.Future
 import scala.scalajs.js
+import scala.util.{Failure, Success}
 
 
 //////////////////////////////////////////////////////////////
@@ -28,9 +29,9 @@ class RefreshPane(league: String,
   implicit pc: PoeCacher) {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-  val elChars = jq("<div>Characters: </div>")
-  val elTabs = jq("<div>Tabs: </div>")
-  var buttons = Map.empty[LootContainerId, (JQuery, Option[StashTabInfo])]
+  val elChars          = jq("<div>Characters: </div>")
+  val elTabs           = jq("<div>Tabs: </div>")
+  var buttons          = Map.empty[LootContainerId, (JQuery, Option[StashTabInfo])]
 
 
   def refreshContainer(conId: LootContainerId) {
@@ -50,23 +51,25 @@ class RefreshPane(league: String,
     }
   }
 
-  def addCharBtns(): Future[Unit] = {
-    for {
-      chars <- pc.getChars(forceNetRefresh = false)
-    } yield {
-      chars.sortBy(_.name.toUpperCase()).foreach { char =>
-        if (char.league.toString =?= league) {
-          val conId: LootContainerId = CharInvId(char.name)
-          val button = jq(s"""<a title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
-          button.data("charName", char.name)
+  def addCharBtnsFut(): Future[Unit] = {
+    pc.getChars(forceNetRefresh = false).map(chars => addCharBtns(chars))
+  }
 
-          buttons += conId -> (button -> None)
+  def addCharBtns(chars : Seq[CharacterInfo]) {
+    buttons = buttons.filterKeys(!_.isCharInv)
+    elChars.empty()
+    chars.sortBy(_.name.toUpperCase).foreach { char =>
+      if (char.league.toString =?= league) {
+        val conId: LootContainerId = CharInvId(char.name)
+        val button = jq(s"""<a title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
+        button.data("charName", char.name)
 
-          addCon(conId, button, elChars) {
-            pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
-              val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
-              updateContainer(conId, items)
-            }
+        buttons += conId -> (button -> None)
+
+        addCon(conId, button, elChars) {
+          pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
+            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
+            updateContainer(conId, items)
           }
         }
       }
@@ -140,11 +143,11 @@ class RefreshPane(league: String,
     |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
 
     reloadAllBtn.click { () =>
-      if (global.confirm("Are you sure? This might take some time").asInstanceOf[Boolean]) {
+      if (global.confirm("Are you sure? This might take some time.").asInstanceOf[Boolean]) {
         pc.clearLeague(league).foreach { x =>
+          Alerter.info("Please reload the page")
           global.location.reload()
         }
-        Alerter.reloadMsg()
       } else {
         Alerter.noReloadMsg()
       }
@@ -164,8 +167,17 @@ class RefreshPane(league: String,
       false
     })
 
-
-
+    val refreshCharactersBtn = jq("""<button title="Refreshes character names and levels, shift click on them to refresh them">Refresh Character Levels But Not Inventories</button>""")
+    refreshCharactersBtn.on("click", { () =>
+      Alerter.info("Refreshing Characters")
+      pc.getChars(forceNetRefresh = true).onComplete {
+        case Success(chars) =>
+          addCharBtns(chars)
+          Alerter.info("Refreshed Characters")
+        case Failure(ex) =>
+          Alerter.warn("Unable to refresh characters from server")
+      }
+    })
 
     el.append("Click to select/unselect characters/tabs. Shift+Click will refresh them from the server.<br>")
     el.append(showAllBtn)
@@ -174,10 +186,8 @@ class RefreshPane(league: String,
     el.append(elTabs)
     el.append(reloadVisibleBtn)
     el.append(reloadAllBtn)
+    el.append(refreshCharactersBtn)
 
-
-
-
-    el -> Future.sequence(List(addCharBtns(), addTabBtns())).map(x => Unit)
+    el -> Future.sequence(List(addCharBtnsFut(), addTabBtns())).map(x => Unit)
   }
 }

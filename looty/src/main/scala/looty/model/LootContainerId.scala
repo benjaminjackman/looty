@@ -22,12 +22,16 @@ object LootContainerId {
 
 sealed trait LootContainerId {
   def encode : String
+  def isCharInv = false
+  def isStashTab = false
 }
 case class CharInvId(character: String) extends LootContainerId {
   override def encode = LootContainerId.iPrefix + character
+  override def isCharInv = true
 }
 case class StashTabIdx(idx: Int) extends LootContainerId {
   override def encode = LootContainerId.sPrefix + idx
+  override def isStashTab = true
 }
 
 case class LootContainer(id: LootContainerId, items: List[ComputedItem])

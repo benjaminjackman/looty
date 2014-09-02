@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.19 (2014-09-01)
+* Refresh character levels
+
 ## 0.2.1.18 (2014-08-30)
 * Added a Link to the [main forum thread](http://www.pathofexile.com/forum/view-thread/832233) in the alert messages. Please stop by and let me know what you think of Looty!
 * Shift-clicking an item will refresh it container from the server. Use this as you find items in looty that you end up using to keep things in sync.
