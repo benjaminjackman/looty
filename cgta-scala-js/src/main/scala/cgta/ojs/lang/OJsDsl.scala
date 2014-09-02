@@ -5,6 +5,7 @@ import scala.scalajs.js
 import scala.concurrent.ExecutionContext
 
 
+
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/11/13 12:18 AM
 //////////////////////////////////////////////////////////////
@@ -14,8 +15,10 @@ trait OJsDsl extends JsExtensions {
 
   val global = js.Dynamic.global
   val console = global.console.asInstanceOf[JsConsole]
-  val JSON = global.JSON
+  val JSON = js.JSON
   val undefined = global.undefined
+
+
 
   def newObject = js.Object().asInstanceOf[js.Dynamic]
 

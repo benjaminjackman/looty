@@ -1,5 +1,7 @@
 package looty.model
 
+import looty.model.LifeAndMana.LifeMana
+
 
 //////////////////////////////////////////////////////////////
 // Copyright (c) 2013 Ben Jackman, Jeff Gomberg
@@ -12,8 +14,8 @@ package looty.model
 
 object LifeAndMana {
   def apply[A](l : A, m : A) = new LifeAndMana[A] {
-    override def life: A = l
-    override def mana: A = m
+    override val life: A = l
+    override val mana: A = m
   }
 
   def of[A](a: => A) = new LifeAndMana[A] {
@@ -27,15 +29,24 @@ object LifeAndMana {
     res
   }
 
-  def calculatedWith[A](f: String => A) = new LifeAndMana[A] {
-    def life: A = f(LifeAndMana.life)
-    def mana: A = f(LifeAndMana.mana)
+  def byNameVal[A](f: LifeMana => A) = new LifeAndMana[A] {
+    val life: A = f(LifeAndMana.Life)
+    val mana: A = f(LifeAndMana.Mana)
   }
 
-  val life = "life"
-  val mana = "mana"
+  def byNameDef[A](f: LifeMana => A) = new LifeAndMana[A] {
+    def life: A = f(LifeAndMana.Life)
+    def mana: A = f(LifeAndMana.Mana)
+  }
 
-  def all = List(life, mana)
+  sealed trait LifeMana {
+    def cap = toString
+  }
+
+  case object Life extends LifeMana
+  case object Mana extends LifeMana
+
+  def all = List(Life, Mana)
 
 }
 trait LifeAndMana[A] {
@@ -44,12 +55,12 @@ trait LifeAndMana[A] {
 
   def map2[B](fl : A => B, fm : A => B) = LifeAndMana(fl(life), fm(mana))
 
-  def apply(name: String): A = name match {
-    case LifeAndMana.life => life
-    case LifeAndMana.mana => mana
+  def apply(name: LifeMana): A = name match {
+    case LifeAndMana.Life => life
+    case LifeAndMana.Mana => mana
   }
 }
-class MutableLifeAndMana[A] extends LifeAndMana[A] with Accessible[String, A] {
+class MutableLifeAndMana[A] extends LifeAndMana[A] with Accessible[LifeMana, A] {
   private var _life: A = _
   private var _mana: A = _
 
@@ -60,9 +71,9 @@ class MutableLifeAndMana[A] extends LifeAndMana[A] with Accessible[String, A] {
   def life_=(a: A) = _life = a
   def mana_=(a: A) = _mana = a
 
-  def update(name: String, value: A) = name match {
-    case LifeAndMana.life => _life = value
-    case LifeAndMana.mana => _mana = value
+  def update(name: LifeMana, value: A) = name match {
+    case LifeAndMana.Life => _life = value
+    case LifeAndMana.Mana => _mana = value
   }
 
 }

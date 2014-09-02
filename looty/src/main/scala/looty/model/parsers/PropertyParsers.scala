@@ -74,9 +74,9 @@ object PropertyParsers {
   named("Elemental Damage") { (i, p) =>
     p.values.foreach { xs =>
       val ele = xs(1).toString.toInt match {
-        case 4 => Elements.fire
-        case 5 => Elements.cold
-        case 6 => Elements.lightning
+        case 4 => Elements.Fire
+        case 5 => Elements.Cold
+        case 6 => Elements.Lightning
       }
       i.properties.damages(ele) set parseDamage(xs(0).toString)
     }

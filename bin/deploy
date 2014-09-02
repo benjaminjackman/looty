@@ -22,6 +22,7 @@ SRC=looty/target/scala-2.10
 cp "$SRC/looty.html" "$SRC/popup.html" "$SRC/looty-opt.js" "$SRC/manifest.json" "$OUT"
 cp -r $SRC/images "$OUT"
 cp -r $SRC/jslib "$OUT"
+cp -r $SRC/data "$OUT"
 
 cd $OUT
 zip -r build.zip *

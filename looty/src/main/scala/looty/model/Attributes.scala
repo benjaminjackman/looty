@@ -19,26 +19,33 @@ object Attributes {
     override val dexterity   : A = int
   }
 
-  def of[A](a: => A) = new Attributes[A] {
+  def allAs[A](a: => A) = new Attributes[A] {
     val strength    : A = a
     val dexterity   : A = a
     val intelligence: A = a
   }
 
-  def mutable[A](a: => A): MutableAttributes[A] = {
+  def mutableAllAs[A](a: => A): MutableAttributes[A] = {
     val res = new MutableAttributes[A]
     all.foreach(e => res(e) = a)
     res
   }
 
-  def calculatedWith[A](f: Attribute => A) = new Attributes[A] {
+  def byNameVal[A](f: Attribute => A) = new Attributes[A] {
+    val strength: A = f(Attributes.Str)
+    val dexterity: A = f(Attributes.Str)
+    val intelligence: A = f(Attributes.Str)
+  }
+
+  def byNameDef[A](f: Attribute => A) = new Attributes[A] {
     def strength: A = f(Attributes.Str)
     def dexterity: A = f(Attributes.Str)
     def intelligence: A = f(Attributes.Str)
   }
 
-  sealed abstract class Attribute(val name: String, val color: SocketColor) {
+  sealed abstract class Attribute(private val name: String, val color: SocketColor) {
     def cap = name.capitalize
+    def low = name
   }
   case object Str extends Attribute("strength", SocketColors.Red)
   case object Dex extends Attribute("dexterity", SocketColors.Green)

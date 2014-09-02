@@ -1,4 +1,4 @@
-Categories,Description,Value,Min V,Max V,Name ,Level,Prefix/Suffix,Rings,Amulets,Belts,Helmets,Gloves,Boots,Chests,Shields,Quivers,Wands,Daggers,Claws,Sceptres,Staffs,Bows,1h Swords and Axes,2h Swords and Axes,1h Maces,2h Maces
+Categories,Description,Value,Min V,Max V,Name,Level,Prefix/Suffix,Rings,Amulets,Belts,Helmets,Gloves,Boots,Chests,Shields,Quivers,Wands,Daggers,Claws,Sceptres,Staffs,Bows,1h Swords and Axes,2h Swords and Axes,1h Maces,2h Maces
 Dmg,Base Min Added Cold Dmg / Base Max Added Cold Dmg,1 / 2,1,2,Frosted,2,Prefix,Yes,Yes,No,No,Yes,No,No,No,Yes,No,No,No,No,No,No,No,No,No,No
 Dmg,Base Min Added Cold Dmg / Base Max Added Cold Dmg,3 to 4 / 7 to 8,3,8,Chilled,13,Prefix,Yes,Yes,No,No,Yes,No,No,No,Yes,No,No,No,No,No,No,No,No,No,No
 Dmg,Base Min Added Cold Dmg / Base Max Added Cold Dmg,5 to 7 / 10 to 12,5,12,Icy,21,Prefix,Yes,Yes,No,No,Yes,No,No,No,Yes,No,No,No,No,No,No,No,No,No,No
@@ -269,31 +269,31 @@ Weapon Elemental Dmg,Weapon Elemental Dmg +%,11 to 20,11,20,Infusing,15,Prefix,Y
 Weapon Elemental Dmg,Weapon Elemental Dmg +%,21 to 30,21,30,Empowering,30,Prefix,Yes,Yes,Yes,No,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
 Weapon Elemental Dmg,Weapon Elemental Dmg +%,31 to 36,31,36,Unleashed,75,Prefix,Yes,Yes,Yes,No,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
 Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,2 / 4,2,4,Frosted,2,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,5 to 7 / 11 to 13,5,13,Chilled,13,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,8 to 11 / 17 to 20,8,20,Icy,21,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,11 to 15 / 22 to 26,11,26,Frigid,29,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,14 to 19 / 29 to 34,14,34,Freezing,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,18 to 25 / 37 to 43,18,43,Frozen,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,21 to 28 / 43 to 50,21,50,Glaciated,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,25 to 33 / 50 to 59,25,59,Polar,69,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,5 to 7 / 10 to 12,5,13,Chilled,13,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,7 to 10 / 15 to 18,8,20,Icy,21,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,10 to 14 / 21 to 25,11,26,Frigid,29,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,12 to 17 / 26 to 30,14,34,Freezing,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,16 to 21 / 32 to 38,18,43,Frozen,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,19 to 25 / 39 to 45,21,50,Glaciated,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,23 to 31 / 46 to 54,25,59,Polar,69,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,27 to 36 / 55 to 64,27,64,Entombing,75,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,1 to 2 / 3 to 4,1,4,Heated,1,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,6 to 8 / 12 to 14,6,14,Smoldering,12,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,9 to 12 / 19 to 22,9,22,Smoking,20,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,12 to 16 / 25 to 29,12,29,Burning,28,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,16 to 22 / 33 to 39,16,39,Flaming,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,21 to 28 / 42 to 50,21,50,Scorching,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,24 to 32 / 49 to 57,24,57,Incinerating,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,28 to 38 / 57 to 67,28,67,Blasting,68,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,5 to 7 / 11 to 13,6,14,Smoldering,12,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,8 to 11 / 17 to 20,9,22,Smoking,20,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,11 to 15 / 23 to 27,12,29,Burning,28,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,14 to 19 / 29 to 34,16,39,Flaming,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,18 to 24 / 36 to 42,21,50,Scorching,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,21 to 29 / 43 to 50,24,57,Incinerating,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,26 to 34 / 52 to 61,28,67,Blasting,68,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Fire Dmg / Local Max Added Fire Dmg,30 to 41 / 62 to 72,30,72,Cremating,74,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,1 / 9 to 10,1,10,Humming,3,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,1 to 2 / 23 to 25,1,25,Buzzing,13,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,1 to 3 / 36 to 38,1,38,Snapping,22,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,2 to 5 / 47 to 50,2,50,Crackling,30,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,2 to 6 / 58 to 61,2,61,Sparking,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,3 to 8 / 75 to 79,3,79,Arcing,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,4 to 9 / 86 to 91,4,91,Shocking,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
-Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,5 to 11 / 100 to 106,5,106,Discharging,68,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,1 to 3 / 31 to 33,1,38,Snapping,22,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,2 to 5 / 48 to 51,2,50,Crackling,30,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,2 to 5 / 52 to 56,2,61,Sparking,38,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,3 to 6 / 63 to 67,3,79,Arcing,50,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,3 to 8 / 76 to 81,4,91,Shocking,58,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
+Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,5 to 10 / 93 to 98,5,106,Discharging,68,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 Bow and 1H elemental Dmg,Local Min Added Lightning Dmg / Local Max Added Lightning Dmg,5 to 11 / 108 to 115,5,115,Electrocuting,74,Prefix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,No,Yes,Yes,No,Yes,No
 2H Weapon elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,2 to 4 / 6 to 7,2,7,Frosted,2,Prefix,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,Yes,No,Yes
 2H Weapon elemental Dmg,Local Min Added Cold Dmg / Local Max Added Cold Dmg,8 to 10 / 16 to 19,8,19,Chilled,13,Prefix,No,No,No,No,No,No,No,No,No,No,No,No,No,Yes,No,No,Yes,No,Yes
@@ -482,9 +482,9 @@ Item acquisition,Base Item Found Rarity +%,11 to 14,11,14,of Raiding,30,Suffix,Y
 Item acquisition,Base Item Found Rarity +%,15 to 20,15,20,of Archaeology,53,Suffix,Yes,Yes,No,Yes,No,No,No,No,No,No,No,No,No,No,No,No,No,No,No
 Item acquisition,Base Item Found Rarity +%,21 to 26,21,26,of Excavation,75,Suffix,Yes,Yes,No,Yes,No,No,No,No,No,No,No,No,No,No,No,No,No,No,No
 Life gain per target,Life Gain Per Target,2,2,2,of Rejuvenation,8,Suffix,Yes,Yes,No,No,Yes,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
-Life gain per target,Life Gain Per Target,3,3,3,of Restoration,20,Suffix,Yes,Yes,No,No,Yes,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
-Life gain per target,Life Gain Per Target,4,4,4,of Regrowth,30,Suffix,Yes,Yes,No,No,Yes,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
-Life gain per target,Life Gain Per Target,5,5,5,of Nourishment,40,Suffix,Yes,Yes,No,No,Yes,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Life gain per target,Life Gain Per Target,3,3,3,of Restoration,20,Suffix,No,Yes,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Life gain per target,Life Gain Per Target,4,4,4,of Regrowth,30,Suffix,No,Yes,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Life gain per target,Life Gain Per Target,5,5,5,of Nourishment,40,Suffix,No,No,No,No,No,No,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
 Life gained on enemy death,Life Gained On Enemy Death,2 to 4,2,4,of Success,1,Suffix,Yes,Yes,No,No,Yes,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
 Life gained on enemy death,Life Gained On Enemy Death,5 to 7,5,7,of Victory,23,Suffix,Yes,Yes,No,No,Yes,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
 Life gained on enemy death,Life Gained On Enemy Death,8 to 11,8,11,of Triumph,40,Suffix,Yes,Yes,No,No,Yes,No,No,No,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes

@@ -41,8 +41,8 @@ class ProperItem {
 
 
   object damage {
-    val local = Elements of p2()
-    val base  = Elements of p2()
+    val local = Elements allAs p2()
+    val base  = Elements allAs p2()
   }
 
   object increased {
@@ -60,7 +60,7 @@ class ProperItem {
 
     //    val localPhysicalDamage = Elements.of(p1())
     val localPhysicalDamage = p1()
-    val elementalDamage     = Elements of p1()
+    val elementalDamage     = Elements allAs p1()
 
     val localArmour  = p1()
     val globalArmour = p1()
@@ -118,8 +118,8 @@ class ProperItem {
 
     val allAttributes = p1()
 
-    val attributes    = Attributes of p1()
-    val resistance    = Elements of p1()
+    val attributes    = Attributes allAs p1()
+    val resistance    = Elements allAs p1()
     val allResistance = p1()
 
     val lifeAndMana = LifeAndMana of p1()

@@ -17,7 +17,7 @@ class PoeCacherDemo extends PoeCacher {
   private var jsonCache : Option[js.Dynamic] = None
   private def loadJson() : Future[js.Dynamic] = {
     jsonCache.map(Future.successful).getOrElse {
-      AjaxHelp.get("data/sample-items.json").map { x=>
+      AjaxHelp.get("samples/sample-items.json").map { x=>
         jsonCache = Some(x)
         x
       }

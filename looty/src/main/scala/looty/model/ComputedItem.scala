@@ -97,7 +97,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   object increased {
-    val damage                         = Elements mutable 0.0
+    val damage                         = Elements mutableAllAs 0.0
     var stunDurationOnEnemies          = 0.0
     var chillDurationOnEnemies         = 0.0
     var attackSpeed                    = 0.0
@@ -170,14 +170,14 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object requirements {
     var level     = 0.0
-    var attribute = Attributes.mutable(0.0)
+    var attribute = Attributes.mutableAllAs(0.0)
   }
 
-  val damages = Elements of MinMaxDamage(0, 0)
+  val damages = Elements allAs MinMaxDamage(0, 0)
 
   object plusTo {
-    val attribute  = Attributes mutable 0.0
-    val resistance = Elements mutable 0.0
+    val attribute  = Attributes mutableAllAs 0.0
+    val resistance = Elements mutableAllAs 0.0
     def totalResistance = resistance.all.sum
     def maxResistance = resistance.all.max
     val lifeAndMana = LifeAndMana mutable 0.0
@@ -193,8 +193,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   object onKill {var lifeAndMana = LifeAndMana mutable 0.0}
   object onHit {var lifeAndMana = LifeAndMana mutable 0.0}
   object gemLevel {
-    val element   = Elements mutable 0.0
-    val attribute = Attributes mutable 0.0
+    val element   = Elements mutableAllAs 0.0
+    val attribute = Attributes mutableAllAs 0.0
     var melee     = 0.0
     var minion    = 0.0
     var bow       = 0.0
@@ -212,7 +212,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object total {
     lazy val dps = perElementDps.all.sum
-    val perElementDps = Elements calculatedWith { element =>
+    val perElementDps = Elements byNameDef { element =>
       if (slots.isWeapon) {
         properties.damages(element).avg * properties.attacksPerSecond
       } else {
@@ -253,7 +253,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var armour                 = 0.0
     var energyShield           = 0.0
     var evasionRating          = 0.0
-    val damages                = Elements of MinMaxDamage(0, 0)
+    val damages                = Elements allAs MinMaxDamage(0, 0)
     var quality                = 0.0
     var criticalStrikeChance   = 0.0
     var attacksPerSecond       = 0.0
