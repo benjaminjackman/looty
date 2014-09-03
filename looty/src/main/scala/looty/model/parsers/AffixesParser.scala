@@ -230,6 +230,7 @@ object AffixesParser {
   simple1("Reflects", "Physical Damage to Melee Attackers")(_.reflectsPhysicalDamageToAttackers += _)
   simple1("", "additional Block Chance")(_.blockChance += _)
   simple1("", "Chance to Block")(_.blockChance += _)
+  simple1("Has","Socket.?")(_.numExplicitModSockets += _ )
 
 
 
@@ -244,6 +245,7 @@ object AffixesParser {
   increased("Amount Recovered")(_.flask.increased.amountRecovered += _)
   increased("Recovery when on Low Life")(_.flask.increased.recoveryOnLowLife += _)
   increased("Life Recovered")(_.flask.increased.lifeRecovered += _)
+  increased("Mana Recovered")(_.flask.increased.manaRecovered += _)
   increased("Armour during flask effect")(_.flask.increased.armour += _)
   increased("Evasion Rating during flask effect")(_.flask.increased.evasion += _)
   increased("Movement Speed during flask effect")(_.flask.increased.evasion += _)
@@ -267,6 +269,7 @@ object AffixesParser {
   simple1("Recharges", "Charges when you take a Critical Strike")(_.flask.chargesOnCriticalStrikeTaken += _)
   simple1("Recharges", "Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
   simple1("Removes", "of Life Recovered from Mana when used")(_.flask.lifeFromMana += _)
+  simple1("Removes", "of Mana Recovered from Life when used")(_.flask.manaFromLife += _)
 
   simple1("", "additional Elemental Resistances during flask effect")(_.flask.additionalResistances += _)
   simple1("Grants", "of Life Recovery to Minions")(_.flask.lifeRecoveryToMinions += _)

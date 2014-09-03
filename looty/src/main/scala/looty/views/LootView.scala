@@ -2,6 +2,7 @@ package looty
 package views
 
 import looty.views.loot.{UpgradesPane, ColumnsPane, Columns, Containers, Filters}
+import org.scalajs.dom.{BlobPropertyBag, Blob}
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
@@ -158,10 +159,22 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       p.el.append(columnsPane.start())
       p
     }
+    controls.add("Export Csv") {
+      val O = js.Dynamic.literal
+      val cols = columns.all
+      val header = cols.map(_.fullName).mkString(",")
+      val rows = dataView.getItems().asJsArr[ComputedItem].toList.map { row =>
+        cols.map(_.getJs(row)).mkString(",")
+      }
+      val csv = header + "\n" + rows.mkString("\n")
+      val blob = new Blob(js.Array(csv), O(`type` = "text/plain;charset=utf-8").asInstanceOf[BlobPropertyBag])
+      global.saveAs(blob, "item-export.csv")
+    }
     controls.add {
       val p = loadSavePane.start()
       p
     }
+
 
     fut
   }

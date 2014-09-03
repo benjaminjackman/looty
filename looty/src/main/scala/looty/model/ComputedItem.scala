@@ -263,6 +263,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   var reflectsPhysicalDamageToAttackers = 0.0
   var blockChance                       = 0.0
+  var numExplicitModSockets = 0.0
 
   val regeneratedPerSecond = LifeAndMana mutable 0.0
 
@@ -279,6 +280,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
       var amountRecovered    = 0.0
       var recoveryOnLowLife  = 0.0
       var lifeRecovered      = 0.0
+      var manaRecovered      = 0.0
       var armour             = 0.0
       var evasion            = 0.0
       var movementSpeed      = 0.0
@@ -295,6 +297,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var chargesOnCriticalStrikeTaken = 0.0
     var chargesOnCriticalStrikeGiven = 0.0
     var lifeFromMana                 = 0.0
+    var manaFromLife                 = 0.0
 
     var additionalResistances = 0.0
     var lifeRecoveryToMinions = 0.0
