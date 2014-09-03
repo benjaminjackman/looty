@@ -15,7 +15,7 @@ import looty.model.ComputedItem
 
 
 object ArmourParser {
-  val helmets      = List("Helmet", "Hat", "Sallet", "Crown", "Hood", "Helm", "Mitts", "Circlet", "Bascinet",
+  val helmets      = List("Helmet", "Hat", "Sallet", "Crown", "Hood", "Helm", "Circlet", "Bascinet",
     "Tricorne", "Mask", "Wolf Pelt", "Ursine Pelt", "Burgonet", "Cap", "Cage", "Lion Pelt", "Coif")
   val gloves       = List("Gauntlets", "Gloves", "Mitts", "Bracers")
   val boots        = List("Boots", "Greaves", "Slippers", "Shoes")

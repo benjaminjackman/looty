@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.21 (2014-09-03)
+* Silly Looty! Mitts aren't Helmets.
+
 ## 0.2.1.20 (2014-09-03)
 * Export Csv
 * Added "for Path of Exile" to the name of looty so hopefully it shows up in the chrome store when searching for Path of Exile
