@@ -31,6 +31,7 @@ class UpgradesPane(
 
   def start(): JQuery = {
     val playerDiv = jq("<div></div>")
+    el.append("<div>Use this pane to find upgrades for a character's items. Simply select a character then click on the item you wish to upgrade. The grid will show deltas of the values of other items.</div>")
     el.append(playerDiv)
     val playerSel = {
       val O = js.Dynamic.literal
@@ -54,7 +55,6 @@ class UpgradesPane(
         loadChar(e.`val`.asInstanceOf[String])
       }: js.Function)
     }
-    el.append("<span>Use this pane to find upgrades for a character's items. Simply select a character then click on the item you wish to upgrade. The grid will then show the +/- of each item vs the one you wish to upgrade.</span>")
     el.append(playerSel)
     el.append(lvlEl)
     el.append(dollEl)

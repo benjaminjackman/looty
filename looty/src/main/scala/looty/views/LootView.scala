@@ -1,7 +1,7 @@
 package looty
 package views
 
-import looty.views.loot.{UpgradesPane, ColumnsPane, Columns, Containers, Filters}
+import looty.views.loot.{ScoresPane, UpgradesPane, ColumnsPane, Columns, Containers, Filters}
 import org.scalajs.dom.{BlobPropertyBag, Blob}
 import org.scalajs.jquery.JQuery
 
@@ -13,12 +13,27 @@ import looty.poeapi.PoeCacher
 
 import scala.language.postfixOps
 
+
+case class FilterCell(columnId: String, initValue: Option[String])(onChange: (String) => Unit) {
+  val el = jq("<input class='header-filter' type='text'>")
+    .data("columnId", columnId)
+
+  initValue.foreach { x => el.`val`(x)}
+
+  def set(v: String) {
+    el.`val`(v)
+  }
+
+  el.on("keyup", { () => onChange(el.`val`().toString)})
+
+}
+
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val obj                               = new JsObjectBuilder
   var grid       : js.Dynamic           = null
   var dataView   : js.Dynamic           = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   var upgradeItem: Option[ComputedItem] = None
-  var filterInputEls                    = Map.empty[String, JQuery]
+  var filterCells                       = Map.empty[String, FilterCell]
 
 
   val columns         = new Columns
@@ -27,6 +42,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val refreshPane     = new RefreshPane(league, containers, filters, updateContainer)
   val loadSavePane    = new LoadSavePane(columns, containers, filters)
   val columnsPane     = new ColumnsPane(columns)
+//  val scoresPane      = new ScoresPane(columns)
   val itemDetailHover = new ItemDetailHover()
   val upgradesPane    = new UpgradesPane(league, itemDetailHover, setUpgradeItem, setLvlFilter)
 
@@ -45,9 +61,10 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   }
 
   def setFilter(id: String, v: String) {
-    filterInputEls.get(id).foreach { el =>
+    filterCells.get(id).foreach { cell =>
       filters.add(id, v)
-      el.`val`(v)
+      cell.set(v)
+
     }
     filters.refresh()
   }
@@ -235,19 +252,17 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
     grid.onHeaderRowCellRendered.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       jq(args.node).empty()
-      val el = jq("<input class='header-filter' type='text'>")
-        .data("columnId", args.column.id)
-      filterInputEls += args.column.id.asJsStr -> el
+      val columnId = args.column.id.asJsStr
+      val initValue = filters.columnFilters.get(args.column.id.asJsStr).map(_.text)
 
-      filters.columnFilters.get(args.column.id.asJsStr).foreach { fil =>
-        el.`val`(fil.text)
+      val cell = FilterCell(columnId, initValue) { x =>
+        filters.add(args.column.id.toString, x)
+        dataView.refresh()
       }
 
-      el.on("keyup", () => {
-        filters.add(args.column.id.toString, el.`val`().toString)
-        dataView.refresh()
-      })
-      el.appendTo(args.node)
+      filterCells += args.column.id.asJsStr -> cell
+
+      cell.el.appendTo(args.node)
     })
 
     grid.onClick.subscribe { (e: js.Dynamic, args: js.Dynamic) =>
