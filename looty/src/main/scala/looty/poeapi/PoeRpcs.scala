@@ -72,7 +72,7 @@ object PoeRpcs {
     val qi = QueueItem(url, params, reqType)
     requestQueue = requestQueue.enqueue(qi)
     scheduleQueueCheck(wasThrottled = false)
-    qi.promise.future.asInstanceOf[Future[A]]
+    qi.getFuture.asInstanceOf[Future[A]]
   }
 
   def get[A](url: String, params: js.Any, reqType: HttpRequestType): Future[A] = {
@@ -108,7 +108,7 @@ object PoeRpcs {
           case Success(x) =>
             requestQueue = requestQueue.tail
             Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! Feedback and suggestions are very welcome!")
-            qi.promise.success(x)
+            qi.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             console.log("Throttled, cooling off ", qi.url, qi.params, msg)
@@ -117,7 +117,7 @@ object PoeRpcs {
           case Failure(t) =>
             requestQueue = requestQueue.tail
             Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
-            qi.promise.failure(t)
+            qi.failure(t)
             checkQueue()
 
         }
@@ -126,7 +126,14 @@ object PoeRpcs {
   }
 
   private case class QueueItem(url: String, params: js.Any, requestType: AjaxHelp.HttpRequestTypes.HttpRequestType) {
-    val promise = Promise[Any]()
+    private val promise = Promise[Any]()
+    def success(x : Any) = {
+      if (!promise.isCompleted) promise.success(x)
+    }
+    def failure(t : Throwable) = {
+      if (!promise.isCompleted) promise.failure(t)
+    }
+    def getFuture = promise.future
   }
 
   private var requestQueue   = immutable.Queue.empty[QueueItem]
