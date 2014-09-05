@@ -61,8 +61,8 @@ trait PoeCacher {
   def getAllContainersFuture(league: String): Future[List[Future[(LootContainerId, List[ComputedItem])]]] = {
     for {
       tabInfos <- getStashInfo(league)
-      tabs <- getAllStashTabs(league)
       invs <- getAllInventories(league)
+      tabs <- getAllStashTabs(league)
     } yield {
       val xs = for {
         fut <- tabs

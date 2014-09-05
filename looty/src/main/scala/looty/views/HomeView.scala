@@ -13,8 +13,12 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.22 (2014-09-04)
+* Fixed bugs that were causing passive skill trees not to load in PoeBuilder.
+* Don't complete futures for queueitems. which have already been completed. Fixes a bug where random stash tabs weren't loading.
+
 ## 0.2.1.21 (2014-09-03)
-* Silly Looty! Mitts aren't Helmets.
+* Silly Looty! Mitts aren't Helmets. (Thanks to Sundrino for the bug report)
 
 ## 0.2.1.20 (2014-09-03)
 * Export Csv

@@ -12,16 +12,17 @@ package model
 
 object CharClasses {
 
-  sealed abstract class CharClass(val startingAttributes: Attributes[Int])
-  case object Marauder extends CharClass(Attributes(str = 32, dex = 14, int = 14))
-  case object Ranger extends CharClass(Attributes(str = 14, dex = 32, int = 14))
-  case object Witch extends CharClass(Attributes(str = 14, dex = 14, int = 32))
-  case object Duelist extends CharClass(Attributes(str = 23, dex = 23, int = 14))
-  case object Shadow extends CharClass(Attributes(str = 23, dex = 14, int = 23))
-  case object Templar extends CharClass(Attributes(str = 14, dex = 23, int = 23))
-  case object Scion extends CharClass(Attributes(str = 20, dex = 20, int = 20))
+  sealed abstract class CharClass(val id: Int, val startingAttributes: Attributes[Int])
+  case object Marauder extends CharClass(1, Attributes(str = 32, dex = 14, int = 14))
+  case object Ranger extends CharClass(2, Attributes(str = 14, dex = 32, int = 14))
+  case object Witch extends CharClass(3, Attributes(str = 14, dex = 14, int = 32))
+  case object Duelist extends CharClass(4, Attributes(str = 23, dex = 23, int = 14))
+  case object Shadow extends CharClass(6, Attributes(str = 23, dex = 14, int = 23))
+  case object Templar extends CharClass(5, Attributes(str = 14, dex = 23, int = 23))
+  case object Scion extends CharClass(0, Attributes(str = 20, dex = 20, int = 20))
 
   lazy val all    = List(Marauder, Ranger, Witch, Shadow, Templar, Duelist, Scion)
   lazy val allMap = Map(all.map(x => x.toString -> x): _*)
+  lazy val allIdMap = Map(all.map(x => x.id -> x): _*)
 
 }

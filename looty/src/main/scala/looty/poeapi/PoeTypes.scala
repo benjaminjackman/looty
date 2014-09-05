@@ -1,7 +1,8 @@
 package looty
 package poeapi
 
-import looty.model.InventoryIds
+import looty.model.CharClasses.CharClass
+import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
 
 import scala.scalajs.js
@@ -25,18 +26,24 @@ object PoeTypes {
 
   object Leagues {
 
-    val Standard   = "Standard"
-    val Hardcore   = "Hardcore"
-//    val Ambush     = "Ambush"
-//    val Invasion   = "Invasion"
-    val Beyond = "Beyond"
-    val Rampage = "Rampage"
+    val Standard = "Standard"
+    val Hardcore = "Hardcore"
+    //    val Ambush     = "Ambush"
+    //    val Invasion   = "Invasion"
+    val Beyond   = "Beyond"
+    val Rampage  = "Rampage"
 
     val all = List(Standard, Hardcore, Beyond, Rampage)
   }
 
   trait PassivesTree extends js.Object {
-    val hashes : js.Array[Int]
+    val hashes: js.Array[Int]
+  }
+
+  object CharacterInfo {
+    implicit class CharacterInfoExtensions(c: CharacterInfo) {
+      def getCharClass: CharClass = CharClasses.allIdMap(c.classId.toInt)
+    }
   }
 
   trait CharacterInfo extends js.Object {
@@ -147,11 +154,11 @@ object PoeTypes {
         }
       }
 
-      def getInventoryId : Option[InventoryId] = {
-        x.inventoryId.toOption.flatMap(iid=>InventoryIds.fromItem(iid, x.x.toOption.map(_.toInt).getOrElse(0)))
+      def getInventoryId: Option[InventoryId] = {
+        x.inventoryId.toOption.flatMap(iid => InventoryIds.fromItem(iid, x.x.toOption.map(_.toInt).getOrElse(0)))
       }
 
-      def isDigit(c : Char) : Boolean = c >= '0' && c <= '9'
+      def isDigit(c: Char): Boolean = c >= '0' && c <= '9'
 
       //(X level, Y experience points, Z needed for next level)
       def getXpProgress: Option[(Int, Long, Long)] = {
@@ -195,7 +202,6 @@ object PoeTypes {
           l
         }).headOption
       }
-
 
 
       def getLocationId: String = {

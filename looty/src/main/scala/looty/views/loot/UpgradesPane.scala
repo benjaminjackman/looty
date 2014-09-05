@@ -55,7 +55,7 @@ class UpgradesPane(
         loadChar(e.`val`.asInstanceOf[String])
       }: js.Function)
     }
-    el.append(playerSel)
+//    el.append(playerSel)
     el.append(lvlEl)
     el.append(dollEl)
     el

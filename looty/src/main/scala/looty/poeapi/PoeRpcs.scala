@@ -70,7 +70,7 @@ object PoeRpcs {
   //calls on throttle failures
   def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Post): Future[A] = {
     val qi = QueueItem(url, params, reqType)
-    requestQueue = requestQueue.enqueue(qi)
+    requestList = qi :: requestList
     scheduleQueueCheck(wasThrottled = false)
     qi.getFuture.asInstanceOf[Future[A]]
   }
@@ -102,11 +102,12 @@ object PoeRpcs {
 
   def checkQueue() {
     willCheckQueue = false
-    requestQueue.headOption match {
+    val q = requestList.reverse
+    q.headOption match {
       case Some(qi) =>
         get[Any](qi.url, qi.params, qi.requestType).onComplete {
           case Success(x) =>
-            requestQueue = requestQueue.tail
+            requestList = q.tail.reverse
             Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! Feedback and suggestions are very welcome!")
             qi.success(x)
             checkQueue()
@@ -115,7 +116,7 @@ object PoeRpcs {
             Alerter.warn(s"""Throttled by pathofexile.com, while you wait why not stop by ${Alerter.featuresLink("here")} and leave some feedback and help other players discover the tool!""")
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
-            requestQueue = requestQueue.tail
+            requestList = q.tail.reverse
             Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
             qi.failure(t)
             checkQueue()
@@ -136,7 +137,7 @@ object PoeRpcs {
     def getFuture = promise.future
   }
 
-  private var requestQueue   = immutable.Queue.empty[QueueItem]
+  private var requestList   = List.empty[QueueItem]
   private var willCheckQueue = false
   //How long to wait after we hit the throttle before checking again
   val coolOffMs = 10000

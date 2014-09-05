@@ -1,6 +1,8 @@
 package looty
 package model
 
+import looty.model.CharClasses.CharClass
+
 import scala.scalajs.js
 
 import scala.scalajs.js
@@ -52,13 +54,13 @@ object PassiveSkillTreeHelp {
   def swapEndian16(i: Int): Int = (i & 0xFF) << 8 | (i & 0xFF00) >> 8
   lazy val sampleIn    = """{"hashes":[465,6913,39821,41250,41536,42964,45035,50338,56341,62712,65224]}"""
   lazy val sampleOut   = """AAAAAgIAAdEbAZuNoSKiQKfUr-vEotwV9Pj-yA=="""
-  lazy val magicPrefix = 0 :: 2 :: swapEndian16(2) :: Nil
+  def magicPrefix(charClassId : Int) = 0 :: 2 :: swapEndian16(charClassId) :: Nil
 
-  def decode(rawHashes: js.Array[Int]): String = {
+  def decode(charClass : CharClass, rawHashes: js.Array[Int]): String = {
 
-    val hashes = (magicPrefix ::: rawHashes.toList).map(swapEndian16).toJsArray
+    val hashes = (magicPrefix(charClass.id) ::: rawHashes.toList).map(swapEndian16).toJsArray
     val sarray = new Uint16Array(hashes)
-    base64ArrayBuffer(sarray.buffer).replaceAll("\\+", "-").replaceAll("\\\\", "_")
+    base64ArrayBuffer(sarray.buffer).replaceAll("\\+", "-").replaceAll("/", "_")
   }
 
   //https://gist.github.com/jonleighton/958841
