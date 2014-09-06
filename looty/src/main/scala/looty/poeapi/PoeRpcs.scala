@@ -3,11 +3,11 @@ package poeapi
 
 import cgta.ojs.io.AjaxHelp.HttpRequestTypes
 import cgta.ojs.io.AjaxHelp.HttpRequestTypes.HttpRequestType
+import org.scalajs.dom
 
 import scala.scalajs.js
 import org.scalajs.jquery.JQueryStatic
 import scala.concurrent.{Promise, Future}
-import scala.collection.immutable
 import cgta.ojs.io.AjaxHelp
 import scala.util.{Failure, Success}
 import looty.views.Alerter
@@ -70,7 +70,7 @@ object PoeRpcs {
   //calls on throttle failures
   def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Post): Future[A] = {
     val qi = QueueItem(url, params, reqType)
-    requestList = qi :: requestList
+    Q.addToQueue(qi)
     scheduleQueueCheck(wasThrottled = false)
     qi.getFuture.asInstanceOf[Future[A]]
   }
@@ -96,48 +96,90 @@ object PoeRpcs {
   def scheduleQueueCheck(wasThrottled: Boolean) {
     if (!willCheckQueue) {
       willCheckQueue = true
-      global.setTimeout(checkQueue _, if (wasThrottled) coolOffMs else 0)
+      global.setTimeout(() => checkQueue(), if (wasThrottled) coolOffMs else 0)
     }
   }
 
   def checkQueue() {
     willCheckQueue = false
-    val q = requestList.reverse
-    q.headOption match {
+    Q.peek() match {
       case Some(qi) =>
+        qi.debugLog("Get")
         get[Any](qi.url, qi.params, qi.requestType).onComplete {
           case Success(x) =>
-            requestList = q.tail.reverse
+            qi.debugLog("Get => Success")
+            Q.remove(qi)
             Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! Feedback and suggestions are very welcome!")
             qi.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
-            console.log("Throttled, cooling off ", qi.url, qi.params, msg)
+            qi.debugLog(s"Get => Throttled Failure $msg")
+            console.debug("Throttled, cooling off ", qi.url, qi.params, msg)
             Alerter.warn(s"""Throttled by pathofexile.com, while you wait why not stop by ${Alerter.featuresLink("here")} and leave some feedback and help other players discover the tool!""")
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
-            requestList = q.tail.reverse
+            qi.debugLog(s"#### Get => Other Failure: $t")
+            Q.remove(qi)
             Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
             qi.failure(t)
             checkQueue()
-
         }
       case None => //Do Nothing, queue is empty
+        console.debug("Check Queue => None")
     }
   }
+
 
   private case class QueueItem(url: String, params: js.Any, requestType: AjaxHelp.HttpRequestTypes.HttpRequestType) {
+    val id = Q.nextId
     private val promise = Promise[Any]()
+    debugLog("Created Queue Item")
     def success(x : Any) = {
-      if (!promise.isCompleted) promise.success(x)
+      debugLog("Success")
+      if (!promise.isCompleted) {
+        promise.success(x)
+      } else {
+        debugLog("#### DUPLICATE SUCCESS")
+      }
     }
     def failure(t : Throwable) = {
-      if (!promise.isCompleted) promise.failure(t)
+      debugLog("Failure")
+      if (!promise.isCompleted) {
+        promise.failure(t)
+      } else {
+        debugLog("#### DUPLICATE FAILURE")
+      }
+    }
+    def debugLog(msg : String) = {
+      //console.debug(msg, id, promise.isCompleted, url, params)
     }
     def getFuture = promise.future
+    def isCompleted = promise.isCompleted
   }
 
-  private var requestList   = List.empty[QueueItem]
+  private object Q {
+    var id = 0
+    def nextId = {
+      id += 1
+      id
+    }
+    def peek() : Option[QueueItem] = {
+      val r = requestList.reverse.headOption
+      r.map(_.debugLog("Peek"))
+      r
+    }
+
+    def addToQueue(q : QueueItem) {
+      q.debugLog("Add To Queue")
+      requestList = q ::requestList
+    }
+    def remove(q: QueueItem) {
+      requestList = requestList.filter(_.id != q.id)
+    }
+
+    private var requestList   = List.empty[QueueItem]
+  }
+
   private var willCheckQueue = false
   //How long to wait after we hit the throttle before checking again
   val coolOffMs = 10000

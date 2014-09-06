@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.23 (2014-09-06)
+* Finally fixed a bug in the RPC layer that was causing tabs to randomly not refresh. Just because js is single threaded doesn't mean it's simple!
+
 ## 0.2.1.22 (2014-09-04)
 * Fixed bugs that were causing passive skill trees not to load in PoeBuilder.
 * Don't complete futures for queueitems. which have already been completed. Fixes a bug where random stash tabs weren't loading.
