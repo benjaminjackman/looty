@@ -207,8 +207,8 @@ object PoeTypes {
       def getLocationId: String = {
         val i = if (x.inItem.isEmpty) x else x.inItem.get
         var res = s"l:${i.league}"
-        if (i.inventoryId.nonEmpty) res += s";i:${i.inventoryId}"
         if (i.character.nonEmpty) res += s";c:${i.character}"
+        if (i.inventoryId.nonEmpty) res += s";i:${i.inventoryId}"
         if (i.x.nonEmpty) res += s";x:${i.x}"
         if (i.y.nonEmpty) res += s";y:${i.y}"
         if (x.inItem.nonEmpty) res += s";s:${x.socket}"

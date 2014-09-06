@@ -59,17 +59,21 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   def forumLocationName = {
     //[linkItem location="Stash4" league="Rampage" x="0" y="0"]
     //[linkItem location="MainInventory" character="frostlarr" x="0" y="2"]
-
     for (x <- item.x.toOption; y <- item.y.toOption) yield {
       containerId match {
         case CharInvId(char) =>
-          s"""[linkItem location="MainInventory" character="$char" x="$x" y="$y"]"""
+          val slot = item.inventoryId.toOption.getOrElse("???")
+          s"""[linkItem location="$slot" character="$char" x="$x" y="$y"]"""
         case StashTabIdx(idx) =>
           val league = item.league
           s"""[linkItem location="Stash${idx + 1}" league="$league" x="$x" y="$y"]"""
       }
     }
+  }
 
+  def locationId = item.locationId.toOption.getOrElse {
+    console.error("Unable to find a location id", this, item)
+    sys.error("Unable to find a location id")
   }
 
   //This location includes coordinates

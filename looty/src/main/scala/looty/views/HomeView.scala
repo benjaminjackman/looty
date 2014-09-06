@@ -13,7 +13,12 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
-## 0.2.1.23 (2014-09-06)
+## 0.2.1.24 (2014-09-06)
+* fixed bug with inventory ids in RefreshPane
+* unknown items are just warnings
+* fixed bug with unused forumLocationName
+
+ ## 0.2.1.23 (2014-09-06)
 * Finally fixed a bug in the RPC layer that was causing tabs to randomly not refresh. Just because js is single threaded doesn't mean it's simple!
 
 ## 0.2.1.22 (2014-09-04)

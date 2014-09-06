@@ -44,7 +44,7 @@ class RefreshPane(league: String,
       case (btn, None) =>
         val char = conId.asInstanceOf[CharInvId].character
         pc.getInv(char, forceNetRefresh = true).foreach { st =>
-          val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char)
+          val items = for (item <- st.allItems(Some(char))) yield ItemParser.parseItem(item, conId, char)
           updateContainer(conId, items)
         }
 
@@ -68,7 +68,7 @@ class RefreshPane(league: String,
 
         addCon(conId, button, elChars) {
           pc.getInv(char.name, forceNetRefresh = true).foreach { st =>
-            val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, char.name)
+            val items = for (item <- st.allItems(Some(char.name))) yield ItemParser.parseItem(item, conId, char.name)
             updateContainer(conId, items)
           }
         }

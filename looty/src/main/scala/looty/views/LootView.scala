@@ -1,16 +1,15 @@
 package looty
 package views
 
-import looty.views.loot.{ScoresPane, UpgradesPane, ColumnsPane, Columns, Containers, Filters}
-import org.scalajs.dom.{BlobPropertyBag, Blob}
+import looty.views.loot.{Columns, ColumnsPane, Containers, Filters, UpgradesPane}
+import org.scalajs.dom.{Blob, BlobPropertyBag}
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
-import looty.model.{ComputedItemProps, ComputedItem, LootContainerId}
+import looty.model.{ComputedItem, ComputedItemProps, LootContainerId}
 import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
 import looty.poeapi.PoeCacher
-
 import scala.language.postfixOps
 
 
@@ -28,6 +27,29 @@ case class FilterCell(columnId: String, initValue: Option[String])(onChange: (St
 
 }
 
+
+object WebSqlDatabase {
+  def open(name: String, version: String, description: String, estimatedSize: Int): WebSqlDatabase =
+    global.openDatabase(name, version, description, estimatedSize).asInstanceOf[WebSqlDatabase]
+
+}
+
+trait WebSqlResultSet {
+
+}
+
+
+trait WebSqlTransaction extends js.Object {
+  def executeSql(sql: String): Unit = ???
+  def executeSql(sql: String, values: js.Array[Any]): Unit = ???
+  def executeSql(sql: String, values: js.Array[Any], f: js.Function2[WebSqlTransaction, WebSqlResultSet, _]): Unit = ???
+}
+
+trait WebSqlDatabase extends js.Object {
+  def transaction(f: js.Function1[WebSqlTransaction, _]): Unit = ???
+}
+
+
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   val obj                               = new JsObjectBuilder
   var grid       : js.Dynamic           = null
@@ -36,13 +58,14 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   var filterCells                       = Map.empty[String, FilterCell]
 
 
+
   val columns         = new Columns
   val containers      = new Containers
   val filters         = new Filters(containers, columns, (f: (ComputedItem => Boolean)) => dataView.setFilter(f))
   val refreshPane     = new RefreshPane(league, containers, filters, updateContainer)
   val loadSavePane    = new LoadSavePane(columns, containers, filters)
   val columnsPane     = new ColumnsPane(columns)
-//  val scoresPane      = new ScoresPane(columns)
+  //  val scoresPane      = new ScoresPane(columns)
   val itemDetailHover = new ItemDetailHover()
   val upgradesPane    = new UpgradesPane(league, itemDetailHover, setUpgradeItem, setLvlFilter)
 
@@ -141,10 +164,30 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     for {
       item <- items
     } {
+//      tempAddItem(item)
       dataView.addItem(item.asInstanceOf[js.Any])
     }
     dataView.endUpdate()
   }
+
+
+//  val db = locally {
+//    val db = WebSqlDatabase.open("sampledb", "1.0", "Experimenting with an items db", 10 * 1024 * 1024)
+//    db.transaction { (tx: WebSqlTransaction) =>
+//      tx.executeSql("DROP TABLE IF EXISTS items")
+//      tx.executeSql("CREATE TABLE IF NOT EXISTS items (location TEXT NOT NULL PRIMARY KEY, fire_resist INTEGER, armour INTEGER)")
+//    }
+//    db
+//  }
+//
+//
+//  def tempAddItem(item: ComputedItem) {
+//    db.transaction { (tx: WebSqlTransaction) =>
+//      tx.executeSql("""INSERT INTO items (location, fire_resist, armour) VALUES (?,?,?)""",
+//        js.Array(item.locationId, item.plusTo.resistance.fire, item.total.armour))
+//    }
+//
+//  }
 
 
   def stop() {}
