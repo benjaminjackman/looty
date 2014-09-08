@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.25 (2014-09-08)
+* Added columns for CookieVortex
+
 ## 0.2.1.24 (2014-09-06)
 * fixed bug with inventory ids in RefreshPane
 * unknown items are just warnings
