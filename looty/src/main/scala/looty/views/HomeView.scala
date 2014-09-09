@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.26 (2014-09-09)
+* Added WealthView
+
 ## 0.2.1.25 (2014-09-08)
 * Added columns for CookieVortex
 

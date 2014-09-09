@@ -40,7 +40,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
       width = 180,
       placeholder = "Name",
       query = { (q: js.Dynamic) =>
-        val names = Saver.getAllNames
+        val names = LootViewSaver.getAllNames
         val term = q.term.asInstanceOf[String]
         val create = if (term.nonEmpty && names.forall(_.toLowerCase != term.toLowerCase)) {
           List(O(id = term, text = s"New: $term"))
@@ -55,7 +55,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     loadBtn.on("click", () => {
       val name = loadSel.`val`().asInstanceOf[String]
       if (name != null && name.nonEmpty) {
-        Saver.load(name)(colId => columns.get(colId)) foreach {
+        LootViewSaver.load(name)(colId => columns.get(colId)) foreach {
           case (cols, colFilters, conIds) =>
             columns.all.foreach(_.hide())
             cols.foreach(_.show())
@@ -82,7 +82,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     saveBtn.on("click", () => {
       val name = loadSel.`val`().asInstanceOf[String]
       if (name != null && name.nonEmpty) {
-        Saver.save(name, columns.visible, None, None)
+        LootViewSaver.save(name, columns.visible, None, None)
         Alerter.info(s"Saved view: $name")
       }
       false
@@ -91,7 +91,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     saveWithFiltersBtn.on("click", () => {
       val name = loadSel.`val`().asInstanceOf[String]
       if (name != null && name.nonEmpty) {
-        Saver.save(
+        LootViewSaver.save(
           name,
           columns.visible,
           columnFilters = Some(filters.columnFilters.values.toVector),
@@ -105,7 +105,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     deleteBtn.on("click", () => {
       val name = loadSel.`val`().asInstanceOf[String]
       if (name != null && name.nonEmpty) {
-        Saver.delete(name)
+        LootViewSaver.delete(name)
         Alerter.info(s"Deleted view: $name")
       }
       false

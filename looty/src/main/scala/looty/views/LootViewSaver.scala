@@ -7,7 +7,7 @@ import looty.views.loot.{Column, LootFilterColumn}
 import scala.scalajs.js
 import scala.language.postfixOps
 
-object Saver {
+object  LootViewSaver {
   val localStorage = global.localStorage
   val colPrefix    = "LOOTVIEW-SAVE-COLUMNS:"
   val itemPrefix   = "LOOTVIEW-SAVE-ITEM:"
