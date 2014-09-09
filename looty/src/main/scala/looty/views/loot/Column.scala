@@ -23,6 +23,7 @@ object Column {
       fullName = p.fullName,
       description = p.description,
       width = p.width,
+      sqlType = p.sqlType,
       groups = p.groups,
       defaultNumFilter = p.defaultNumFilter,
       getJs = p.getJs,
@@ -36,10 +37,14 @@ class Column(
   val fullName: String,
   val description: String,
   val width: Int,
+  val sqlType: String,
   val groups: Vector[String],
   val defaultNumFilter: Option[NumFilter],
   val getJs: (ComputedItem) => js.Any,
   val setJs: Option[String => Unit]) {
+
+  def toSqlDecl: String = s"$fullName $sqlType"
+
   def id = shortName
   lazy val slick = makeColumn(shortName, description, width)(getJs)
 

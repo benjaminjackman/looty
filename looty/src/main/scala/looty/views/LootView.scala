@@ -34,19 +34,27 @@ object WebSqlDatabase {
 
 }
 
-trait WebSqlResultSet {
+trait SQLResultSetRowList extends js.Object{
+  def item(i : Int) : js.Any = ???
+  def length: Int = ???
+}
 
+trait WebSqlResultSet extends js.Object {
+  def insertId : Int = ???
+  def rows : SQLResultSetRowList = ???
+  def rowsAffected : Int = ???
 }
 
 
 trait WebSqlTransaction extends js.Object {
   def executeSql(sql: String): Unit = ???
-  def executeSql(sql: String, values: js.Array[Any]): Unit = ???
-  def executeSql(sql: String, values: js.Array[Any], f: js.Function2[WebSqlTransaction, WebSqlResultSet, _]): Unit = ???
+  def executeSql(sql: String, values: js.Array[js.Any]): Unit = ???
+  def executeSql(sql: String, values: js.Array[js.Any], f: js.Function2[WebSqlTransaction, WebSqlResultSet, _]): Unit = ???
 }
 
 trait WebSqlDatabase extends js.Object {
   def transaction(f: js.Function1[WebSqlTransaction, _]): Unit = ???
+  def readTransaction = ???
 }
 
 
@@ -56,7 +64,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   var dataView   : js.Dynamic           = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   var upgradeItem: Option[ComputedItem] = None
   var filterCells                       = Map.empty[String, FilterCell]
-
 
 
   val columns         = new Columns
@@ -164,30 +171,35 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     for {
       item <- items
     } {
-//      tempAddItem(item)
+      tempAddItem(item)
       dataView.addItem(item.asInstanceOf[js.Any])
     }
     dataView.endUpdate()
   }
 
 
-//  val db = locally {
-//    val db = WebSqlDatabase.open("sampledb", "1.0", "Experimenting with an items db", 10 * 1024 * 1024)
-//    db.transaction { (tx: WebSqlTransaction) =>
-//      tx.executeSql("DROP TABLE IF EXISTS items")
-//      tx.executeSql("CREATE TABLE IF NOT EXISTS items (location TEXT NOT NULL PRIMARY KEY, fire_resist INTEGER, armour INTEGER)")
-//    }
-//    db
-//  }
-//
-//
-//  def tempAddItem(item: ComputedItem) {
-//    db.transaction { (tx: WebSqlTransaction) =>
-//      tx.executeSql("""INSERT INTO items (location, fire_resist, armour) VALUES (?,?,?)""",
-//        js.Array(item.locationId, item.plusTo.resistance.fire, item.total.armour))
-//    }
-//
-//  }
+  val db = locally {
+    val db = WebSqlDatabase.open("sampledb", "1.0", "Experimenting with an items db", 10 * 1024 * 1024)
+    db.transaction { (tx: WebSqlTransaction) =>
+      tx.executeSql("DROP TABLE IF EXISTS items")
+      val cols = columns.all.map(_.toSqlDecl).mkString(", ")
+      val sql = s"CREATE TABLE IF NOT EXISTS items (itemlocid TEXT NOT NULL PRIMARY KEY, $cols)"
+      console.log("Attempting to create table", sql)
+      tx.executeSql(sql)
+    }
+    db
+  }
+
+  def tempAddItem(item: ComputedItem) {
+    db.transaction { (tx: WebSqlTransaction) =>
+      val colNames = ("itemlocid" :: columns.all.map(_.fullName).toList).mkString(",")
+      val values = (item.locationId: js.Any) :: columns.all.map(c => c.getJs(item)).toList
+      val qmarks = values.map(x => "?").mkString(",")
+      val sql = s"""INSERT INTO items ($colNames) VALUES ($qmarks)"""
+      tx.executeSql(sql, values.toJsArray, { (tx: WebSqlTransaction, rs: WebSqlResultSet) =>
+      })
+    }
+  }
 
 
   def stop() {}
@@ -315,6 +327,18 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       }
 
       console.log(e, "GRIDMINI CLICK", args, item, item.item.inventoryId)
+
+
+      console.log("DB TRANSACTION!!", db)
+      db.transaction { (tx: WebSqlTransaction) =>
+        console.log("DB TRANSACTION BBB!!", tx)
+        tx.executeSql("SELECT * FROM items LIMIT 10", js.Array[js.Any](), { (tx: WebSqlTransaction, rs: WebSqlResultSet) =>
+          console.log("DB TRANSACTION CCC!!")
+          console.log(rs.rows.item(0))
+        }
+        )
+      }
+
     }
 
     addSort()

@@ -31,6 +31,7 @@ object ComputedItemProps {
     val groups: Vector[String],
     val defaultNumFilter: Option[NumFilter],
     val getJs: ComputedItem => js.Any,
+    val sqlType : String,
     private var desc: String = "") {
 
     def description = desc
@@ -68,7 +69,8 @@ object ComputedItemProps {
       width = width,
       groups = groups.distinct.toVector,
       defaultNumFilter = None,
-      getJs = (i) => f(i)
+      getJs = (i) => f(i),
+      sqlType = "TEXT"
     )
     add(res)
     res
@@ -86,7 +88,8 @@ object ComputedItemProps {
       width = width,
       groups = groups.distinct.toVector,
       defaultNumFilter = Some(NumFilter(_ >= _)),
-      getJs = (i) => f(i)
+      getJs = (i) => f(i),
+      sqlType = "REAL"
     )
     add(res)
     res
@@ -104,7 +107,8 @@ object ComputedItemProps {
       width = width,
       groups = groups.distinct.toVector,
       defaultNumFilter = Some(NumFilter(_ <= _)),
-      getJs = (i) => f(i)
+      getJs = (i) => f(i),
+      sqlType = "REAL"
     )
     add(res)
     res
