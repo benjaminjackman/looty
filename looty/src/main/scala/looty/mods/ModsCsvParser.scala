@@ -1,8 +1,9 @@
 package looty
 package mods
 
+import looty.util.AjaxHelp
+
 import scala.concurrent.Future
-import cgta.ojs.io.AjaxHelp
 import scala.scalajs.js
 import looty.model.{LifeAndMana, Attributes, Elements}
 

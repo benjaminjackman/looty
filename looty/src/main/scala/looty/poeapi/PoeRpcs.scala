@@ -1,14 +1,13 @@
 package looty
 package poeapi
 
-import cgta.ojs.io.AjaxHelp.HttpRequestTypes
-import cgta.ojs.io.AjaxHelp.HttpRequestTypes.HttpRequestType
-import org.scalajs.dom
+import looty.util.AjaxHelp
+import AjaxHelp.HttpRequestTypes
+import AjaxHelp.HttpRequestTypes.HttpRequestType
 
 import scala.scalajs.js
 import org.scalajs.jquery.JQueryStatic
 import scala.concurrent.{Promise, Future}
-import cgta.ojs.io.AjaxHelp
 import scala.util.{Failure, Success}
 import looty.views.Alerter
 

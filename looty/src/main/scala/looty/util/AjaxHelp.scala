@@ -1,10 +1,11 @@
-package cgta.ojs
-package io
+package looty.util
 
-import org.scalajs.jquery.{JQueryAjaxSettings, JQueryStatic}
-import scala.scalajs.js
-import scala.concurrent.Future
+import cgta.ojs._
 import cgta.ojs.lang.JsPromises
+import org.scalajs.jquery.{JQueryAjaxSettings, JQueryStatic}
+
+import scala.concurrent.Future
+import scala.scalajs.js
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/9/13 11:15 PM

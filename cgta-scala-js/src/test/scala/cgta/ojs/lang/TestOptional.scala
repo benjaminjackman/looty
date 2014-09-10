@@ -1,5 +1,6 @@
-package cgta.ojs
-package lang
+package cgta.ojs.lang
+
+import cgta.otest.FunSuite
 
 import scala.scalajs.js
 
@@ -13,19 +14,14 @@ import scala.scalajs.js
 //////////////////////////////////////////////////////////////
 
 
-class TestOptional {
-  def test(name : String)(b  : => Unit) {
-    //TODO Implement this
-  }
-
+object TestOptional extends FunSuite {
   class JsSettings extends js.Object {
     var x: Optional[Int] = ???
-
   }
 
-  test("Optional should ") {
-    val y = new JsSettings(5)
-    y.x = 6
+  test("This test does nothing!") {
+//    y.x = 6
+//    Assert.isAnyEquals(6, y)
   }
 
 }

@@ -68,11 +68,16 @@ object Build extends sbt.Build {
       scalacOptions += "-language:existentials",
       scalacOptions += "-language:higherKinds"
     ).settings(
-      // Continuation plugin
+      cgta.otest.OtestPlugin.settingsSjs: _*
+    ).settings(
       autoCompilerPlugins := true,
+      ScalaJSKeys.requiresDOM := true,
       libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
-      libraryDependencies ++= Seq(Libs.jQuery, Libs.dom, Libs.async),
-      scalacOptions += "-P:continuations:enable"
+      libraryDependencies ++= Seq(
+        "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
+        "org.scala-lang.modules" %% "scala-async" % "0.9.2",
+        "biz.cgta" %%% "otest-sjs" % "0.1.12"
+      )
     )
 
   lazy val csjs = pject("cgta-scala-js")
@@ -80,17 +85,15 @@ object Build extends sbt.Build {
   lazy val looty = pject("looty").settings(
     resourceGenerators in Compile <+= generateHtml,
     watchSources += (sourceDirectory in Compile).value / "html",
-    resourceGenerators in Compile <+= copyAll).dependsOn(csjs)
+    resourceGenerators in Compile <+= copyAll,
+    libraryDependencies += "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6",
+    libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.0",
+    libraryDependencies += "com.scalatags" %%% "scalatags" % "0.3.8"
+  ).dependsOn(csjs)
 
   lazy val root = Project("root", file(".")).aggregate(csjs, looty)
 
   object Libs {
-    val jQuery = "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6"
-    val dom    = "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6"
-    val async  = "org.scala-lang.modules" %% "scala-async" % "0.9.2"
-
-    //    lazy val dom    = RootProject(file("../scala-js-dom"))
-    //    lazy val jQuery = RootProject(file("../scala-js-jquery"))
   }
 
 }

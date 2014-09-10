@@ -1,10 +1,11 @@
 package looty
 package poeapi
 
+import looty.util.AjaxHelp
+
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes.{Characters, Inventory, StashTab}
 import scala.scalajs.js
-import cgta.ojs.io.AjaxHelp
 
 
 //////////////////////////////////////////////////////////////
