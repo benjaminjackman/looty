@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.28 (2014-09-12)
+* Fix for borked netcode logic (thanks to sundrino for pointing it out)
+
 ## 0.2.1.27 (2014-09-12)
 * Removed ojs / Start using the CGTA/open libraries
 * Flat Accuracy increase column - for sundrino

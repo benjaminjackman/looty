@@ -77,8 +77,8 @@ object PoeRpcs {
   def get[A](url: String, params: js.Any, reqType: HttpRequestType): Future[A] = {
     val jQuery = global.jQuery.asInstanceOf[JQueryStatic]
     AjaxHelp(url, reqType, params.nullSafe.map(s => jQuery.param(s))).flatMap { res: js.Any =>
-      res match {
-        case x: js.prim.Boolean =>
+      res.asInstanceOf[Any] match {
+        case x: Boolean =>
           //GGG sends back "false" when the parameters aren't valid
           Future.failed(BadParameters(s"called $url with ${JSON.stringify(params)}"))
         case res => res.asInstanceOf[js.Dynamic].error.nullSafe match {

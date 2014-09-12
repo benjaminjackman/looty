@@ -43,6 +43,10 @@ class LootyIterableExtensions[A](val xs : Iterable[A]) {
   def maxByOptI[B](f: A => B)(implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.maxBy[B](f))
 }
 
+class LootyTypeAExtensions[A](val a : A) extends AnyVal {
+  def nullSafe : Option[A] = if (a == null || a.isInstanceOf[js.Undefined]) None else Some(a)
+}
+
 package object looty
   extends OScalaExportsShared
   with OScalaExportsPlat
@@ -56,5 +60,6 @@ package object looty
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   implicit def addLootyStringExtensions(s: String) = new LootyStringExtensions(s)
   implicit def addLootyJsAnyExtensions(a: js.Any) = new LootyJsAnyExtensions(a)
+  implicit def addLootyTypeAExtensions[A](a: A) = new LootyTypeAExtensions(a)
   implicit def addLootyIterableExtensions[A](a: Iterable[A]) = new LootyIterableExtensions(a)
 }

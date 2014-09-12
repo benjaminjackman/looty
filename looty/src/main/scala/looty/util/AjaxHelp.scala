@@ -3,13 +3,34 @@ package util
 
 import org.scalajs.jquery.JQueryAjaxSettings
 
-import scala.concurrent.Future
+import scala.concurrent.{Promise, Future}
 import scala.scalajs.js
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 12/9/13 11:15 PM
 //////////////////////////////////////////////////////////////
 
+
+
+object JsPromises {
+
+  case class JsFutureFailure(reason: Any) extends Exception
+
+  def wrap[A](that: js.Dynamic): Future[A] = {
+    def wrapAPlusReason(reason: js.Any): Throwable = {
+      reason match {
+        case reason: Throwable => reason
+        case x => new JsFutureFailure(reason)
+      }
+    }
+
+    val p = Promise[A]()
+    that.`then`(
+      (data: js.Any) => p.success(data.asInstanceOf[A]),
+      (reason: js.Any) => p.failure(wrapAPlusReason(reason)))
+    p.future
+  }
+}
 
 object AjaxHelp {
 
@@ -21,11 +42,11 @@ object AjaxHelp {
     val Delete = Value("Delete")
   }
 
-  def apply[A](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
-    Future[A] {
+  def apply[A <: js.Any](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
+    JsPromises.wrap[A] {
       val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDict[String]
       data.foreach(data => req("data") = data)
-      jq.ajax(req.asInstanceOf[JQueryAjaxSettings]).asInstanceOf[A]
+      jq.ajax(req.asInstanceOf[JQueryAjaxSettings])
     }
   }
 
