@@ -1,8 +1,7 @@
-package looty.util
+package looty
+package util
 
-import cgta.ojs._
-import cgta.ojs.lang.JsPromises
-import org.scalajs.jquery.{JQueryAjaxSettings, JQueryStatic}
+import org.scalajs.jquery.JQueryAjaxSettings
 
 import scala.concurrent.Future
 import scala.scalajs.js
@@ -13,7 +12,6 @@ import scala.scalajs.js
 
 
 object AjaxHelp {
-  val jQuery: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
 
   object HttpRequestTypes extends Enumeration {
     type HttpRequestType = Value
@@ -24,10 +22,10 @@ object AjaxHelp {
   }
 
   def apply[A](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
-    JsPromises.wrap[A] {
-      val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDic[String]
+    Future[A] {
+      val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDict[String]
       data.foreach(data => req("data") = data)
-      jQuery.ajax(req.asInstanceOf[JQueryAjaxSettings])
+      jq.ajax(req.asInstanceOf[JQueryAjaxSettings]).asInstanceOf[A]
     }
   }
 

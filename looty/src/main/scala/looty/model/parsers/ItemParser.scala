@@ -44,7 +44,7 @@ object ItemParser {
       mod: js.String <- emods
     } {
       if (!AffixesParser.parse(ci, mod)
-          && (ci.item.getFrameType =!= FrameTypes.unique || !ci.isEquippable)) {
+          && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {
         console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.name, "->", mod)
       }
     }

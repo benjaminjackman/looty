@@ -1,3 +1,4 @@
+import org.sbtidea.SbtIdeaPlugin
 import sbt._
 import Keys._
 import scala.scalajs.sbtplugin.ScalaJSPlugin._
@@ -76,22 +77,24 @@ object Build extends sbt.Build {
       libraryDependencies ++= Seq(
         "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
         "org.scala-lang.modules" %% "scala-async" % "0.9.2",
-        "biz.cgta" %%% "otest-sjs" % "0.1.12"
+        "biz.cgta" %%% "otest-sjs" % "0.1.12",
+        "biz.cgta" %%% "oscala-sjs" % "0.1.0",
+        "biz.cgta" %%% "cenum-sjs" % "0.1.0",
+        "biz.cgta" %%% "serland-sjs" % "0.1.0"
       )
     )
 
-  lazy val csjs = pject("cgta-scala-js")
-
   lazy val looty = pject("looty").settings(
+    SbtIdeaPlugin.ideaBasePackage := Some("looty"),
     resourceGenerators in Compile <+= generateHtml,
     watchSources += (sourceDirectory in Compile).value / "html",
     resourceGenerators in Compile <+= copyAll,
     libraryDependencies += "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6",
     libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.0",
     libraryDependencies += "com.scalatags" %%% "scalatags" % "0.3.8"
-  ).dependsOn(csjs)
+  )
 
-  lazy val root = Project("root", file(".")).aggregate(csjs, looty)
+  lazy val root = Project("root", file(".")).aggregate(looty)
 
   object Libs {
   }

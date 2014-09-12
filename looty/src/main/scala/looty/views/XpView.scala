@@ -2,10 +2,10 @@ package looty
 package views
 
 import org.scalajs.jquery.JQuery
+import util.DurationText
 
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
-import cgta.ojs.io.DurationText
 import looty.poeapi.PoeCacher
 
 
@@ -94,11 +94,11 @@ object CheckpointFmts {
 
   val fmt = global.d3.format(",f")
   def format(d: Double): String = {
-    fmt(d.toJs).toString
+    fmt(d).toString
   }
   val fmt2 = global.d3.format(".2f")
   def format2(d: Double): String = {
-    fmt2(d.toJs).toString
+    fmt2(d).toString
   }
 
 }

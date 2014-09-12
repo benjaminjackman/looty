@@ -27,16 +27,16 @@ class PoeCacherDemo extends PoeCacher {
   private val account: String = "UnknownAccount!"
 
   def getChars(forceNetRefresh: Boolean): Future[PoeTypes.Characters] =
-    loadJson().map(_.asJsDic[Characters](s"$account-characters"))
+    loadJson().map(_.asJsDict[Characters](s"$account-characters"))
 
   def getInv(char: String, forceNetRefresh: Boolean): Future[Inventory] =
-    loadJson().map(_.asJsDic[Inventory](s"$account-$char-inventory"))
+    loadJson().map(_.asJsDict[Inventory](s"$account-$char-inventory"))
 
   def getStashInfo(league: String, forceNetRefresh: Boolean): Future[PoeTypes.StashTabInfos] =
-    loadJson().map(_.asJsDic[PoeTypes.StashTabInfos](s"$account-$league-stis"))
+    loadJson().map(_.asJsDict[PoeTypes.StashTabInfos](s"$account-$league-stis"))
 
   def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean): Future[StashTab] =
-    loadJson().map(_.asJsDic[StashTab](s"$account-$league-$tabIdx-stis"))
+    loadJson().map(_.asJsDict[StashTab](s"$account-$league-$tabIdx-stis"))
 
   def clearLeague(league: String): Future[Unit] = Future.successful(Unit)
 }

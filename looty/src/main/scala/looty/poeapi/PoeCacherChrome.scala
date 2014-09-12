@@ -24,7 +24,7 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
       val otherLeagueChars = for {
         chars <- getChars.toList
         char <- chars.toList
-        if char.league.toString =!= league
+        if char.league.toString !=?= league
       } yield {
         char
       }

@@ -37,7 +37,7 @@ case class MinMaxDamage(var min: Double, var max: Double) {
 //}
 
 class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val locationName: String) {
-  lazy val maxLinks: Int = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOpt.getOrElse(0)).getOrElse(0)
+  lazy val maxLinks: Int = item.sockets.toOption.map(_.toList.map(_.group).groupBy(x => x).map(_._2.size).maxOptI.getOrElse(0)).getOrElse(0)
 
 
   object Scores {
@@ -72,7 +72,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   def locationId = item.locationId.toOption.getOrElse {
-    console.error("Unable to find a location id", this, item)
+    console.error("Unable to find a location id", this.asJsAny, item)
     sys.error("Unable to find a location id")
   }
 

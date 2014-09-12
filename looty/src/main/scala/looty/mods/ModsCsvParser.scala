@@ -67,7 +67,7 @@ object ModsCsvParser {
       loadParsers()
     } catch {
       case e : Throwable =>
-        console.log(e)
+        console.log(e.asJsAny)
         e.printStackTrace()
     }
       console.debug("Loaded parsers")

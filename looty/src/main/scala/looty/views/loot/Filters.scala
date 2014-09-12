@@ -63,7 +63,7 @@ class Filters(containers: Containers, columns: Columns, setFilterFn: (ComputedIt
       }
       def containerAllows = containerFilters(item.containerId)
 
-      (columnsAllows && containerAllows).toJs
+      columnsAllows && containerAllows
     }
     setFilterFn(filter)
   }

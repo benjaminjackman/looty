@@ -1,5 +1,4 @@
-package cgta.ojs.io
-
+package looty.util
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 1/1/14 4:40 PM

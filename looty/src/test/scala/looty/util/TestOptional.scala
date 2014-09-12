@@ -1,4 +1,4 @@
-package cgta.ojs.lang
+package looty.util
 
 import cgta.otest.FunSuite
 

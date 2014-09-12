@@ -156,6 +156,7 @@ object ComputedItemProps {
   val DpsCold              = pno("DpsCold", "cDps")(Attack, Dps)(_.total.perElementDps.cold.round)
   val DpsLightning         = pno("DpsLightning", "lDps")(Attack, Dps)(_.total.perElementDps.lightning.round)
   val DpsChaos             = pno("DpsChaos", "xDps")(Attack, Dps)(_.total.perElementDps.chaos.round)
+  val PlusToAccuracy    = pno("PlusToAccuracy", "+acc")(Attack)(_.plusTo.accuracyRatingWithDex)
   val IncreasedAccuracy    = pno("IncreasedAccuracy", "+%acc")(Attack)(_.increased.accuracyRating)
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
   AttacksPerSecond ?= "AttacksPerSecond"
@@ -165,7 +166,8 @@ object ComputedItemProps {
   DpsCold ?= "Cold Dps or Average Damage for Non-Weapons"
   DpsLightning ?= "Lightning Dps or Average Damage for Non-Weapons"
   DpsChaos ?= "Chaos Dps or Average Damage for Non-Weapons"
-  IncreasedAccuracy ?= "Increased Accuracy Rating, includes Dexterity Bonus"
+  PlusToAccuracy ?= "Flat bonus to accuracy + dexterity bonus"
+  IncreasedAccuracy ?= "Increased Accuracy Rating"
   IncreasedAttackSpeed ?= "Increased Attack Speed"
 
   //Stun

@@ -4,9 +4,9 @@ package poeapi
 import looty.model.CharClasses.CharClass
 import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
+import util.Optional
 
 import scala.scalajs.js
-import cgta.ojs.lang.Optional
 
 
 //////////////////////////////////////////////////////////////
@@ -62,8 +62,8 @@ object PoeTypes {
             i.inItem = item
             i
           }) map { i =>
-            character.foreach(c => i.character = c.toJs.asJsStr)
-            i.locationId = i.getLocationId.toJs.asJsStr
+            character.foreach(c => i.character = c)
+            i.locationId = i.getLocationId
             i
           }
         }

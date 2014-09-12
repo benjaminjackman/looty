@@ -7,7 +7,6 @@ import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
 import looty.model.{ComputedItem, ComputedItemProps, LootContainerId}
-import cgta.ojs.lang.JsObjectBuilder
 import scala.concurrent.Future
 import looty.poeapi.PoeCacher
 import scala.language.postfixOps
@@ -51,7 +50,6 @@ trait WebSqlDatabase extends js.Object {
 
 
 class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
-  val obj                               = new JsObjectBuilder
   var grid       : js.Dynamic           = null
   var dataView   : js.Dynamic           = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   var upgradeItem: Option[ComputedItem] = None
@@ -131,7 +129,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       resizeGridPending = true
       global.setTimeout(() => {
         val height = jq(global.window).height() - jq("#header").height() - jq("#controls").height() - 40
-        console.log("RESIZE: ", height.toJs)
+        console.log("RESIZE: ", height)
         jq("#grid").css("height", height)
         grid.resizeCanvas()
         resizeGridPending = false
@@ -314,7 +312,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
         refreshPane.refreshContainer(item.containerId)
       }
 
-      console.log(e, "GRIDMINI CLICK", args, item, item.item.inventoryId)
+      console.log(e, "GRIDMINI CLICK", args, item.asJsAny, item.item.inventoryId)
     }
 
     addSort()

@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.27 (2014-09-12)
+* Removed ojs / Start using the CGTA/open libraries
+* Flat Accuracy increase column - for sundrino
+
 ## 0.2.1.26 (2014-09-09)
 * Added WealthView
 

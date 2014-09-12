@@ -25,6 +25,8 @@ import looty.chrome.StoreMaster
 
 
 class LootyApp(demoMode: Boolean) {
+
+
   implicit val pc: PoeCacher = {
     if (demoMode) new PoeCacherDemo() else new PoeCacherChrome()
   }

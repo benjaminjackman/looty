@@ -22,7 +22,7 @@ object ChromeStorageLocal {
     def futGet[B](key: js.String): Future[Option[B]] = {
       val p = Promise[Option[B]]()
       def setPromise(kv: js.Any) {
-        p.success(kv.asJsDic[B](key).nullSafe)
+        p.success(kv.asJsDict[B](key).nullSafe)
       }
       x.get(key, setPromise _)
       p.future
@@ -32,7 +32,7 @@ object ChromeStorageLocal {
       def setPromise() {
         p.success(Unit)
       }
-      val kv = newObject.asJsDic[js.Any]
+      val kv = newObject.asJsDict[js.Any]
       kv(key) = value
       x.set(kv, setPromise _)
       p.future
