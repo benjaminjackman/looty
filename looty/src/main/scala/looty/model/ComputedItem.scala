@@ -77,7 +77,16 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   //This location includes coordinates
-  def locAndCoords = s"${locationName} x:${item.x.toOption.map(_ + 1).getOrElse("")} y:${item.y.toOption.map(_ + 1).getOrElse("")}"
+  lazy val locAndCoords = {
+    val l = Some(locationName)
+    val s = containerId match {
+      case StashTabIdx(i) => Some("s:" + i)
+      case _ => None
+    }
+    val x = item.x.toOption.map(_ + 1).map("x:" + _)
+    val y = item.y.toOption.map(_ + 1).map("y:" + _)
+    List(l, s, x, y).flatten.mkString(" ")
+  }
 
   lazy val typeName = {
     if (slots.isAmulet) "Jewelry Amulet"
@@ -267,7 +276,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   var reflectsPhysicalDamageToAttackers = 0.0
   var blockChance                       = 0.0
-  var numExplicitModSockets = 0.0
+  var numExplicitModSockets             = 0.0
 
   val regeneratedPerSecond = LifeAndMana mutable 0.0
 

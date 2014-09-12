@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.29 (2014-09-12)
+* added stash idx to loc
+
 ## 0.2.1.28 (2014-09-12)
 * Fix for borked netcode logic (thanks to sundrino for pointing it out)
 
