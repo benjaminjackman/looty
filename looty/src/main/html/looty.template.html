@@ -8,8 +8,75 @@
 
 
 <style>
+html {
+    height: 100%;
+}
+
 body {
     font-family: Helvetica, Arial, sans-serif;
+    height: 100%;
+    background: #151515;
+    color: #08b2ee;
+    padding-right: 5px;
+}
+
+body div.home {
+    display: inline-block;
+    max-width: 600px;
+}
+
+
+#sidebar-left {
+    float: left;
+    height: 100%;
+    background-color: #321212;
+    width: 0%;
+}
+
+#sidebar-left .sidebar-button {
+    float: right;
+    height: 100%;
+    width:10px;
+    background-color: #521616;
+}
+#sidebar-left .sidebar-button:hover{
+    background-color: yellow;
+}
+#sidebar-left .sidebar-content{
+    width: 95%;
+    height: 100%;
+}
+#sidebar-right {
+    float: right;
+    height: 100%;
+    background-color: #321212;
+    width: 0%;
+}
+#sidebar-right .sidebar-button {
+    float: left;
+    height: 100%;
+    width: 10px;
+    background-color: #521616;
+}
+#sidebar-right .sidebar-button:hover{
+    background-color: yellow;
+}
+#sidebar-right .sidebar-content{
+    width: 95%;
+    height: 100%;
+}
+
+
+
+#header {
+
+}
+
+#footer {
+
+}
+
+#content {
 }
 
 #item-details {
@@ -20,7 +87,7 @@ body {
 }
 
 .item-detail {
-    float:left;
+    float: left;
     max-width: 400px;
     color: white;
     border-width: 4px;
@@ -75,25 +142,12 @@ iframe.poebuilder {
     /*position: absolute;*/
     display: block;
     /*left: 0px;*/
-    width: 100%;
+    width: 95%;
     /*top: 0px;*/
     height: 90%;
     /*min-height: 100%;*/
 }
 
-#content {
-    height: 100%;
-}
-
-body {
-    background: #151515;
-    color: #08b2ee;
-}
-
-body div.home {
-    display: inline-block;
-    max-width: 600px;
-}
 
 a:visited {
     color: cyan;
@@ -262,6 +316,16 @@ a.loading {
 
 </head>
 <body>
+
+<div id="sidebar-left">
+    <div class="sidebar-button">&gt;</div>
+    <div class="sidebar-content"></div>
+</div>
+
+<div id="sidebar-right">
+    <div class="sidebar-button">&lt;</div>
+    <div class="sidebar-content"></div>
+</div>
 
 <div id="header">
     <div id="alerter">

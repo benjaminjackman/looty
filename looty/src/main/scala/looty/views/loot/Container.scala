@@ -22,6 +22,7 @@ object Container {
 class Container(val id: LootContainerId, html: JQuery, initialVisible: Boolean, refreshFn: () => Unit) {
   import Container._
 
+
   private var _items = Vector.empty[ComputedItem]
   def items = _items
   def setItems(items: Vector[ComputedItem]) {
@@ -34,7 +35,8 @@ class Container(val id: LootContainerId, html: JQuery, initialVisible: Boolean, 
   }
 
 
-  private var listeners = Vector.empty[Boolean => Unit]
+  private var nextListenerKey = 0L
+  private var listeners = Vector.empty[(Long, Boolean => Unit)]
   private var _visible  = initialVisible
 
   private def refreshHtml() {
@@ -48,7 +50,7 @@ class Container(val id: LootContainerId, html: JQuery, initialVisible: Boolean, 
 
   private def changed() {
     refreshHtml()
-    listeners.foreach(_(_visible))
+    listeners.foreach(_._2(_visible))
   }
 
   def visible = _visible
@@ -66,9 +68,13 @@ class Container(val id: LootContainerId, html: JQuery, initialVisible: Boolean, 
     changed()
   }
 
-  def onChange(f: Boolean => Unit) {
-    listeners :+= f
+  def onChange(f: Boolean => Unit) : Long = {
+    val key = nextListenerKey
+    nextListenerKey += 1
+    listeners :+= key -> f
+    key
   }
+  def removeListener(key : Long) = listeners = listeners.filter(_._1 !=?= key)
 }
 
 class Containers {
