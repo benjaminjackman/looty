@@ -1,7 +1,7 @@
 package looty
 package views
 
-import looty.views.loot.{Columns, ColumnsPane, Containers, Filters, UpgradesPane}
+import looty.views.loot.{SellPane, Columns, ColumnsPane, Containers, Filters, UpgradesPane}
 import org.scalajs.dom.{Blob, BlobPropertyBag}
 import org.scalajs.jquery.JQuery
 
@@ -56,7 +56,6 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   var filterCells                       = Map.empty[String, FilterCell]
 
 
-
   val columns         = new Columns
   val containers      = new Containers
   val filters         = new Filters(containers, columns, (f: (ComputedItem => Boolean)) => dataView.setFilter(f))
@@ -66,6 +65,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
   //  val scoresPane      = new ScoresPane(columns)
   val itemDetailHover = new ItemDetailHover()
   val upgradesPane    = new UpgradesPane(league, itemDetailHover, setUpgradeItem, setLvlFilter)
+  val sellPane        = new SellPane(league, pc)
 
   def setUpgradeItem(item: Option[ComputedItem]) {
     upgradeItem = item
@@ -162,30 +162,30 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     for {
       item <- items
     } {
-//      tempAddItem(item)
+      //      tempAddItem(item)
       dataView.addItem(item.asInstanceOf[js.Any])
     }
     dataView.endUpdate()
   }
 
 
-//  val db = locally {
-//    val db = WebSqlDatabase.open("sampledb", "1.0", "Experimenting with an items db", 10 * 1024 * 1024)
-//    db.transaction { (tx: WebSqlTransaction) =>
-//      tx.executeSql("DROP TABLE IF EXISTS items")
-//      tx.executeSql("CREATE TABLE IF NOT EXISTS items (location TEXT NOT NULL PRIMARY KEY, fire_resist INTEGER, armour INTEGER)")
-//    }
-//    db
-//  }
-//
-//
-//  def tempAddItem(item: ComputedItem) {
-//    db.transaction { (tx: WebSqlTransaction) =>
-//      tx.executeSql("""INSERT INTO items (location, fire_resist, armour) VALUES (?,?,?)""",
-//        js.Array(item.locationId, item.plusTo.resistance.fire, item.total.armour))
-//    }
-//
-//  }
+  //  val db = locally {
+  //    val db = WebSqlDatabase.open("sampledb", "1.0", "Experimenting with an items db", 10 * 1024 * 1024)
+  //    db.transaction { (tx: WebSqlTransaction) =>
+  //      tx.executeSql("DROP TABLE IF EXISTS items")
+  //      tx.executeSql("CREATE TABLE IF NOT EXISTS items (location TEXT NOT NULL PRIMARY KEY, fire_resist INTEGER, armour INTEGER)")
+  //    }
+  //    db
+  //  }
+  //
+  //
+  //  def tempAddItem(item: ComputedItem) {
+  //    db.transaction { (tx: WebSqlTransaction) =>
+  //      tx.executeSql("""INSERT INTO items (location, fire_resist, armour) VALUES (?,?,?)""",
+  //        js.Array(item.locationId, item.plusTo.resistance.fire, item.total.armour))
+  //    }
+  //
+  //  }
 
 
   def stop() {}
@@ -215,6 +215,11 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     controls.add {
       val p = new ControlPane("Columns")
       p.el.append(columnsPane.start())
+      p
+    }
+    controls.add {
+      val p = new ControlPane("Sell")
+      p.el.append(sellPane.start())
       p
     }
     controls.add("Export Csv") {
