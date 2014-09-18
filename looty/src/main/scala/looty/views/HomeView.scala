@@ -13,6 +13,14 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.30 (2014-09-18)
+* Added Skill Gem Keywords Column
+* Added +%Phys Column
+* Added Explicit Mod Count Column
+* Added Crafted Mod Count Column
+* Show Crafted (from masters) Mods on Item Cards + Use their stats in columns
+* Only show a few columns by default
+
 ## 0.2.1.29 (2014-09-12)
 * added stash idx to loc
 

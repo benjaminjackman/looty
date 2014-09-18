@@ -105,6 +105,7 @@ class ItemDetailHover {
       item.item.descrText.toOption.map(_.toString).getOrElse(""),
       item.item.implicitModList.mkString("<br>"),
       item.item.explicitModList.mkString("<br>"),
+      item.item.craftedModList.mkString("<br>"),
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
       item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
       flavorText,

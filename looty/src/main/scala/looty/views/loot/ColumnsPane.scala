@@ -15,6 +15,7 @@ import org.scalajs.jquery.JQuery
 class ColumnsPane(columns : Columns) {
   def start(): JQuery = {
     val el = jq("""<div id="columns-controls"></div>""")
+    val showDefault = jq("<a href='javascript:void(0)'>[Default]</a>")
     val showAll = jq("<a href='javascript:void(0)'>[All +]</a>")
     showAll.on("click", () => {
       columns.all.foreach(_.show())
@@ -25,8 +26,13 @@ class ColumnsPane(columns : Columns) {
       columns.all.foreach(_.hide())
       false
     })
+    showDefault.on("click", () => {
+      columns.all.foreach(_.setDefaultVisibility())
+      false
+    })
     el.append(showAll)
     el.append(hideAll)
+    el.append(showDefault)
     val grouped = columns.all.groupBy(_.groups.head)
     val groups = columns.all.map(_.groups.head).distinct
     groups.foreach { groupName =>

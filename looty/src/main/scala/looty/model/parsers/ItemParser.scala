@@ -24,6 +24,7 @@ object ItemParser {
     try {
       if (ci.isEquippable) parseMods(ci, ci.item.explicitMods.toOption)
       if (ci.isEquippable) parseMods(ci, ci.item.implicitMods.toOption)
+      if (ci.isEquippable) parseMods(ci, ci.item.craftedMods.toOption)
       if (ci.isEquippable || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
       if (ci.isEquippable || ci.item.isGem) parseRequirements(ci)
       if (ci.isEquippable) parseTypeLine(ci)

@@ -31,13 +31,21 @@ object ComputedItemProps {
     val groups: Vector[String],
     val defaultNumFilter: Option[NumFilter],
     val getJs: ComputedItem => js.Any,
-    private var desc: String = "") {
+    private var desc: String = "",
+    private var vis : Boolean = true
+    ) {
 
     def description = desc
+    def defaultVisible = vis
 
     private[ComputedItemProps] def ?=(d: String) {
       desc = d
     }
+    private[ComputedItemProps] def !?=(d: String) {
+      desc = d
+      vis = false
+    }
+
   }
 
   val General      = "General"
@@ -52,7 +60,7 @@ object ComputedItemProps {
   val Resists      = "Resists"
   val Crit         = "Crit"
   val Spells       = "Spells"
-  val Elemental    = "Elemental"
+  val Damage       = "Damage"
   val Gems         = "Gems"
   //  val Flasks       = "Flasks"
 
@@ -111,28 +119,34 @@ object ComputedItemProps {
   }
 
   //General
-  val Location    = str("Location", "loc", 130)(General)(_.locAndCoords)
-  val Rarity      = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
-  val DisplayName = str("DisplayName", "name", 160)(General)(_.displayName)
-  val TypeName    = str("TypeName", "type", 100)(General)(_.typeName)
-  val Cosmetics   = str("Cosmetics", "cosmetics", 80)(General)(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
-  val Sockets     = str("Sockets", "sockets", 100)(General)(_.socketColors)
-  val Misc        = pno("Misc", "misc")(General)(_.misc)
-  val Quality     = pno("Quality", "qual")(General)(_.properties.quality)
+  val Location         = str("Location", "loc", 130)(General)(_.locAndCoords)
+  val Rarity           = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
+  val DisplayName      = str("DisplayName", "name", 160)(General)(_.displayName)
+  val TypeName         = str("TypeName", "type", 100)(General)(_.typeName)
+  val Cosmetics        = str("Cosmetics", "cosmetics", 80)(General)(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
+  val Sockets          = str("Sockets", "sockets", 100)(General)(_.socketColors)
+  val Misc             = pno("Misc", "misc")(General)(_.misc)
+  val Quality          = pno("Quality", "qual")(General)(_.properties.quality)
+  val ExplicitModCount = nno("ExplicitModCount", "emc")(General)(_.item.explicitMods.toOption.map(_.length.toDouble).getOrElse(0.0))
+  val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
+  val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
   TypeName ?= "The name of the base item type"
   Cosmetics ?= "A list of all cosmetic effects applied to the item"
   Sockets ?= "The sockets sorted by number in group, then by color"
-  Misc ?= "Gem level / Items in Stack / # of Sockets /  Map Level"
-  Quality ?= "The quality of the item"
+  Misc !?= "Gem level / Items in Stack / # of Sockets /  Map Level"
+  Quality !?= "The quality of the item"
+  ExplicitModCount !?= "The number of explicit mods on an item"
+  CraftedModCount !?= "The number crafted mods on an item"
+  GemKeywords !?= "The keywords on a skill gem"
 
   //Score
   val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
   val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
-  DefaultScore ?= "An experimental score assigned to assess the desirability of the item"
-  CustomScore ?= "The result of the user definable score"
+  DefaultScore !?= "An experimental score assigned to assess the desirability of the item"
+  CustomScore !?= "The result of the user definable score"
 
   //Defensive
   val Armour                        = pno("Armour", "AR")(Defensive)(_.total.armour)
@@ -140,13 +154,17 @@ object ComputedItemProps {
   val ArmourPlusEvasion             = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
   val EnergyShield                  = pno("EnergyShield", "ES")(Defensive)(_.total.energyShield)
   val IncreasedMaxEnergyShield      = pno("IncreasedMaxEnergyShield", "+%ES")(Defensive)(_.total.globalEnergyShield)
+  val IncreasedArmour               = pno("IncreasedArmour", "+%AR")(Defensive)(_.increased.armour)
+  val IncreasedEvasion              = pno("IncreasedEvasion", "+%EV")(Defensive)(_.increased.evasion)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
   Armour ?= "Armour"
   Evasion ?= "Evasion"
-  ArmourPlusEvasion ?= "Armour + Evasion"
+  ArmourPlusEvasion !?= "Armour + Evasion"
   EnergyShield ?= "Energy Shield"
-  IncreasedMaxEnergyShield ?= "Increased Max Energy Shield Includes Intelligence Bonus"
-  IncreasedBlockAndStunRecovery ?= "Increased Block and Stun Recovery"
+  IncreasedMaxEnergyShield !?= "Increased Max Energy Shield Includes Intelligence Bonus"
+  IncreasedArmour !?= "Increased Armour Rating"
+  IncreasedEvasion !?= "Increased Evasion Rating"
+  IncreasedBlockAndStunRecovery !?= "Increased Block and Stun Recovery"
 
   //Attack
   val AttacksPerSecond     = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
@@ -156,25 +174,25 @@ object ComputedItemProps {
   val DpsCold              = pno("DpsCold", "cDps")(Attack, Dps)(_.total.perElementDps.cold.round)
   val DpsLightning         = pno("DpsLightning", "lDps")(Attack, Dps)(_.total.perElementDps.lightning.round)
   val DpsChaos             = pno("DpsChaos", "xDps")(Attack, Dps)(_.total.perElementDps.chaos.round)
-  val PlusToAccuracy    = pno("PlusToAccuracy", "+acc")(Attack)(_.plusTo.accuracyRatingWithDex)
+  val PlusToAccuracy       = pno("PlusToAccuracy", "+acc")(Attack)(_.plusTo.accuracyRatingWithDex)
   val IncreasedAccuracy    = pno("IncreasedAccuracy", "+%acc")(Attack)(_.increased.accuracyRating)
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
-  AttacksPerSecond ?= "AttacksPerSecond"
+  AttacksPerSecond !?= "AttacksPerSecond"
   DpsTotal ?= "Total Dps or Average Damage for Non-Weapons"
-  DpsPhysical ?= "Physical Dps or Average Damage for Non-Weapons"
-  DpsFire ?= "Fire Dps or Average Damage for Non-Weapons"
-  DpsCold ?= "Cold Dps or Average Damage for Non-Weapons"
-  DpsLightning ?= "Lightning Dps or Average Damage for Non-Weapons"
-  DpsChaos ?= "Chaos Dps or Average Damage for Non-Weapons"
-  PlusToAccuracy ?= "Flat bonus to accuracy + dexterity bonus"
-  IncreasedAccuracy ?= "Increased Accuracy Rating"
-  IncreasedAttackSpeed ?= "Increased Attack Speed"
+  DpsPhysical !?= "Physical Dps or Average Damage for Non-Weapons"
+  DpsFire !?= "Fire Dps or Average Damage for Non-Weapons"
+  DpsCold !?= "Cold Dps or Average Damage for Non-Weapons"
+  DpsLightning !?= "Lightning Dps or Average Damage for Non-Weapons"
+  DpsChaos !?= "Chaos Dps or Average Damage for Non-Weapons"
+  PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
+  IncreasedAccuracy !?= "Increased Accuracy Rating"
+  IncreasedAttackSpeed !?= "Increased Attack Speed"
 
   //Stun
   val IncreasedStunDurationOnEnemies = pno("IncreasedStunDurationOnEnemies", "+sdure")(Attack)(_.increased.stunDurationOnEnemies)
   val ReducedEnemyStunThreshold      = pno("ReducedEnemyStunThreshold", "+rest")(Attack)(_.reduced.enemyStunThreshold)
-  IncreasedStunDurationOnEnemies ?= "Increased Stun Duration on Enemies"
-  ReducedEnemyStunThreshold ?= "Reduced Stun Threshold"
+  IncreasedStunDurationOnEnemies !?= "Increased Stun Duration on Enemies"
+  ReducedEnemyStunThreshold !?= "Reduced Stun Threshold"
 
 
   //Requirements
@@ -183,9 +201,9 @@ object ComputedItemProps {
   val RequiredStr   = nno("RequiredStr", "rStr")(Requirements)(_.requirements.attribute.strength)
   val RequiredInt   = nno("RequiredInt", "rInt")(Requirements)(_.requirements.attribute.intelligence)
   RequiredLevel ?= "Level Required to Equip the Item"
-  RequiredDex ?= "Dex Required to Equip the Item"
-  RequiredStr ?= "Str Required to Equip the Item"
-  RequiredInt ?= "Int Required to Equip the Item"
+  RequiredDex !?= "Dex Required to Equip the Item"
+  RequiredStr !?= "Str Required to Equip the Item"
+  RequiredInt !?= "Int Required to Equip the Item"
 
   //Efficiency
   val MagicFind                = pno("MagicFind", "mf")(Efficiency)(_.magicFind)
@@ -194,10 +212,10 @@ object ComputedItemProps {
   val IncreasedMoveSpeed       = pno("IncreasedMoveSpeed", "+%move")(Efficiency)(_.increased.movementSpeed)
   val IncreasedProjectileSpeed = pno("IncreasedProjectileSpeed", "+%projSpeed")(Efficiency)(_.increased.projectileSpeed)
   MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
-  IncreasedItemRarity ?= "Increased Rarity of Items Found"
-  IncreasedItemQuantity ?= "Increased Quantity of Items Found"
+  IncreasedItemRarity !?= "Increased Rarity of Items Found"
+  IncreasedItemQuantity !?= "Increased Quantity of Items Found"
   IncreasedMoveSpeed ?= "Increased Movement Speed"
-  IncreasedProjectileSpeed ?= "Increased Projectile Speed"
+  IncreasedProjectileSpeed !?= "Increased Projectile Speed"
 
   //Regen
   val LifeLeech          = pno("LifeLeech", "lleech")(Regen)(_.leech.physical.life)
@@ -208,14 +226,14 @@ object ComputedItemProps {
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
   val LifeRegen          = pno("LifeRegen", "lireg")(Regen)(_.regeneratedPerSecond.life)
   val IncreasedManaRegen = pno("IncreasedManaRegen", "+%mareg")(Regen)(_.increased.manaRegenerationRate)
-  LifeLeech ?= "Life Leech from Physical Attack Damage"
-  LifeGainOnHit ?= "Life Gain on Hit"
-  ManaGainOnHit ?= "Mana Gain on Hit"
-  LifeGainOnKill ?= "Life Gain on Kill"
-  ManaGainOnKill ?= "Mana Gain on Kill"
-  ManaLeech ?= "Mana Leech from Physical Attack Damage"
-  LifeRegen ?= "Life Regeneration Rate"
-  IncreasedManaRegen ?= "Increased Mana Regeneration Rate"
+  LifeLeech !?= "Life Leech from Physical Attack Damage"
+  LifeGainOnHit !?= "Life Gain on Hit"
+  ManaGainOnHit !?= "Mana Gain on Hit"
+  LifeGainOnKill !?= "Life Gain on Kill"
+  ManaGainOnKill !?= "Mana Gain on Kill"
+  ManaLeech !?= "Mana Leech from Physical Attack Damage"
+  LifeRegen !?= "Life Regeneration Rate"
+  IncreasedManaRegen !?= "Increased Mana Regeneration Rate"
 
   //Attributes
   val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
@@ -225,9 +243,9 @@ object ComputedItemProps {
   val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
   PlusLife ?= "Adds this amount of life (includes strength bonus)"
   PlusMana ?= "Adds this amount of mana (includes intelligence bonus)"
-  PlusDex ?= "Adds this amount of dex"
-  PlusStr ?= "Adds this amount of str"
-  PlusInt ?= "Adds this amount of int"
+  PlusDex !?= "Adds this amount of dex"
+  PlusStr !?= "Adds this amount of str"
+  PlusInt !?= "Adds this amount of int"
 
   //Resists
   val PlusTotalResist     = pno("PlusTotalResist", "+SRes")(Resists)(_.plusTo.totalResistance)
@@ -237,11 +255,11 @@ object ComputedItemProps {
   val PlusLightningResist = pno("PlusLightningResist", "+lRes")(Resists)(_.plusTo.resistance.lightning)
   val PlusChaosResist     = pno("PlusChaosResist", "+xRes")(Resists)(_.plusTo.resistance.chaos)
   PlusTotalResist ?= "The total amount of resistance"
-  PlusMaxResist ?= "The highest amount of resistance"
+  PlusMaxResist !?= "The highest amount of resistance"
   PlusFireResist ?= "The amount of fire resistance"
   PlusColdResist ?= "The amount of cold resistance"
   PlusLightningResist ?= "The amount of lightning resistance"
-  PlusChaosResist ?= "The amount of chaos resistance"
+  PlusChaosResist !?= "The amount of chaos resistance"
 
   //Crit
   val IncreasedCritChance       = pno("IncreasedCritChance", "+%crit")(Crit)(_.properties.criticalStrikeChance)
@@ -263,23 +281,25 @@ object ComputedItemProps {
   val IncreasedChaosSpellDamage     = pno("IncreasedChaosSpellDamage", "+%spXDmg")(Spells)(_.increasedSpell.elements.lightning)
   IncreasedCastSpeed ?= "Increased Cast Speed"
   IncreasedSpellDamage ?= "Increased Spell Damage"
-  IncreasedElementalSpellDamage ?= "Increased Elemental Damage + Spell Damage"
-  IncreasedFireSpellDamage ?= "Increased Fire Damage + Elemental Damage + Spell Damage"
-  IncreasedColdSpellDamage ?= "Increased Cold Damage + Elemental Damage + Spell Damage"
-  IncreasedLightningSpellDamage ?= "Increased Lightning Damage + Elemental Damage + Spell Damage"
-  IncreasedChaosSpellDamage ?= "Increased Chaos Damage + Spell Damage"
+  IncreasedElementalSpellDamage !?= "Increased Elemental Damage + Spell Damage"
+  IncreasedFireSpellDamage !?= "Increased Fire Damage + Elemental Damage + Spell Damage"
+  IncreasedColdSpellDamage !?= "Increased Cold Damage + Elemental Damage + Spell Damage"
+  IncreasedLightningSpellDamage !?= "Increased Lightning Damage + Elemental Damage + Spell Damage"
+  IncreasedChaosSpellDamage !?= "Increased Chaos Damage + Spell Damage"
 
   //Elemental
-  val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(Elemental)(_.increased.elementalDamage)
-  val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(Elemental)(_.increased.damage.fire)
-  val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(Elemental)(_.increased.damage.cold)
-  val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(Elemental)(_.increased.damage.lightning)
-  val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(Elemental)(_.increased.damage.chaos)
-  IncreasedElementalDamage ?= "Increased Elemental Damage"
-  IncreasedFireDamage ?= "Increased Fire Damage + Elemental Damage"
-  IncreasedColdDamage ?= "Increased Cold Damage + Elemental Damage"
-  IncreasedLightningDamage ?= "Increased Lightning Damage + Elemental Damage"
-  IncreasedChaosDamage ?= "Increased Chaos Damage"
+  val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(Damage)(_.increased.elementalDamage)
+  val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(Damage)(_.increased.damage.fire)
+  val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(Damage)(_.increased.damage.cold)
+  val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(Damage)(_.increased.damage.lightning)
+  val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(Damage)(_.increased.damage.chaos)
+  val IncreasedPhysicalDamage  = pno("IncreasedPhysicalDamage", "+%pDmg")(Damage)(_.increased.damage.physical)
+  IncreasedElementalDamage !?= "Increased Elemental Damage"
+  IncreasedFireDamage !?= "Increased Fire Damage + Elemental Damage"
+  IncreasedColdDamage !?= "Increased Cold Damage + Elemental Damage"
+  IncreasedLightningDamage !?= "Increased Lightning Damage + Elemental Damage"
+  IncreasedChaosDamage !?= "Increased Chaos Damage"
+  IncreasedPhysicalDamage !?= "Increased Physical Damage"
 
   //Gems
   val IncreasedGemLevelBow          = pno("IncreasedGemLevelBow", "+gBow")(Gems)(_.gemLevel.bow)
@@ -292,15 +312,15 @@ object ComputedItemProps {
   val IncreasedGemLevelStrength     = pno("IncreasedGemLevelStrength", "+gStr")(Gems)(_.gemLevel.attribute.strength)
   val IncreasedGemLevelDexterity    = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.gemLevel.attribute.dexterity)
   val IncreasedGemLevelIntelligence = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.gemLevel.attribute.intelligence)
-  IncreasedGemLevelBow ?= "Increased Bow Gem Level "
-  IncreasedGemLevelMinion ?= "Increased Minion Gem Level "
-  IncreasedGemLevelMelee ?= "Increased Melee Gem Level "
-  IncreasedGemLevelAny ?= "Increased Any Gem Level "
-  IncreasedGemLevelFire ?= "Increased Fire Gem Level "
-  IncreasedGemLevelCold ?= "Increased Cold Gem Level "
-  IncreasedGemLevelLightning ?= "Increased Lightning Gem Level "
-  IncreasedGemLevelStrength ?= "Increased Strength Gem Level "
-  IncreasedGemLevelDexterity ?= "Increased Dexterity Gem Level "
-  IncreasedGemLevelIntelligence ?= "Increased Intelligence Gem Level "
+  IncreasedGemLevelBow !?= "Increased Bow Gem Level "
+  IncreasedGemLevelMinion !?= "Increased Minion Gem Level "
+  IncreasedGemLevelMelee !?= "Increased Melee Gem Level "
+  IncreasedGemLevelAny !?= "Increased Any Gem Level "
+  IncreasedGemLevelFire !?= "Increased Fire Gem Level "
+  IncreasedGemLevelCold !?= "Increased Cold Gem Level "
+  IncreasedGemLevelLightning !?= "Increased Lightning Gem Level "
+  IncreasedGemLevelStrength !?= "Increased Strength Gem Level "
+  IncreasedGemLevelDexterity !?= "Increased Dexterity Gem Level "
+  IncreasedGemLevelIntelligence !?= "Increased Intelligence Gem Level "
 
 }

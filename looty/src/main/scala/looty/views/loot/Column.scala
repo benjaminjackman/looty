@@ -26,7 +26,8 @@ object Column {
       groups = p.groups,
       defaultNumFilter = p.defaultNumFilter,
       getJs = p.getJs,
-      setJs = None
+      setJs = None,
+      defaultVisible = p.defaultVisible
     )
   }
 }
@@ -39,7 +40,9 @@ class Column(
   val groups: Vector[String],
   val defaultNumFilter: Option[NumFilter],
   val getJs: (ComputedItem) => js.Any,
-  val setJs: Option[String => Unit]) {
+  val setJs: Option[String => Unit],
+  val defaultVisible: Boolean
+  ) {
   def id = shortName
   lazy val slick = makeColumn(shortName, description, width)(getJs)
 
@@ -56,12 +59,17 @@ class Column(
   }
 
   private var listeners = Vector.empty[Boolean => Unit]
-  private var _visible  = true
+  private var _visible  = defaultVisible
   private def changed() {
     listeners.foreach(_(_visible))
   }
 
   def visible = _visible
+
+  def setDefaultVisibility() {
+    _visible = defaultVisible
+    changed()
+  }
 
   def hide() {
     _visible = false

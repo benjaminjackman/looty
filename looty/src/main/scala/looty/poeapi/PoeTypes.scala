@@ -143,6 +143,7 @@ object PoeTypes {
 
       def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
+      def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
 
       def getFrameType = {
         val ft = x.frameType.toInt
@@ -226,6 +227,16 @@ object PoeTypes {
           l
         }).headOption
       }
+
+      def getGemKeywords: Option[String] = {
+        for {
+          props <- x.properties.toOption
+          prop <- props.headOption
+          if (this.isGem)
+        } yield {
+          prop.name
+        }
+      }
     }
   }
 
@@ -253,6 +264,7 @@ object PoeTypes {
     val descrText            : Optional[js.String]
     val secDescrText         : Optional[js.String]
     val explicitMods         : Optional[js.Array[js.String]]
+    val craftedMods          : Optional[js.Array[js.String]]
     val implicitMods         : Optional[js.Array[js.String]]
     val frameType            : js.Number
     val socketedItems        : js.Array[AnyItem]
