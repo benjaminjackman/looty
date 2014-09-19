@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.31 (2014-09-19)
+* Moar columns
+
 ## 0.2.1.30 (2014-09-18)
 * Added Skill Gem Keywords Column
 * Added +%Phys Column

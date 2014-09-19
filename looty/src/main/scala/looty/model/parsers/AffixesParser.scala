@@ -264,7 +264,7 @@ object AffixesParser {
   reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
 
   simple1("", "Extra Charges")(_.flask.extraCharges += _)
-  simple1("", "of Recovery applied Instantly")(_.flask.extraCharges += _)
+  simple1("", "of Recovery applied Instantly")(_.flask.amountAppliedInstantly += _)
 
   simple1("Recharges", "Charges when you take a Critical Strike")(_.flask.chargesOnCriticalStrikeTaken += _)
   simple1("Recharges", "Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)

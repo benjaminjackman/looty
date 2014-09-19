@@ -32,7 +32,7 @@ object ComputedItemProps {
     val defaultNumFilter: Option[NumFilter],
     val getJs: ComputedItem => js.Any,
     private var desc: String = "",
-    private var vis : Boolean = true
+    private var vis: Boolean = true
     ) {
 
     def description = desc
@@ -48,21 +48,23 @@ object ComputedItemProps {
 
   }
 
-  val General      = "General"
-  val Scores       = "Score"
-  val Defensive    = "Defensive"
-  val Attack       = "Attack"
-  val Dps          = "Dps"
-  val Requirements = "Requirements"
-  val Efficiency   = "Efficiency"
-  val Regen        = "Regen"
-  val Attributes   = "Attributes"
-  val Resists      = "Resists"
-  val Crit         = "Crit"
-  val Spells       = "Spells"
-  val Damage       = "Damage"
-  val Gems         = "Gems"
-  //  val Flasks       = "Flasks"
+  val General         = "General"
+  val Scores          = "Score"
+  val Defensive       = "Defensive"
+  val Attack          = "Attack"
+  val Dps             = "Dps"
+  val AverageDamage   = "AverageDamage"
+  val Requirements    = "Requirements"
+  val Efficiency      = "Efficiency"
+  val Regen           = "Regen"
+  val Attributes      = "Attributes"
+  val Resists         = "Resists"
+  val Crit            = "Crit"
+  val Spells          = "Spells"
+  val IncreasedDamage = "IncreasedDamage"
+  val Gems            = "Gems"
+  val FlasksMods      = "FlaskMods"
+  val FlasksActions   = "FlaskActions"
 
   def str(
     fullName: String,
@@ -118,6 +120,24 @@ object ComputedItemProps {
     res
   }
 
+  def boo(
+    fullName: String,
+    shortName: String,
+    width: Int = 50)(
+    groups: String*)(
+    f: ComputedItem => Boolean): ComputedItemProp[Double] = {
+    val res = new ComputedItemProp[Double](
+      shortName = shortName,
+      fullName = fullName,
+      width = width,
+      groups = groups.distinct.toVector,
+      defaultNumFilter = Some(NumFilter(_ >= _)),
+      getJs = (i) => if (f(i)) 1.0 else 0.0
+    )
+    add(res)
+    res
+  }
+
   //General
   val Location         = str("Location", "loc", 130)(General)(_.locAndCoords)
   val Rarity           = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
@@ -168,25 +188,42 @@ object ComputedItemProps {
 
   //Attack
   val AttacksPerSecond     = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
-  val DpsTotal             = pno("DpsTotal", "dps")(Attack, Dps)(_.total.dps.round)
-  val DpsPhysical          = pno("DpsPhysical", "pDps")(Attack, Dps)(_.total.perElementDps.physical.round)
-  val DpsFire              = pno("DpsFire", "fDps")(Attack, Dps)(_.total.perElementDps.fire.round)
-  val DpsCold              = pno("DpsCold", "cDps")(Attack, Dps)(_.total.perElementDps.cold.round)
-  val DpsLightning         = pno("DpsLightning", "lDps")(Attack, Dps)(_.total.perElementDps.lightning.round)
-  val DpsChaos             = pno("DpsChaos", "xDps")(Attack, Dps)(_.total.perElementDps.chaos.round)
   val PlusToAccuracy       = pno("PlusToAccuracy", "+acc")(Attack)(_.plusTo.accuracyRatingWithDex)
   val IncreasedAccuracy    = pno("IncreasedAccuracy", "+%acc")(Attack)(_.increased.accuracyRating)
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
   AttacksPerSecond !?= "AttacksPerSecond"
+  PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
+  IncreasedAccuracy !?= "Increased Accuracy Rating"
+  IncreasedAttackSpeed !?= "Increased Attack Speed"
+
+  //Dps
+  val DpsTotal     = pno("DpsTotal", "dps")(Dps)(_.total.dps.round)
+  val DpsPhysical  = pno("DpsPhysical", "pDps")(Dps)(_.total.perElementDps.physical.round)
+  val DpsFire      = pno("DpsFire", "fDps")(Dps)(_.total.perElementDps.fire.round)
+  val DpsCold      = pno("DpsCold", "cDps")(Dps)(_.total.perElementDps.cold.round)
+  val DpsLightning = pno("DpsLightning", "lDps")(Dps)(_.total.perElementDps.lightning.round)
+  val DpsChaos     = pno("DpsChaos", "xDps")(Dps)(_.total.perElementDps.chaos.round)
   DpsTotal ?= "Total Dps or Average Damage for Non-Weapons"
   DpsPhysical !?= "Physical Dps or Average Damage for Non-Weapons"
   DpsFire !?= "Fire Dps or Average Damage for Non-Weapons"
   DpsCold !?= "Cold Dps or Average Damage for Non-Weapons"
   DpsLightning !?= "Lightning Dps or Average Damage for Non-Weapons"
   DpsChaos !?= "Chaos Dps or Average Damage for Non-Weapons"
-  PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
-  IncreasedAccuracy !?= "Increased Accuracy Rating"
-  IncreasedAttackSpeed !?= "Increased Attack Speed"
+
+  //Average Damage
+  val AvgTotal     = pno("AvgTotal", "avg")(AverageDamage)(_.total.avgDamage)
+  val AvgPhysical  = pno("AvgPhysical", "pAvg")(AverageDamage)(_.total.avgDamages.physical.round)
+  val AvgFire      = pno("AvgFire", "fAvg")(AverageDamage)(_.total.avgDamages.fire.round)
+  val AvgCold      = pno("AvgCold", "cAvg")(AverageDamage)(_.total.avgDamages.cold.round)
+  val AvgLightning = pno("AvgLightning", "lAvg")(AverageDamage)(_.total.avgDamages.lightning.round)
+  val AvgChaos     = pno("AvgChaos", "xAvg")(AverageDamage)(_.total.avgDamages.chaos.round)
+  AvgTotal !?= "Total Average Damage "
+  AvgPhysical !?= "Physical Average Damage"
+  AvgFire !?= "Fire Average Damage"
+  AvgCold !?= "Cold Average Damage"
+  AvgLightning !?= "Lightning Average Damage"
+  AvgChaos !?= "Chaos Average Damage"
+
 
   //Stun
   val IncreasedStunDurationOnEnemies = pno("IncreasedStunDurationOnEnemies", "+sdure")(Attack)(_.increased.stunDurationOnEnemies)
@@ -288,12 +325,12 @@ object ComputedItemProps {
   IncreasedChaosSpellDamage !?= "Increased Chaos Damage + Spell Damage"
 
   //Elemental
-  val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(Damage)(_.increased.elementalDamage)
-  val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(Damage)(_.increased.damage.fire)
-  val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(Damage)(_.increased.damage.cold)
-  val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(Damage)(_.increased.damage.lightning)
-  val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(Damage)(_.increased.damage.chaos)
-  val IncreasedPhysicalDamage  = pno("IncreasedPhysicalDamage", "+%pDmg")(Damage)(_.increased.damage.physical)
+  val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(IncreasedDamage)(_.increased.elementalDamage)
+  val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(IncreasedDamage)(_.increased.damage.fire)
+  val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(IncreasedDamage)(_.increased.damage.cold)
+  val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(IncreasedDamage)(_.increased.damage.lightning)
+  val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(IncreasedDamage)(_.increased.damage.chaos)
+  val IncreasedPhysicalDamage  = pno("IncreasedPhysicalDamage", "+%pDmg")(IncreasedDamage)(_.increased.damage.physical)
   IncreasedElementalDamage !?= "Increased Elemental Damage"
   IncreasedFireDamage !?= "Increased Fire Damage + Elemental Damage"
   IncreasedColdDamage !?= "Increased Cold Damage + Elemental Damage"
@@ -322,5 +359,34 @@ object ComputedItemProps {
   IncreasedGemLevelStrength !?= "Increased Strength Gem Level "
   IncreasedGemLevelDexterity !?= "Increased Dexterity Gem Level "
   IncreasedGemLevelIntelligence !?= "Increased Intelligence Gem Level "
+
+  //Flask
+  val FlaskExtraCharges = pno("FlaskExtraCharges", "fextrac")(FlasksMods)(_.flask.extraCharges)
+  val FlaskChargesOnCriticalStrikeGiven = pno("FlaskChargesOnCriticalStrikeGiven", "fsurgeon")(FlasksMods)(_.flask.chargesOnCriticalStrikeGiven)
+  val FlaskLifeRecoveryToMinions        = pno("FlaskLifeRecoveryToMinions", "fminion")(FlasksMods)(_.flask.lifeRecoveryToMinions)
+  val FlaskAmountAppliedInstantly        = pno("FlaskAmountAppliedInstantly", "f%instant")(FlasksMods)(_.flask.amountAppliedInstantly)
+
+  FlaskExtraCharges !?= "Flask Extra Charges"
+  FlaskChargesOnCriticalStrikeGiven !?= "Flask Charges On Critical Strike Given"
+  FlaskLifeRecoveryToMinions !?= "Flask Life Recovery To Minions"
+  FlaskAmountAppliedInstantly !?= "Flask Amount Applied Instantly"
+
+
+  val FlaskDispelsFrozenAndChilled = boo("FlaskDispelsFrozenAndChilled", "fafreeze")(FlasksActions)(_.flask.dispelsFrozenAndChilled)
+  val FlaskDispelsShocked          = boo("FlaskDispelsShocked", "fashock")(FlasksActions)(_.flask.dispelsShocked)
+  val FlaskDispelsBurning          = boo("FlaskDispelsBurning", "faburn")(FlasksActions)(_.flask.dispelsBurning)
+  val FlaskRemovesBleeding         = boo("FlaskRemovesBleeding", "fableed")(FlasksActions)(_.flask.removesBleeding)
+  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.curseImmunity)
+  val FlaskKnockback               = boo("FlaskKnockback", "fknock")(FlasksActions)(_.flask.knockback)
+  val FlaskInstant                 = boo("FlaskInstant", "finstant")(FlasksActions)(_.flask.instantRecovery)
+
+  FlaskDispelsFrozenAndChilled !?= "Flask Dispels FrozenAndChilled"
+  FlaskDispelsShocked !?= "Flask Dispels Shocked"
+  FlaskDispelsBurning !?= "Flask Dispels Burning"
+  FlaskRemovesBleeding !?= "Flask Removes Bleeding"
+  FlaskCurseImmunity !?= "Flask Curse Immunity"
+  FlaskKnockback !?= "Flask adds Knockback"
+  FlaskInstant !?= "Flask Instant Recovery"
+
 
 }

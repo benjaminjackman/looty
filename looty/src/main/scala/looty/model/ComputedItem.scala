@@ -225,13 +225,24 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object total {
     lazy val dps = perElementDps.all.sum
-    val perElementDps = Elements calculatedWith { element =>
+    lazy val avgDamage = properties.damages.all.map(_.avg).sum
+
+    lazy val perElementDps = Elements calculatedWith { element =>
       if (slots.isWeapon) {
         properties.damages(element).avg * properties.attacksPerSecond
       } else {
         damages(element).avg
       }
     }
+
+    lazy val avgDamages = Elements calculatedWith { element =>
+      if (slots.isWeapon) {
+        properties.damages(element).avg
+      } else {
+        damages(element).avg
+      }
+    }
+
     def armour = properties.armour.oIf(_ == 0.0, x => plusTo.armour, x => x)
     def evasionRating = properties.evasionRating.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
     def energyShield = properties.energyShield.oIf(_ == 0.0, x => plusTo.energyShield, x => x)
