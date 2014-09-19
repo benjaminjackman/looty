@@ -8,6 +8,7 @@ import looty.poeapi.PoeCacher
 import looty.views.GlobalView.GlobalViewRoot
 import looty.views.GlobalView.Leagues.League
 import looty.views.snippets.Select2Wrapper
+import looty.views.widgets.Select2Widget
 import org.scalajs.dom
 import org.scalajs.dom.HTMLDivElement
 import org.scalajs.jquery.JQuery
@@ -47,30 +48,25 @@ object GlobalView {
 
   val SelectLeagueComponent = {
     ReactComponentB[SelectLeagueProps]("SelectLeague")
-      .getInitialState((p) => p.initialLeague)
-      .render((_, S) => div(ref := "divEl"))
-      .componentDidMount { scope =>
-      val ref = Ref[HTMLDivElement]("divEl")(scope).get
-      val el = ref.getDOMNode()
-      Select2Wrapper(
-        el,
-        120,
-        "League",
-        (txt) => Future(Leagues.elements.map(_.toString).filter(l => l.toLowerCase.startsWith(txt.toLowerCase))))(
-          (txt) => scope.props.onLeagueChanged(Leagues.fromString(txt)))
-    }
+      .render((props, S) => Select2Widget.component(Select2Widget.Props(
+      width = 120,
+      placeholder = "League",
+      onFilter = (txt) => Future(Leagues.elements.map(_.toString).filter(l => l.toLowerCase.startsWith(txt.toLowerCase))),
+      onChange = (txt) => props.onLeagueChanged(Leagues.fromString(txt))
+    )))
       .create
   }
 
-  
-
+  val SelectCharacterComponent = {
+    
+  }
 
   class GlobalViewRoot(pc: PoeCacher) {
 
     val component = ReactComponentB[Unit]("GlobalViewRoot")
       .render((_) =>
       div(
-        SelectLeagueComponent(SelectLeagueProps(None,(l) => console.log("NEW LEAGUE", l.toString)))
+        SelectLeagueComponent(SelectLeagueProps(None, (l) => console.log("NEW LEAGUE", l.toString)))
       ))
       .createU
   }

@@ -35,16 +35,27 @@ class LootyJsAnyExtensions(val a: js.Any) extends AnyVal {
   def isUndefined: Boolean = a.isInstanceOf[js.Undefined]
 }
 
-class LootyIterableExtensions[A](val xs : Iterable[A]) {
+class LootyIterableExtensions[A](val xs: Iterable[A]) {
   def minOptI[B >: A](implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.min[B])
   def maxOptI[B >: A](implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.max[B])
 
   def minByOptI[B](f: A => B)(implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.minBy[B](f))
   def maxByOptI[B](f: A => B)(implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.maxBy[B](f))
+
+  def toJsArr: js.Array[A] = {
+    val zs = xs.toVector
+    val ys = new js.Array[A](zs.size)
+    var i = 0
+    while (i < xs.size) {
+      ys(i) = zs(i)
+      i += 1
+    }
+    ys
+  }
 }
 
-class LootyTypeAExtensions[A](val a : A) extends AnyVal {
-  def nullSafe : Option[A] = if (a == null || a.isInstanceOf[js.Undefined]) None else Some(a)
+class LootyTypeAExtensions[A](val a: A) extends AnyVal {
+  def nullSafe: Option[A] = if (a == null || a.isInstanceOf[js.Undefined]) None else Some(a)
 }
 
 package object looty
