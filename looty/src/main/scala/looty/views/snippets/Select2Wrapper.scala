@@ -1,6 +1,7 @@
 package looty
 package views.snippets
 
+import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 
 import scala.concurrent.Future
@@ -17,12 +18,12 @@ import scala.scalajs.js
 
 
 object Select2Wrapper {
-  def apply(el: JQuery,
+  def apply(el: dom.Element,
     width : Int,
     placeHolder : String,
-    filterFn: (String) => Future[List[String]])(onChangeFn: String => Unit) {
+    filterFn: (String) => Future[Seq[String]])(onChangeFn: String => Unit) {
     val theDiv = jq("<div></div>")
-    el.append(theDiv)
+    jq(el).append(theDiv)
     //Add a list of buttons one per character
     val O = js.Dynamic.literal
     theDiv.asJsDyn.select2(O(

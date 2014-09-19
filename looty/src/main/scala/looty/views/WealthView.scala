@@ -2,6 +2,7 @@ package looty
 package views
 
 import looty.views.snippets.Select2Wrapper
+import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.PoeCacher
@@ -107,7 +108,7 @@ class WealthView(implicit val pc: PoeCacher) extends View {
 
 
     Select2Wrapper(
-      selEl,
+      selEl.get(0).asInstanceOf[dom.Element],
       180,
       "League",
       (x) => Future.successful(Leagues.all.filter(_.toLowerCase.contains(x.toLowerCase)))) { l =>
