@@ -1,8 +1,8 @@
 package looty
 package views.widgets
 
-import japgolly.scalajs.react.{ReactComponentB, Ref}
-import org.scalajs.dom.HTMLDivElement
+import japgolly.scalajs.react.ReactComponentB
+import org.scalajs.jquery.JQuery
 
 import scala.concurrent.Future
 import scala.scalajs.js
@@ -22,7 +22,9 @@ object Select2Widget {
   import japgolly.scalajs.react.vdom.ReactVDom.all._
 
 
-  def apply[A](width: Int,
+  def apply[A](
+    selection: Option[A],
+    width: Int,
     placeholder: String,
     elements: => Future[Seq[A]],
     onChange: A => Unit,
@@ -32,6 +34,7 @@ object Select2Widget {
     mustStartWith: Boolean = false
   ) = {
     val props = Props(
+      selection = selection.map(i => toString(i)),
       width = width,
       placeholder = placeholder,
       onFilter = { s =>
@@ -53,6 +56,7 @@ object Select2Widget {
 
 
   case class Props(
+    selection: Option[String],
     width: Int,
     placeholder: String,
     onFilter: String => Future[Seq[String]],
@@ -60,15 +64,19 @@ object Select2Widget {
   )
 
   val component = {
-    val myRef = Ref[HTMLDivElement]("myEl")
     ReactComponentB[Props]("Select2Component")
-      .render((_) => div(ref := myRef.name))
+      .render((_) => div())
       .componentDidMount { scope =>
-      val el = myRef(scope).get.getDOMNode()
+      val el = scope.getDOMNode()
       val O = js.Dynamic.literal
       jq(el).asJsDyn.select2(O(
         width = scope.props.width,
         placeholder = scope.props.placeholder,
+        initSelection = {(el : JQuery, cb : js.Dynamic) =>
+          scope.props.selection.foreach { x =>
+            cb(O(id = x, text = x))
+          }
+        },
         query = { (q: js.Dynamic) =>
           val term = q.term.asInstanceOf[String]
           scope.props.onFilter(term).foreach { xs =>
@@ -79,6 +87,14 @@ object Select2Widget {
       )).on("change", { (e: js.Dynamic) =>
         scope.props.onChange(e.`val`.asInstanceOf[String])
       }: js.Function)
+    }
+      .componentDidUpdate { (scope, p, s) =>
+      val el = jq(scope.getDOMNode()).asJsDyn
+      val oldVal = el.select2("val").toString
+      val newVal = scope.props.selection.getOrElse("")
+      if (oldVal != newVal) {
+        el.select2("val", newVal)
+      }
     }
       .create
   }
