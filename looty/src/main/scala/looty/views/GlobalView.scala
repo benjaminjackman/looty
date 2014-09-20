@@ -56,6 +56,8 @@ object GlobalViewWidget {
         .backend(Backend)
         .render { (p, s, b) =>
         div(
+          a(href:="#/home", "[", span(`class` := "fa fa-home"), " Home]"),
+          a(key:= "config", href:="#/config", "[", span(`class` := "fa fa-gear"), " Settings]"),
           SelectLeagueWidget(s.league, b.setLeague)(),
           s.league.map { l => SelectCharacterWidget(s.character, () => b.getCharacters(), (c) => b.setCharacter(c))()},
           s.character.map { character =>
