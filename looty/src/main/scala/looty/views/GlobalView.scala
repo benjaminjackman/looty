@@ -2,13 +2,16 @@ package looty
 package views
 
 import cgta.cenum.CEnum
-import japgolly.scalajs.react.{BackendScope, React, ReactComponentB}
+import org.scalajs.dom
+import dom.HTMLInputElement
+import japgolly.scalajs.react.{SyntheticEvent, BackendScope, React, ReactComponentB}
 import looty.poeapi.PoeCacher
 import looty.views.GlobalView.GlobalViewRoot
 import looty.views.widgets.Select2Widget
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 import poeapi.PoeTypes.CharacterInfo
+import views.SelectLeagueWidget.Leagues
 import views.SelectLeagueWidget.Leagues.League
 
 import scala.concurrent.Future
@@ -35,13 +38,10 @@ object SelectLeagueWidget {
     final override val elements = CEnum.getElements(this)
   }
 
-  case class Props(
-    initialLeague: Option[League],
-    onLeagueChanged: League => Unit)
-
   val component = {
-    ReactComponentB[Props]("SelectLeague")
+    ReactComponentB[SelectLeagueWidget]("SelectLeague")
       .render((props) => Select2Widget[League](
+      selection = props.league,
       width = 120,
       placeholder = "League",
       elements = Future(Leagues.elements),
@@ -51,13 +51,17 @@ object SelectLeagueWidget {
     ))
       .create
   }
+
+}
+case class SelectLeagueWidget(league: Option[League], onLeagueChanged: League => Unit) {
+  def apply() = SelectLeagueWidget.component(this)
 }
 
 
 object SelectCharacterWidget {
-  case class Props(getCharacters: () => Future[Seq[CharacterInfo]], onCharacterChanged: String => Unit)
-  val component = ReactComponentB[Props]("SelectCharacter")
+  lazy val component = ReactComponentB[SelectCharacterWidget]("SelectCharacter")
     .render((props) => Select2Widget[String](
+    selection = props.character,
     width = 220,
     placeholder = "Character",
     elements = props.getCharacters().map(_.map(_.name)),
@@ -68,17 +72,27 @@ object SelectCharacterWidget {
     )
     .create
 }
+case class SelectCharacterWidget(
+  character : Option[String],
+  getCharacters: () => Future[Seq[CharacterInfo]],
+  onCharacterChanged: String => Unit) {
+  def apply() = SelectCharacterWidget.component(this)
+}
 
 
 object GlobalView {
 
 
   class GlobalViewRoot(pc: PoeCacher) {
-
     import japgolly.scalajs.react.vdom.ReactVDom._
     import japgolly.scalajs.react.vdom.ReactVDom.all._
 
-    case class State(league: Option[League], character: Option[String])
+    case class State(
+      league: Option[League],
+      character: Option[String],
+      autowatch: Boolean = false,
+      refreshIntervalSec: Int = 30
+    )
     case class Backend(T: BackendScope[_, State]) {
       def setLeague(league: League) {
         T.modState(_.copy(league = Some(league), character = None))
@@ -89,6 +103,9 @@ object GlobalView {
       def getCharacters(): Future[Seq[CharacterInfo]] = {
         pc.getChars().map(cs => cs.toList.filter(c => Option(c.league) =?= T.state.league.map(_.toString)))
       }
+      def setAutowatch(enabled: Boolean, e : SyntheticEvent[HTMLInputElement]) {
+        T.modState(_.copy(autowatch = enabled))
+      }
     }
 
     val component = ReactComponentB[Unit]("GlobalViewRoot")
@@ -96,8 +113,18 @@ object GlobalView {
       .backend(Backend)
       .render { (p, s, b) =>
       div(
-        SelectLeagueWidget.component(SelectLeagueWidget.Props(s.league, b.setLeague)),
-        s.league.map(l => SelectCharacterWidget.component(SelectCharacterWidget.Props(() => b.getCharacters(), (c) => b.setCharacter(c))))
+        SelectLeagueWidget(s.league, b.setLeague)(),
+        s.league.map { l =>
+          span(
+            SelectCharacterWidget(s.character, () => b.getCharacters(), (c) => b.setCharacter(c))(),
+            label("Autowatch",
+              title := s"Automatically scan this player for updates every ${s.refreshIntervalSec} Seconds",
+              input(`type` := "checkbox",
+                onchange ==> { e: SyntheticEvent[HTMLInputElement] => b.setAutowatch(e.target.checked, e)},
+                s.autowatch && (checked := "true"))
+            )
+          )
+        }
       )
     }
       .createU

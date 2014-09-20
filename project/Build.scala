@@ -90,7 +90,7 @@ object Build extends sbt.Build {
     watchSources += (sourceDirectory in Compile).value / "html",
     resourceGenerators in Compile <+= copyAll,
     libraryDependencies += "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6",
-    libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.0"
+    libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.1"
   )
 
   lazy val root = Project("root", file(".")).aggregate(looty)
