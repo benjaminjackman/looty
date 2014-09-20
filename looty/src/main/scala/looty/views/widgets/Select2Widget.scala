@@ -22,12 +22,42 @@ object Select2Widget {
   import japgolly.scalajs.react.vdom.ReactVDom.all._
 
 
+  def apply[A](width: Int,
+    placeholder: String,
+    elements: => Future[Seq[A]],
+    onChange: A => Unit,
+    toString: A => String,
+    fromString: String => A,
+    caseSensitive: Boolean = false,
+    mustStartWith: Boolean = false
+  ) = {
+    val props = Props(
+      width = width,
+      placeholder = placeholder,
+      onFilter = { s =>
+        elements.map { elements =>
+          elements.filter { el =>
+            val elStr = toString(el)
+            val (elStrC, txt) = if (caseSensitive) elStr -> s else elStr.toLowerCase -> s.toLowerCase
+            if (mustStartWith) elStrC.startsWith(txt) else elStrC.contains(txt)
+          }.map(toString)
+            .sortBy(_.toLowerCase)
+        }
+      },
+      onChange = { s =>
+        onChange(fromString(s))
+      }
+    )
+    component(props)
+  }
+
+
   case class Props(
     width: Int,
     placeholder: String,
     onFilter: String => Future[Seq[String]],
     onChange: String => Unit
-    )
+  )
 
   val component = {
     val myRef = Ref[HTMLDivElement]("myEl")
