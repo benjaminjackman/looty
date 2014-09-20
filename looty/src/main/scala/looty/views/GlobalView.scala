@@ -41,12 +41,14 @@ object SelectLeagueWidget {
 
   val component = {
     ReactComponentB[Props]("SelectLeague")
-      .render((props) => Select2Widget.component(Select2Widget.Props(
+      .render((props) => Select2Widget[League](
       width = 120,
       placeholder = "League",
-      onFilter = (txt) => Future(Leagues.elements.map(_.toString).filter(l => l.toLowerCase.startsWith(txt.toLowerCase))),
-      onChange = (txt) => props.onLeagueChanged(Leagues.fromString(txt))
-    )))
+      elements = Future(Leagues.elements),
+      onChange = props.onLeagueChanged,
+      toString = x => x.toString,
+      fromString = Leagues.fromString
+    ))
       .create
   }
 }
@@ -55,12 +57,14 @@ object SelectLeagueWidget {
 object SelectCharacterWidget {
   case class Props(getCharacters: () => Future[Seq[CharacterInfo]], onCharacterChanged: String => Unit)
   val component = ReactComponentB[Props]("SelectCharacter")
-    .render((props) => Select2Widget.component(Select2Widget.Props(
-    width = 120,
+    .render((props) => Select2Widget[String](
+    width = 220,
     placeholder = "Character",
-    onFilter = (txt) => props.getCharacters().map(cs => cs.map(c => c.name).filter(_.toLowerCase.contains(txt.toLowerCase))),
-    onChange = (txt) => props.onCharacterChanged(txt)
-  ))
+    elements = props.getCharacters().map(_.map(_.name)),
+    onChange = props.onCharacterChanged,
+    toString = x => x,
+    fromString = x => x
+  )
     )
     .create
 }
