@@ -64,7 +64,7 @@ object Select2Widget {
   )
 
   val component = {
-    ReactComponentB[Props]("Select2Component")
+    ReactComponentB[Props]("Select2Widget")
       .render((_) => div())
       .componentDidMount { scope =>
       val el = scope.getDOMNode()
