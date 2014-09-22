@@ -33,7 +33,7 @@ object ComputedItemProps {
     val getJs: ComputedItem => js.Any,
     private var desc: String = "",
     private var vis: Boolean = true
-    ) {
+  ) {
 
     def description = desc
     def defaultVisible = vis
@@ -176,6 +176,7 @@ object ComputedItemProps {
   val IncreasedMaxEnergyShield      = pno("IncreasedMaxEnergyShield", "+%ES")(Defensive)(_.total.globalEnergyShield)
   val IncreasedArmour               = pno("IncreasedArmour", "+%AR")(Defensive)(_.increased.armour)
   val IncreasedEvasion              = pno("IncreasedEvasion", "+%EV")(Defensive)(_.increased.evasion)
+  val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
   Armour ?= "Armour"
   Evasion ?= "Evasion"
@@ -184,6 +185,7 @@ object ComputedItemProps {
   IncreasedMaxEnergyShield !?= "Increased Max Energy Shield Includes Intelligence Bonus"
   IncreasedArmour !?= "Increased Armour Rating"
   IncreasedEvasion !?= "Increased Evasion Rating"
+  BlockChance !?= "Block Chance"
   IncreasedBlockAndStunRecovery !?= "Increased Block and Stun Recovery"
 
   //Attack
@@ -361,10 +363,10 @@ object ComputedItemProps {
   IncreasedGemLevelIntelligence !?= "Increased Intelligence Gem Level "
 
   //Flask
-  val FlaskExtraCharges = pno("FlaskExtraCharges", "fextrac")(FlasksMods)(_.flask.extraCharges)
+  val FlaskExtraCharges                 = pno("FlaskExtraCharges", "fextrac")(FlasksMods)(_.flask.extraCharges)
   val FlaskChargesOnCriticalStrikeGiven = pno("FlaskChargesOnCriticalStrikeGiven", "fsurgeon")(FlasksMods)(_.flask.chargesOnCriticalStrikeGiven)
   val FlaskLifeRecoveryToMinions        = pno("FlaskLifeRecoveryToMinions", "fminion")(FlasksMods)(_.flask.lifeRecoveryToMinions)
-  val FlaskAmountAppliedInstantly        = pno("FlaskAmountAppliedInstantly", "f%instant")(FlasksMods)(_.flask.amountAppliedInstantly)
+  val FlaskAmountAppliedInstantly       = pno("FlaskAmountAppliedInstantly", "f%instant")(FlasksMods)(_.flask.amountAppliedInstantly)
 
   FlaskExtraCharges !?= "Flask Extra Charges"
   FlaskChargesOnCriticalStrikeGiven !?= "Flask Charges On Critical Strike Given"
