@@ -12,6 +12,7 @@ import org.scalajs.jquery.JQuery
 import poeapi.PoeTypes.CharacterInfo
 
 import scala.concurrent.Future
+import scalajs.js.Dynamic
 
 
 //////////////////////////////////////////////////////////////
@@ -23,8 +24,29 @@ import scala.concurrent.Future
 //////////////////////////////////////////////////////////////
 
 
+//Id of an item of loot
+class LootItemId {
+
+}
+
+//History of all your loot, ever!
+class LootHistory {
+
+}
+
+class LootWatcher(pc: PoeCacher) {
+
+  def setMode(enabled: Boolean, league: Option[League], character: Option[String]) {
+
+  }
+
+}
+
 object GlobalViewWidget {
-  class Component(pc: PoeCacher) {
+  class Component(
+    pc: PoeCacher,
+    lootWatcher: LootWatcher
+  ) {
 
     case class State(
       league: Option[League],
@@ -42,7 +64,8 @@ object GlobalViewWidget {
       def getCharacters(): Future[Seq[CharacterInfo]] = {
         pc.getChars().map(cs => cs.toList.filter(c => Option(c.league) =?= T.state.league.map(_.toString)))
       }
-      def setAutowatch(enabled: Boolean, e: SyntheticEvent[HTMLInputElement]) {
+      def setAutowatch(enabled: Boolean) {
+        lootWatcher.setMode(enabled = enabled, league = T.state.league, character = T.state.character)
         T.modState(_.copy(autowatch = enabled))
       }
     }
@@ -50,14 +73,16 @@ object GlobalViewWidget {
     val component = {
       import japgolly.scalajs.react.vdom.ReactVDom._
       import japgolly.scalajs.react.vdom.ReactVDom.all._
+      import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+      val O = Dynamic.literal
 
       ReactComponentB[GlobalViewWidget]("GlobalViewWidget")
         .initialState(State(None, None))
         .backend(Backend)
         .render { (p, s, b) =>
         div(
-          a(href:="#/home", "[", span(`class` := "fa fa-home"), " Home]"),
-          a(key:= "config", href:="#/config", "[", span(`class` := "fa fa-gear"), " Settings]"),
+          a(href := "#/home", "[", span(`class` := "fa fa-home"), " Home]"),
+          a(key := "config", href := "#/config", "[", span(`class` := "fa fa-gear"), " Settings]"),
           SelectLeagueWidget(s.league, b.setLeague)(),
           s.league.map { l => SelectCharacterWidget(s.character, () => b.getCharacters(), (c) => b.setCharacter(c))()},
           s.character.map { character =>
@@ -66,10 +91,10 @@ object GlobalViewWidget {
               title := s"Automatically scan this player for updates every ${s.refreshIntervalSec} Seconds",
               input(
                 `type` := "checkbox",
-                onchange ==> { e: SyntheticEvent[HTMLInputElement] => b.setAutowatch(e.target.checked, e)},
-                s.autowatch && (checked := "true"))
-            )
-          }
+                onchange ==> { e: SyntheticEvent[HTMLInputElement] => b.setAutowatch(e.target.checked)},
+                s.autowatch && (checked := "true")))
+          },
+          img(src:="sha2:afcf65")
         )
       }
         .create
@@ -78,7 +103,7 @@ object GlobalViewWidget {
 }
 
 case class GlobalViewWidget() {
-  def apply(pc: PoeCacher) = new GlobalViewWidget.Component(pc).component(this)
+  def apply(pc: PoeCacher) = new GlobalViewWidget.Component(pc, new LootWatcher(pc)).component(this)
 }
 
 class GlobalView(implicit val pc: PoeCacher) extends View {
@@ -90,3 +115,6 @@ class GlobalView(implicit val pc: PoeCacher) extends View {
   override def stop(): Unit = {
   }
 }
+
+//http://forum.hardware.fr/hfr/JeuxVideo/PC/unique-path-exile-sujet_173815_276.htm
+//CATALINA->Ratcha

@@ -148,9 +148,9 @@ case class IdeaParse(p: Path) {
 
 case class Project(name: String) {
   def streamsPath = Path(name, "./" + name + "/target/streams/")
-  def globalPath = Path("global", "$global/streams/$global/out")
-  def testPath = Path("test", "test/compile/$global/out")
-  def compilePath = Path("compile", "compile/compile/$global/out")
+  def globalPath = Path("global", "$global/$global/$global/streams/out")
+  def testPath = Path("test", "test/compile/$global/streams/out")
+  def compilePath = Path("compile", "compile/compile/$global/streams/out")
   def subpaths = List(globalPath, testPath, compilePath)
   def allPaths = subpaths.map(streamsPath / _)
 
