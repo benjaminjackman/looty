@@ -237,6 +237,17 @@ object PoeTypes {
           prop.name
         }
       }
+
+      def getPropertiesInterpolated: List[String] = {
+        for {
+          prop <- x.properties.toOption.toList.map(_.toList).flatten
+        } yield {
+          var res = prop.name
+          if (prop.name.contains("%0")) {res = res.replaceAll("%0", prop.values(0)(0).toString)}
+          if (prop.name.contains("%1")) {res = res.replaceAll("%1", prop.values(1)(0).toString)}
+          res
+        }
+      }
     }
   }
 

@@ -37,8 +37,8 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
     val O = js.Dynamic.literal
 
     val loadSel = loadDiv.asJsDyn.select2(O(
-      width = 180,
-      placeholder = "Name",
+      width = 200,
+      placeholder = "Save Selected Columns",
       query = { (q: js.Dynamic) =>
         val names = LootViewSaver.getAllNames
         val term = q.term.asInstanceOf[String]

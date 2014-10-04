@@ -81,15 +81,9 @@ class ItemDetailHover {
     }
     def properties = {
       (for {
-        props <- item.item.properties.toOption.toList
-        prop <- props.toList
+        prop <- item.item.getPropertiesInterpolated
       } yield {
-        val vs = for {
-          v <- prop.values.toList
-        } yield {
-          v(0)
-        }
-        prop.name + " " + vs.mkString("")
+        prop
       }).mkString("<br>")
     }
     def flavorText = {

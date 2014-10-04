@@ -213,7 +213,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
       p
     }
     controls.add {
-      val p = new ControlPane("Columns")
+      val p = new ControlPane("Select Columns")
       p.el.append(columnsPane.start())
       p
     }
