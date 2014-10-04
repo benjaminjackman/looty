@@ -89,10 +89,15 @@ class ItemDetailHover {
     def flavorText = {
       item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
     }
+    val itemName = item.item.name
+    val typeLine = item.item.typeLine
+    if (itemName.isEmpty) {
+      s"""<span class="item-name">${typeLine.toString}</span>"""
+    } else {
+      s"""<span class="item-name">${itemName.toString}</span><br><hr>${typeLine.toString}"""
+    }
     val sections = List(
-      item.item.name.toString,
-      item.item.typeLine.toString,
-      s"Location: ${item.locAndCoords}",
+      s"<br><hr>Location: ${item.locAndCoords}",
       if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
       properties,
       requirements,
@@ -107,6 +112,8 @@ class ItemDetailHover {
       if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) "Corrupted" else "",
       if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else ""
     ).filter(_.nonEmpty)
+    console.log(sections.head)
+
     val h = s"""
         <div style="padding:5px">
         <img src="${item.item.icon}"></img>
