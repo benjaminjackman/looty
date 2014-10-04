@@ -91,7 +91,7 @@ class ItemDetailHover {
     }
     val itemName = item.item.name
     val typeLine = item.item.typeLine
-    if (itemName.isEmpty) {
+    val titleName = if (itemName.isEmpty) {
       s"""<span class="item-name">${typeLine.toString}</span>"""
     } else {
       s"""<span class="item-name">${itemName.toString}</span><br><hr>${typeLine.toString}"""
@@ -117,6 +117,7 @@ class ItemDetailHover {
     val h = s"""
         <div style="padding:5px">
         <img src="${item.item.icon}"></img>
+        $titleName
         ${sections.mkString("<hr>")}
         </div>
         """
