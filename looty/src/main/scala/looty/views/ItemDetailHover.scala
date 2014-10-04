@@ -117,7 +117,7 @@ class ItemDetailHover {
     val h = s"""
         <div style="padding:5px">
         <img src="${item.item.icon}"></img>
-        $titleName
+        <span class="item-title">$titleName</span>
         ${sections.mkString("<hr>")}
         </div>
         """

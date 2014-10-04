@@ -10,10 +10,16 @@
   opacity: .9;
   background-color: black;
 
+  .item-title {
+    -webkit-animation: my-blink-slow 5s infinite ;
+  }
+
   .item-name {
-    font-size: 50px;
+    font-size: 30px;
     font-weight: bolder;
     font-style: italic;
+    -webkit-animation: my-buzz-smooth 100ms infinite, ;
+    -webkit-animation-timing-function: step-start;
   }
 
   &.unknown {
@@ -57,3 +63,75 @@
   }
 
 }
+
+
+//Use with a time of .1s
+@-webkit-keyframes my-buzz-smooth {
+    0% {color: red;}
+    50% {color: yellow;}
+    100% {color: red;}
+}
+
+@-webkit-keyframes my-buzz-choppy {
+    0% {color: red;}
+    50% {color: red;}
+    51% {color: yellow;}
+    100% {color: yellow;}
+}
+@-webkit-keyframes my-2 {
+    from {color: black;}
+    to {color: white;}
+}
+//Between black and Whatever the current color is!
+@-webkit-keyframes my-3{
+    0% {color: black;}
+//    50% {color: white;}
+}
+
+@-webkit-keyframes my-4{
+    0% {color: black;}
+    50% {color: white;}
+    100% {color: black;}
+}
+
+@-webkit-keyframes my-5{
+    0% {color: black;}
+//    50% {color: white;}
+}
+
+@-webkit-keyframes my-blink-slow{
+    0% {opacity: .5}
+    50% {opacity: 1}
+    100% {opacity: .5}
+  //    50% {color: white;}
+}
+
+@-webkit-keyframes my-blink-fast {
+    0% {opacity: 1}
+    25% {opacity: 0}
+    50% {opacity: 1}
+    75% {opacity: 0}
+    100% {opacity: 1}
+  //    50% {color: white;}
+}
+
+@-webkit-keyframes my-blink-fast {
+    0% {opacity: 1}
+    25% {opacity: 0}
+    50% {opacity: 1}
+    75% {opacity: 0}
+    100% {opacity: 1}
+  //    50% {color: white;}
+}
+
+
+
+@-webkit-keyframes my-blink-harsh {
+    0% {opacity: 0}
+    50% {opacity: 1}
+    100% {opacity: 0}
+  //    50% {color: white;}
+}
+
+
+
