@@ -30,10 +30,12 @@ object PoeTypes {
     val Hardcore = "Hardcore"
     //    val Ambush     = "Ambush"
     //    val Invasion   = "Invasion"
-    val Beyond   = "Beyond"
-    val Rampage  = "Rampage"
-
-    val all = List(Standard, Hardcore, Beyond, Rampage)
+//    val Beyond   = "Beyond"
+//    val Rampage  = "Rampage"
+    val Torment = "Torment"
+    val Bloodlines = "Bloodlines"
+    val OneWeekRampageBeyond  = "One Week HC Rampage/Beyond"
+    val all = List(Standard, Hardcore, Torment, Bloodlines, OneWeekRampageBeyond)
   }
 
   trait PassivesTree extends js.Object {

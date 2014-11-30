@@ -55,7 +55,7 @@ class LootyApp(demoMode: Boolean) {
     crossroads.addRoute("home", () => setView(new HomeView(banner = banner, version = version)))
     for (league <- Leagues.all) {
       if (demoMode) {
-        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Beyond)))
+        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
       } else {
         crossroads.addRoute(s"$league-grid", () => setView(new LootView(league)))
       }
