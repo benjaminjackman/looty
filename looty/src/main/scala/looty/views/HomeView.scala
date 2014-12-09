@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.34 (2014-12-09)
+* Added Increased Elemental Damage With Weapons (thanks jalish/toup/sundrino!)
+* Added css classes for controls
+
 ## 0.2.1.33 (2014-11-30)
 * Added upcoming leagues
 * Flasks are interpolated

@@ -13,7 +13,7 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 
-class ControlPane(val name: String) {
+class ControlPane(val name: String, val cssCls : String) {
   lazy val el = jq("""<div style="display:none"></div>""")
   def toggle() {
     if (el.is(":visible")) {
@@ -32,8 +32,8 @@ class Controls(gOnClick: () => Unit) {
     m
   }
   var panes: List[ControlPane] = Nil
-  def add(text: String)(onClick: => Unit) {
-    val m = jq(s"""<a href="javascript:void(0)">[$text]</a>""")
+  def add(text: String, cssCls: String)(onClick: => Unit) {
+    val m = jq(s"""<a href="javascript:void(0)" class="ctrl-btn $cssCls">[$text]</a>""")
     m.on("click", () => {
       onClick
       gOnClick()
@@ -42,7 +42,7 @@ class Controls(gOnClick: () => Unit) {
     menu.append(m)
   }
   def add(pane: ControlPane) {
-    val m = jq(s"""<a href="javascript:void(0)">[${pane.name}]</a>""")
+    val m = jq(s"""<a href="javascript:void(0) class="pane-btn ${pane.cssCls}">[${pane.name}]</a>""")
     m.on("click", () => {
       panes.filterNot(_ =?= pane).foreach(_.el.hide())
       pane.toggle()

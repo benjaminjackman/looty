@@ -1,0 +1,15 @@
+#make sure upto date
+gru
+gmocff
+#commit changes
+
+#bump version number in
+manifest
+homeview (copy to commit)
+
+gg (commit)
+
+bin/deploy
+
+#upload to chrome web store
+https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US

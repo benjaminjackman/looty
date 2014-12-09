@@ -328,12 +328,14 @@ object ComputedItemProps {
 
   //Elemental
   val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(IncreasedDamage)(_.increased.elementalDamage)
+  val IncreasedElementalDamageWithWeapons = pno("IncreasedElementalDamageWithWeapons", "+%eleWDmg")(IncreasedDamage)(_.increased.elementalDamageWithWeapons)
   val IncreasedFireDamage      = pno("IncreasedFireDamage", "+%fDmg")(IncreasedDamage)(_.increased.damage.fire)
   val IncreasedColdDamage      = pno("IncreasedColdDamage", "+%cDmg")(IncreasedDamage)(_.increased.damage.cold)
   val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(IncreasedDamage)(_.increased.damage.lightning)
   val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(IncreasedDamage)(_.increased.damage.chaos)
   val IncreasedPhysicalDamage  = pno("IncreasedPhysicalDamage", "+%pDmg")(IncreasedDamage)(_.increased.damage.physical)
   IncreasedElementalDamage !?= "Increased Elemental Damage"
+  IncreasedElementalDamageWithWeapons !?= "Increased Elemental Damage With Weapons"
   IncreasedFireDamage !?= "Increased Fire Damage + Elemental Damage"
   IncreasedColdDamage !?= "Increased Cold Damage + Elemental Damage"
   IncreasedLightningDamage !?= "Increased Lightning Damage + Elemental Damage"

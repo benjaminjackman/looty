@@ -198,26 +198,26 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
     appendGrid()
     el.append(itemDetailHover.el)
     val (refreshEl, fut) = refreshPane.start()
-    controls.add("Clear Filters") {
+    controls.add("Clear Filters", "clear-filters") {
       filters.clear()
       filters.refresh()
     }
     controls.add {
-      val p = new ControlPane("Upgrades")
+      val p = new ControlPane("Upgrades", "upgrades")
       p.el.append(upgradesPane.start())
       p
     }
     controls.add {
-      val p = new ControlPane("Refresh/Tabs")
+      val p = new ControlPane("Refresh/Tabs", "refresh-tabs")
       p.el.append(refreshEl)
       p
     }
     controls.add {
-      val p = new ControlPane("Select Columns")
+      val p = new ControlPane("Select Columns", "select-columns")
       p.el.append(columnsPane.start())
       p
     }
-    controls.add("Export Csv") {
+    controls.add("Export Csv", "export-csv") {
       val O = js.Dynamic.literal
       val cols = columns.all
       val header = cols.map(_.fullName).mkString(",")
