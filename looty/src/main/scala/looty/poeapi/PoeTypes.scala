@@ -245,9 +245,26 @@ object PoeTypes {
           prop <- x.properties.toOption.toList.map(_.toList).flatten
         } yield {
           var res = prop.name
-          if (prop.name.contains("%0")) {res = res.replaceAll("%0", prop.values(0)(0).toString)}
-          if (prop.name.contains("%1")) {res = res.replaceAll("%1", prop.values(1)(0).toString)}
-          res
+          var didInterpol = false
+          if (prop.name.contains("%0")) {
+            res = res.replaceAll("%0", prop.values(0)(0).toString)
+            didInterpol = true
+          }
+          if (prop.name.contains("%1")) {
+            res = res.replaceAll("%1", prop.values(1)(0).toString)
+            didInterpol = true
+          }
+
+          if (didInterpol) {
+            res
+          } else {
+            val vs = for {
+              v <- prop.values.toList
+            } yield {
+              v(0)
+            }
+            res + " " + vs.mkString("")
+          }
         }
       }
     }
