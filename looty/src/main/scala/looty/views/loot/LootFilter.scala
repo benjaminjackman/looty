@@ -56,7 +56,7 @@ object LootFilterColumn {
         case NUM(n) if n.nonEmpty && col.defaultNumFilter.isDefined => numFilter(n)(col.defaultNumFilter.get.apply)
         case "" => LootFilterColumn(text, col, i => true)
         case s =>
-          val toks = s.split(" ")
+          val toks = s.split("\\|")
           LootFilterColumn(text, col, (i) => {
             val value = col.getJs(i).toString.toLowerCase
             toks.exists(tok => value.matches(".*" + tok.toLowerCase + ".*"))
