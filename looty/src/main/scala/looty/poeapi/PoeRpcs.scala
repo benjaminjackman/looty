@@ -108,13 +108,13 @@ object PoeRpcs {
           case Success(x) =>
             qi.debugLog("Get => Success")
             Q.remove(qi)
-            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! Feedback and suggestions are very welcome!")
+            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! ")
             qi.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             qi.debugLog(s"Get => Throttled Failure $msg")
             console.debug("Throttled, cooling off ", qi.url, qi.params, msg)
-            Alerter.warn(s"""Throttled by pathofexile.com, while you wait why not stop by ${Alerter.featuresLink("here")} and leave some feedback and help other players discover the tool!""")
+            Alerter.warn(s"""Throttled by pathofexile.com, while you wait stop by ${Alerter.featuresLink("here")} and help other players discover the tool!""")
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
             qi.debugLog(s"#### Get => Other Failure: $t")
