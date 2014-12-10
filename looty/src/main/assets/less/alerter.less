@@ -1,27 +1,43 @@
-#alerter .info {
-  background: green;
-  color: white;
-  font-weight: bold;
-}
+@import "material/colors.less";
+@import "material/buttons.less";
 
-#alerter .warn {
-  background: yellow;
-  color: black;
-  font-weight: bold;
-}
+#alerter {
+  .info {
+    background: @green-A700;
+    color: black;
+    font-weight: bold;
+    margin: 5px;
+    .BoxShadowHelper(2);
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
 
-#alerter .warn a {
-  color: blue;
-  text-decoration: underline;
-}
+  }
 
-#alerter .warn a:hover {
-  color: pink;
-}
+  .warn {
+    background: @yellow-A200;
+    color: black;
+    font-weight: bold;
+    margin: 5px;
+    .BoxShadowHelper(2);
+  }
 
-#alerter .error {
-  background: red;
-  color: white;
-  font-weight: bold;
+  a, a:visited {
+    color: @red-A400;
+    text-decoration: none;
+  }
+
+  .warn a:hover {
+    color: pink;
+  }
+
+  .error {
+    background: red;
+    color: white;
+    font-weight: bold;
+    margin: 5px;
+    .BoxShadowHelper(2);
+  }
 }
 

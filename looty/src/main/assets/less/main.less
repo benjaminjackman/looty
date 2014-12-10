@@ -1,3 +1,6 @@
+@import "material/buttons";
+@import "material/colors";
+
 body {
   font-family: Helvetica, Arial, sans-serif;
 }
@@ -15,8 +18,8 @@ body {
 }
 
 body {
-  background: #151515;
-  color: #08b2ee;
+  background: @brown-500;
+//  color: #08b2ee;
 }
 
 body div.home {
@@ -24,16 +27,7 @@ body div.home {
   max-width: 600px;
 }
 
-a:visited {
-  color: cyan;
-}
-
-a:hover {
-  color: yellow;
-}
-
 a {
-  color: cyan;
   text-decoration: none;
 }
 
@@ -87,4 +81,80 @@ a.loading {
   -webkit-animation-duration: 100ms;
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-timing-function: ease-in-out;
+}
+
+.select2-container {
+  margin-right: 2px;
+  margin-bottom: 2px;
+  .select2-choice {
+    height: inherit;
+    line-height: normal;
+
+    border: none;
+    border-radius: 0px;
+    .select2-arrow {
+      display:none;
+    }
+    .MaterialBtn;
+  }
+  .select2-chosen {
+    color: black;
+    margin-right: 0px !important;
+    text-overflow: clip !important;
+  }
+}
+
+.ls-btn {
+  background-color: @blue-400;
+}
+.view-btn, .ctrl-btn, .pane-btn, .ls-btn, .col-btn, .col-div,
+.upgrade-btn, .char-btn, .tab-btn, .show-all-btn, .hide-all-btn,
+.reload-all-btn, .reload-visible-btn, .refresh-characters-btn {
+  margin-right: 2px;
+  .MaterialBtn;
+}
+.tab-btn {
+  color: white;
+}
+
+.refresh-pane {
+  background-color: @light-green-100;
+  .reload-all-btn {
+    background-color: @red-300;
+  }
+  .reload-visible-btn {
+    background-color: @yellow-300;
+  }
+  .refresh-characters-btn {
+    background-color: @green-300;
+  }
+}
+
+.columns-controls {
+  background-color: @light-green-100;
+  .col-div {
+    cursor: hand;
+    cursor: pointer;
+  }
+  .col-div.on-col {
+    color: black;
+    background-color: @green-300;
+    text-decoration: underline;
+  }
+  .col-div.off-col {
+    color: black;
+    background-color: @red-300;
+  }
+}
+
+.load-save {
+  background-color: @blue-100;
+//  .select2-container .select2-choice{
+//    background-color: @blue-500;
+//  }
+}
+
+
+#content {
+  padding: 5px;
 }

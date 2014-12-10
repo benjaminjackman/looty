@@ -87,7 +87,7 @@ class UpgradesPane(
 
   def displayLevelAndAttributes(level: Int, attrs: Attributes[Int]) {
     lvlEl.empty()
-    val lvlBtn = jq(s"""<a href="javascript:void(0)">Level: $level</a>""")
+    val lvlBtn = jq(s"""<a href="javascript:void(0)" class="upgrade-btn lvl-btn">Level: $level</a>""")
     lvlEl.append(lvlBtn)
     lvlBtn.on("click", () => {
       setRequiredLvlFn(level)
@@ -99,7 +99,7 @@ class UpgradesPane(
 
   def displayPaperDoll(doll: PaperDoll[Option[ComputedItem]]) {
     dollEl.empty()
-    val clrBtn = jq(s"""<a href="javascript:void(0)">[Clear]</a>""")
+    val clrBtn = jq(s"""<a href="javascript:void(0)" class="upgrade-btn clear-btn">Clear</a>""")
     dollEl.append(clrBtn)
     clrBtn.on("click", () => {
       itemDetailHover.setSecondItem(None)
@@ -114,7 +114,7 @@ class UpgradesPane(
   }
 
   def renderIid(iid: InventoryId, item: Option[ComputedItem]): JQuery = {
-    val el = jq(s"""<a href="javascript:void(0)">[$iid]</a>""")
+    val el = jq(s"""<a href="javascript:void(0)" class="upgrade-btn">$iid</a>""")
     el.on("click", () => {
       itemDetailHover.setSecondItem(item)
       setUpgradeItemFn(item)

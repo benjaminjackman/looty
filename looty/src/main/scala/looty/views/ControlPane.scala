@@ -33,7 +33,7 @@ class Controls(gOnClick: () => Unit) {
   }
   var panes: List[ControlPane] = Nil
   def add(text: String, cssCls: String)(onClick: => Unit) {
-    val m = jq(s"""<a href="javascript:void(0)" class="ctrl-btn $cssCls">[$text]</a>""")
+    val m = jq(s"""<a href="javascript:void(0)" class="ctrl-btn $cssCls">$text</a>""")
     m.on("click", () => {
       onClick
       gOnClick()
@@ -42,7 +42,7 @@ class Controls(gOnClick: () => Unit) {
     menu.append(m)
   }
   def add(pane: ControlPane) {
-    val m = jq(s"""<a href="javascript:void(0) class="pane-btn ${pane.cssCls}">[${pane.name}]</a>""")
+    val m = jq(s"""<a href="javascript:void(0)" class="pane-btn ${pane.cssCls}">${pane.name}</a>""")
     m.on("click", () => {
       panes.filterNot(_ =?= pane).foreach(_.el.hide())
       pane.toggle()

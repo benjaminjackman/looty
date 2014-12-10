@@ -18,5 +18,5 @@
 
   "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'",
 
-  "permissions": ["http://www.pathofexile.com/*", "http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
+  "permissions": ["https://poebuilder.com/*", "http://www.pathofexile.com/*", "http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
 }

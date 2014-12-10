@@ -29,8 +29,6 @@ class ItemDetailHover {
   def setSecondItem(item: Option[ComputedItem]) { secondItem = item }
 
 
-
-
   def show(
     x: Double,
     y: Double,
@@ -54,7 +52,7 @@ class ItemDetailHover {
   def positionFrame(x: Double, y: Double) {
     val yRat = y / global.window.innerHeight
     val h = el.height()
-    val top = Some(y-yRat*h)
+    val top = Some(y - yRat * h)
     val (right, left) = if (x / global.window.innerWidth < .5) {
       None -> Some(x + 10)
     } else {
@@ -89,10 +87,17 @@ class ItemDetailHover {
     def flavorText = {
       item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
     }
+
+    val itemName = item.item.name
+    val typeLine = item.item.typeLine
+    val titleName = if (itemName.isEmpty) {
+      s"""<span class="item-name">${typeLine.toString}</span>"""
+    } else {
+      s"""<span class="item-name">${itemName.toString}</span><br><hr>${typeLine.toString}"""
+    }
+
     val sections = List(
-      item.item.name.toString,
-      item.item.typeLine.toString,
-      s"Location: ${item.locAndCoords}",
+      s"<br><hr>Location: ${item.locAndCoords}",
       if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
       properties,
       requirements,
@@ -110,6 +115,7 @@ class ItemDetailHover {
     val h = s"""
         <div style="padding:5px">
         <img src="${item.item.icon}"></img>
+        $titleName
         ${sections.mkString("<hr>")}
         </div>
         """

@@ -29,8 +29,8 @@ class RefreshPane(league: String,
   implicit pc: PoeCacher) {
 
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
-  val elChars          = jq("<div>Characters: </div>")
-  val elTabs           = jq("<div>Tabs: </div>")
+  val elChars          = jq("<div class='chars'>Characters: </div>")
+  val elTabs           = jq("<div class='tabs'>Tabs: </div>")
   var buttons          = Map.empty[LootContainerId, (JQuery, Option[StashTabInfo])]
 
 
@@ -61,7 +61,7 @@ class RefreshPane(league: String,
     chars.sortBy(_.name.toUpperCase).foreach { char =>
       if (char.league.toString =?= league) {
         val conId: LootContainerId = CharInvId(char.name)
-        val button = jq(s"""<a title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
+        val button = jq(s"""<a class='char-btn' title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
         button.data("charName", char.name)
 
         buttons += conId -> (button -> None)
@@ -122,15 +122,15 @@ class RefreshPane(league: String,
 
 
   def start(): (JQuery, Future[Unit]) = {
-    val el = jq("<div></div>")
+    val el = jq("<div class='refresh-pane'></div>")
 
-    val showAllBtn = jq(s"""<a class="${Container.visCls}" href="javascript:void(0)" title="Will show all inventories and stash tabs">Show All</a>""")
+    val showAllBtn = jq(s"""<a class="${Container.visCls} show-all-btn" href="javascript:void(0)" title="Will show all inventories and stash tabs">Show All</a>""")
     showAllBtn.click { () =>
       containers.all.foreach(_.show())
       filters.refresh()
       false
     }
-    val hideAllBtn = jq(s"""<a class="${Container.invisCls}" href="javascript:void(0)" title="Will Hide all inventories and stash tabs">Hide All</a>""")
+    val hideAllBtn = jq(s"""<a class="${Container.invisCls} hide-all-btn" href="javascript:void(0)" title="Will Hide all inventories and stash tabs">Hide All</a>""")
     hideAllBtn.click { () =>
       containers.all.foreach(_.hide())
       filters.refresh()
@@ -138,9 +138,9 @@ class RefreshPane(league: String,
     }
 
 
-    val reloadAllBtn = jq("""<button title="Use this button after you move or rename premium stash tabs, or
+    val reloadAllBtn = jq("""<a class="reload-all-btn" href="javascript:void(0)" title="Use this button after you move or rename premium stash tabs, or
     |have changed several tabs. This will take some time, as GGG throttles the number of requests made per minute
-    |to get this data.">Clear And Reload Everything For This League From Server</button>""".stripMargin)
+    |to get this data.">Clear And Reload Everything For This League From Server</a>""".stripMargin)
 
     reloadAllBtn.click { () =>
       if (global.confirm("Are you sure? This might take some time.").asInstanceOf[Boolean]) {
@@ -154,7 +154,7 @@ class RefreshPane(league: String,
     }
 
 
-    val reloadVisibleBtn = jq("""<button title="Connects to GGG servers and refreshes the visible tabs">Refresh Shown</button>""")
+    val reloadVisibleBtn = jq("""<a class="reload-visible-btn" href="javascript:void(0)" title="Connects to GGG servers and refreshes the visible tabs">Refresh Shown</a>""")
     reloadVisibleBtn.on("click", () => {
       val cons = containers.all.filter(_.visible)
       if (cons.size > 12) {
@@ -167,7 +167,7 @@ class RefreshPane(league: String,
       false
     })
 
-    val refreshCharactersBtn = jq("""<button title="Refreshes character names and levels, shift click on them to refresh them">Refresh Character Levels But Not Inventories</button>""")
+    val refreshCharactersBtn = jq("""<a class="refresh-characters-btn" href="javascript:void(0)" title="Refreshes character names and levels, shift click on them to refresh them">Refresh Character Levels But Not Inventories</a>""")
     refreshCharactersBtn.on("click", { () =>
       Alerter.info("Refreshing Characters")
       pc.getChars(forceNetRefresh = true).onComplete {

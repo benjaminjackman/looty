@@ -1,9 +1,10 @@
-
+@import "material/colors";
+@import "material/buttons";
 
 .slick-headerrow-column {
-  background: #87ceeb;
   text-overflow: clip;
   box-sizing: border-box;
+  .MaterialBtn
 }
 
 .slick-headerrow-column.ui-state-default {
@@ -19,9 +20,12 @@
 }
 
 .slick-header-column.ui-state-default {
+  .MaterialBtn;
   background: none;
-  background-color: #505050;
-  color: #eeeeee;
+  background-color: @deep-orange-A200;
+  color: black;
+  border-color: @brown-500;
+  padding: 0px;
   /*border: none;*/
   /*padding: 0;*/
   /*text-shadow: none;*/
@@ -32,17 +36,17 @@
 }
 
 .slick-row.ui-widget-content.odd, .slick-cell {
-  background-color: #202020;
+  background-color: @brown-300;
 }
 
 .slick-row.ui-widget-content.even, .slick-cell {
-  background-color: #505050;
+  background-color: @brown-200;
 }
 
 .slick-row.ui-widget-content, .slick-cell {
   background: none;
 
-  color: #eeeeee;
+  color: black;
 
   /*background-color: #eeeeee;*/
   /*color: #666666;*/
