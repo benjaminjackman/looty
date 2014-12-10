@@ -25,7 +25,7 @@ class UpgradesPane(
   setUpgradeItemFn: (Option[ComputedItem]) => Unit,
   setRequiredLvlFn: Int => Unit
 )(implicit val pc: PoeCacher) {
-  val el     = jq("<div></div>")
+  val el     = jq("<div class='upgrades-pane'></div>")
   val dollEl = jq("<div></div>")
   val lvlEl  = jq("<div></div>")
 
