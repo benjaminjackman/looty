@@ -45,8 +45,7 @@ class LootWatcher(pc: PoeCacher) {
 object GlobalViewWidget {
   class Component(
     pc: PoeCacher,
-    lootWatcher: LootWatcher
-  ) {
+    lootWatcher: LootWatcher) {
 
     case class State(
       league: Option[League],
@@ -82,7 +81,6 @@ object GlobalViewWidget {
         .render { (p, s, b) =>
         div(
           a(href := "#/home", "[", span(`class` := "fa fa-home"), " Home]"),
-          a(key := "config", href := "#/config", "[", span(`class` := "fa fa-gear"), " Settings]"),
           SelectLeagueWidget(s.league, b.setLeague)(),
           s.league.map { l => SelectCharacterWidget(s.character, () => b.getCharacters(), (c) => b.setCharacter(c))()},
           s.character.map { character =>
@@ -94,7 +92,7 @@ object GlobalViewWidget {
                 onchange ==> { e: SyntheticEvent[HTMLInputElement] => b.setAutowatch(e.target.checked)},
                 s.autowatch && (checked := "true")))
           },
-          img(src:="sha2:afcf65")
+          a(key := "config", href := "#/config", "[", span(`class` := "fa fa-gear"), " Settings]")
         )
       }
         .create
@@ -116,5 +114,3 @@ class GlobalView(implicit val pc: PoeCacher) extends View {
   }
 }
 
-//http://forum.hardware.fr/hfr/JeuxVideo/PC/unique-path-exile-sujet_173815_276.htm
-//CATALINA->Ratcha
