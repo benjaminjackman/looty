@@ -9,7 +9,7 @@ import scala.concurrent.Future
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
-import looty.views.{GlobalView, Alerter, PoeBuilderView, WealthView, XpView, LootView, HomeView, View}
+import looty.views.{MapsView, GlobalView, Alerter, PoeBuilderView, WealthView, XpView, LootView, HomeView, View}
 import scala.util.Try
 import scala.scalajs.js.annotation.JSExport
 import looty.chrome.StoreMaster
@@ -63,6 +63,7 @@ class LootyApp(demoMode: Boolean) {
     }
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("global", () => setView(new GlobalView))
+    crossroads.addRoute("maps", () => setView(new MapsView))
     crossroads.addRoute("wealth", () => setView(new WealthView))
     crossroads.addRoute("poebuilder", () => setView(new PoeBuilderView))
     crossroads.routed.add(global.console.log, console)

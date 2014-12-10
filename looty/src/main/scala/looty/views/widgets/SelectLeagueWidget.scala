@@ -23,8 +23,8 @@ object SelectLeagueWidget {
     sealed trait League extends EnumElement
     case object Standard extends League
     case object Hardcore extends League
-    case object Rampage extends League
-    case object Beyond extends League
+    case object Torment extends League
+    case object Bloodlines extends League
     //Needs to be overrided in child class with
     final override val elements = CEnum.getElements(this)
   }
