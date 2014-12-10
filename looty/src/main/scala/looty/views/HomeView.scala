@@ -13,6 +13,11 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.36 (2014-12-10)
+* Material Design
+* Added Coinbase tip
+* Split strings on | instead of ' '
+
 ## 0.2.1.35 (2014-12-09)
 * Fixed properties in tooltips that got broke by flask interpolation
 
@@ -179,10 +184,7 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         |<li>Try starting the search with &gt; or &lt; or =</li>
         |<li>The search is not case sensitive.</li>
         |<li>If the first term isn't an operator, then it defaults to regular expression search.</li>
-        |<li>Spaces between words are treated as an 'OR', so only one word has to match to return a result.</li>
-        |<li>If you need to search for a space just use a \s instead.</li>
-        |<li>For example brass maul, will match 'brass maul' and 'spiny maul' and 'brass monkey'</li>
-        |<li>Whereas brass\smaul will match only 'brass maul'.</li>
+        |<li>| between words are treated as an 'OR', use this to search for several different types at once, for example: gloves|helmet|boots</li>
         |</ul>
         |</li>
         |<li>You can type into multiple columns to filter down to what you want, for example to find boots with a red

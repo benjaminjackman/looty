@@ -18,7 +18,7 @@ sbt fullOptJS
 rm -rf build
 mkdir build
 OUT="$(pwd)/build"
-SRC=looty/target/scala-2.10
+SRC=looty/target/web/public/main
 cp "$SRC/looty.html" "$SRC/popup.html" "$SRC/looty-opt.js" "$SRC/manifest.json" "$OUT"
 cp -r $SRC/images "$OUT"
 cp -r $SRC/jslib "$OUT"

@@ -138,6 +138,7 @@ object Build extends sbt.Build {
       libraryDependencies += "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6",
       libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.1")
     .settings((ScalaJSKeys.fastOptJS in Compile) <<= (ScalaJSKeys.fastOptJS in Compile).dependsOn(WebKeys.assets in Assets))
+    .settings((ScalaJSKeys.fullOptJS in Compile) <<= (ScalaJSKeys.fullOptJS in Compile).dependsOn(WebKeys.assets in Assets))
     .settings(sjsOutDir := WebKeys.webTarget.value / "public" / "main" )
     .settings(sjsTasks.map(t => crossTarget in(Compile, t) := sjsOutDir.value): _*)
     .enablePlugins(SbtWeb)
