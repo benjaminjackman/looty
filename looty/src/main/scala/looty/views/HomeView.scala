@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.35 (2014-12-09)
+* Fixed properties in tooltips that got broke by flask interpolation
+
 ## 0.2.1.34 (2014-12-09)
 * Added Increased Elemental Damage With Weapons (thanks jalish/toup/sundrino!)
 * Added css classes for controls
