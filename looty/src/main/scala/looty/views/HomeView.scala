@@ -13,8 +13,12 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.39 (2014-12-11)
+* fabric
+* poebuilder pop out
+
 ## 0.2.1.38 (2014-12-10)
-*styling
+* styling
 
 ## 0.2.1.37 (2014-12-10)
 * Fixed Bug, Less/CSS files not copied to deploy

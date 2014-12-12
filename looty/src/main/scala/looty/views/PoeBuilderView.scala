@@ -22,40 +22,40 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
   override def start(el: JQuery): Unit = {
     var charMap = Map.empty[String, CharacterInfo]
     val playerDiv = jq("<div></div>")
-    val iframe = jq("""<iframe class="poebuilder"></iframe>""")
+    //IFRAME DISABLED UNTIL POE BUILDER STOPS BLOCKING IFRAMES
+    //val iframe = jq("""<iframe class="poebuilder"></iframe>""")
     //Add a list of buttons one per character
-    val playerSel = {
-      val O = js.Dynamic.literal
-      el.append(playerDiv)
-      playerDiv.asJsDyn.select2(O(
-        width = 180,
-        placeholder = "Character",
-        query = { (q: js.Dynamic) =>
-          val term = q.term.asInstanceOf[String]
-          for {
-            chars <- pc.getChars()
-          } {
-            charMap = Map(chars.toList.map(c=>c.name -> c) : _*)
-            val cs = chars.toList
-              .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase))
-              .sortBy(_.name.toLowerCase)
-              .map(c => O(id = c.name, text = c.name))
-              .toJsArray
-            q.callback(O(results = cs))
-          }
-        }: js.Function
-      )).on("change", { (e: js.Dynamic) =>
-        Alerter.info("Attempting to get passive skill tree try from path of exile.com...")
-        val charName = e.`val`.asInstanceOf[String]
-        PoeRpcs.getPassiveSkills(charName).foreach { data =>
-          val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
-          iframe.attr("src", s"http://poebuilder.com/character/$base64")
-//          global.open()
+    val O = js.Dynamic.literal
+    el.append(playerDiv)
+    playerDiv.asJsDyn.select2(O(
+      width = 180,
+      placeholder = "Character",
+      query = { (q: js.Dynamic) =>
+        val term = q.term.asInstanceOf[String]
+        for {
+          chars <- pc.getChars()
+        } {
+          charMap = Map(chars.toList.map(c => c.name -> c): _*)
+          val cs = chars.toList
+            .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase))
+            .sortBy(_.name.toLowerCase)
+            .map(c => O(id = c.name, text = c.name))
+            .toJsArray
+          q.callback(O(results = cs))
         }
-      }: js.Function)
-    }
-//    el.append(playerSel)
-    el.append(iframe)
+      }: js.Function
+    )).on("change", { (e: js.Dynamic) =>
+      Alerter.info("Attempting to get passive skill tree try from path of exile.com...")
+      val charName = e.`val`.asInstanceOf[String]
+      PoeRpcs.getPassiveSkills(charName).foreach { data =>
+        val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
+        //iframe.attr("src", s"http://poebuilder.com/character/$base64")
+        window.open(s"http://poebuilder.com/character/$base64")
+      }
+    }: js.Function)
+
+    //    el.append(playerSel)
+    //el.append(iframe)
   }
   override def stop(): Unit = {
 
