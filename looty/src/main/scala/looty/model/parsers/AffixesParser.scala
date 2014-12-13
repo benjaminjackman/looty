@@ -108,12 +108,12 @@ object AffixesParser {
   def increased(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
   def reduced(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
   def plusTo(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
-  def addsDamage(element: js.String)(f: (ComputedItem, Double, Double) => Unit) = {
-    regex2(s"^Adds ([\\d]+)-([\\d]+) $element Damage$$")(f)
+  def addsDamage(element: js.String, suffix : String = "")(f: (ComputedItem, Double, Double) => Unit) = {
+    regex2(s"^Adds ([\\d]+)-([\\d]+) $element Damage${suffix}$$")(f)
   }
   def level(name: js.String)(f: (ComputedItem, Double) => Unit) = {
     val a = if (name.isEmpty) "" else name + " "
-    val r = s"^([.+-\\d]+)%* to Level of ${a}Gems in this item$$"
+    val r = s"^([.+-\\d]+)%* to Level of Socketed ${a}Gems$$"
     regex1(r)(f)
   }
   def simple1(prefix: js.String, suffix: js.String)(f: (ComputedItem, Double) => Unit) = {
@@ -133,6 +133,7 @@ object AffixesParser {
     increased(s"${x.cap} Damage")(_.increased.damage.+=(x, _))
     plusTo(s"${x.cap} Resistance")(_.plusTo.resistance.+=(x, _))
     addsDamage(x.cap)(_.damages(x).+=(_, _))
+    addsDamage(x.cap, " to attacks with Bows")(_.damagesWithBows(x).+=(_, _))
     level(x.cap)(_.gemLevel.element.+=(x, _))
   }
 
@@ -141,11 +142,11 @@ object AffixesParser {
     regex1(s"^([+-\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
     plusTo(s"maximum ${x.cap}")(_.plusTo.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} Regenerated per second")(_.regeneratedPerSecond.+=(x, _))
-    simple1("", s"${x.cap} gained for each enemy hit by your Attacks")(_.onHit.lifeAndMana.+=(x, _))
+    simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onHit.lifeAndMana.+=(x, _))
   }
 
   increased("Attack Speed")(_.increased.attackSpeed += _)
-  increased("Stun Duration on enemies")(_.increased.stunDurationOnEnemies += _)
+  increased("Stun Duration on Enemies")(_.increased.stunDurationOnEnemies += _)
   increased("Chill Duration on enemies")(_.increased.chillDurationOnEnemies += _)
   increased("Global Critical Strike Multiplier")(_.increased.globalCriticalStrikeMultiplier += _)
   increased("Global Critical Strike Chance")(_.increased.globalCriticalStrikeChance += _)
@@ -154,7 +155,7 @@ object AffixesParser {
   increased("Quantity of Items found")(_.increased.quantityOfItemsFound += _)
   increased("Rarity of Items found")(_.increased.rarityOfItemsFound += _)
   increased("Movement Speed")(_.increased.movementSpeed += _)
-  increased("Block and Stun Recovery")(_.increased.blockAndStunRecovery += _)
+  increased("Stun Recovery")(_.increased.blockAndStunRecovery += _)
   increased("Spell Damage")(_.increased.spellDamage += _)
   increased("Mana Regeneration Rate")(_.increased.manaRegenerationRate += _)
   increased("Elemental Damage with Weapons")(_.increased.elementalDamageWithWeapons += _)
@@ -223,6 +224,7 @@ object AffixesParser {
   reduced("Enemy Stun Threshold")(_.reduced.enemyStunThreshold += _)
 
   level("Melee")(_.gemLevel.melee += _)
+  level("Support")(_.gemLevel.support += _)
   level("Minion")(_.gemLevel.minion += _)
   level("Bow")(_.gemLevel.bow += _)
   level("")(_.gemLevel.addToAll(_))
@@ -232,6 +234,8 @@ object AffixesParser {
   simple1("", "Chance to Block")(_.blockChance += _)
   simple1("Has","Socket.?")(_.numExplicitModSockets += _ )
 
+  simple1("", "to Mana Cost of Skills")(_.minusToManaCostOfSkills += _.abs)
+  simple1("", "chance of Arrows Piercing")(_.arrowPierceChance += _)
 
 
   increased("Flask Charges gained")(_.flask.increased.chargesGained += _)

@@ -193,10 +193,12 @@ object ComputedItemProps {
   val PlusToAccuracy       = pno("PlusToAccuracy", "+acc")(Attack)(_.plusTo.accuracyRatingWithDex)
   val IncreasedAccuracy    = pno("IncreasedAccuracy", "+%acc")(Attack)(_.increased.accuracyRating)
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
+  val ArrowPierceChance = pno("ArrowPierceChance", "+%apc")(Attack)(_.arrowPierceChance)
   AttacksPerSecond !?= "AttacksPerSecond"
   PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
   IncreasedAccuracy !?= "Increased Accuracy Rating"
   IncreasedAttackSpeed !?= "Increased Attack Speed"
+  ArrowPierceChance !?= "Chance of Arrows Piercing"
 
   //Dps
   val DpsTotal     = pno("DpsTotal", "dps")(Dps)(_.total.dps.round)
@@ -265,6 +267,7 @@ object ComputedItemProps {
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
   val LifeRegen          = pno("LifeRegen", "lireg")(Regen)(_.regeneratedPerSecond.life)
   val IncreasedManaRegen = pno("IncreasedManaRegen", "+%mareg")(Regen)(_.increased.manaRegenerationRate)
+  val MinusToManaCostOfSkills = nno("MinusToManaCostOfSkills", "-mcos")(Regen)(_.minusToManaCostOfSkills)
   LifeLeech !?= "Life Leech from Physical Attack Damage"
   LifeGainOnHit !?= "Life Gain on Hit"
   ManaGainOnHit !?= "Mana Gain on Hit"
@@ -273,6 +276,7 @@ object ComputedItemProps {
   ManaLeech !?= "Mana Leech from Physical Attack Damage"
   LifeRegen !?= "Life Regeneration Rate"
   IncreasedManaRegen !?= "Increased Mana Regeneration Rate"
+  MinusToManaCostOfSkills !?= "Mana Cost of Skills"
 
   //Attributes
   val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
@@ -346,6 +350,7 @@ object ComputedItemProps {
   val IncreasedGemLevelBow          = pno("IncreasedGemLevelBow", "+gBow")(Gems)(_.gemLevel.bow)
   val IncreasedGemLevelMinion       = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.gemLevel.minion)
   val IncreasedGemLevelMelee        = pno("IncreasedGemLevelMelee", "+gMelee")(Gems)(_.gemLevel.melee)
+  val IncreasedGemLevelSupport        = pno("IncreasedGemLevelSupport", "+gSupport")(Gems)(_.gemLevel.support)
   val IncreasedGemLevelAny          = pno("IncreasedGemLevelAny", "+gAny")(Gems)(_.gemLevel.any)
   val IncreasedGemLevelFire         = pno("IncreasedGemLevelFire", "+gFir")(Gems)(_.gemLevel.element.fire)
   val IncreasedGemLevelCold         = pno("IncreasedGemLevelCold", "+gCol")(Gems)(_.gemLevel.element.cold)
@@ -356,6 +361,7 @@ object ComputedItemProps {
   IncreasedGemLevelBow !?= "Increased Bow Gem Level "
   IncreasedGemLevelMinion !?= "Increased Minion Gem Level "
   IncreasedGemLevelMelee !?= "Increased Melee Gem Level "
+  IncreasedGemLevelSupport !?= "Increased Support Gem Level "
   IncreasedGemLevelAny !?= "Increased Any Gem Level "
   IncreasedGemLevelFire !?= "Increased Fire Gem Level "
   IncreasedGemLevelCold !?= "Increased Cold Gem Level "

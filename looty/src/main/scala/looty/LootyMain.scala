@@ -101,7 +101,7 @@ object LootyMain {
   @JSExport
   def main() {
     new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-    Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Looty is free, open source software.")
+    Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
   }
 
 }

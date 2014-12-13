@@ -34,8 +34,8 @@ object PoeTypes {
 //    val Rampage  = "Rampage"
     val Torment = "Torment"
     val Bloodlines = "Bloodlines"
-    val OneWeekRampageBeyond  = "One Week HC Rampage/Beyond"
-    val all = List(Standard, Hardcore, Torment, Bloodlines, OneWeekRampageBeyond)
+
+    val all = List(Standard, Hardcore, Torment, Bloodlines)
   }
 
   trait PassivesTree extends js.Object {
@@ -130,6 +130,15 @@ object PoeTypes {
 
       val all = List(normal, magic, rare, unique, gem, currency, quest)
     }
+    val vaalFragments = ISet(
+      "Sacrifice at Dusk",
+      "Sacrifice at Midnight",
+      "Sacrifice at Dawn",
+      "Sacrifice at Noon",
+      "Mortal Grief",
+      "Mortal Rage",
+      "Mortal Hope",
+      "Mortal Ignorance")
 
     implicit class AnyItemExtensions(val x: AnyItem) extends AnyVal {
       def isGem = x.getFrameType == FrameTypes.gem
@@ -139,6 +148,7 @@ object PoeTypes {
       def isCurrency = x.getFrameType == FrameTypes.currency && !isHideoutItem
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
+      def isFragment = vaalFragments(x.typeLine)
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
 
       def isInSocket = x.socket.toOption.isDefined

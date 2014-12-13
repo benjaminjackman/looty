@@ -48,7 +48,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   def maxResist = plusTo.resistance.all.max
   def magicFind = increased.quantityOfItemsFound + increased.rarityOfItemsFound
 
-  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest
+  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem
 
   def displayName = {
     var n = item.name
@@ -105,6 +105,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isSupportGem) "Support Gem"
     else if (item.isSkillGem) "Skill Gem"
     else if (item.isMap) "Map"
+    else if (item.isFragment) "Fragment"
     else if (item.isQuest) "QuestItem"
     else "UNKNOWN"
   }
@@ -186,7 +187,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var attribute = Attributes.mutable(0.0)
   }
 
-  val damages = Elements of MinMaxDamage(0, 0)
+  val damages         = Elements of MinMaxDamage(0, 0)
+  val damagesWithBows = Elements of MinMaxDamage(0, 0)
 
   object plusTo {
     val attribute  = Attributes mutable 0.0
@@ -212,6 +214,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var minion    = 0.0
     var bow       = 0.0
     var any       = 0.0
+    var support   = 0.0
     def addToAll(n: Double) = {
       Elements.all.foreach(element +=(_, n))
       Attributes.all.foreach(attribute +=(_, n))
@@ -224,7 +227,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   object total {
-    lazy val dps = perElementDps.all.sum
+    lazy val dps       = perElementDps.all.sum
     lazy val avgDamage = properties.damages.all.map(_.avg).sum
 
     lazy val perElementDps = Elements calculatedWith { element =>
@@ -288,6 +291,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   var reflectsPhysicalDamageToAttackers = 0.0
   var blockChance                       = 0.0
   var numExplicitModSockets             = 0.0
+  var minusToManaCostOfSkills           = 0.0
+  var arrowPierceChance                 = 0.0
 
   val regeneratedPerSecond = LifeAndMana mutable 0.0
 
