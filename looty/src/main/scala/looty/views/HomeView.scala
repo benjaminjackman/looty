@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.41 (2014-12-12)
+* Updated description
+
 ## 0.2.1.40 (2014-12-12)
 * Patch 1.3.0 Parsing updates
 

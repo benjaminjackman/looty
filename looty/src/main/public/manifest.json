@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Looty! for Path of Exile",
-  "version": "0.2.1.40",
+  "name": "Looty! Stash search for Path of Exile",
+  "version": "0.2.1.41",
 
-  "description": "Looty! A Datagrid interface to Path of Exile Inventories.",
+  "description": "Looty! Helps you quickly find items by their stats or name in large Path of Exile stashes.",
 
   "icons": {
     "16": "images/coin16.png",
