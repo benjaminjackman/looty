@@ -19,6 +19,7 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 object MapsView {
+  import japgolly.scalajs.react.vdom.ReactVDom._
   import japgolly.scalajs.react.vdom.ReactVDom.all._
 
   object TopComp {
@@ -53,8 +54,15 @@ object MapsView {
 
   val MapsComponent = ReactComponentB[Seq[ComputedItem]]("MapsComponent")
     .render { (p) =>
+    val mapsByLvl = p.groupBy(_.mapLevel)
     div(
-      p.map(MapComponent(_))
+      mapsByLvl.toList.sortBy(_._1).map { case (lvl, ms) =>
+        div(
+          span("Level=", lvl, " "),
+          span("Count=", ms.size, ": "),
+          ms.sortBy(_.displayName).map(m=>MapComponent(m))
+        )
+      }
     )
   }
     .create

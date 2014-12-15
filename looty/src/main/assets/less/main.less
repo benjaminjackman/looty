@@ -28,32 +28,6 @@ a {
   text-decoration: none;
 }
 
-.visible-loot-container {
-  border-color: #00A0FF;
-  border-width: 2px;
-  border-style: solid;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 2px;
-}
-
-.invisible-loot-container {
-  border-color: gold;
-  border-width: 2px;
-  border-style: dotted;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: 2px;
-}
-
-.tab-btn {
-  color: white;
-}
-
-a.loading {
-  color: red;
-}
-
 @-webkit-keyframes llama-mode {
   0% {
     background-color: Yellow;
@@ -115,12 +89,11 @@ a.loading {
     background: #c2c2c2;
   }
 }
+
 .upgrades-pane {
   background-color: @yellow-500;
   background-image: url("/images/yellow-500-linen.png");
 }
-
-
 
 .pane-btn.refresh-tabs {
   background-color: @light-blue-100;
@@ -128,6 +101,7 @@ a.loading {
     background: #c2c2c2;
   }
 }
+
 .refresh-pane {
   background-color: @light-blue-100;
   background-image: url("/images/light-blue-100-linen.png");
@@ -140,15 +114,40 @@ a.loading {
   .refresh-characters-btn {
     background-color: @green-300;
   }
+
   .tab-btn {
     color: white;
   }
+
+  .visible-loot-container {
+    border-color: @light-blue-100;
+    border-width: 2px;
+    border-style: solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .invisible-loot-container {
+    border-color: @yellow-300;
+    border-width: 2px;
+    border-style: dotted;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
   .tab-btn, .char-btn {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     margin-left: -5px;
     margin-right: -5px;
+    white-space: nowrap;
+    &.loading {
+      color: red;
+    }
   }
+
+
+
   .show-all-btn {
     background-color: @green-300;
   }
