@@ -144,7 +144,8 @@ object Build extends sbt.Build {
     .settings(sjsOutDir := WebKeys.webTarget.value / "public" / "main" )
     .settings(sjsTasks.map(t => crossTarget in(Compile, t) := sjsOutDir.value): _*)
 //    .settings(scalatex.SbtPlugin.projectSettings:_*)
-    .enablePlugins(SbtWeb)
+    .enablePlugins(SbtWeb, play.twirl.sbt.SbtTwirl)
+    .settings(sourceDirectories in (Compile, play.twirl.sbt.Import.TwirlKeys.compileTemplates) := (unmanagedSourceDirectories in Compile).value)
 
   lazy val root = Project("root", file("."))
     .aggregate(looty)
