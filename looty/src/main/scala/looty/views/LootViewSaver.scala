@@ -43,21 +43,21 @@ object  LootViewSaver {
     val k = colPrefix + name.take(50)
 
     val data = js.Dynamic.literal()
-    data.cols = cols.map(_.id).toJsArray
+    data.cols = cols.map(_.id).toJsArr
     columnFilters.foreach { filters =>
       data.columnFilters = filters.map { filter =>
         val fd = js.Dynamic.literal()
         fd.text = filter.text
         fd.col = filter.col.id
         fd
-      } toJsArray
+      } toJsArr
     }
     containerFilters.foreach { filters =>
       data.containerFilters = filters.map { containerId =>
         val fd = js.Dynamic.literal()
         fd.encoded = containerId.encode
         fd
-      } toJsArray
+      } toJsArr
     }
     val json = global.JSON.stringify(data).toString
     localStorage.setItem(k, json)

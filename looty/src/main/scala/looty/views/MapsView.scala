@@ -4,6 +4,7 @@ package views
 import japgolly.scalajs.react.{BackendScope, React, ReactComponentB}
 import looty.model.ComputedItem
 import looty.poeapi.PoeCacher
+
 import looty.views.widgets.SelectLeagueWidget
 import looty.views.widgets.SelectLeagueWidget.Leagues.League
 import org.scalajs.dom

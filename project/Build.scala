@@ -97,11 +97,12 @@ object Build extends sbt.Build {
 
 
   lazy val sjsTasks = List(
-    ScalaJSKeys.packageExternalDepsJS,
-    ScalaJSKeys.packageInternalDepsJS,
-    ScalaJSKeys.packageExportedProductsJS,
     ScalaJSKeys.fastOptJS,
     ScalaJSKeys.fullOptJS)
+
+
+  lazy val cgtaOpenVersion = "0.2.1"
+  lazy val sVersion = "2.11.4"
 
   lazy val sjsOutDir = Def.settingKey[File]("directory for javascript files output by scalajs")
 
@@ -114,18 +115,19 @@ object Build extends sbt.Build {
       scalacOptions += "-language:existentials",
       scalacOptions += "-language:higherKinds"
     ).settings(
+      scalaVersion := sVersion
+    ).settings(
       cgta.otest.OtestPlugin.settingsSjs: _*
     ).settings(
       autoCompilerPlugins := true,
       ScalaJSKeys.requiresDOM := true,
-      libraryDependencies += compilerPlugin("org.scala-lang.plugins" % "continuations" % scalaVersion.value),
       libraryDependencies ++= Seq(
         "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
         "org.scala-lang.modules" %% "scala-async" % "0.9.2",
         "biz.cgta" %%% "otest-sjs" % "0.1.12",
-        "biz.cgta" %%% "oscala-sjs" % "0.1.0",
-        "biz.cgta" %%% "cenum-sjs" % "0.1.0",
-        "biz.cgta" %%% "serland-sjs" % "0.1.0"
+        "biz.cgta" %%% "oscala-sjs" % cgtaOpenVersion,
+        "biz.cgta" %%% "serland-sjs" % cgtaOpenVersion,
+        "biz.cgta" %%% "cenum-sjs" % cgtaOpenVersion
       )
     )
     .settings(
@@ -141,9 +143,13 @@ object Build extends sbt.Build {
     .settings((ScalaJSKeys.fullOptJS in Compile) <<= (ScalaJSKeys.fullOptJS in Compile).dependsOn(WebKeys.assets in Assets))
     .settings(sjsOutDir := WebKeys.webTarget.value / "public" / "main" )
     .settings(sjsTasks.map(t => crossTarget in(Compile, t) := sjsOutDir.value): _*)
+//    .settings(scalatex.SbtPlugin.projectSettings:_*)
     .enablePlugins(SbtWeb)
 
-  lazy val root = Project("root", file(".")).aggregate(looty).enablePlugins(SbtWeb)
+  lazy val root = Project("root", file("."))
+    .aggregate(looty)
+    .settings(scalaVersion := sVersion)
+    .enablePlugins(SbtWeb)
 
   object Libs {
   }

@@ -37,7 +37,7 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
       }
 
       Future.sequence(
-        List(setChars(otherLeagueChars.toJsArray), clearStis(league)) :::
+        List(setChars(otherLeagueChars.toJsArr), clearStis(league)) :::
             tabsToClear
       ).map(x => Unit)
     }

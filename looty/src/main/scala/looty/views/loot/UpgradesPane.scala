@@ -47,7 +47,7 @@ class UpgradesPane(
               .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase) && c.league =?= league)
               .sortBy(_.name.toLowerCase)
               .map(c => O(id = c.name, text = c.name))
-              .toJsArray
+              .toJsArr
             q.callback(O(results = cs))
           }
         }: js.Function

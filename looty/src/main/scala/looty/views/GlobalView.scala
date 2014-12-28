@@ -1,12 +1,14 @@
 package looty
 package views
 
+
+import looty.views.widgets.SelectLeagueWidget.Leagues.League
 import org.scalajs.dom
 import dom.HTMLInputElement
 import japgolly.scalajs.react.{SyntheticEvent, BackendScope, React, ReactComponentB}
 import looty.poeapi.PoeCacher
 import widgets.{SelectCharacterWidget, SelectLeagueWidget}
-import widgets.SelectLeagueWidget.Leagues.League
+
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 import poeapi.PoeTypes.CharacterInfo

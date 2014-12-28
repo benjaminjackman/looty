@@ -156,7 +156,7 @@ class WealthView(implicit val pc: PoeCacher) extends View {
     el.append(table)
     def refresh() = {
       rowMap.foreach(_._2.refresh())
-      val ccs = global.JSON.stringify(rowMap.toList.map(_._2.cc.toJs).toJsArray).asJsStr
+      val ccs = global.JSON.stringify(rowMap.toList.map(_._2.cc.toJs).toJsArr).asJsStr
       LocalStorageSaver.save(lsKey, ccs)
       val tot = rowMap.map(_._2.total).sum
       totSpan.text(global.d3.round(tot, 2).toString)

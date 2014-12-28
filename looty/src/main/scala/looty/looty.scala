@@ -42,16 +42,16 @@ class LootyIterableExtensions[A](val xs: Iterable[A]) {
   def minByOptI[B](f: A => B)(implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.minBy[B](f))
   def maxByOptI[B](f: A => B)(implicit cmp: Ordering[B]): Option[A] = if (xs.isEmpty) None else Some(xs.maxBy[B](f))
 
-  def toJsArr: js.Array[A] = {
-    val zs = xs.toVector
-    val ys = new js.Array[A](zs.size)
-    var i = 0
-    while (i < xs.size) {
-      ys(i) = zs(i)
-      i += 1
-    }
-    ys
-  }
+//  def toJsArr: js.Array[A] = {
+//    val zs = xs.toVector
+//    val ys = new js.Array[A](zs.size)
+//    var i = 0
+//    while (i < xs.size) {
+//      ys(i) = zs(i)
+//      i += 1
+//    }
+//    ys
+//  }
 }
 
 class LootyTypeAExtensions[A](val a: A) extends AnyVal {

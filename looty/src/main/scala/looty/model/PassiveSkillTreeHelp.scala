@@ -58,7 +58,7 @@ object PassiveSkillTreeHelp {
 
   def decode(charClass : CharClass, rawHashes: js.Array[Int]): String = {
 
-    val hashes = (magicPrefix(charClass.id) ::: rawHashes.toList).map(swapEndian16).toJsArray
+    val hashes = (magicPrefix(charClass.id) ::: rawHashes.toList).map(swapEndian16).toJsArr
     val sarray = new Uint16Array(hashes)
     base64ArrayBuffer(sarray.buffer).replaceAll("\\+", "-").replaceAll("/", "_")
   }

@@ -33,7 +33,7 @@ object Select2Wrapper {
         val term = q.term.asInstanceOf[String]
         filterFn(term).foreach { xs =>
           val ys = xs.map(x => O(id = x, text = x))
-          q.callback(O(results = ys.toJsArray))
+          q.callback(O(results = ys.toJsArr))
         }
       }: js.Function
     )).on("change", { (e: js.Dynamic) =>

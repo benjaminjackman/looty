@@ -40,7 +40,7 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
             .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase))
             .sortBy(_.name.toLowerCase)
             .map(c => O(id = c.name, text = c.name))
-            .toJsArray
+            .toJsArr
           q.callback(O(results = cs))
         }
       }: js.Function

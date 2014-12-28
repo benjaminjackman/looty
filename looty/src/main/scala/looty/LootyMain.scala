@@ -82,7 +82,7 @@ class LootyApp(demoMode: Boolean) {
   def initComponents(): Future[_] = {
     //ModsCsvParser.init()
     if (demoMode) {
-      Future.successful()
+      Future.successful(())
     } else {
       Future.sequence(List(StoreMaster.init()))
     }
@@ -96,7 +96,7 @@ class LootyApp(demoMode: Boolean) {
   }
 }
 
-@JSExport
+@JSExport("LootyMain")
 object LootyMain {
   @JSExport
   def main() {

@@ -47,7 +47,7 @@ class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
         } else {
           Nil
         }
-        val vs = (create ++ names.filter(_.toLowerCase.startsWith(term.toLowerCase)).map(n => O(id = n, text = n))).toJsArray
+        val vs = (create ++ names.filter(_.toLowerCase.startsWith(term.toLowerCase)).map(n => O(id = n, text = n))).toJsArr
         q.callback(O(results = vs))
       }: js.Function
     ))
