@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.43 (2014-02-01)
+# Added eDps (thanks 1BLOOBERRY)
+# Added Dire Cloak, Dire Jack, Pain Veil types (thanks 1BLOOBERRY)
+
 ## 0.2.1.42 (2014-12-15)
 * Fixed stash tab buttons not turning red during reloads
 * Tweaks to map view

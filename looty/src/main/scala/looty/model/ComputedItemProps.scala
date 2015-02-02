@@ -203,12 +203,14 @@ object ComputedItemProps {
   //Dps
   val DpsTotal     = pno("DpsTotal", "dps")(Dps)(_.total.dps.round)
   val DpsPhysical  = pno("DpsPhysical", "pDps")(Dps)(_.total.perElementDps.physical.round)
+  val DpsElemental  = pno("DpsElemental", "eDps")(Dps)(_.total.eDps.round)
   val DpsFire      = pno("DpsFire", "fDps")(Dps)(_.total.perElementDps.fire.round)
   val DpsCold      = pno("DpsCold", "cDps")(Dps)(_.total.perElementDps.cold.round)
   val DpsLightning = pno("DpsLightning", "lDps")(Dps)(_.total.perElementDps.lightning.round)
   val DpsChaos     = pno("DpsChaos", "xDps")(Dps)(_.total.perElementDps.chaos.round)
   DpsTotal ?= "Total Dps or Average Damage for Non-Weapons"
   DpsPhysical !?= "Physical Dps or Average Damage for Non-Weapons"
+  DpsElemental !?= "Elemental Dps or Average Damage for Non-Weapons"
   DpsFire !?= "Fire Dps or Average Damage for Non-Weapons"
   DpsCold !?= "Cold Dps or Average Damage for Non-Weapons"
   DpsLightning !?= "Lightning Dps or Average Damage for Non-Weapons"

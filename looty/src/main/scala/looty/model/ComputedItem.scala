@@ -228,6 +228,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object total {
     lazy val dps       = perElementDps.all.sum
+    lazy val eDps      = perElementDps.fire + perElementDps.cold + perElementDps.lightning
     lazy val avgDamage = properties.damages.all.map(_.avg).sum
 
     lazy val perElementDps = Elements calculatedWith { element =>
