@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.44 (2014-02-10)
+# Added type line for finding items by their base types (Jalish)
+
 ## 0.2.1.43 (2014-02-01)
 # Added eDps (thanks 1BLOOBERRY)
 # Added Dire Cloak, Dire Jack, Pain Veil types (thanks 1BLOOBERRY)
