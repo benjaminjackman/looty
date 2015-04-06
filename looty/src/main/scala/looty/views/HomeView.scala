@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.45 (2014-04-06)
+# Added temp leagues
+
 ## 0.2.1.44 (2014-02-10)
 # Added type line for finding items by their base types (Jalish)
 
