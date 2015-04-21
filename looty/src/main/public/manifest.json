@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Looty! Stash search for Path of Exile",
-  "version": "0.2.1.45",
+  "version": "0.2.1.46",
 
   "description": "Looty! Helps you quickly find items by their stats or name in large Path of Exile stashes.",
 
@@ -16,7 +16,7 @@
     "default_popup" : "popup.html"
   },
 
-  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com https://www.coinbase.com/assets/tips.js 'unsafe-eval'",
+  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'",
 
   "permissions": ["http://www.pathofexile.com/*", "http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
 }

@@ -15,7 +15,11 @@ import looty.chrome.StoreMaster
 /**
  * This class will cache the data from the website in localstorage
  */
-class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
+class PoeCacherChrome(accountName : String) extends PoeCacher {
+  //GGG started requiring accountName for getting character inventories, this was used to store things in localstorage
+  //in anticipation of the day that looty would support multiple accounts, that day has not yet come. So for now hack
+  // around the issue
+  val account = "UnknownAccount!"
 
   private object Store {
     val store = StoreMaster
@@ -63,7 +67,8 @@ class PoeCacherChrome(account: String = "UnknownAccount!") extends PoeCacher {
       chars
     }
 
-    def getInvAndStore(char: String) = PoeRpcs.getCharacterInventory(char) map { inv =>
+    //Use the accountName variable here, in the future do this better
+    def getInvAndStore(char: String) = PoeRpcs.getCharacterInventory(accountName, char) map { inv =>
       Store.setInv(char, inv)
       inv
     }

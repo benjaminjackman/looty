@@ -386,11 +386,11 @@ object ComputedItemProps {
   FlaskAmountAppliedInstantly !?= "Flask Amount Applied Instantly"
 
 
-  val FlaskDispelsFrozenAndChilled = boo("FlaskDispelsFrozenAndChilled", "fafreeze")(FlasksActions)(_.flask.dispelsFrozenAndChilled)
-  val FlaskDispelsShocked          = boo("FlaskDispelsShocked", "fashock")(FlasksActions)(_.flask.dispelsShocked)
-  val FlaskDispelsBurning          = boo("FlaskDispelsBurning", "faburn")(FlasksActions)(_.flask.dispelsBurning)
+  val FlaskDispelsFrozenAndChilled = boo("FlaskDispelsFrozenAndChilled", "fafreeze")(FlasksActions)(_.flask.removesFrozenAndChilled)
+  val FlaskDispelsShocked          = boo("FlaskDispelsShocked", "fashock")(FlasksActions)(_.flask.removesShocked)
+  val FlaskDispelsBurning          = boo("FlaskDispelsBurning", "faburn")(FlasksActions)(_.flask.removesBurning)
   val FlaskRemovesBleeding         = boo("FlaskRemovesBleeding", "fableed")(FlasksActions)(_.flask.removesBleeding)
-  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.curseImmunity)
+  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.cursesImmunity)
   val FlaskKnockback               = boo("FlaskKnockback", "fknock")(FlasksActions)(_.flask.knockback)
   val FlaskInstant                 = boo("FlaskInstant", "finstant")(FlasksActions)(_.flask.instantRecovery)
 

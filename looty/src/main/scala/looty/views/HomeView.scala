@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.46 (2014-04-21)
+# Added account name to get-character inventories call since it is required there now
+
 ## 0.2.1.45 (2014-04-06)
 # Added temp leagues
 
@@ -198,7 +201,7 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
     el.html {
       """<div class="home">""" +
         s"""<h1 style="color:red">$banner</h1>""" +
-        """<h2><img src="images/coin16.png">Welcome to <span style="color:gold">Looty!</span><img src="images/coin16.png">""" +
+        """<h2><img src="images/coin16.png">Welcome to <span id="gold-looty" style="color:gold">Looty!</span><img src="images/coin16.png">""" +
         s"""</h2>Version: ($version)<p>""" +
         """<span style="color:gold">Looty</span> was created to make it easier to search inventories in Path of Exile.<br>
         |It provides a grid interface to search for items in different leagues.<br>
@@ -237,6 +240,7 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         """.stripMargin
     }
     val ta = el.append(s"""<textarea rows="60" cols="120" readonly>$versionHistory</textarea>""")
+    jq("#gold-looty", el).on("click", () => console.log("Clickity"))
   }
 
   def stop() {}

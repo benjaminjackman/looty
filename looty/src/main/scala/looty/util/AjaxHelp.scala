@@ -42,7 +42,7 @@ object AjaxHelp {
     val Delete = Value("Delete")
   }
 
-  def apply[A <: js.Any](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
+  def apply[A](url: String, requestType: HttpRequestTypes.HttpRequestType, data: Option[String]): Future[A] = {
     JsPromises.wrap[A] {
       val req = js.Dynamic.literal(url = url, `type`=requestType.toString).asJsDict[String]
       data.foreach(data => req("data") = data)

@@ -254,11 +254,18 @@ object AffixesParser {
   increased("Evasion Rating during flask effect")(_.flask.increased.evasion += _)
   increased("Movement Speed during flask effect")(_.flask.increased.evasion += _)
 
-  simple0("Dispels Frozen and Chilled")(_.flask.dispelsFrozenAndChilled = true)
-  simple0("Dispels Shocked")(_.flask.dispelsShocked = true)
-  simple0("Dispels Burning")(_.flask.dispelsBurning = true)
-  simple0("Removes Bleeding")(_.flask.removesBleeding = true)
-  simple0("Immunity to Curses during flask effect. Removes Curses on use")(_.flask.curseImmunity = true)
+  simple0("Removes Freeze and Chill on use")(_.flask.removesFrozenAndChilled = true)
+  simple0("Removes Shock on use")(_.flask.removesShocked = true)
+  simple0("Removes Burning on use")(_.flask.removesBurning = true)
+  simple0("Removes Bleeding on use")(_.flask.removesBleeding = true)
+  simple0("Removes Curses on use")(_.flask.removesCurses = true)
+
+  simple0("Immunity to Freeze and Chill during flask effect")(_.flask.frozenAndChilledImmunity = true)
+  simple0("Immunity to Shock during flask effect")(_.flask.shockedImmunity = true)
+  simple0("Immunity to Ignite during flask effect")(_.flask.burningImmunity = true)
+  simple0("Immunity to Curses during flask effect")(_.flask.cursesImmunity = true)
+  simple0("Immunity to Bleeding during flask effect")(_.flask.bleedingImmunity = true)
+
   simple0("Adds Knockback to Melee Attacks during flask effect")(_.flask.knockback = true)
   simple0("Instant Recovery")(_.flask.instantRecovery = true)
   simple0("Instant Recovery when on Low Life")(_.flask.instantRecoveryLowLife = true)

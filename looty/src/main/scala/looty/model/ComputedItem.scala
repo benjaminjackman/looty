@@ -332,13 +332,21 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var additionalResistances = 0.0
     var lifeRecoveryToMinions = 0.0
 
-    var dispelsFrozenAndChilled = false
-    var dispelsShocked          = false
-    var dispelsBurning          = false
+
+    var removesFrozenAndChilled = false
+    var removesShocked          = false
+    var removesBurning          = false
     var removesBleeding         = false
-    var curseImmunity           = false
-    var knockback               = false
-    var instantRecovery         = false
-    var instantRecoveryLowLife  = false
+    var removesCurses           = false
+
+    var frozenAndChilledImmunity = false
+    var shockedImmunity          = false
+    var burningImmunity          = false
+    var bleedingImmunity         = false
+    var cursesImmunity           = false
+
+    var knockback              = false
+    var instantRecovery        = false
+    var instantRecoveryLowLife = false
   }
 }

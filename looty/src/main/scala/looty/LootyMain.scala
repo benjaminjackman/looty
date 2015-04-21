@@ -1,5 +1,7 @@
 package looty
 
+import cgta.oscala.util.debugging.PRINT
+import looty.poeapi.PoeRpcs
 import looty.vmjs.Vm
 
 import scala.annotation.meta.field
@@ -24,11 +26,11 @@ import looty.chrome.StoreMaster
 //////////////////////////////////////////////////////////////
 
 
-class LootyApp(demoMode: Boolean) {
+class LootyApp(accountName: String, demoMode: Boolean) {
 
 
   implicit val pc: PoeCacher = {
-    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome()
+    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome(accountName)
   }
 
 
@@ -57,7 +59,7 @@ class LootyApp(demoMode: Boolean) {
       if (demoMode) {
         crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
       } else {
-        val l = league.toLowerCase.replace("/","_").replace(" ","_")
+        val l = league.toLowerCase.replace("/", "_").replace(" ", "_")
         crossroads.addRoute(s"$l-grid", () => setView(new LootView(league)))
       }
     }
@@ -100,8 +102,17 @@ class LootyApp(demoMode: Boolean) {
 object LootyMain {
   @JSExport
   def main() {
-    new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-    Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
+    Alerter.info("Looking up accountName from GGGs website")
+    PoeRpcs.getAccountName().foreach {
+      case Some(accountName) =>
+        console.log(accountName)
+        new LootyApp(accountName, demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+        Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
+      case _ =>
+        console.log("NO MATCH FOUND")
+        new LootyApp("No_Account", demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+        Alerter.error("Unable to locate account name, You are probably not logged into path of exile account, please log in.")
+    }
   }
 
 }

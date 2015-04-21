@@ -25,12 +25,24 @@ object PoeRpcs {
 
   import PoeTypes._
 
+  def getAccountName() : Future[Option[String]] = {
+    AjaxHelp[String]("http://www.pathofexile.com/my-account", HttpRequestTypes.Get, None).map { html =>
+      val Regex = "href=\"/account/view-profile/([^\"]*)".r.unanchored
+      html match {
+        case Regex(accountName) => Some(accountName)
+        case _ => None
+      }
+
+    }
+  }
 
   def getCharacters(): Future[Characters] = {
     enqueue[js.Array[CharacterInfo]](url = "http://www.pathofexile.com/character-window/get-characters", params = null)
   }
 
   def getPassiveSkills(character: String): Future[PassivesTree] = {
+    //Also reqData=0 is sent sometimes
+    //TODO accountName=$accountName
     enqueue[PassivesTree](
       url = s"http://www.pathofexile.com/character-window/get-passive-skills?character=$character",
       params = null,
@@ -38,9 +50,10 @@ object PoeRpcs {
     )
   }
 
-  def getCharacterInventory(character: String): Future[Inventory] = {
+  def getCharacterInventory(accountName : String, character: String): Future[Inventory] = {
     val p = newObject
     p.character = character
+    p.accountName = accountName
     enqueue[Inventory](url = "http://www.pathofexile.com/character-window/get-items", params = p)
   }
 
