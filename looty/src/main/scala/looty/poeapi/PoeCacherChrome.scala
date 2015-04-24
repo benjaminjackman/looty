@@ -15,7 +15,7 @@ import looty.chrome.StoreMaster
 /**
  * This class will cache the data from the website in localstorage
  */
-class PoeCacherChrome(accountName : String) extends PoeCacher {
+class PoeCacherChrome(override val accountName : String) extends PoeCacher {
   //GGG started requiring accountName for getting character inventories, this was used to store things in localstorage
   //in anticipation of the day that looty would support multiple accounts, that day has not yet come. So for now hack
   // around the issue

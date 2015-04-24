@@ -24,7 +24,7 @@ class UpgradesPane(
   itemDetailHover: ItemDetailHover,
   setUpgradeItemFn: (Option[ComputedItem]) => Unit,
   setRequiredLvlFn: Int => Unit
-)(implicit val pc: PoeCacher) {
+  )(implicit val pc: PoeCacher) {
   val el     = jq("<div class='upgrades-pane'></div>")
   val dollEl = jq("<div></div>")
   val lvlEl  = jq("<div></div>")
@@ -55,7 +55,7 @@ class UpgradesPane(
         loadChar(e.`val`.asInstanceOf[String])
       }: js.Function)
     }
-//    el.append(playerSel)
+    //    el.append(playerSel)
     el.append(lvlEl)
     el.append(dollEl)
     el
@@ -64,7 +64,7 @@ class UpgradesPane(
   def loadChar(name: String) {
     import scala.async.Async.{async, await}
     async {
-      val pFut = PoeRpcs.getPassiveSkills(name)
+      val pFut = PoeRpcs.getPassiveSkills(accountName = pc.accountName, character = name)
       val cFut = pc.getChars()
       val iFut = pc.getInv(name)
       val passives = await(pFut)

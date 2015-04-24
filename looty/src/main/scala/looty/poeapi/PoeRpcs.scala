@@ -32,7 +32,6 @@ object PoeRpcs {
         case Regex(accountName) => Some(accountName)
         case _ => None
       }
-
     }
   }
 
@@ -40,11 +39,11 @@ object PoeRpcs {
     enqueue[js.Array[CharacterInfo]](url = "http://www.pathofexile.com/character-window/get-characters", params = null)
   }
 
-  def getPassiveSkills(character: String): Future[PassivesTree] = {
+  def getPassiveSkills(accountName: String, character: String): Future[PassivesTree] = {
     //Also reqData=0 is sent sometimes
-    //TODO accountName=$accountName
+    //TODO
     enqueue[PassivesTree](
-      url = s"http://www.pathofexile.com/character-window/get-passive-skills?character=$character",
+      url = s"http://www.pathofexile.com/character-window/get-passive-skills?accountName=$accountName&character=$character",
       params = null,
       reqType = HttpRequestTypes.Get
     )

@@ -47,7 +47,7 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
     )).on("change", { (e: js.Dynamic) =>
       Alerter.info("Attempting to get passive skill tree try from path of exile.com...")
       val charName = e.`val`.asInstanceOf[String]
-      PoeRpcs.getPassiveSkills(charName).foreach { data =>
+      PoeRpcs.getPassiveSkills(accountName = pc.accountName, character = charName).foreach { data =>
         val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
         //iframe.attr("src", s"http://poebuilder.com/character/$base64")
         window.open(s"http://poebuilder.com/character/$base64")

@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.47 (2014-04-24)
+# Added account name to get-character skill tree call
+
 ## 0.2.1.46 (2014-04-21)
 # Added account name to get-character inventories call since it is required there now
 

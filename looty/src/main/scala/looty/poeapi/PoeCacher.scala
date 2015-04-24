@@ -15,6 +15,7 @@ import looty.model.parsers.ItemParser
 //////////////////////////////////////////////////////////////
 
 trait PoeCacher {
+  def accountName: String
   def getChars(forceNetRefresh: Boolean = false): Future[Characters]
   def getInv(char: String, forceNetRefresh: Boolean = false): Future[Inventory]
   def getStashInfo(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]
