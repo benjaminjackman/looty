@@ -25,12 +25,12 @@ object PoeRpcs {
 
   import PoeTypes._
 
-  def getAccountName() : Future[Option[String]] = {
-    AjaxHelp[String]("http://www.pathofexile.com/my-account", HttpRequestTypes.Get, None).map { html =>
+  def getAccountName() : Future[String] = {
+    AjaxHelp[String]("http://www.pathofexile.com/my-account", HttpRequestTypes.Get, None).flatMap{ html =>
       val Regex = "href=\"/account/view-profile/([^\"]*)".r.unanchored
       html match {
-        case Regex(accountName) => Some(accountName)
-        case _ => None
+        case Regex(accountName) => Future.successful(accountName)
+        case _ => Future.failed(new Throwable("Unable to regex parse account name from page."))
       }
     }
   }

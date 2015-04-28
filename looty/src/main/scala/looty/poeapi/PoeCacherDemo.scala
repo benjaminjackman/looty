@@ -15,10 +15,10 @@ import scala.scalajs.js
 
 class PoeCacherDemo extends PoeCacher {
   //Demo version needs to just read the whole store off disk then have it in a data structure
-  private var jsonCache : Option[js.Dynamic] = None
-  private def loadJson() : Future[js.Dynamic] = {
+  private var jsonCache: Option[js.Dynamic] = None
+  private def loadJson(): Future[js.Dynamic] = {
     jsonCache.map(Future.successful).getOrElse {
-      AjaxHelp.get("data/sample-items.json").map { x=>
+      AjaxHelp.get("data/sample-items.json").map { x =>
         jsonCache = Some(x)
         x
       }
@@ -26,7 +26,10 @@ class PoeCacherDemo extends PoeCacher {
   }
   private val account: String = "UnknownAccount!"
 
-  override def accountName: String = "NoAccountName"
+
+  def getAccountName: Future[String] = Future.successful("DemoAccount")
+  override def setAccountNameOverride(accountName: Option[String]): Unit = {}
+  override def getAccountNameOverride(): Option[String] = None
 
   def getChars(forceNetRefresh: Boolean): Future[PoeTypes.Characters] =
     loadJson().map(_.asJsDict[Characters](s"$account-characters"))

@@ -1,10 +1,9 @@
 package looty
 
-import cgta.oscala.util.debugging.PRINT
-import looty.poeapi.PoeRpcs
-import looty.vmjs.Vm
 
-import scala.annotation.meta.field
+import looty.poeapi.PoeRpcs
+import looty.views.SettingsView
+
 import scala.scalajs.js
 
 import scala.concurrent.Future
@@ -26,13 +25,11 @@ import looty.chrome.StoreMaster
 //////////////////////////////////////////////////////////////
 
 
-class LootyApp(accountName: String, demoMode: Boolean) {
-
+class LootyApp(demoMode: Boolean) {
 
   implicit val pc: PoeCacher = {
-    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome(accountName)
+    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome()
   }
-
 
   var curView: View = null
 
@@ -68,6 +65,7 @@ class LootyApp(accountName: String, demoMode: Boolean) {
     crossroads.addRoute("maps", () => setView(new MapsView))
     crossroads.addRoute("wealth", () => setView(new WealthView))
     crossroads.addRoute("poebuilder", () => setView(new PoeBuilderView))
+    crossroads.addRoute("settings", () => setView(new SettingsView))
     crossroads.routed.add(global.console.log, console)
     if (hasher.getURL().toString.endsWith("home")) {
       hasher.setHash("home")
@@ -102,17 +100,20 @@ class LootyApp(accountName: String, demoMode: Boolean) {
 object LootyMain {
   @JSExport
   def main() {
-    Alerter.info("Looking up accountName from GGGs website")
-    PoeRpcs.getAccountName().foreach {
-      case Some(accountName) =>
-        console.log(accountName)
-        new LootyApp(accountName, demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-        Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
-      case _ =>
-        console.log("NO MATCH FOUND")
-        new LootyApp("No_Account", demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-        Alerter.error("Unable to locate account name, You are probably not logged into path of exile account, please log in.")
-    }
+    new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+//    Alerter.info("Looking up accountName from GGGs website")
+//    PoeRpcs.getAccountName().foreach {
+//      case Some(accountName) =>
+//        console.log(accountName)
+//
+//        Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
+//      case _ =>
+//        console.log("NO MATCH FOUND")
+//        new LootyApp(None, demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+//        Alerter.error("Unable to locate account name, You are probably not logged into path of exile account, please log in. If you are logged in specify your account name manually <a href=\"#/settings\">here</a>")
+//      //Allow user to manually enter account name
+//
+//    }
   }
 
 }

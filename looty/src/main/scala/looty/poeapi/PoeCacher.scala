@@ -15,7 +15,9 @@ import looty.model.parsers.ItemParser
 //////////////////////////////////////////////////////////////
 
 trait PoeCacher {
-  def accountName: String
+  def getAccountNameOverride() : Option[String]
+  def setAccountNameOverride(accountName : Option[String]) : Unit
+  def getAccountName : Future[String]
   def getChars(forceNetRefresh: Boolean = false): Future[Characters]
   def getInv(char: String, forceNetRefresh: Boolean = false): Future[Inventory]
   def getStashInfo(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]

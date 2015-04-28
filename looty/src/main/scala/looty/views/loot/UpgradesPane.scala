@@ -64,7 +64,7 @@ class UpgradesPane(
   def loadChar(name: String) {
     import scala.async.Async.{async, await}
     async {
-      val pFut = PoeRpcs.getPassiveSkills(accountName = pc.accountName, character = name)
+      val pFut = pc.getAccountName.flatMap(accountName => PoeRpcs.getPassiveSkills(accountName = accountName, character = name))
       val cFut = pc.getChars()
       val iFut = pc.getInv(name)
       val passives = await(pFut)

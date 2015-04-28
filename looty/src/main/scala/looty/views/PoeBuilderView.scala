@@ -7,6 +7,8 @@ import looty.poeapi.{PoeRpcs, PoeCacher}
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 import scala.scalajs.js
+import scala.util.Failure
+import scala.util.Success
 
 
 //////////////////////////////////////////////////////////////
@@ -47,10 +49,15 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
     )).on("change", { (e: js.Dynamic) =>
       Alerter.info("Attempting to get passive skill tree try from path of exile.com...")
       val charName = e.`val`.asInstanceOf[String]
-      PoeRpcs.getPassiveSkills(accountName = pc.accountName, character = charName).foreach { data =>
-        val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
-        //iframe.attr("src", s"http://poebuilder.com/character/$base64")
-        window.open(s"http://poebuilder.com/character/$base64")
+      pc.getAccountName.onComplete {
+        case Success(accountName) =>
+          PoeRpcs.getPassiveSkills(accountName = accountName, character = charName).foreach { data =>
+            val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
+            //iframe.attr("src", s"http://poebuilder.com/character/$base64")
+            window.open(s"http://poebuilder.com/character/$base64")
+          }
+        case Failure(ex) =>
+          Alerter.error(s"""No account name specified ($ex) please set it manually here: <a href="#/settings">here</a>""")
       }
     }: js.Function)
 

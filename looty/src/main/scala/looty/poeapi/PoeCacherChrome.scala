@@ -15,7 +15,8 @@ import looty.chrome.StoreMaster
 /**
  * This class will cache the data from the website in localstorage
  */
-class PoeCacherChrome(override val accountName : String) extends PoeCacher {
+class PoeCacherChrome() extends PoeCacher {
+  cacher =>
   //GGG started requiring accountName for getting character inventories, this was used to store things in localstorage
   //in anticipation of the day that looty would support multiple accounts, that day has not yet come. So for now hack
   // around the issue
@@ -30,21 +31,28 @@ class PoeCacherChrome(override val accountName : String) extends PoeCacher {
         char <- chars.toList
         if char.league.toString !=?= league
       } yield {
-        char
-      }
+          char
+        }
 
       val tabsToClear = for {
         stis <- getStis(league).toList
         sti <- stis.toList
       } yield {
-        clearStashTab(league, sti.i.toInt)
-      }
+          clearStashTab(league, sti.i.toInt)
+        }
 
       Future.sequence(
         List(setChars(otherLeagueChars.toJsArr), clearStis(league)) :::
-            tabsToClear
+          tabsToClear
       ).map(x => Unit)
     }
+
+    def setAccountNameOverride(accountName: String) = store.set("accountNameOverride", accountName)
+    def clearAccountNameOverride() = store.clear("accountNameOverride")
+    def getAccountNameOverride(): Option[String] = store.get("accountNameOverride")
+
+    def setAccountNameNet(accountName: String) = store.set("accountNameNet", accountName)
+    def getAccountNameNet(): Option[String] = store.get("accountNameNet")
 
     def getChars = store.get[Characters](s"$account-characters")
     def setChars(chars: Characters) = store.set(s"$account-characters", chars)
@@ -62,15 +70,24 @@ class PoeCacherChrome(override val accountName : String) extends PoeCacher {
   }
 
   private object Net {
+    def getAccountName = PoeRpcs.getAccountName() map { accountName =>
+      Store.setAccountNameNet(accountName)
+      accountName
+    }
+
     def getCharsAndStore = PoeRpcs.getCharacters() map { chars =>
       Store.setChars(chars)
       chars
     }
 
     //Use the accountName variable here, in the future do this better
-    def getInvAndStore(char: String) = PoeRpcs.getCharacterInventory(accountName, char) map { inv =>
-      Store.setInv(char, inv)
-      inv
+    def getInvAndStore(char: String): Future[Inventory] = {
+      cacher.getAccountName.flatMap { accountName =>
+        PoeRpcs.getCharacterInventory(accountName, char) map { inv =>
+          Store.setInv(char, inv)
+          inv
+        }
+      }
     }
 
     def getStisAndStore(league: String) = PoeRpcs.getStashTabInfos(league) map { stis =>
@@ -81,6 +98,17 @@ class PoeCacherChrome(override val accountName : String) extends PoeCacher {
     def getStashTabAndStore(league: String, tabIdx: Int) = PoeRpcs.getStashTab(league, tabIdx) map { stab =>
       Store.setStashTab(league, tabIdx, stab)
       stab
+    }
+  }
+
+  override def getAccountName: Future[String] = {
+    Store.getAccountNameOverride() match {
+      case Some(accountName) => Future.successful(accountName)
+      case None =>
+        Store.getAccountNameNet() match {
+          case Some(accountName) => Future.successful(accountName)
+          case None => Net.getAccountName
+        }
     }
   }
 
@@ -133,4 +161,10 @@ class PoeCacherChrome(override val accountName : String) extends PoeCacher {
 
 
   override def clearLeague(league: String): Future[Unit] = Store.clearLeague(league)
+  override def getAccountNameOverride(): Option[String] = Store.getAccountNameOverride()
+
+  override def setAccountNameOverride(accountName: Option[String]): Unit = accountName match {
+    case Some(accountName) => Store.setAccountNameOverride(accountName)
+    case None => Store.clearAccountNameOverride()
+  }
 }
