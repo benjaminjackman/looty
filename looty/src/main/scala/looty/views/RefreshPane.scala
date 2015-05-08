@@ -4,6 +4,7 @@ package views
 import looty.model.parsers.ItemParser
 import looty.model.{StashTabIdx, CharInvId, ComputedItem, LootContainerId}
 import looty.poeapi.PoeCacher
+import looty.poeapi.PoeTypes.Leagues.League
 import looty.poeapi.PoeTypes.{CharacterInfo, StashTabInfo}
 
 import looty.views.loot.{Filters, Containers, Container}
@@ -22,7 +23,7 @@ import scala.util.{Failure, Success}
 // Created by bjackman @ 8/24/14 6:23 PM
 //////////////////////////////////////////////////////////////
 
-class RefreshPane(league: String,
+class RefreshPane(league: League,
   containers: Containers,
   filters: Filters,
   updateContainer: (LootContainerId, List[ComputedItem]) => Unit)(
@@ -37,7 +38,7 @@ class RefreshPane(league: String,
   def refreshContainer(conId: LootContainerId) {
     buttons.get(conId).foreach {
       case (btn, Some(sti)) =>
-        pc.getStashTab(league, conId.asInstanceOf[StashTabIdx].idx, forceNetRefresh = true).foreach { st =>
+        pc.getStashTab(league.poeName, conId.asInstanceOf[StashTabIdx].idx, forceNetRefresh = true).foreach { st =>
           val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
           updateContainer(conId, items)
         }
@@ -59,7 +60,7 @@ class RefreshPane(league: String,
     buttons = buttons.filterKeys(!_.isCharInv)
     elChars.empty()
     chars.sortBy(_.name.toUpperCase).foreach { char =>
-      if (char.league.toString =?= league) {
+      if (char.league.toString =?= league.poeName) {
         val conId: LootContainerId = CharInvId(char.name)
         val button = jq(s"""<a class='char-btn' title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
         button.data("charName", char.name)
@@ -78,7 +79,7 @@ class RefreshPane(league: String,
 
   def addTabBtns(): Future[Unit] = {
     for {
-      stis <- pc.getStashInfo(league, forceNetRefresh = false)
+      stis <- pc.getStashInfo(league.poeName, forceNetRefresh = false)
     } yield {
       stis.foreach { sti =>
         val index = sti.i
@@ -90,7 +91,7 @@ class RefreshPane(league: String,
         buttons += conId -> (button -> Some(sti))
 
         addCon(conId, button, elTabs) {
-          pc.getStashTab(league, sti.i.toInt, forceNetRefresh = true).foreach { st =>
+          pc.getStashTab(league.poeName, sti.i.toInt, forceNetRefresh = true).foreach { st =>
             val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
             updateContainer(conId, items)
           }
@@ -144,7 +145,7 @@ class RefreshPane(league: String,
 
     reloadAllBtn.click { () =>
       if (global.confirm("Are you sure? This might take some time.").asInstanceOf[Boolean]) {
-        pc.clearLeague(league).foreach { x =>
+        pc.clearLeague(league.poeName).foreach { x =>
           Alerter.info("Please reload the page")
           global.location.reload()
         }

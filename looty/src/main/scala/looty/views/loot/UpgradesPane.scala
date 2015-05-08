@@ -4,6 +4,7 @@ package views.loot
 import looty.model.InventoryIds.InventoryId
 import looty.model.parsers.ItemParser
 import looty.model.{Attributes, CharClasses, CharInvId, ComputedItem, PaperDoll, PassiveSkillTreeHelp}
+import looty.poeapi.PoeTypes.Leagues.League
 import looty.poeapi.{PoeCacher, PoeRpcs}
 import looty.views.ItemDetailHover
 import org.scalajs.jquery.JQuery
@@ -20,7 +21,7 @@ import scala.scalajs.js
 //////////////////////////////////////////////////////////////
 
 class UpgradesPane(
-  league: String,
+  league: League,
   itemDetailHover: ItemDetailHover,
   setUpgradeItemFn: (Option[ComputedItem]) => Unit,
   setRequiredLvlFn: Int => Unit
@@ -44,7 +45,7 @@ class UpgradesPane(
             chars <- pc.getChars()
           } {
             val cs = chars.toList
-              .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase) && c.league =?= league)
+              .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase) && c.league =?= league.poeName)
               .sortBy(_.name.toLowerCase)
               .map(c => O(id = c.name, text = c.name))
               .toJsArr

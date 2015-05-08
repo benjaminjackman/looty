@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.49 (2014-05-08)
+# Added flashback league support
+
 ## 0.2.1.48 (2014-04-28)
 # Trying to get account name to work for all users
 

@@ -25,13 +25,14 @@ object PoeTypes {
   type StashTabInfos = js.Array[StashTabInfo]
 
   object Leagues {
+    case class League(name : String, poeName : String)
 
-    val Standard = "Standard"
-    val Hardcore = "Hardcore"
-    val TormentBloodlinesSC = "Torment/Bloodlines"
-    val TormentBloodlinesHC = "Torment/Bloodlines HC"
+    val Standard = League("Standard", "Standard")
+    val Hardcore = League("Hardcore", "Hardcore")
+    val FlashbackSC = League("FlashbackSC", "1 Month Flashback (IC006)")
+    val FlashbackHC = League("FlashbackHC", "1 Month Flashback HC (IC007)")
 
-    val all = List(Standard, Hardcore, TormentBloodlinesSC, TormentBloodlinesHC)
+    val all = List(Standard, Hardcore, FlashbackSC, FlashbackHC)
   }
 
   trait PassivesTree extends js.Object {

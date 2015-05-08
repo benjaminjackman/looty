@@ -1,6 +1,7 @@
 package looty
 package views
 
+import looty.poeapi.PoeTypes.Leagues.League
 import looty.views.loot.{Columns, ColumnsPane, Containers, Filters, UpgradesPane}
 import org.scalajs.dom.{Blob, BlobPropertyBag}
 import org.scalajs.jquery.JQuery
@@ -49,7 +50,7 @@ trait WebSqlDatabase extends js.Object {
 }
 
 
-class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
+class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
   var grid       : js.Dynamic           = null
   var dataView   : js.Dynamic           = js.Dynamic.newInstance(global.Slick.Data.DataView)()
   var upgradeItem: Option[ComputedItem] = None
@@ -140,7 +141,7 @@ class LootView(val league: String)(implicit val pc: PoeCacher) extends View {
 
   def addAllItems {
     for {
-      cons <- pc.getAllContainersFuture(league)
+      cons <- pc.getAllContainersFuture(league.poeName)
       conFut <- cons
       (conId, con) <- conFut
     } {
