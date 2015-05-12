@@ -23,10 +23,12 @@ import looty.views.Alerter
 
 object PoeRpcs {
 
+  val basePoeUrl = "http://www.pathofexile.com"
+
   import PoeTypes._
 
   def getAccountName() : Future[String] = {
-    AjaxHelp[String]("http://www.pathofexile.com/my-account", HttpRequestTypes.Get, None).flatMap{ html =>
+    AjaxHelp[String](s"$basePoeUrl/my-account", HttpRequestTypes.Get, None).flatMap{ html =>
       val Regex = "href=\"/account/view-profile/([^\"]*)".r.unanchored
       html match {
         case Regex(accountName) => Future.successful(accountName)
@@ -36,14 +38,14 @@ object PoeRpcs {
   }
 
   def getCharacters(): Future[Characters] = {
-    enqueue[js.Array[CharacterInfo]](url = "http://www.pathofexile.com/character-window/get-characters", params = null)
+    enqueue[js.Array[CharacterInfo]](url = s"$basePoeUrl/character-window/get-characters", params = null)
   }
 
   def getPassiveSkills(accountName: String, character: String): Future[PassivesTree] = {
     //Also reqData=0 is sent sometimes
     //TODO
     enqueue[PassivesTree](
-      url = s"http://www.pathofexile.com/character-window/get-passive-skills?accountName=$accountName&character=$character",
+      url = s"$basePoeUrl/character-window/get-passive-skills?accountName=$accountName&character=$character",
       params = null,
       reqType = HttpRequestTypes.Get
     )
@@ -53,7 +55,7 @@ object PoeRpcs {
     val p = newObject
     p.character = character
     p.accountName = accountName
-    enqueue[Inventory](url = "http://www.pathofexile.com/character-window/get-items", params = p)
+    enqueue[Inventory](url = s"$basePoeUrl/character-window/get-items", params = p)
   }
 
   def getStashTab(league: String, tabIdx: Int): Future[StashTab] = {
@@ -61,7 +63,7 @@ object PoeRpcs {
     p.league = league.toString
     p.tabIndex = tabIdx
 
-    enqueue[StashTab](url = "http://www.pathofexile.com/character-window/get-stash-items", params = p)
+    enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p)
   }
 
   def getStashTabInfos(league: String): Future[StashTabInfos] = {
@@ -70,7 +72,7 @@ object PoeRpcs {
     p.tabIndex = 0
     p.tabs = 1
 
-    enqueue[StashTab](url = "http://www.pathofexile.com/character-window/get-stash-items", params = p).map { stab =>
+    enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p).map { stab =>
       stab.tabs.toOption.getOrElse(sys.error(s"Stash tab was not set in ${stab.toJsonString}"))
     }
   }

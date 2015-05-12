@@ -77,10 +77,10 @@ object Alerter {
 //  private def redditLink(msg: String) = s"""<a target="_blank" href="$feedback_0_2_1_10">$msg</a>"""
 
 
-  private val mainGGGUrl = "http://www.pathofexile.com/forum/view-thread/832233"
-  private def mainGGGLink(msg: String) = s"""<a target="_blank" href="$mainGGGUrl">$msg</a>"""
+  private val mainGGGForumUrl = "http://www.pathofexile.com/forum/view-thread/832233"
+  private def mainGGGForumLink(msg: String) = s"""<a target="_blank" href="$mainGGGForumUrl">$msg</a>"""
 
-  def featuresLink(msg: String) = mainGGGLink(msg: String)
+  def featuresLink(msg: String) = mainGGGForumLink(msg: String)
 
   // Returns a random integer between min (included) and max (excluded)
   def getRandomInt(min: Int, max: Int): Int = {
