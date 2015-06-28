@@ -13,25 +13,28 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
-## 0.2.1.49 (2014-05-08)
+## 0.2.1.50 (2015-06-28)
+# Fix for changed ajax api
+
+## 0.2.1.49 (2015-05-08)
 # Added flashback league support
 
-## 0.2.1.48 (2014-04-28)
+## 0.2.1.48 (2015-04-28)
 # Trying to get account name to work for all users
 
-## 0.2.1.47 (2014-04-24)
+## 0.2.1.47 (2015-04-24)
 # Added account name to get-character skill tree call
 
-## 0.2.1.46 (2014-04-21)
+## 0.2.1.46 (2015-04-21)
 # Added account name to get-character inventories call since it is required there now
 
-## 0.2.1.45 (2014-04-06)
+## 0.2.1.45 (2015-04-06)
 # Added temp leagues
 
-## 0.2.1.44 (2014-02-10)
+## 0.2.1.44 (2015-02-10)
 # Added type line for finding items by their base types (Jalish)
 
-## 0.2.1.43 (2014-02-01)
+## 0.2.1.43 (2015-02-01)
 # Added eDps (thanks 1BLOOBERRY)
 # Added Dire Cloak, Dire Jack, Pain Veil types (thanks 1BLOOBERRY)
 
