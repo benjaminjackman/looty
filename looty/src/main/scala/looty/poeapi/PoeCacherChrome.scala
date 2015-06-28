@@ -15,8 +15,7 @@ import looty.chrome.StoreMaster
 /**
  * This class will cache the data from the website in localstorage
  */
-class PoeCacherChrome() extends PoeCacher {
-  cacher =>
+class PoeCacherChrome() extends PoeCacher {cacher =>
   //GGG started requiring accountName for getting character inventories, this was used to store things in localstorage
   //in anticipation of the day that looty would support multiple accounts, that day has not yet come. So for now hack
   // around the issue
@@ -31,15 +30,15 @@ class PoeCacherChrome() extends PoeCacher {
         char <- chars.toList
         if char.league.toString !=?= league
       } yield {
-          char
-        }
+        char
+      }
 
       val tabsToClear = for {
         stis <- getStis(league).toList
         sti <- stis.toList
       } yield {
-          clearStashTab(league, sti.i.toInt)
-        }
+        clearStashTab(league, sti.i.toInt)
+      }
 
       Future.sequence(
         List(setChars(otherLeagueChars.toJsArr), clearStis(league)) :::
@@ -90,14 +89,22 @@ class PoeCacherChrome() extends PoeCacher {
       }
     }
 
-    def getStisAndStore(league: String) = PoeRpcs.getStashTabInfos(league) map { stis =>
-      Store.setStis(league, stis)
-      stis
+    def getStisAndStore(league: String) = {
+      cacher.getAccountName.flatMap { accountName =>
+        PoeRpcs.getStashTabInfos(accountName, league) map { stis =>
+          Store.setStis(league, stis)
+          stis
+        }
+      }
     }
 
-    def getStashTabAndStore(league: String, tabIdx: Int) = PoeRpcs.getStashTab(league, tabIdx) map { stab =>
-      Store.setStashTab(league, tabIdx, stab)
-      stab
+    def getStashTabAndStore(league: String, tabIdx: Int) = {
+      cacher.getAccountName.flatMap { accountName =>
+        PoeRpcs.getStashTab(accountName, league, tabIdx) map { stab =>
+          Store.setStashTab(league, tabIdx, stab)
+          stab
+        }
+      }
     }
   }
 

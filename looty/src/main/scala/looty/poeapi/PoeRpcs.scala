@@ -23,7 +23,7 @@ import looty.views.Alerter
 
 object PoeRpcs {
 
-  val basePoeUrl = "http://www.pathofexile.com"
+  val basePoeUrl = "https://www.pathofexile.com"
 
   import PoeTypes._
 
@@ -58,16 +58,18 @@ object PoeRpcs {
     enqueue[Inventory](url = s"$basePoeUrl/character-window/get-items", params = p)
   }
 
-  def getStashTab(league: String, tabIdx: Int): Future[StashTab] = {
+  def getStashTab(accountName : String, league: String, tabIdx: Int): Future[StashTab] = {
     val p = newObject
+    p.accountName = accountName
     p.league = league.toString
     p.tabIndex = tabIdx
 
     enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p)
   }
 
-  def getStashTabInfos(league: String): Future[StashTabInfos] = {
+  def getStashTabInfos(accountName : String, league: String): Future[StashTabInfos] = {
     val p = newObject
+    p.accountName = accountName
     p.league = league.toString
     p.tabIndex = 0
     p.tabs = 1
