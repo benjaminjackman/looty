@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.51 (2015-07-10)
+# Added Support for Tempest / Warbands Leagues
+
 ## 0.2.1.50 (2015-06-28)
 # Fix for changed ajax api
 

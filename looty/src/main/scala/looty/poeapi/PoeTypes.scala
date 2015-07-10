@@ -29,10 +29,10 @@ object PoeTypes {
 
     val Standard = League("Standard", "Standard")
     val Hardcore = League("Hardcore", "Hardcore")
-    val FlashbackSC = League("FlashbackSC", "1 Month Flashback (IC006)")
-    val FlashbackHC = League("FlashbackHC", "1 Month Flashback HC (IC007)")
+    val Warbands = League("Warbands", "Warbands")
+    val Tempest = League("Tempest", "Tempest")
 
-    val all = List(Standard, Hardcore, FlashbackSC, FlashbackHC)
+    val all = List(Standard, Hardcore, Warbands, Tempest)
   }
 
   trait PassivesTree extends js.Object {
