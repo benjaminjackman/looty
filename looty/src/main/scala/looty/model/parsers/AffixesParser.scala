@@ -133,15 +133,17 @@ object AffixesParser {
     increased(s"${x.cap} Damage")(_.increased.damage.+=(x, _))
     plusTo(s"${x.cap} Resistance")(_.plusTo.resistance.+=(x, _))
     addsDamage(x.cap)(_.damages(x).+=(_, _))
-    addsDamage(x.cap, " to attacks with Bows")(_.damagesWithBows(x).+=(_, _))
+    addsDamage(x.cap, " to Attacks")(_.damages(x).+=(_, _))
+    addsDamage(x.cap, " to Attacks with Bows")(_.damagesWithBows(x).+=(_, _))
     level(x.cap)(_.gemLevel.element.+=(x, _))
   }
 
   for (x <- LifeAndMana.all) {
     regex1(s"^([+-\\d]+) ${x.cap} [gG]ained on Kill")(_.onKill.lifeAndMana(x) += _)
-    regex1(s"^([+-\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
+    regex1(s"^([+-\\.\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
     plusTo(s"maximum ${x.cap}")(_.plusTo.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} Regenerated per second")(_.regeneratedPerSecond.+=(x, _))
+    simple1("", s"${x.cap} gained for each Enemy hit by Attacks")(_.onHit.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onHit.lifeAndMana.+=(x, _))
   }
 
@@ -244,15 +246,15 @@ object AffixesParser {
   increased("Flask Life Recovery rate")(_.flask.increased.lifeRecoveryRate += _)
   increased("Flask Recovery Speed")(_.flask.increased.flaskRecoverySpeed += _)
   increased("Charge Recovery")(_.flask.increased.chargeRecovery += _)
-  increased("Stun Recovery during flask effect")(_.flask.increased.stunRecovery += _)
+  increased("Stun Recovery during Flask effect")(_.flask.increased.stunRecovery += _)
   increased("Recovery Speed")(_.flask.increased.recoverySpeed += _)
   increased("Amount Recovered")(_.flask.increased.amountRecovered += _)
   increased("Recovery when on Low Life")(_.flask.increased.recoveryOnLowLife += _)
   increased("Life Recovered")(_.flask.increased.lifeRecovered += _)
   increased("Mana Recovered")(_.flask.increased.manaRecovered += _)
-  increased("Armour during flask effect")(_.flask.increased.armour += _)
-  increased("Evasion Rating during flask effect")(_.flask.increased.evasion += _)
-  increased("Movement Speed during flask effect")(_.flask.increased.evasion += _)
+  increased("Armour during Flask effect")(_.flask.increased.armour += _)
+  increased("Evasion Rating during Flask effect")(_.flask.increased.evasion += _)
+  increased("Movement Speed during Flask effect")(_.flask.increased.evasion += _)
 
   simple0("Removes Freeze and Chill on use")(_.flask.removesFrozenAndChilled = true)
   simple0("Removes Shock on use")(_.flask.removesShocked = true)
@@ -260,13 +262,13 @@ object AffixesParser {
   simple0("Removes Bleeding on use")(_.flask.removesBleeding = true)
   simple0("Removes Curses on use")(_.flask.removesCurses = true)
 
-  simple0("Immunity to Freeze and Chill during flask effect")(_.flask.frozenAndChilledImmunity = true)
-  simple0("Immunity to Shock during flask effect")(_.flask.shockedImmunity = true)
-  simple0("Immunity to Ignite during flask effect")(_.flask.burningImmunity = true)
-  simple0("Immunity to Curses during flask effect")(_.flask.cursesImmunity = true)
-  simple0("Immunity to Bleeding during flask effect")(_.flask.bleedingImmunity = true)
+  simple0("Immunity to Freeze and Chill during Flask effect")(_.flask.frozenAndChilledImmunity = true)
+  simple0("Immunity to Shock during Flask effect")(_.flask.shockedImmunity = true)
+  simple0("Immunity to Ignite during Flask effect")(_.flask.burningImmunity = true)
+  simple0("Immunity to Curses during Flask effect")(_.flask.cursesImmunity = true)
+  simple0("Immunity to Bleeding during Flask effect")(_.flask.bleedingImmunity = true)
 
-  simple0("Adds Knockback to Melee Attacks during flask effect")(_.flask.knockback = true)
+  simple0("Adds Knockback to Melee Attacks during Flask effect")(_.flask.knockback = true)
   simple0("Instant Recovery")(_.flask.instantRecovery = true)
   simple0("Instant Recovery when on Low Life")(_.flask.instantRecoveryLowLife = true)
 
@@ -282,7 +284,7 @@ object AffixesParser {
   simple1("Removes", "of Life Recovered from Mana when used")(_.flask.lifeFromMana += _)
   simple1("Removes", "of Mana Recovered from Life when used")(_.flask.manaFromLife += _)
 
-  simple1("", "additional Elemental Resistances during flask effect")(_.flask.additionalResistances += _)
+  simple1("", "additional Elemental Resistances during Flask effect")(_.flask.additionalResistances += _)
   simple1("Grants", "of Life Recovery to Minions")(_.flask.lifeRecoveryToMinions += _)
 
   val all = _all.toList

@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.52 (2015-07-10)
+# Fixed parsers to work with POE 2.0 Affix strings
+
 ## 0.2.1.51 (2015-07-10)
 # Added Support for Tempest / Warbands Leagues
 

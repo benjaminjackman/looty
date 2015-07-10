@@ -123,10 +123,12 @@ object PoeTypes {
       val unique   = FrameType(3, "unique", "rgb(192,64,64)")
       val gem      = FrameType(4, "gem", "rgb(0,192,192)")
       val currency = FrameType(5, "currency", "rgb(165,146,99)")
-      val quest    = FrameType(6, "quest", "rgb(0,255,0)")
+      val divCard = FrameType(6, "card", "rgb(165,146,99)")
+      val quest    = FrameType(7, "quest", "rgb(0,255,0)")
 
-      val all = List(normal, magic, rare, unique, gem, currency, quest)
+      val all = Array(normal, magic, rare, unique, gem, currency, divCard, quest)
     }
+
     val vaalFragments = ISet(
       "Sacrifice at Dusk",
       "Sacrifice at Midnight",
