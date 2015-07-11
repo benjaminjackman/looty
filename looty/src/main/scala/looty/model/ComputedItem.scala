@@ -89,8 +89,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   lazy val typeName = {
-    if (slots.isAmulet) "Jewelry Amulet"
-    else if (slots.isRing) "Jewelry Ring"
+    if (slots.isAmulet) "Amulet"
+    else if (slots.isRing) "Ring"
     else if (slots.isHelmet) "Arm Helmet"
     else if (slots.isChest) "Arm Chest"
     else if (slots.isGloves) "Arm Gloves"
@@ -107,6 +107,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isMap) "Map"
     else if (item.isFragment) "Fragment"
     else if (item.isQuest) "QuestItem"
+    else if (item.isJewel) "Jewel"
     else "UNKNOWN"
   }
 
