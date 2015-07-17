@@ -15,6 +15,7 @@ import looty.views.widgets.Select2Widget
 import looty.views.widgets.SelectCharacterWidget
 import looty.views.widgets.SelectLeagueWidget
 import looty.views.widgets.SelectLeagueWidget.Leagues.League
+import looty.views.widgets.SelectStashWidget
 import org.scalajs.dom
 import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.KeyboardEvent
@@ -64,40 +65,6 @@ case class VisualStashTabWidget(tab: StashTab, tabInfo: StashTabInfo) {
   def apply() = VisualStashTabWidget.component(this)
 }
 
-object SelectStashWidget {
-  val component = {
-    import japgolly.scalajs.react.vdom.ReactVDom._
-    import japgolly.scalajs.react.vdom.ReactVDom.all._
-    import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
-    val O = Dynamic.literal
-
-
-    ReactComponentB[SelectStashWidget]("SelectStashWidget")
-      .render((props) =>
-      Select2Widget[StashTabInfo](
-        selection = props.stashTabInfo,
-        width = 120,
-        placeholder = "Stash Tab",
-        elements = props.getStashTabInfos(),
-        onChange = props.onChange,
-        toString = x => s"${"%04d".format(x.i.toInt)}: ${x.n}",
-        fromString = s => {
-          val x = s.indexOf(':')
-          val i = s.substring(0, x).toInt
-          val n = s.substring(x + 2)
-          O(i = i, n = n).asInstanceOf[StashTabInfo]
-        }
-      )
-      )
-      .create
-  }
-
-
-}
-
-case class SelectStashWidget(league: League, stashTabInfo: Option[StashTabInfo], getStashTabInfos: () => Future[Seq[StashTabInfo]], onChange: (StashTabInfo) => Unit) {
-  def apply() = SelectStashWidget.component(this)
-}
 
 
 object UnderlayViewWidget {
@@ -127,7 +94,11 @@ object UnderlayViewWidget {
             SelectLeagueWidget(s.league, b.setLeague)(),
             div(st.display := "inline-block")(s.league.map { l => SelectStashWidget(l, s.stashTabInfo, () => pc.getStashTabInfos(l.rpcName).map(_.toSeq), b.setStashTabInfo)()}),
             a(href := "javascript:void(0)", className := "ctrl-btn", "resize")
+          ),
+          div(
+            s.stashTabInfo.map(sti => VisualStashTabWidget(null, sti)())
           )
+
           //          ,
           //          VisualStashTabWidget(null, null)()
         )
