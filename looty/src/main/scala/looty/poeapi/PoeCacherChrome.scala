@@ -144,7 +144,7 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
     }
   }
 
-  override def getStashInfo(league: String, forceNetRefresh: Boolean): Future[StashTabInfos] = {
+  override def getStashTabInfos(league: String, forceNetRefresh: Boolean): Future[StashTabInfos] = {
     if (forceNetRefresh) {
       Net.getStisAndStore(league)
     } else {

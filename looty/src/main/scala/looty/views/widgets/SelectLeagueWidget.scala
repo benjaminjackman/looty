@@ -20,11 +20,14 @@ import concurrent.Future
 object SelectLeagueWidget {
   object Leagues extends CEnum {
     final type EET = League
-    sealed trait League extends EnumElement
+    sealed trait League extends EnumElement {
+      def displayName = toString
+      def rpcName = toString
+    }
     case object Standard extends League
     case object Hardcore extends League
-    case object Torment extends League
-    case object Bloodlines extends League
+    case object Warbands extends League
+    case object Tempest extends League
     //Needs to be overrided in child class with
     final override val elements = CEnum.getElements(this)
   }

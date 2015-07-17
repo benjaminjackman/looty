@@ -79,7 +79,7 @@ class RefreshPane(league: League,
 
   def addTabBtns(): Future[Unit] = {
     for {
-      stis <- pc.getStashInfo(league.poeName, forceNetRefresh = false)
+      stis <- pc.getStashTabInfos(league.poeName, forceNetRefresh = false)
     } yield {
       stis.foreach { sti =>
         val index = sti.i

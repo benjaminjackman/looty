@@ -20,7 +20,7 @@ trait PoeCacher {
   def getAccountName : Future[String]
   def getChars(forceNetRefresh: Boolean = false): Future[Characters]
   def getInv(char: String, forceNetRefresh: Boolean = false): Future[Inventory]
-  def getStashInfo(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]
+  def getStashTabInfos(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]
   def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean = false): Future[StashTab]
   def clearLeague(league: String): Future[Unit]
 
@@ -33,8 +33,8 @@ trait PoeCacher {
 
 
   private def getAllStashTabs(league: String): Future[List[Future[(StashTabIdx, StashTab)]]] = {
-    getStashInfo(league).map { si =>
-      si.toList.map { sti =>
+    getStashTabInfos(league).map { tabInfos =>
+      tabInfos.toList.map { sti =>
         getStashTab(league, sti.i.toInt).map(StashTabIdx(sti.i.toInt) -> _) //.log("Got Stash Tab")
       }
     }
@@ -63,7 +63,7 @@ trait PoeCacher {
   //List[Future[LootContainer]]
   def getAllContainersFuture(league: String): Future[List[Future[(LootContainerId, List[ComputedItem])]]] = {
     for {
-      tabInfos <- getStashInfo(league)
+      tabInfos <- getStashTabInfos(league)
       invs <- getAllInventories(league)
       tabs <- getAllStashTabs(league)
     } yield {

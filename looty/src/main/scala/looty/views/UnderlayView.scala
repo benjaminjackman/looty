@@ -1,21 +1,30 @@
 package looty
 package views
 
-import cgta.oscala.util.debugging.PRINT
 import cgta.serland.SerBuilder
-import looty.model.ComputedItemProps
-import looty.model.LootContainerId
+import japgolly.scalajs.react.BackendScope
+import japgolly.scalajs.react.React
+import japgolly.scalajs.react.ReactComponentB
+import japgolly.scalajs.react.SyntheticEvent
 import looty.model.StashTabIdx
 import looty.model.parsers.ItemParser
 import looty.poeapi.PoeCacher
 import looty.poeapi.PoeTypes.StashTab
 import looty.poeapi.PoeTypes.StashTabInfo
+import looty.views.widgets.Select2Widget
+import looty.views.widgets.SelectCharacterWidget
+import looty.views.widgets.SelectLeagueWidget
+import looty.views.widgets.SelectLeagueWidget.Leagues.League
+import org.scalajs.dom
+import org.scalajs.dom.HTMLInputElement
 import org.scalajs.dom.KeyboardEvent
 import org.scalajs.dom.extensions.KeyCode
 import org.scalajs.jquery.JQuery
 import org.scalajs.jquery.JQueryEventObject
 
+import scala.concurrent.Future
 import scala.scalajs.js
+import scala.scalajs.js.Dynamic
 
 
 //////////////////////////////////////////////////////////////
@@ -25,6 +34,114 @@ import scala.scalajs.js
 // for licensing inquiries
 // Created by bjackman @ 7/17/15 1:45 AM
 //////////////////////////////////////////////////////////////
+
+object VisualStashTabWidget {
+  val component = {
+    import japgolly.scalajs.react.vdom.ReactVDom._
+    import japgolly.scalajs.react.vdom.ReactVDom.all._
+    import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+    val O = Dynamic.literal
+
+
+    ReactComponentB[VisualStashTabWidget]("VisualStashTabWidget")
+      .render((props) =>
+      div(
+        st.position := "absolute",
+        st.backgroundColor := "black",
+        st.top := "100px",
+        st.left := "100px",
+        st.height := "800px",
+        st.width := "800px"
+      )
+      )
+      .create
+  }
+
+
+}
+
+case class VisualStashTabWidget(tab: StashTab, tabInfo: StashTabInfo) {
+  def apply() = VisualStashTabWidget.component(this)
+}
+
+object SelectStashWidget {
+  val component = {
+    import japgolly.scalajs.react.vdom.ReactVDom._
+    import japgolly.scalajs.react.vdom.ReactVDom.all._
+    import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+    val O = Dynamic.literal
+
+
+    ReactComponentB[SelectStashWidget]("SelectStashWidget")
+      .render((props) =>
+      Select2Widget[StashTabInfo](
+        selection = props.stashTabInfo,
+        width = 120,
+        placeholder = "Stash Tab",
+        elements = props.getStashTabInfos(),
+        onChange = props.onChange,
+        toString = x => s"${"%04d".format(x.i.toInt)}: ${x.n}",
+        fromString = s => {
+          val x = s.indexOf(':')
+          val i = s.substring(0, x).toInt
+          val n = s.substring(x + 2)
+          O(i = i, n = n).asInstanceOf[StashTabInfo]
+        }
+      )
+      )
+      .create
+  }
+
+
+}
+
+case class SelectStashWidget(league: League, stashTabInfo: Option[StashTabInfo], getStashTabInfos: () => Future[Seq[StashTabInfo]], onChange: (StashTabInfo) => Unit) {
+  def apply() = SelectStashWidget.component(this)
+}
+
+
+object UnderlayViewWidget {
+  class Component(pc: PoeCacher) {
+    case class State(
+      league: Option[League],
+      stashTabInfo: Option[StashTabInfo]
+      )
+    case class Backend(T: BackendScope[_, State]) {
+      def setLeague(league: League) { T.modState(_.copy(league = Some(league))) }
+      def setStashTabInfo(stashTabInfo: StashTabInfo) { T.modState(_.copy(stashTabInfo = Some(stashTabInfo))) }
+    }
+
+
+    val component = {
+      import japgolly.scalajs.react.vdom.ReactVDom._
+      import japgolly.scalajs.react.vdom.ReactVDom.all._
+      import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+      val O = Dynamic.literal
+
+      ReactComponentB[UnderlayViewWidget]("UnderlayViewWidget")
+        .initialState(State(None, None))
+        .backend(Backend)
+        .render { (p, s, b) =>
+        div(
+          div(
+            SelectLeagueWidget(s.league, b.setLeague)(),
+            div(st.display := "inline-block")(s.league.map { l => SelectStashWidget(l, s.stashTabInfo, () => pc.getStashTabInfos(l.rpcName).map(_.toSeq), b.setStashTabInfo)()}),
+            a(href := "javascript:void(0)", className := "ctrl-btn", "resize")
+          )
+          //          ,
+          //          VisualStashTabWidget(null, null)()
+        )
+      }
+        .create
+    }
+
+  }
+}
+
+case class UnderlayViewWidget() {
+  def apply(pc: PoeCacher) = new UnderlayViewWidget.Component(pc).component(this)
+}
+
 
 class UnderlayView(implicit val pc: PoeCacher) extends View {
 
@@ -40,7 +157,16 @@ class UnderlayView(implicit val pc: PoeCacher) extends View {
 
   val league = "Standard"
   override def start(el: JQuery): Unit = {
+    val mel = el.get(0).asInstanceOf[dom.Element]
+    val root = UnderlayViewWidget()(pc)
+    React.renderComponent(root, mel)
+
+
+  }
+
+  def old(el: JQuery): Unit = {
     this.el = el
+
     val r = rect
     this.tabEl = jq(s"<div style='position:absolute;top:${r.top}px;left:${r.left}px; height:${r.h}px;width:${r.w}px;background-color:black'></div>")
     this.el.append(tabEl)
@@ -48,11 +174,12 @@ class UnderlayView(implicit val pc: PoeCacher) extends View {
     jq(window).on("keydown", f)
     el.append(itemDetailHover.el)
     getAndRenderTab(tabIdx)
+
   }
 
   def getAndRenderTab(i: Int) {
     pc.getStashTab(league, i).foreach { tab =>
-      pc.getStashInfo(league).foreach { infos =>
+      pc.getStashTabInfos(league).foreach { infos =>
         val info = infos(i)
         renderTab(tab, info)
       }

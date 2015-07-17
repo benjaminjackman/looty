@@ -37,7 +37,7 @@ class PoeCacherDemo extends PoeCacher {
   def getInv(char: String, forceNetRefresh: Boolean): Future[Inventory] =
     loadJson().map(_.asJsDict[Inventory](s"$account-$char-inventory"))
 
-  def getStashInfo(league: String, forceNetRefresh: Boolean): Future[PoeTypes.StashTabInfos] =
+  def getStashTabInfos(league: String, forceNetRefresh: Boolean): Future[PoeTypes.StashTabInfos] =
     loadJson().map(_.asJsDict[PoeTypes.StashTabInfos](s"$account-$league-stis"))
 
   def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean): Future[StashTab] =
