@@ -20,15 +20,21 @@ import scala.util.matching.Regex
 object TestLootScorerScriptParser extends FunSuite {
 
   val sample = """
+  sub print
+    set foo $1
+    set bar $2
+
+  end
+
   match
     Armour >= 1000
-    setToColor TextColor 255 255 0
-    setToColor BorderColor 128 0 0
-    setToColor BackgroundColor 64 64 0 192
-    setToFont
-    addTo Score 10
-    print
 
+    TextColor := 255 255 0
+    BorderColor := 128 0 0
+    BackgroundColor := 64 64 0 192
+    Score := 10
+    call print
+  end
 
   """.stripAuto
 

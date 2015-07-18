@@ -57,7 +57,7 @@ class Filters(containers: Containers, columns: Columns, setFilterFn: (ComputedIt
 
 
   def refresh() {
-    def filter(item: ComputedItem): js.Boolean = {
+    def filter(item: ComputedItem): Boolean = {
       def columnsAllows = columnFilters.forall { case (colId, fil) =>
         fil.allows(item)
       }

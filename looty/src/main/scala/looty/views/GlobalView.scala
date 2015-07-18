@@ -4,7 +4,6 @@ package views
 
 import looty.views.widgets.SelectLeagueWidget.Leagues.League
 import org.scalajs.dom
-import dom.HTMLInputElement
 import japgolly.scalajs.react.{SyntheticEvent, BackendScope, React, ReactComponentB}
 import looty.poeapi.PoeCacher
 import widgets.{SelectCharacterWidget, SelectLeagueWidget}
@@ -72,9 +71,9 @@ object GlobalViewWidget {
     }
 
     val component = {
-      import japgolly.scalajs.react.vdom.ReactVDom._
-      import japgolly.scalajs.react.vdom.ReactVDom.all._
-      import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+      import japgolly.scalajs.react.vdom._
+      import japgolly.scalajs.react.vdom.all._
+
       val O = Dynamic.literal
 
       ReactComponentB[GlobalViewWidget]("GlobalViewWidget")
@@ -91,7 +90,7 @@ object GlobalViewWidget {
               title := s"Automatically scan this player for updates every ${s.refreshIntervalSec} Seconds",
               input(
                 `type` := "checkbox",
-                onchange ==> { e: SyntheticEvent[HTMLInputElement] => b.setAutowatch(e.target.checked)},
+                onchange ==> { e: SyntheticEvent[dom.html.Input] => b.setAutowatch(e.target.checked)},
                 s.autowatch && (checked := "true")))
           },
           a(key := "config", href := "#/config", "[", span(`class` := "fa fa-gear"), " Settings]")

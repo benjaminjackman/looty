@@ -2,6 +2,7 @@ package looty
 package views
 
 import looty.model.ComputedItem
+import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
@@ -50,10 +51,10 @@ class ItemDetailHover {
   }
 
   def positionFrame(x: Double, y: Double) {
-    val yRat = y / global.window.innerHeight
+    val yRat = y / dom.window.innerHeight
     val h = el.height()
     val top = Some(y - yRat * h)
-    val (right, left) = if (x / global.window.innerWidth < .5) {
+    val (right, left) = if (x / window.innerWidth < .5) {
       None -> Some(x + 10)
     } else {
       Some(global.window.innerWidth.asInstanceOf[Double] - x + 10) -> None

@@ -27,12 +27,12 @@ class LootyStringExtensions(s: String) {
 }
 
 class LootyJsAnyExtensions(val a: js.Any) extends AnyVal {
-  def toJsonString: js.String = js.JSON.stringify(a)
+  def toJsonString: String = js.JSON.stringify(a)
   def asJsArr[A]: js.Array[A] = a.asInstanceOf[js.Array[A]]
-  def asJsBool: js.Boolean = a.asInstanceOf[js.Boolean]
-  def asJsStr: js.String = a.asInstanceOf[js.String]
-  def asJsNum: js.prim.Number = a.asInstanceOf[js.Number]
-  def isUndefined: Boolean = a.isInstanceOf[js.Undefined]
+  def asJsBool: Boolean = a.asInstanceOf[Boolean]
+  def asJsStr: String = a.asInstanceOf[String]
+  def asJsNum: Double = a.asInstanceOf[Double]
+  def isUndefined: Boolean = js.isUndefined(a)
 }
 
 class LootyIterableExtensions[A](val xs: Iterable[A]) {
@@ -55,7 +55,7 @@ class LootyIterableExtensions[A](val xs: Iterable[A]) {
 }
 
 class LootyTypeAExtensions[A](val a: A) extends AnyVal {
-  def nullSafe: Option[A] = if (a == null || a.isInstanceOf[js.Undefined]) None else Some(a)
+  def nullSafe: Option[A] = if (a == null || js.isUndefined(a)) None else Some(a)
 }
 
 package object looty

@@ -72,7 +72,7 @@ class LootyApp(demoMode: Boolean) {
     if (hasher.getURL().toString.endsWith("home")) {
       hasher.setHash("home")
     }
-    def parseHash(newHash: js.String, oldHash: js.UndefOr[String]) {
+    def parseHash(newHash: String, oldHash: js.UndefOr[String]) {
       crossroads.parse(newHash)
     }
     hasher.initialized.add(parseHash _)

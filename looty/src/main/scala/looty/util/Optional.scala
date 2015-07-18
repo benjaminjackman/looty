@@ -10,7 +10,7 @@ import scala.scalajs.js
 object Optional {
   implicit class OptionalExtensions[A](val a: Optional[A]) extends AnyVal {
     def isNull = a == null
-    def isUndefined = a.isInstanceOf[js.Undefined]
+    def isUndefined = js.isUndefined(a)
     def isEmpty = isNull || isUndefined
     def nonEmpty = !isEmpty
     def get: A = if (nonEmpty) a.asInstanceOf[A] else sys.error(s"get called on nullable when A is not defined")

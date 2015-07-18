@@ -15,7 +15,7 @@ import scala.scalajs.js
 
 
 object AffixesParser2 {
-  def parse(item: ProperItem, s: js.String): Boolean = {
+  def parse(item: ProperItem, s: String): Boolean = {
     var parsed = false
     all.toList.foreach { parser =>
       if (parser.parse(s, item)) parsed = true
@@ -31,7 +31,7 @@ object AffixesParser2 {
 
 
   trait AffixParser {
-    def parse(s: js.prim.String, i: ProperItem): Boolean
+    def parse(s: String, i: ProperItem): Boolean
   }
 
   trait RegexAffixParser extends AffixParser {
@@ -39,8 +39,8 @@ object AffixesParser2 {
   }
 
   trait BinaryAffixParser extends AffixParser {
-    def str: js.prim.String
-    def parse(s: js.prim.String, i: ProperItem): Boolean = if (s =?= str) {
+    def str: String
+    def parse(s: String, i: ProperItem): Boolean = if (s =?= str) {
       process(i)
       true
     } else {
@@ -50,8 +50,8 @@ object AffixesParser2 {
   }
 
   trait RegexAffixParser1 extends RegexAffixParser {
-    override def parse(s: js.prim.String, i: ProperItem): Boolean = {
-      s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
+    override def parse(s: String, i: ProperItem): Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList  match {
         case null => false
         case x :: y :: zs =>
           process(i, y.toString.toDouble)
@@ -64,8 +64,8 @@ object AffixesParser2 {
 
 
   trait RegexAffixParser2 extends RegexAffixParser {
-    override def parse(s: js.prim.String, i: ProperItem): Boolean = {
-      s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
+    override def parse(s: String, i: ProperItem): Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList  match {
         case null => false
         case x :: y :: z :: zs =>
           process(i, y.toString.toDouble, z.toString.toDouble)
@@ -76,17 +76,17 @@ object AffixesParser2 {
     def process(i: ProperItem, x: Double, y: Double)
   }
 
-  def simple0(s: js.String)(f: ProperItem => ProperItemProp0) {
+  def simple0(s: String)(f: ProperItem => ProperItemProp0) {
     add {
       new BinaryAffixParser {
-        def str: js.prim.String = s
+        def str: String = s
         def process(i: ProperItem): Unit = f(i)(i)
       }
     }
   }
 
 
-  def regex1(regex: js.String)(f: ProperItem => ProperItemProp1) = {
+  def regex1(regex: String)(f: ProperItem => ProperItemProp1) = {
     val r = regex
     add {
       new RegexAffixParser1() {
@@ -97,7 +97,7 @@ object AffixesParser2 {
   }
 
 
-  def regex2(regex: js.String)(f: ProperItem => ProperItemProp2) = {
+  def regex2(regex: String)(f: ProperItem => ProperItemProp2) = {
     val r = regex
     add {
       new RegexAffixParser2() {
@@ -108,18 +108,18 @@ object AffixesParser2 {
   }
 
 
-  def increased(name: js.String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
-  def reduced(name: js.String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
-  def plusTo(name: js.String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
-  def addsDamage(element: js.String)(f: ProperItem =>ProperItemProp2) = {
+  def increased(name: String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
+  def reduced(name: String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
+  def plusTo(name: String)(f: ProperItem => ProperItemProp1) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
+  def addsDamage(element: String)(f: ProperItem =>ProperItemProp2) = {
     regex2(s"^Adds ([\\d]+)-([\\d]+) $element Damage$$")(f)
   }
-  def level(name: js.String)(f: ProperItem => Option[ProperItemProp1]) = {
+  def level(name: String)(f: ProperItem => Option[ProperItemProp1]) = {
     val a = if (name.isEmpty) "" else name + " "
     val r = s"^([.+-\\d]+)%* to Level of ${a}Gems in this item$$"
     regex1(r)(i=> f(i).getOrElse(sys.error("Unknown gem type")))
   }
-  def simple1(prefix: js.String, suffix: js.String)(f: ProperItem => ProperItemProp1) = {
+  def simple1(prefix: String, suffix: String)(f: ProperItem => ProperItemProp1) = {
     val a = if (prefix.isEmpty) "" else prefix + " "
     val b = if (suffix.isEmpty) "" else " " + suffix
     val r = s"^$a([.+-\\d]+)%*$b$$"

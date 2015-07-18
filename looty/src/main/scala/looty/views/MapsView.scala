@@ -20,8 +20,8 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 object MapsView {
-  import japgolly.scalajs.react.vdom.ReactVDom._
-  import japgolly.scalajs.react.vdom.ReactVDom.all._
+  import japgolly.scalajs.react.vdom._
+  import japgolly.scalajs.react.vdom.all._
 
   object TopComp {
     case class Props(pc: PoeCacher)

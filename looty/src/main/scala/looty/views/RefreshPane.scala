@@ -112,7 +112,7 @@ class RefreshPane(league: League,
     el.append(" ")
     button.on("click", (e: js.Dynamic) => {
       //Filter the grid to show only that tab
-      if (e.shiftKey.asInstanceOf[js.Boolean]) {
+      if (e.shiftKey.asInstanceOf[Boolean]) {
         con.refresh()
       } else {
         con.toggle()

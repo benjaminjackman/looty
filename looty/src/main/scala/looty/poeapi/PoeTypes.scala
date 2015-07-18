@@ -46,11 +46,11 @@ object PoeTypes {
   }
 
   trait CharacterInfo extends js.Object {
-    val `class`: js.String
-    val classId: js.Number
-    val league : js.String
-    val level  : js.Number
-    val name   : js.String
+    val `class`: String
+    val classId: Int
+    val league : String
+    val level  : Int
+    val name   : String
   }
 
   object ItemContainer {
@@ -75,30 +75,30 @@ object PoeTypes {
   }
 
   trait Inventory extends js.Object with ItemContainer {
-    val character: js.String
+    val character: String
 
     //Returned when there is an error (throttled)
-    val error: Optional[js.String]
+    val error: Optional[String]
   }
 
   trait StashTab extends js.Object with ItemContainer {
-    val numTabs: js.Number
+    val numTabs: Int
 
     //Returned optionally when tabs = 1 is set
     val tabs : Optional[js.Array[StashTabInfo]]
     //Returned when there was an error (throttled for example)
-    val error: Optional[js.String]
+    val error: Optional[String]
   }
 
   trait StashTabInfo extends js.Object {
     //Background color
     val colour: Colour
     //Index
-    val i     : js.Number
+    val i     : Int
     //Name
-    val n     : js.String
+    val n     : String
     //Image to use for the tab
-    val src   : js.String
+    val src   : String
   }
 
   object Colour {
@@ -108,9 +108,9 @@ object PoeTypes {
   }
 
   trait Colour extends js.Object {
-    val r: js.Number
-    val g: js.Number
-    val b: js.Number
+    val r: Int
+    val g: Int
+    val b: Int
   }
 
   object AnyItem {
@@ -282,58 +282,58 @@ object PoeTypes {
   }
 
   trait AnyItem extends js.Object {
-    val verified             : js.Boolean
+    val verified             : Boolean
     //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
-    val w                    : js.Number
-    val h                    : js.Number
+    val w                    : Int
+    val h                    : Int
     //a Url
-    val icon                 : js.String
-    val support              : js.Boolean
-    val league               : js.String
-    val name                 : js.String
-    val typeLine             : js.String
-    val cosmeticMods         : Optional[js.Array[js.String]]
-    val identified           : Optional[js.Boolean]
-    val corrupted            : Optional[js.Boolean]
+    val icon                 : String
+    val support              : Boolean
+    val league               : String
+    val name                 : String
+    val typeLine             : String
+    val cosmeticMods         : Optional[js.Array[String]]
+    val identified           : Optional[Boolean]
+    val corrupted            : Optional[Boolean]
     //Mirrored
-    val duplicated           : Optional[js.Boolean]
+    val duplicated           : Optional[Boolean]
     val additionalProperties : Optional[js.Array[AdditionalProperty]]
     val sockets              : Optional[js.Array[Socket]]
     val properties           : Optional[js.Array[ItemProperty]]
     val nextLevelRequirements: Optional[js.Array[ItemRequirement]]
     val requirements         : Optional[js.Array[ItemRequirement]]
-    val descrText            : Optional[js.String]
-    val secDescrText         : Optional[js.String]
-    val explicitMods         : Optional[js.Array[js.String]]
-    val craftedMods          : Optional[js.Array[js.String]]
-    val implicitMods         : Optional[js.Array[js.String]]
-    val frameType            : js.Number
+    val descrText            : Optional[String]
+    val secDescrText         : Optional[String]
+    val explicitMods         : Optional[js.Array[String]]
+    val craftedMods          : Optional[js.Array[String]]
+    val implicitMods         : Optional[js.Array[String]]
+    val frameType            : Int
     val socketedItems        : js.Array[AnyItem]
-    val flavourText          : Optional[js.Array[js.String]]
+    val flavourText          : Optional[js.Array[String]]
 
     //For items that are not socketed in other items
-    val x          : Optional[js.Number]
+    val x          : Optional[Int]
     //The top left corner, when in an item slot, this is 0,0 from what i can tell
-    val y          : Optional[js.Number]
-    val inventoryId: Optional[js.String]
+    val y          : Optional[Int]
+    val inventoryId: Optional[String]
 
     //For items that are socketed in other items
-    val socket: Optional[js.Number]
-    val colour: Optional[js.String]
+    val socket: Optional[Int]
+    val colour: Optional[String]
 
     //Added by allItems
     var inItem    : Optional[AnyItem]
-    var character : Optional[js.String]
-    var locationId: Optional[js.String]
+    var character : Optional[String]
+    var locationId: Optional[String]
 
   }
 
   trait AdditionalProperty extends js.Object {
-    val displayMode: js.Number
+    val displayMode: Int
     //Experience for gem experience
-    val name       : js.String
+    val name       : String
     //0 to 1 depending on progress to next level for gems
-    val progress   : js.Number
+    val progress   : Int
     //For XP in Gems: Typically the 0th element of the inner array is a string like "175815/175816"
     val values     : js.Array[js.Array[js.Any]]
   }
@@ -350,9 +350,9 @@ object PoeTypes {
   }
 
   trait Socket extends js.Object {
-    val group: js.Number
+    val group: Int
     //used for socket groups, aka a 6 linked would have all sockets in group 0
-    val attr : js.String //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
+    val attr : String //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
   }
 
   object ItemProperty {
@@ -362,15 +362,15 @@ object PoeTypes {
   }
 
   trait ItemProperty extends js.Object {
-    val name       : js.String
+    val name       : String
     val values     : js.Array[js.Array[Any]]
-    val displayMode: js.Number
+    val displayMode: Int
   }
 
   trait ItemRequirement extends js.Object {
-    val name       : Optional[js.String]
-    val values     : js.Array[js.Array[js.Array[js.String]]]
-    val displayMode: js.Number
+    val name       : Optional[String]
+    val values     : js.Array[js.Array[js.Array[String]]]
+    val displayMode: Int
   }
 
 }

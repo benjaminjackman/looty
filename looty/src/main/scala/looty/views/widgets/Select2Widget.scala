@@ -18,8 +18,8 @@ import scala.scalajs.js
 
 
 object Select2Widget {
-  import japgolly.scalajs.react.vdom.ReactVDom._
-  import japgolly.scalajs.react.vdom.ReactVDom.all._
+  import japgolly.scalajs.react.vdom._
+  import japgolly.scalajs.react.vdom.all._
 
 
   def apply[A](

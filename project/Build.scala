@@ -4,7 +4,8 @@ import com.typesafe.sbt.web.SbtWeb
 import org.sbtidea.SbtIdeaPlugin
 import sbt._
 import Keys._
-import scala.scalajs.sbtplugin.ScalaJSPlugin._
+import org.scalajs.sbtplugin.ScalaJSPlugin
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Build extends sbt.Build {
   import web.Import._
@@ -39,7 +40,7 @@ object Build extends sbt.Build {
 <script type="text/javascript" src="jslib/slickgrid/slick.dataview.js"></script>
     """
 
-    val analytics  = """
+    val analytics = """
 <script type="text/javascript" src="jslib/analytics.js"></script>
 <script src="https://ssl.google-analytics.com/ga.js" async="true"></script>
 <script type="text/javascript" src="jslib/startup.js"></script>
@@ -47,15 +48,15 @@ object Build extends sbt.Build {
 
     //Copy over the html files, while filling in the template sections
     val lessFiles = {
-      val i = (includeFilter in (Assets, LessKeys.less)).value
-      val x = (excludeFilter in (Assets, LessKeys.less)).value
+      val i = (includeFilter in(Assets, LessKeys.less)).value
+      val x = (excludeFilter in(Assets, LessKeys.less)).value
       val srcDir = (sourceDirectory in Assets).value
       val lessSrcs = (sourceDirectory in Assets).value ** (i -- x)
       val f = lessSrcs.pair(relativeTo(srcDir))
       f.map(_._2).map(_.replace(".less", ".css"))
     }
 
-    val less = lessFiles.map(f=>s"""<link rel="stylesheet" href="$f"/>""").mkString("\n")
+    val less = lessFiles.map(f => s"""<link rel="stylesheet" href="$f"/>""").mkString("\n")
 
     val htmlSrcDir: File = (sourceDirectory in Assets).value
     val htmlSrcs: PathFinder = htmlSrcDir * "*.template.html"
@@ -74,7 +75,7 @@ object Build extends sbt.Build {
         val devScripts = """<script type="text/javascript" src="looty-fastopt.js"></script>""".stripMargin
         val releaseScripts = """<script type="text/javascript" src="looty-opt.js"></script>"""
 
-        def addAll(sjsScripts : String) : String = {
+        def addAll(sjsScripts: String): String = {
           var res = content
           res = res.replace("<!-- insert scalajs -->", sjsScripts)
           res = res.replace("<!-- insert css -->", css)
@@ -96,56 +97,52 @@ object Build extends sbt.Build {
   }
 
 
-  lazy val sjsTasks = List(
-    ScalaJSKeys.fastOptJS,
-    ScalaJSKeys.fullOptJS)
-
-
-  lazy val cgtaOpenVersion = "0.2.1"
+  lazy val sjsTasks = List(fastOptJS, fullOptJS)
+  lazy val cgtaOpenVersion = "0.2.2"
   lazy val sVersion = "2.11.4"
-
   lazy val sjsOutDir = Def.settingKey[File]("directory for javascript files output by scalajs")
 
-  lazy val looty: Project = Project("looty", file("looty")).settings(
-    scalaJSSettings: _*).settings(
+
+  lazy val looty: Project = Project("looty", file("looty"))
+    .enablePlugins(ScalaJSPlugin, SbtWeb, play.twirl.sbt.SbtTwirl)
+    .settings(
+      autoCompilerPlugins := true,
       scalacOptions += "-deprecation",
       scalacOptions += "-unchecked",
       scalacOptions += "-feature",
       scalacOptions += "-language:implicitConversions",
       scalacOptions += "-language:existentials",
-      scalacOptions += "-language:higherKinds"
-    ).settings(
-      scalaVersion := sVersion
-    ).settings(
-      cgta.otest.OtestPlugin.settingsSjs: _*
-    ).settings(
-      autoCompilerPlugins := true,
-      ScalaJSKeys.requiresDOM := true,
+      scalacOptions += "-language:higherKinds",
+      scalaVersion := sVersion)
+    .settings(
+      libraryDependencies += "biz.cgta" %%%! "otest-sjs" % "0.2.1",
+      testFrameworks := Seq(new TestFramework("cgta.otest.runner.OtestSbtFramework")),
+      scalaJSStage in Test := FastOptStage)
+    .settings(
       libraryDependencies ++= Seq(
-        "org.scala-lang.modules.scalajs" %%% "scalajs-dom" % "0.6",
+        "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "org.scala-lang.modules" %% "scala-async" % "0.9.2",
-        "biz.cgta" %%% "otest-sjs" % "0.1.12",
+        //        "org.scalajs" %%% "scala-parser-combinators" % "1.0.2",
         "biz.cgta" %%% "oscala-sjs" % cgtaOpenVersion,
         "biz.cgta" %%% "serland-sjs" % cgtaOpenVersion,
-        "biz.cgta" %%% "cenum-sjs" % cgtaOpenVersion
+        "biz.cgta" %%% "cenum-sjs" % cgtaOpenVersion,
+        "be.doeraene" %%% "scalajs-jquery" % "0.7.0",
+        "com.github.japgolly.scalajs-react" %%% "core" % "0.8.2"
       )
     )
     .settings(
-      includeFilter in (Assets, LessKeys.less) := "*.less",
-      excludeFilter in (Assets, LessKeys.less) := "_*.less"
+      includeFilter in(Assets, LessKeys.less) := "*.less",
+      excludeFilter in(Assets, LessKeys.less) := "_*.less"
     )
-    .settings(
-      SbtIdeaPlugin.ideaBasePackage := Some("looty"),
-      sourceGenerators in Assets <+= handleLootyHtml,
-      libraryDependencies += "org.scala-lang.modules.scalajs" %%% "scalajs-jquery" % "0.6",
-      libraryDependencies += "com.github.japgolly.scalajs-react" %%% "core" % "0.4.1")
-    .settings((ScalaJSKeys.fastOptJS in Compile) <<= (ScalaJSKeys.fastOptJS in Compile).dependsOn(WebKeys.assets in Assets))
-    .settings((ScalaJSKeys.fullOptJS in Compile) <<= (ScalaJSKeys.fullOptJS in Compile).dependsOn(WebKeys.assets in Assets))
-    .settings(sjsOutDir := WebKeys.webTarget.value / "public" / "main" )
+    .settings(SbtIdeaPlugin.ideaBasePackage := Some("looty"))
+    .settings(sourceGenerators in Assets <+= handleLootyHtml)
+    .settings(sourceDirectories in(Compile, play.twirl.sbt.Import.TwirlKeys.compileTemplates) := (unmanagedSourceDirectories in Compile).value)
+    .settings(sjsOutDir := WebKeys.webTarget.value / "public" / "main")
+    .settings((fastOptJS in(Compile)) <<= (fastOptJS in(Compile)).dependsOn(WebKeys.assets in Assets))
+    .settings((fullOptJS in(Compile)) <<= (fullOptJS in(Compile)).dependsOn(WebKeys.assets in Assets))
     .settings(sjsTasks.map(t => crossTarget in(Compile, t) := sjsOutDir.value): _*)
-//    .settings(scalatex.SbtPlugin.projectSettings:_*)
-    .enablePlugins(SbtWeb, play.twirl.sbt.SbtTwirl)
-    .settings(sourceDirectories in (Compile, play.twirl.sbt.Import.TwirlKeys.compileTemplates) := (unmanagedSourceDirectories in Compile).value)
+
+
 
   lazy val root = Project("root", file("."))
     .aggregate(looty)

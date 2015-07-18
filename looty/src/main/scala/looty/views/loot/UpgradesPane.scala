@@ -7,6 +7,7 @@ import looty.model.{Attributes, CharClasses, CharInvId, ComputedItem, PaperDoll,
 import looty.poeapi.PoeTypes.Leagues.League
 import looty.poeapi.{PoeCacher, PoeRpcs}
 import looty.views.ItemDetailHover
+import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
@@ -121,10 +122,10 @@ class UpgradesPane(
       setUpgradeItemFn(item)
       false
     })
-    el.on("mouseenter", (e: js.Dynamic) => {
+    el.on("mouseenter", (e: dom.MouseEvent) => {
       item.foreach { item =>
         itemDetailHover.setFirstItem(Some(item))
-        itemDetailHover.show(e.clientX.asInstanceOf[js.Number], e.clientY.asInstanceOf[js.Number], compare = false)
+        itemDetailHover.show(e.clientX, e.clientY, compare = false)
       }
     })
 

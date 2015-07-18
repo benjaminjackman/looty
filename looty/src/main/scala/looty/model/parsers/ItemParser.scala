@@ -39,10 +39,10 @@ object ItemParser {
   }
 
 
-  def parseMods(ci: ComputedItem, mods: Option[js.Array[js.String]]) {
+  def parseMods(ci: ComputedItem, mods: Option[js.Array[String]]) {
     for {
       emods <- mods
-      mod: js.String <- emods
+      mod <- emods
     } {
       if (!AffixesParser.parse(ci, mod)
           && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {

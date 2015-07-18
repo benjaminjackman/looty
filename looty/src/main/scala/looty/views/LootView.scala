@@ -241,11 +241,11 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
   private def renderCell(item: ComputedItem, column: js.Dynamic) = {
     val v = column.getter(item.asInstanceOf[js.Any]).asInstanceOf[js.Any]
     v match {
-      case v: js.prim.Number =>
+      case v: Double =>
         val dbl = v.toDouble
         upgradeItem match {
-          case Some(item) => column.getter(item.asInstanceOf[js.Any]).asInstanceOf[js.Any] match {
-            case v: js.prim.Number =>
+          case Some(item) => column.getter(item.asInstanceOf[js.Any]).asInstanceOf[Any] match {
+            case v: Double =>
               val diff = dbl - v
               if (diff > 0) {
                 math.round(diff).toDouble
@@ -335,12 +335,12 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
           var ret = 0.0
           while (i < cols.length && ret == 0) {
             val col = cols(i)
-            val sign = if (cols(i).sortAsc.asInstanceOf[js.Boolean]) 1 else -1
+            val sign = if (cols(i).sortAsc.asInstanceOf[Boolean]) 1 else -1
             val a1: js.Dynamic = col.sortCol.getter(a.asInstanceOf[js.Any])
             val b1: js.Dynamic = col.sortCol.getter(b.asInstanceOf[js.Any])
 
             val res = a1 - b1
-            if (js.isNaN(res)) {
+            if ( js.isNaN(res)) {
               if (a1.toString > b1.toString) {
                 ret = sign
               } else if (b1.toString > a1.toString) {
@@ -353,7 +353,7 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
 
             i += 1
           }
-          ret: js.Number
+          ret
       }
 
       grid.invalidate()
@@ -367,8 +367,8 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
       if (row.nullSafe.isDefined) {
         itemDetailHover.setFirstItem(Some(grid.getDataItem(row).asInstanceOf[ComputedItem]))
         itemDetailHover.show(
-          x = e.clientX.asInstanceOf[js.Number],
-          y = e.clientY.asInstanceOf[js.Number],
+          x = e.clientX.asInstanceOf[Double],
+          y = e.clientY.asInstanceOf[Double],
           compare = true
         )
       }

@@ -19,9 +19,8 @@ import scala.scalajs.js.Dynamic
 
 object SelectStashWidget {
   val component = {
-    import japgolly.scalajs.react.vdom.ReactVDom._
-    import japgolly.scalajs.react.vdom.ReactVDom.all._
-    import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+    import japgolly.scalajs.react.vdom._
+    import japgolly.scalajs.react.vdom.all._
     val O = Dynamic.literal
 
 

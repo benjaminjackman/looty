@@ -28,7 +28,7 @@ object ArmourParser {
   val quiver       = List("Quiver")
 
   def parse(ci: ComputedItem, typeLine: String): Boolean = {
-    if (ci.item.h =?= (1: js.Number) && ci.item.w =?= (1: js.Number)) {
+    if (ci.item.h =?= 1 && ci.item.w =?= 1) {
       if (typeLine.contains("Amulet")) {
         ci.slots.isAmulet = true
         true
@@ -39,10 +39,10 @@ object ArmourParser {
         console.warn("1x1 Non Jewelery", ci.item.typeLine, ci.asJsAny)
         false
       }
-    } else if (ci.item.h =?= (1: js.Number) && ci.item.w =?= (2: js.Number)) {
+    } else if (ci.item.h =?= 1 && ci.item.w =?= 2) {
       ci.slots.isBelt = true
       true
-    } else if (ci.item.h =?= (2: js.Number) && ci.item.w =?= (2: js.Number)) {
+    } else if (ci.item.h =?= 2 && ci.item.w =?= 2) {
       //Helmet, Gloves, Boots
       if (helmets.exists(typeLine.contains(_))) {
         ci.slots.isHelmet = true
@@ -64,7 +64,7 @@ object ArmourParser {
         console.warn("2x2 Unknown", ci.item.typeLine, ci.asJsAny)
         false
       }
-    } else if (ci.item.h =?= (3: js.Number) && ci.item.w =?= (2: js.Number)) {
+    } else if (ci.item.h =?= 3 && ci.item.w =?= 2) {
       if (chest.exists(typeLine.contains(_))) {
         ci.slots.isChest = true
         true
@@ -78,7 +78,7 @@ object ArmourParser {
         console.warn("3x2 Unknown", ci.item.typeLine, ci.asJsAny)
         false
       }
-    } else if (ci.item.h =?= (4: js.Number) && ci.item.w =?= (2: js.Number)) {
+    } else if (ci.item.h =?= 4 && ci.item.w =?= 2) {
       if (shield.exists(typeLine.contains(_))) {
         ci.slots.isShield = true
         true

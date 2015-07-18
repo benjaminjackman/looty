@@ -17,9 +17,9 @@ import looty.views.widgets.SelectLeagueWidget
 import looty.views.widgets.SelectLeagueWidget.Leagues.League
 import looty.views.widgets.SelectStashWidget
 import org.scalajs.dom
-import org.scalajs.dom.HTMLInputElement
+import org.scalajs.dom.html.Input
 import org.scalajs.dom.KeyboardEvent
-import org.scalajs.dom.extensions.KeyCode
+import org.scalajs.dom.ext.KeyCode
 import org.scalajs.jquery.JQuery
 import org.scalajs.jquery.JQueryEventObject
 
@@ -38,21 +38,20 @@ import scala.scalajs.js.Dynamic
 
 object VisualStashTabWidget {
   val component = {
-    import japgolly.scalajs.react.vdom.ReactVDom._
-    import japgolly.scalajs.react.vdom.ReactVDom.all._
-    import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+    import japgolly.scalajs.react.vdom._
+    import japgolly.scalajs.react.vdom.all._
     val O = Dynamic.literal
 
 
     ReactComponentB[VisualStashTabWidget]("VisualStashTabWidget")
       .render((props) =>
       div(
-        st.position := "absolute",
-        st.backgroundColor := "black",
-        st.top := "100px",
-        st.left := "100px",
-        st.height := "800px",
-        st.width := "800px"
+        position := "absolute",
+        backgroundColor := "black",
+        top := "100px",
+        left := "100px",
+        height := "800px",
+        width := "800px"
       )
       )
       .create
@@ -80,9 +79,9 @@ object UnderlayViewWidget {
 
 
     val component = {
-      import japgolly.scalajs.react.vdom.ReactVDom._
-      import japgolly.scalajs.react.vdom.ReactVDom.all._
-      import japgolly.scalajs.react.vdom.ReactVDom.{styles => st}
+      import japgolly.scalajs.react.vdom._
+      import japgolly.scalajs.react.vdom.all._
+
       val O = Dynamic.literal
 
       ReactComponentB[UnderlayViewWidget]("UnderlayViewWidget")
@@ -92,7 +91,7 @@ object UnderlayViewWidget {
         div(
           div(
             SelectLeagueWidget(s.league, b.setLeague)(),
-            div(st.display := "inline-block")(s.league.map { l => SelectStashWidget(l, s.stashTabInfo, () => pc.getStashTabInfos(l.rpcName).map(_.toSeq), b.setStashTabInfo)()}),
+            div(display := "inline-block")(s.league.map { l => SelectStashWidget(l, s.stashTabInfo, () => pc.getStashTabInfos(l.rpcName).map(_.toSeq), b.setStashTabInfo)()}),
             a(href := "javascript:void(0)", className := "ctrl-btn", "resize")
           ),
           div(
@@ -202,8 +201,8 @@ class UnderlayView(implicit val pc: PoeCacher) extends View {
         itemDetailHover.setFirstItem(Some(ci))
         val de = e.asInstanceOf[js.Dynamic]
         itemDetailHover.show(
-          x = de.clientX.asInstanceOf[js.Number],
-          y = de.clientY.asInstanceOf[js.Number],
+          x = de.clientX.asInstanceOf[Double],
+          y = de.clientY.asInstanceOf[Double],
           compare = false
         )
       }

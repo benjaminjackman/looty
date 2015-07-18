@@ -15,7 +15,7 @@ import looty.model.{LifeAndMana, Elements, Attributes, ComputedItem}
 
 
 object AffixesParser {
-  def parse(item: ComputedItem, s: js.String): Boolean = {
+  def parse(item: ComputedItem, s: String): Boolean = {
     var parsed = false
     all.toList.foreach { parser =>
       if (parser.parse(s, item)) parsed = true
@@ -31,7 +31,7 @@ object AffixesParser {
 
 
   trait AffixParser {
-    def parse(s: js.prim.String, i: ComputedItem): Boolean
+    def parse(s: String, i: ComputedItem): Boolean
   }
 
   trait RegexAffixParser extends AffixParser {
@@ -39,8 +39,8 @@ object AffixesParser {
   }
 
   trait BinaryAffixParser extends AffixParser {
-    def str: js.prim.String
-    def parse(s: js.prim.String, i: ComputedItem): Boolean = if (s =?= str) {
+    def str: String
+    def parse(s: String, i: ComputedItem): Boolean = if (s =?= str) {
       process(i)
       true
     } else {
@@ -48,18 +48,18 @@ object AffixesParser {
     }
     def process(i: ComputedItem)
   }
-  def simple0(s: js.String)(f: (ComputedItem) => Unit) {
+  def simple0(s: String)(f: (ComputedItem) => Unit) {
     add {
       new BinaryAffixParser {
-        def str: js.prim.String = s
+        def str: String = s
         def process(i: ComputedItem): Unit = f(i)
       }
     }
   }
 
   trait RegexAffixParser1 extends RegexAffixParser {
-    override def parse(s: js.prim.String, i: ComputedItem): Boolean = {
-      s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
+    override def parse(s: String, i: ComputedItem): Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList match {
         case null => false
         case x :: y :: zs =>
           process(i, y.toString.toDouble)
@@ -71,7 +71,7 @@ object AffixesParser {
   }
 
 
-  def regex1(regex: js.String)(f: (ComputedItem, Double) => Unit) = {
+  def regex1(regex: String)(f: (ComputedItem, Double) => Unit) = {
     val r = regex
     add {
       new RegexAffixParser1() {
@@ -82,8 +82,8 @@ object AffixesParser {
   }
 
   trait RegexAffixParser2 extends RegexAffixParser {
-    override def parse(s: js.prim.String, i: ComputedItem): Boolean = {
-      s.`match`(regex).nullSafe.getOrElse(js.Array()).toList match {
+    override def parse(s: String, i: ComputedItem): Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList match {
         case null => false
         case x :: y :: z :: zs =>
           process(i, y.toString.toDouble, z.toString.toDouble)
@@ -94,7 +94,7 @@ object AffixesParser {
     def process(i: ComputedItem, x: Double, y: Double)
   }
 
-  def regex2(regex: js.String)(f: (ComputedItem, Double, Double) => Unit) = {
+  def regex2(regex: String)(f: (ComputedItem, Double, Double) => Unit) = {
     val r = regex
     add {
       new RegexAffixParser2() {
@@ -105,18 +105,18 @@ object AffixesParser {
   }
 
 
-  def increased(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
-  def reduced(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
-  def plusTo(name: js.String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
-  def addsDamage(element: js.String, suffix : String = "")(f: (ComputedItem, Double, Double) => Unit) = {
+  def increased(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
+  def reduced(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
+  def plusTo(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
+  def addsDamage(element: String, suffix : String = "")(f: (ComputedItem, Double, Double) => Unit) = {
     regex2(s"^Adds ([\\d]+)-([\\d]+) $element Damage${suffix}$$")(f)
   }
-  def level(name: js.String)(f: (ComputedItem, Double) => Unit) = {
+  def level(name: String)(f: (ComputedItem, Double) => Unit) = {
     val a = if (name.isEmpty) "" else name + " "
     val r = s"^([.+-\\d]+)%* to Level of Socketed ${a}Gems$$"
     regex1(r)(f)
   }
-  def simple1(prefix: js.String, suffix: js.String)(f: (ComputedItem, Double) => Unit) = {
+  def simple1(prefix: String, suffix: String)(f: (ComputedItem, Double) => Unit) = {
     val a = if (prefix.isEmpty) "" else prefix + " "
     val b = if (suffix.isEmpty) "" else " " + suffix
     val r = s"^$a([.+-\\d]+)%*$b$$"

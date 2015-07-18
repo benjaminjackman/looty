@@ -27,33 +27,33 @@ object ModsCsvParser {
   }
 
   trait ModRow extends js.Object {
-    val `1h Maces`          : js.String
-    val `1h Swords and Axes`: js.String
-    val `2h Maces`          : js.String
-    val `2h Swords and Axes`: js.String
-    val Amulets             : js.String
-    val Belts               : js.String
-    val Boots               : js.String
-    val Bows                : js.String
-    val Categories          : js.String
-    val Chests              : js.String
-    val Claws               : js.String
-    val Daggers             : js.String
-    val Description         : js.String
-    val Gloves              : js.String
-    val Helmets             : js.String
-    val Level               : js.String
-    val `Max V`             : js.String
-    val `Min V`             : js.String
-    val Name                : js.String
-    val `Prefix/Suffix`     : js.String
-    val Quivers             : js.String
-    val Rings               : js.String
-    val Sceptres            : js.String
-    val Shields             : js.String
-    val Staffs              : js.String
-    val Value               : js.String
-    val Wands               : js.String
+    val `1h Maces`          : String
+    val `1h Swords and Axes`: String
+    val `2h Maces`          : String
+    val `2h Swords and Axes`: String
+    val Amulets             : String
+    val Belts               : String
+    val Boots               : String
+    val Bows                : String
+    val Categories          : String
+    val Chests              : String
+    val Claws               : String
+    val Daggers             : String
+    val Description         : String
+    val Gloves              : String
+    val Helmets             : String
+    val Level               : String
+    val `Max V`             : String
+    val `Min V`             : String
+    val Name                : String
+    val `Prefix/Suffix`     : String
+    val Quivers             : String
+    val Rings               : String
+    val Sceptres            : String
+    val Shields             : String
+    val Staffs              : String
+    val Value               : String
+    val Wands               : String
   }
 
   var modDescriptions: List[ModRow] = null

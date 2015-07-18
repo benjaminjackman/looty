@@ -19,7 +19,7 @@ object ChromeStorageLocal {
       p.future
     }
 
-    def futGet[B](key: js.String): Future[Option[B]] = {
+    def futGet[B](key: String): Future[Option[B]] = {
       val p = Promise[Option[B]]()
       def setPromise(kv: js.Any) {
         p.success(kv.asJsDict[B](key).nullSafe)
@@ -27,7 +27,7 @@ object ChromeStorageLocal {
       x.get(key, setPromise _)
       p.future
     }
-    def futSet(key: js.String, value: js.Any): Future[Unit] = {
+    def futSet(key: String, value: js.Any): Future[Unit] = {
       val p = Promise[Unit]()
       def setPromise() {
         p.success(Unit)
@@ -37,7 +37,7 @@ object ChromeStorageLocal {
       x.set(kv, setPromise _)
       p.future
     }
-    def futClear(key: js.String): Future[Unit] = {
+    def futClear(key: String): Future[Unit] = {
       val p = Promise[Unit]()
       def clearPromise() {
         p.success(Unit)
@@ -50,7 +50,7 @@ object ChromeStorageLocal {
 
 
 trait ChromeStorageLocal extends js.Object {
-  val QUOTA_BYTES: js.Number = ???
+  val QUOTA_BYTES: Double = ???
   def clear(): Unit = ???
   def clear(cb: js.Function0[Unit]): Unit = ???
 
