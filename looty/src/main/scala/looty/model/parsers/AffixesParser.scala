@@ -135,6 +135,7 @@ object AffixesParser {
     addsDamage(x.cap)(_.damages(x).+=(_, _))
     addsDamage(x.cap, " to Attacks")(_.damages(x).+=(_, _))
     addsDamage(x.cap, " to Attacks with Bows")(_.damagesWithBows(x).+=(_, _))
+    addsDamage(x.cap, " to Spells")(_.addDamagesToSpells(x).+=(_, _))
     level(x.cap)(_.gemLevel.element.+=(x, _))
   }
 
@@ -143,8 +144,8 @@ object AffixesParser {
     regex1(s"^([+-\\.\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
     plusTo(s"maximum ${x.cap}")(_.plusTo.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} Regenerated per second")(_.regeneratedPerSecond.+=(x, _))
-    simple1("", s"${x.cap} gained for each Enemy hit by Attacks")(_.onHit.lifeAndMana.+=(x, _))
-    simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onHit.lifeAndMana.+=(x, _))
+    simple1("", s"${x.cap} gained for each Enemy hit by Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
+    simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
   }
 
   increased("Attack Speed")(_.increased.attackSpeed += _)

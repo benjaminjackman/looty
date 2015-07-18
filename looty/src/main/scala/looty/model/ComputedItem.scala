@@ -48,7 +48,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   def maxResist = plusTo.resistance.all.max
   def magicFind = increased.quantityOfItemsFound + increased.rarityOfItemsFound
 
-  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem
+  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem && !item.isJewel && !item.isDivinationCard
 
   def displayName = {
     var n = item.name
@@ -108,6 +108,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isFragment) "Fragment"
     else if (item.isQuest) "QuestItem"
     else if (item.isJewel) "Jewel"
+    else if (item.isDivinationCard) "DivCard"
     else "UNKNOWN"
   }
 
@@ -190,6 +191,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   val damages         = Elements of MinMaxDamage(0, 0)
   val damagesWithBows = Elements of MinMaxDamage(0, 0)
+  val addDamagesToSpells   = Elements of MinMaxDamage(0, 0)
+
+  def addsDamageToSpellsTotal = addDamagesToSpells.all.map(_.avg).sum
 
   object plusTo {
     val attribute  = Attributes mutable 0.0
@@ -207,7 +211,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object leech {var physical = LifeAndMana mutable 0.0}
   object onKill {var lifeAndMana = LifeAndMana mutable 0.0}
-  object onHit {var lifeAndMana = LifeAndMana mutable 0.0}
+  object onAttackHit {var lifeAndMana = LifeAndMana mutable 0.0}
   object gemLevel {
     val element   = Elements mutable 0.0
     val attribute = Attributes mutable 0.0

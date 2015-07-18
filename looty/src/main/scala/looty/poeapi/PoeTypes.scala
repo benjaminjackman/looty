@@ -150,6 +150,7 @@ object PoeTypes {
       def isFragment = vaalFragments(x.typeLine)
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
+      def isDivinationCard = x.getFrameType == FrameTypes.divCard
 
       def isInSocket = x.socket.toOption.isDefined
 

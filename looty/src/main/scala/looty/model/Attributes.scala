@@ -33,8 +33,8 @@ object Attributes {
 
   def calculatedWith[A](f: Attribute => A) = new Attributes[A] {
     def strength: A = f(Attributes.Str)
-    def dexterity: A = f(Attributes.Str)
-    def intelligence: A = f(Attributes.Str)
+    def dexterity: A = f(Attributes.Dex)
+    def intelligence: A = f(Attributes.Int)
   }
 
   sealed abstract class Attribute(val name: String, val color: SocketColor) {

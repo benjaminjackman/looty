@@ -61,6 +61,7 @@ object ComputedItemProps {
   val Resists         = "Resists"
   val Crit            = "Crit"
   val Spells          = "Spells"
+  val DamageToSpells  = "DamageToSpells"
   val IncreasedDamage = "IncreasedDamage"
   val Gems            = "Gems"
   val FlasksMods      = "FlaskMods"
@@ -264,8 +265,8 @@ object ComputedItemProps {
 
   //Regen
   val LifeLeech          = pno("LifeLeech", "lleech")(Regen)(_.leech.physical.life)
-  val LifeGainOnHit      = pno("LifeGainOnHit", "lgoh")(Regen)(_.onHit.lifeAndMana.life)
-  val ManaGainOnHit      = pno("ManaGainOnHit", "mgoh")(Regen)(_.onHit.lifeAndMana.mana)
+  val LifeGainOnHit      = pno("LifeGainOnHit", "lgoh")(Regen)(_.onAttackHit.lifeAndMana.life)
+  val ManaGainOnHit      = pno("ManaGainOnHit", "mgoh")(Regen)(_.onAttackHit.lifeAndMana.mana)
   val LifeGainOnKill     = pno("LifeGainOnKill", "lgok")(Regen)(_.onKill.lifeAndMana.life)
   val ManaGainOnKill     = pno("ManaGainOnKill", "mgok")(Regen)(_.onKill.lifeAndMana.mana)
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
@@ -333,6 +334,19 @@ object ComputedItemProps {
   IncreasedColdSpellDamage !?= "Increased Cold Damage + Elemental Damage + Spell Damage"
   IncreasedLightningSpellDamage !?= "Increased Lightning Damage + Elemental Damage + Spell Damage"
   IncreasedChaosSpellDamage !?= "Increased Chaos Damage + Spell Damage"
+
+  //Damage To Spells
+  val AddsDamageToSpells = pno("AddsDamageToSpells", "+DmgToSp")(DamageToSpells)(_.addsDamageToSpellsTotal)
+  val AddsFireDamageToSpells = pno("AddsFireDamageToSpells", "+FDmgToSp")(DamageToSpells)(_.addDamagesToSpells.fire.avg)
+  val AddsColdDamageToSpells = pno("AddsColdDamageToSpells", "+CDmgToSp")(DamageToSpells)(_.addDamagesToSpells.cold.avg)
+  val AddsLightningDamageToSpells = pno("AddsLightningDamageToSpells", "+LDmgToSp")(DamageToSpells)(_.addDamagesToSpells.lightning.avg)
+  val AddsChaosDamageToSpells = pno("AddsChaosDamageToSpells", "+XDmgToSp")(DamageToSpells)(_.addDamagesToSpells.chaos.avg)
+  AddsDamageToSpells !?= "Adds Damage To Spells"
+  AddsFireDamageToSpells !?= "Adds Fire Damage To Spells"
+  AddsColdDamageToSpells !?= "Adds Cold Damage To Spells"
+  AddsLightningDamageToSpells !?= "Adds Lightning Damage To Spells"
+  AddsChaosDamageToSpells !?= "Adds Chaos Damage To Spells"
+
 
   //Elemental
   val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(IncreasedDamage)(_.increased.elementalDamage)

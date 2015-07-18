@@ -55,7 +55,7 @@ class ColumnsPane(columns: Columns) {
       grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
 
       group.foreach { c =>
-        val colDiv = jq(s"""<div style="display:inline-block" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
+        val colDiv = jq(s"""<div style="display:inline-block" title="${c.fullName}: ${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
         colDiv.on("click", () => {
           c.toggle()
           false
