@@ -105,6 +105,7 @@ object Build extends sbt.Build {
 
   lazy val looty: Project = Project("looty", file("looty"))
     .enablePlugins(ScalaJSPlugin, SbtWeb, play.twirl.sbt.SbtTwirl)
+    .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings : _*)
     .settings(
       autoCompilerPlugins := true,
       scalacOptions += "-deprecation",
@@ -122,11 +123,11 @@ object Build extends sbt.Build {
       libraryDependencies ++= Seq(
         "org.scala-js" %%% "scalajs-dom" % "0.8.0",
         "org.scala-lang.modules" %% "scala-async" % "0.9.2",
-        //        "org.scalajs" %%% "scala-parser-combinators" % "1.0.2",
+        "org.scala-js" %%% "scala-parser-combinators" % "1.0.2",
         "biz.cgta" %%% "oscala-sjs" % cgtaOpenVersion,
         "biz.cgta" %%% "serland-sjs" % cgtaOpenVersion,
         "biz.cgta" %%% "cenum-sjs" % cgtaOpenVersion,
-        "be.doeraene" %%% "scalajs-jquery" % "0.7.0",
+        "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
         "com.github.japgolly.scalajs-react" %%% "core" % "0.8.2"
       )
     )
