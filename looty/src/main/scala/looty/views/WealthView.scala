@@ -1,6 +1,7 @@
 package looty
 package views
 
+import cgta.oscala.util.debugging.PRINT
 import looty.poeapi.PoeTypes.Leagues.League
 import looty.views.snippets.Select2Wrapper
 import org.scalajs.dom
@@ -112,12 +113,13 @@ class WealthView(implicit val pc: PoeCacher) extends View {
       selEl.get(0).asInstanceOf[dom.Element],
       180,
       "League",
-      (x) => Future.successful(Leagues.all.filter(_.name.toLowerCase.trim == x.toLowerCase.trim)).map(_.map(_.name))) { l =>
-      setLeague(Leagues.all.find(_.name == l).get, gridEl)
+      (x) => Future.successful(Leagues.all.filter(l => x.isEmpty || l.displayName.toLowerCase.trim.contains(x.toLowerCase))).map(_.map(_.displayName))) { l =>
+      setLeague(Leagues.all.find(_.displayName == l).get, gridEl)
     }
   }
 
   def setLeague(league: League, el: JQuery) {
+    PRINT | s"SET LEAGUE TO $league"
     val lsKey = s"WealthView-$league-ccs"
     el.empty()
 
@@ -168,7 +170,7 @@ class WealthView(implicit val pc: PoeCacher) extends View {
     refresh()
 
     for {
-      items <- pc.getAllItems(league.poeName)
+      items <- pc.getAllItems(league.rpcName)
     } {
       for {
         item <- items

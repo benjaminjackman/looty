@@ -2,8 +2,9 @@ package looty
 package views.widgets
 
 import japgolly.scalajs.react.ReactComponentB
+import looty.poeapi.PoeTypes.Leagues.League
 import looty.poeapi.PoeTypes.StashTabInfo
-import looty.views.widgets.SelectLeagueWidget.Leagues.League
+
 
 import scala.concurrent.Future
 import scala.scalajs.js.Dynamic
@@ -19,8 +20,7 @@ import scala.scalajs.js.Dynamic
 
 object SelectStashWidget {
   val component = {
-    import japgolly.scalajs.react.vdom._
-    import japgolly.scalajs.react.vdom.all._
+    import japgolly.scalajs.react.vdom.prefix_<^._
     val O = Dynamic.literal
 
 
@@ -41,7 +41,7 @@ object SelectStashWidget {
         }
       )
       )
-      .create
+      .build
   }
 
 

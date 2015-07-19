@@ -46,7 +46,7 @@ class UpgradesPane(
             chars <- pc.getChars()
           } {
             val cs = chars.toList
-              .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase) && c.league =?= league.poeName)
+              .filter(c => c.name.toLowerCase.startsWith(term.toLowerCase) && c.league =?= league.rpcName)
               .sortBy(_.name.toLowerCase)
               .map(c => O(id = c.name, text = c.name))
               .toJsArr

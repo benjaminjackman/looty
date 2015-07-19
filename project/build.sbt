@@ -10,6 +10,8 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-twirl" % "1.0.4")
 
+addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.4")
+
 //someProject.enablePlugins(SbtTwirl)
 //lazy val root = (project in file(".")).enablePlugins(SbtTwirl)
 //TwirlKeys.templateImports += "org.example._"

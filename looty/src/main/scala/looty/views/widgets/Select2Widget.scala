@@ -96,6 +96,6 @@ object Select2Widget {
         el.select2("val", newVal)
       }
     }
-      .create
+      .build
   }
 }

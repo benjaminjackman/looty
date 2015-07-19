@@ -27,33 +27,33 @@ object ModsCsvParser {
   }
 
   trait ModRow extends js.Object {
-    val `1h Maces`          : String
-    val `1h Swords and Axes`: String
-    val `2h Maces`          : String
-    val `2h Swords and Axes`: String
-    val Amulets             : String
-    val Belts               : String
-    val Boots               : String
-    val Bows                : String
-    val Categories          : String
-    val Chests              : String
-    val Claws               : String
-    val Daggers             : String
-    val Description         : String
-    val Gloves              : String
-    val Helmets             : String
-    val Level               : String
-    val `Max V`             : String
-    val `Min V`             : String
-    val Name                : String
-    val `Prefix/Suffix`     : String
-    val Quivers             : String
-    val Rings               : String
-    val Sceptres            : String
-    val Shields             : String
-    val Staffs              : String
-    val Value               : String
-    val Wands               : String
+    val `1h Maces`          : String = js.native
+    val `1h Swords and Axes`: String = js.native
+    val `2h Maces`          : String = js.native
+    val `2h Swords and Axes`: String = js.native
+    val Amulets             : String = js.native
+    val Belts               : String = js.native
+    val Boots               : String = js.native
+    val Bows                : String = js.native
+    val Categories          : String = js.native
+    val Chests              : String = js.native
+    val Claws               : String = js.native
+    val Daggers             : String = js.native
+    val Description         : String = js.native
+    val Gloves              : String = js.native
+    val Helmets             : String = js.native
+    val Level               : String = js.native
+    val `Max V`             : String = js.native
+    val `Min V`             : String = js.native
+    val Name                : String = js.native
+    val `Prefix/Suffix`     : String = js.native
+    val Quivers             : String = js.native
+    val Rings               : String = js.native
+    val Sceptres            : String = js.native
+    val Shields             : String = js.native
+    val Staffs              : String = js.native
+    val Value               : String = js.native
+    val Wands               : String = js.native
   }
 
   var modDescriptions: List[ModRow] = null

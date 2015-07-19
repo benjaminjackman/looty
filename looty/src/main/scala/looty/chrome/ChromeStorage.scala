@@ -50,25 +50,25 @@ object ChromeStorageLocal {
 
 
 trait ChromeStorageLocal extends js.Object {
-  val QUOTA_BYTES: Double = ???
-  def clear(): Unit = ???
-  def clear(cb: js.Function0[Unit]): Unit = ???
+  val QUOTA_BYTES: Double = js.native
+  def clear(): Unit = js.native
+  def clear(cb: js.Function0[Unit]): Unit = js.native
 
-  def set(items: js.Any): Unit = ???
-  def set(items: js.Any, cb: js.Function0[Unit]): Unit = ???
+  def set(items: js.Any): Unit = js.native
+  def set(items: js.Any, cb: js.Function0[Unit]): Unit = js.native
 
-  def get(cb: js.Function1[js.Any, Unit]): Unit = ???
+  def get(cb: js.Function1[js.Any, Unit]): Unit = js.native
 
-  def get(keys: js.Any): Unit = ???
-  def get(keys: js.Any, cb: js.Function1[js.Any, Unit]): Unit = ???
+  def get(keys: js.Any): Unit = js.native
+  def get(keys: js.Any, cb: js.Function1[js.Any, Unit]): Unit = js.native
 
-  def remove(keys: js.Any, cb: js.Function0[Unit]): Unit = ???
+  def remove(keys: js.Any, cb: js.Function0[Unit]): Unit = js.native
 }
 
 
 @JSName("chrome.storage")
 object ChromeStorage extends js.Object {
-  val local: ChromeStorageLocal = ???
+  val local: ChromeStorageLocal = js.native
 }
 
 

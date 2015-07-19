@@ -4,11 +4,13 @@ package views
 import japgolly.scalajs.react.{BackendScope, React, ReactComponentB}
 import looty.model.ComputedItem
 import looty.poeapi.PoeCacher
+import looty.poeapi.PoeTypes.Leagues.League
 
 import looty.views.widgets.SelectLeagueWidget
-import looty.views.widgets.SelectLeagueWidget.Leagues.League
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
+
+import scala.concurrent.Future
 
 
 //////////////////////////////////////////////////////////////
@@ -20,15 +22,14 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 object MapsView {
-  import japgolly.scalajs.react.vdom._
-  import japgolly.scalajs.react.vdom.all._
+  import japgolly.scalajs.react.vdom.prefix_<^._
 
   object TopComp {
-    case class Props(pc: PoeCacher)
+    case class Props(getAllItems: League => Future[List[ComputedItem]])
     case class State(league: Option[League], maps: Seq[ComputedItem])
     case class Backend(T: BackendScope[Props, State]) {
       def setLeague(league: League) {
-        T.props.pc.getAllItems(league.toString).map { items =>
+        T.props.getAllItems(league).map { items =>
           T.modState(_.copy(maps = items.filter(_.item.isMap)))
         }
         T.modState(_.copy(
@@ -41,42 +42,42 @@ object MapsView {
       .initialState(State(None, Nil))
       .backend(Backend)
       .render { (p, s, b) =>
-      div(
+      <.div(
         SelectLeagueWidget(s.league, b.setLeague)(),
         MapsComponent(s.maps)
       )
     }
-      .create
+      .build
 
 
-    def apply(pc: PoeCacher) = component(Props(pc))
+    def apply(pc: PoeCacher) = component(Props((l : League) => pc.getAllItems(l.rpcName)))
   }
 
 
   val MapsComponent = ReactComponentB[Seq[ComputedItem]]("MapsComponent")
     .render { (p) =>
     val mapsByLvl = p.groupBy(_.mapLevel)
-    div(
+    <.div(
       mapsByLvl.toList.sortBy(_._1).map { case (lvl, ms) =>
-        div(
-          span("Level=", lvl, " "),
-          span("Count=", ms.size, ": "),
+        <.div(
+          <.span("Level=", lvl, " "),
+          <.span("Count=", ms.size, ": "),
           ms.sortBy(_.displayName).map(m=>MapComponent(m))
         )
       }
     )
   }
-    .create
+    .build
 
   val MapComponent = ReactComponentB[ComputedItem]("MapComponent")
     .render { (item) =>
-    div(
-      display := "inline-block",
+    <.div(
+      ^.display := "inline-block",
       item.displayName,
-      img(src := item.item.icon)
+      <.img(^.src := item.item.getIconUrl)
     )
   }
-    .create
+    .build
 
 
 }
@@ -87,7 +88,7 @@ class MapsView(implicit val pc: PoeCacher) extends View {
     jq.empty()
     val el = jq.get(0).asInstanceOf[dom.Element]
 
-    React.renderComponent(MapsView.TopComp(pc), el)
+    React.render(MapsView.TopComp(pc), el)
   }
   override def stop() {
 

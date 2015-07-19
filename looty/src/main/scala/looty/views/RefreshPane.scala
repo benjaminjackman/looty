@@ -38,7 +38,7 @@ class RefreshPane(league: League,
   def refreshContainer(conId: LootContainerId) {
     buttons.get(conId).foreach {
       case (btn, Some(sti)) =>
-        pc.getStashTab(league.poeName, conId.asInstanceOf[StashTabIdx].idx, forceNetRefresh = true).foreach { st =>
+        pc.getStashTab(league.rpcName, conId.asInstanceOf[StashTabIdx].idx, forceNetRefresh = true).foreach { st =>
           val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
           updateContainer(conId, items)
         }
@@ -60,7 +60,7 @@ class RefreshPane(league: League,
     buttons = buttons.filterKeys(!_.isCharInv)
     elChars.empty()
     chars.sortBy(_.name.toUpperCase).foreach { char =>
-      if (char.league.toString =?= league.poeName) {
+      if (char.league.toString =?= league.rpcName) {
         val conId: LootContainerId = CharInvId(char.name)
         val button = jq(s"""<a class='char-btn' title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
         button.data("charName", char.name)
@@ -79,7 +79,7 @@ class RefreshPane(league: League,
 
   def addTabBtns(): Future[Unit] = {
     for {
-      stis <- pc.getStashTabInfos(league.poeName, forceNetRefresh = false)
+      stis <- pc.getStashTabInfos(league.rpcName, forceNetRefresh = false)
     } yield {
       stis.foreach { sti =>
         val index = sti.i
@@ -91,7 +91,7 @@ class RefreshPane(league: League,
         buttons += conId -> (button -> Some(sti))
 
         addCon(conId, button, elTabs) {
-          pc.getStashTab(league.poeName, sti.i.toInt, forceNetRefresh = true).foreach { st =>
+          pc.getStashTab(league.rpcName, sti.i.toInt, forceNetRefresh = true).foreach { st =>
             val items = for (item <- st.allItems(None)) yield ItemParser.parseItem(item, conId, sti.n)
             updateContainer(conId, items)
           }
@@ -145,7 +145,7 @@ class RefreshPane(league: League,
 
     reloadAllBtn.click { () =>
       if (global.confirm("Are you sure? This might take some time.").asInstanceOf[Boolean]) {
-        pc.clearLeague(league.poeName).foreach { x =>
+        pc.clearLeague(league.rpcName).foreach { x =>
           Alerter.info("Please reload the page")
           global.location.reload()
         }

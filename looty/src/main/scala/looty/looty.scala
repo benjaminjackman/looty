@@ -33,6 +33,7 @@ class LootyJsAnyExtensions(val a: js.Any) extends AnyVal {
   def asJsStr: String = a.asInstanceOf[String]
   def asJsNum: Double = a.asInstanceOf[Double]
   def isUndefined: Boolean = js.isUndefined(a)
+  def isNaN: Boolean = js.Dynamic.global.isNaN(a).asInstanceOf[Boolean]
 }
 
 class LootyIterableExtensions[A](val xs: Iterable[A]) {

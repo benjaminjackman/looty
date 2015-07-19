@@ -2,7 +2,8 @@ package looty
 package views
 
 
-import looty.views.widgets.SelectLeagueWidget.Leagues.League
+import japgolly.scalajs.react.ReactEventI
+import looty.poeapi.PoeTypes.Leagues.League
 import org.scalajs.dom
 import japgolly.scalajs.react.{SyntheticEvent, BackendScope, React, ReactComponentB}
 import looty.poeapi.PoeCacher
@@ -71,8 +72,7 @@ object GlobalViewWidget {
     }
 
     val component = {
-      import japgolly.scalajs.react.vdom._
-      import japgolly.scalajs.react.vdom.all._
+      import japgolly.scalajs.react.vdom.prefix_<^._
 
       val O = Dynamic.literal
 
@@ -80,23 +80,23 @@ object GlobalViewWidget {
         .initialState(State(None, None))
         .backend(Backend)
         .render { (p, s, b) =>
-        div(
-          a(href := "#/home", "[", span(`class` := "fa fa-home"), " Home]"),
+        <.div(
+          <.a(^.href := "#/home", "[", <.span(^.`class` := "fa fa-home"), " Home]"),
           SelectLeagueWidget(s.league, b.setLeague)(),
           s.league.map { l => SelectCharacterWidget(s.character, () => b.getCharacters(), (c) => b.setCharacter(c))()},
           s.character.map { character =>
-            label(
+            <.label(
               "Autowatch",
-              title := s"Automatically scan this player for updates every ${s.refreshIntervalSec} Seconds",
-              input(
-                `type` := "checkbox",
-                onchange ==> { e: SyntheticEvent[dom.html.Input] => b.setAutowatch(e.target.checked)},
-                s.autowatch && (checked := "true")))
+              ^.title := s"Automatically scan this player for updates every ${s.refreshIntervalSec} Seconds",
+              <.input(
+                ^.`type` := "checkbox",
+                ^.onChange ==> { e: ReactEventI => b.setAutowatch(e.target.checked)},
+                s.autowatch ?= (^.checked := true)))
           },
-          a(key := "config", href := "#/config", "[", span(`class` := "fa fa-gear"), " Settings]")
+          <.a(^.key := "config", ^.href := "#/config", "[", <.span(^.`class` := "fa fa-gear"), " Settings]")
         )
       }
-        .create
+        .build
     }
   }
 }
@@ -109,7 +109,7 @@ class GlobalView(implicit val pc: PoeCacher) extends View {
   override def start(jq: JQuery): Unit = {
     val el = jq.get(0).asInstanceOf[dom.Element]
     val root = GlobalViewWidget()(pc)
-    React.renderComponent(root, el)
+    React.render(root, el)
   }
   override def stop(): Unit = {
   }

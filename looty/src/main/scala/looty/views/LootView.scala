@@ -40,13 +40,13 @@ trait WebSqlResultSet {
 
 
 trait WebSqlTransaction extends js.Object {
-  def executeSql(sql: String): Unit = ???
-  def executeSql(sql: String, values: js.Array[Any]): Unit = ???
-  def executeSql(sql: String, values: js.Array[Any], f: js.Function2[WebSqlTransaction, WebSqlResultSet, _]): Unit = ???
+  def executeSql(sql: String): Unit =  js.native
+  def executeSql(sql: String, values: js.Array[Any]): Unit  = js.native
+  def executeSql(sql: String, values: js.Array[Any], f: js.Function2[WebSqlTransaction, WebSqlResultSet, _]): Unit  = js.native
 }
 
 trait WebSqlDatabase extends js.Object {
-  def transaction(f: js.Function1[WebSqlTransaction, _]): Unit = ???
+  def transaction(f: js.Function1[WebSqlTransaction, _]): Unit  = js.native
 }
 
 
@@ -141,7 +141,7 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
 
   def addAllItems {
     for {
-      cons <- pc.getAllContainersFuture(league.poeName)
+      cons <- pc.getAllContainersFuture(league.rpcName)
       conFut <- cons
       (conId, con) <- conFut
     } {
@@ -239,7 +239,7 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
   }
 
   private def renderCell(item: ComputedItem, column: js.Dynamic) = {
-    val v = column.getter(item.asInstanceOf[js.Any]).asInstanceOf[js.Any]
+    val v = column.getter(item.asInstanceOf[js.Any]).asInstanceOf[Any]
     v match {
       case v: Double =>
         val dbl = v.toDouble
@@ -325,6 +325,7 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
   }
 
 
+  js.Dictionary
   private def addSort() {
     grid.onSort.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       val cols = args.sortCols.asInstanceOf[js.Array[js.Dynamic]]
@@ -340,15 +341,16 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
             val b1: js.Dynamic = col.sortCol.getter(b.asInstanceOf[js.Any])
 
             val res = a1 - b1
-            if ( js.isNaN(res)) {
-              if (a1.toString > b1.toString) {
-                ret = sign
-              } else if (b1.toString > a1.toString) {
-                ret = -sign
-              }
 
-            } else {
-              ret = sign * res
+            (res : Any) match {
+              case res : Double if res.isNaN =>
+                if (a1.toString > b1.toString) {
+                  ret = sign
+                } else if (b1.toString > a1.toString) {
+                  ret = -sign
+                }
+              case res : Double =>
+                ret = sign * res
             }
 
             i += 1

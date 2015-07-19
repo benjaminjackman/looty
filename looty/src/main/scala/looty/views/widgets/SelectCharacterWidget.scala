@@ -28,7 +28,7 @@ object SelectCharacterWidget {
       fromString = x => x
     )
       )
-      .create
+      .build
   }
 }
 

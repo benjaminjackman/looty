@@ -3,7 +3,8 @@ package views.widgets
 
 import cgta.cenum.CEnum
 import japgolly.scalajs.react.ReactComponentB
-import views.widgets.SelectLeagueWidget.Leagues.League
+import looty.poeapi.PoeTypes.Leagues
+import looty.poeapi.PoeTypes.Leagues.League
 
 import concurrent.Future
 
@@ -18,19 +19,6 @@ import concurrent.Future
 
 
 object SelectLeagueWidget {
-  object Leagues extends CEnum {
-    final type EET = League
-    sealed trait League extends EnumElement {
-      def displayName = toString
-      def rpcName = toString
-    }
-    case object Standard extends League
-    case object Hardcore extends League
-    case object Warbands extends League
-    case object Tempest extends League
-    //Needs to be overrided in child class with
-    final override val elements = CEnum.getElements(this)
-  }
 
   val component = {
     ReactComponentB[SelectLeagueWidget]("SelectLeagueWidget")
@@ -43,7 +31,7 @@ object SelectLeagueWidget {
       toString = x => x.toString,
       fromString = Leagues.fromString
     ))
-      .create
+      .build
   }
 
 }

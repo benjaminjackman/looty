@@ -1,6 +1,8 @@
 package looty
 package poeapi
 
+import cgta.cenum.CEnum
+import cgta.oscala.util.debugging.PRINT
 import looty.model.CharClasses.CharClass
 import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
@@ -24,19 +26,34 @@ object PoeTypes {
 
   type StashTabInfos = js.Array[StashTabInfo]
 
-  object Leagues {
-    case class League(name : String, poeName : String)
+  //  object Leagues {
+  //    case class League(name: String, poeName: String)
+  //
+  //    val Standard = League("Standard", "Standard")
+  //    val Hardcore = League("Hardcore", "Hardcore")
+  //    val Warbands = League("Warbands", "Warbands")
+  //    val Tempest = League("Tempest", "Tempest")
+  //
+  //    val all = List(Standard, Hardcore, Warbands, Tempest)
+  //  }
 
-    val Standard = League("Standard", "Standard")
-    val Hardcore = League("Hardcore", "Hardcore")
-    val Warbands = League("Warbands", "Warbands")
-    val Tempest = League("Tempest", "Tempest")
-
-    val all = List(Standard, Hardcore, Warbands, Tempest)
+  object Leagues extends CEnum {
+    final type EET = League
+    sealed trait League extends EnumElement {
+      def displayName = toString
+      def rpcName = toString
+    }
+    case object Standard extends League
+    case object Hardcore extends League
+    case object Warbands extends League
+    case object Tempest extends League
+    //Needs to be overrided in child class with
+    final override val elements = CEnum.getElements(this)
+    def all = toIVec
   }
 
   trait PassivesTree extends js.Object {
-    val hashes: js.Array[Int]
+    val hashes: js.Array[Int] = js.native
   }
 
   object CharacterInfo {
@@ -46,11 +63,11 @@ object PoeTypes {
   }
 
   trait CharacterInfo extends js.Object {
-    val `class`: String
-    val classId: Int
-    val league : String
-    val level  : Int
-    val name   : String
+    val `class`: String = js.native
+    val classId: Int = js.native
+    val league: String = js.native
+    val level: Int = js.native
+    val name: String = js.native
   }
 
   object ItemContainer {
@@ -71,34 +88,34 @@ object PoeTypes {
   }
 
   trait ItemContainer extends js.Object {
-    protected val items: js.Array[AnyItem]
+    protected val items: js.Array[AnyItem] = js.native
   }
 
   trait Inventory extends js.Object with ItemContainer {
-    val character: String
+    val character: String = js.native
 
     //Returned when there is an error (throttled)
-    val error: Optional[String]
+    val error: Optional[String] = js.native
   }
 
   trait StashTab extends js.Object with ItemContainer {
-    val numTabs: Int
+    val numTabs: Int = js.native
 
     //Returned optionally when tabs = 1 is set
-    val tabs : Optional[js.Array[StashTabInfo]]
+    val tabs: Optional[js.Array[StashTabInfo]] = js.native
     //Returned when there was an error (throttled for example)
-    val error: Optional[String]
+    val error: Optional[String] = js.native
   }
 
   trait StashTabInfo extends js.Object {
     //Background color
-    val colour: Colour
+    val colour: Colour = js.native
     //Index
-    val i     : Int
+    val i: Int = js.native
     //Name
-    val n     : String
+    val n: String = js.native
     //Image to use for the tab
-    val src   : String
+    val src: String = js.native
   }
 
   object Colour {
@@ -108,23 +125,23 @@ object PoeTypes {
   }
 
   trait Colour extends js.Object {
-    val r: Int
-    val g: Int
-    val b: Int
+    val r: Int = js.native
+    val g: Int = js.native
+    val b: Int = js.native
   }
 
   object AnyItem {
     case class FrameType(id: Int, name: String, color: String)
     object FrameTypes {
-      val unknown  = FrameType(-1, "unknown", "rgb(128,128,128)")
-      val normal   = FrameType(0, "normal", "rgb(255,255,255)")
-      val magic    = FrameType(1, "magic", "rgb(128,128,255)")
-      val rare     = FrameType(2, "rare", "rgb(255,255,0)")
-      val unique   = FrameType(3, "unique", "rgb(192,64,64)")
-      val gem      = FrameType(4, "gem", "rgb(0,192,192)")
+      val unknown = FrameType(-1, "unknown", "rgb(128,128,128)")
+      val normal = FrameType(0, "normal", "rgb(255,255,255)")
+      val magic = FrameType(1, "magic", "rgb(128,128,255)")
+      val rare = FrameType(2, "rare", "rgb(255,255,0)")
+      val unique = FrameType(3, "unique", "rgb(192,64,64)")
+      val gem = FrameType(4, "gem", "rgb(0,192,192)")
       val currency = FrameType(5, "currency", "rgb(165,146,99)")
       val divCard = FrameType(6, "card", "rgb(165,146,99)")
-      val quest    = FrameType(7, "quest", "rgb(0,255,0)")
+      val quest = FrameType(7, "quest", "rgb(0,255,0)")
 
       val all = Array(normal, magic, rare, unique, gem, currency, divCard, quest)
     }
@@ -278,64 +295,82 @@ object PoeTypes {
           }
         }
       }
+
+      def getIconUrl: String = {
+        if (x.artFilename.isDefined && x.artFilename != null && x.artFilename.nonEmpty) {
+          val afn = x.artFilename.get
+          if (afn.startsWith("http")) {
+            afn
+          } else {
+            "https://www.pathofexile.com/image/" + afn + ".png"
+          }
+
+        } else if (x.icon.startsWith("/")) {
+          "https://www.pathofexile.com" + x.icon
+        } else {
+          x.icon
+        }
+      }
+
     }
   }
 
   trait AnyItem extends js.Object {
-    val verified             : Boolean
+    val artFilename: js.UndefOr[String] = js.native
+    val verified: Boolean = js.native
     //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
-    val w                    : Int
-    val h                    : Int
+    val w: Int = js.native
+    val h: Int = js.native
     //a Url
-    val icon                 : String
-    val support              : Boolean
-    val league               : String
-    val name                 : String
-    val typeLine             : String
-    val cosmeticMods         : Optional[js.Array[String]]
-    val identified           : Optional[Boolean]
-    val corrupted            : Optional[Boolean]
+    val icon: String = js.native
+    val support: Boolean = js.native
+    val league: String = js.native
+    val name: String = js.native
+    val typeLine: String = js.native
+    val cosmeticMods: Optional[js.Array[String]] = js.native
+    val identified: Optional[Boolean] = js.native
+    val corrupted: Optional[Boolean] = js.native
     //Mirrored
-    val duplicated           : Optional[Boolean]
-    val additionalProperties : Optional[js.Array[AdditionalProperty]]
-    val sockets              : Optional[js.Array[Socket]]
-    val properties           : Optional[js.Array[ItemProperty]]
-    val nextLevelRequirements: Optional[js.Array[ItemRequirement]]
-    val requirements         : Optional[js.Array[ItemRequirement]]
-    val descrText            : Optional[String]
-    val secDescrText         : Optional[String]
-    val explicitMods         : Optional[js.Array[String]]
-    val craftedMods          : Optional[js.Array[String]]
-    val implicitMods         : Optional[js.Array[String]]
-    val frameType            : Int
-    val socketedItems        : js.Array[AnyItem]
-    val flavourText          : Optional[js.Array[String]]
+    val duplicated: Optional[Boolean] = js.native
+    val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
+    val sockets: Optional[js.Array[Socket]] = js.native
+    val properties: Optional[js.Array[ItemProperty]] = js.native
+    val nextLevelRequirements: Optional[js.Array[ItemRequirement]] = js.native
+    val requirements: Optional[js.Array[ItemRequirement]] = js.native
+    val descrText: Optional[String] = js.native
+    val secDescrText: Optional[String] = js.native
+    val explicitMods: Optional[js.Array[String]] = js.native
+    val craftedMods: Optional[js.Array[String]] = js.native
+    val implicitMods: Optional[js.Array[String]] = js.native
+    val frameType: Int = js.native
+    val socketedItems: js.Array[AnyItem] = js.native
+    val flavourText: Optional[js.Array[String]] = js.native
 
     //For items that are not socketed in other items
-    val x          : Optional[Int]
+    val x: Optional[Int] = js.native
     //The top left corner, when in an item slot, this is 0,0 from what i can tell
-    val y          : Optional[Int]
-    val inventoryId: Optional[String]
+    val y: Optional[Int] = js.native
+    val inventoryId: Optional[String] = js.native
 
     //For items that are socketed in other items
-    val socket: Optional[Int]
-    val colour: Optional[String]
+    val socket: Optional[Int] = js.native
+    val colour: Optional[String] = js.native
 
     //Added by allItems
-    var inItem    : Optional[AnyItem]
-    var character : Optional[String]
-    var locationId: Optional[String]
+    var inItem: Optional[AnyItem] = js.native
+    var character: Optional[String] = js.native
+    var locationId: Optional[String] = js.native
 
   }
 
   trait AdditionalProperty extends js.Object {
-    val displayMode: Int
+    val displayMode: Int = js.native
     //Experience for gem experience
-    val name       : String
+    val name: String = js.native
     //0 to 1 depending on progress to next level for gems
-    val progress   : Int
+    val progress: Int = js.native
     //For XP in Gems: Typically the 0th element of the inner array is a string like "175815/175816"
-    val values     : js.Array[js.Array[js.Any]]
+    val values: js.Array[js.Array[js.Any]] = js.native
   }
 
   object Socket {
@@ -350,9 +385,9 @@ object PoeTypes {
   }
 
   trait Socket extends js.Object {
-    val group: Int
+    val group: Int = js.native
     //used for socket groups, aka a 6 linked would have all sockets in group 0
-    val attr : String //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
+    val attr: String = js.native //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
   }
 
   object ItemProperty {
@@ -362,15 +397,15 @@ object PoeTypes {
   }
 
   trait ItemProperty extends js.Object {
-    val name       : String
-    val values     : js.Array[js.Array[Any]]
-    val displayMode: Int
+    val name: String = js.native
+    val values: js.Array[js.Array[Any]] = js.native
+    val displayMode: Int = js.native
   }
 
   trait ItemRequirement extends js.Object {
-    val name       : Optional[String]
-    val values     : js.Array[js.Array[js.Array[String]]]
-    val displayMode: Int
+    val name: Optional[String] = js.native
+    val values: js.Array[js.Array[js.Array[String]]] = js.native
+    val displayMode: Int = js.native
   }
 
 }

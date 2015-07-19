@@ -23,7 +23,7 @@ object Build extends sbt.Build {
 <script type="text/javascript" src="jslib/d3.js"></script>
 <script type="text/javascript" src="jslib/jquery.js"></script>
 <script type="text/javascript" src="jslib/jquery-migrate.js"></script>
-<script type="text/javascript" src="jslib/react-with-addons.js"></script>
+<script type="text/javascript" src="jslib/react/0.12.1/react-with-addons.js"></script>
 <script type="text/javascript" src="jslib/signals.js"></script>
 <script type="text/javascript" src="jslib/crossroads.js"></script>
 <script type="text/javascript" src="jslib/hasher.js"></script>
@@ -99,7 +99,7 @@ object Build extends sbt.Build {
 
   lazy val sjsTasks = List(fastOptJS, fullOptJS)
   lazy val cgtaOpenVersion = "0.2.2"
-  lazy val sVersion = "2.11.4"
+  lazy val sVersion = "2.11.5"
   lazy val sjsOutDir = Def.settingKey[File]("directory for javascript files output by scalajs")
 
 
