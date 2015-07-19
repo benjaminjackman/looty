@@ -20,6 +20,7 @@ object Build extends sbt.Build {
     """
 
     val jslib = """
+<script type="text/javascript" src="jslib/jailed/0.2.0/jailed.js"></script>
 <script type="text/javascript" src="jslib/d3.js"></script>
 <script type="text/javascript" src="jslib/jquery.js"></script>
 <script type="text/javascript" src="jslib/jquery-migrate.js"></script>

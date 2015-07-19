@@ -2,6 +2,7 @@ package looty
 
 
 import looty.poeapi.PoeRpcs
+import looty.views.ScriptView
 import looty.views.SettingsView
 import looty.views.UnderlayView
 
@@ -68,6 +69,7 @@ class LootyApp(demoMode: Boolean) {
     crossroads.addRoute("poebuilder", () => setView(new PoeBuilderView))
     crossroads.addRoute("settings", () => setView(new SettingsView))
     crossroads.addRoute("underlay", () => setView(new UnderlayView))
+    crossroads.addRoute("script", () => setView(new ScriptView))
     crossroads.routed.add(global.console.log, console)
     if (hasher.getURL().toString.endsWith("home")) {
       hasher.setHash("home")
