@@ -40,11 +40,11 @@ object TestLootScorerScriptParser extends FunSuite {
     import scala.util.parsing.combinator._
 
     class LootyScoreScriptParser extends JavaTokenParsers {
-//      def expr: Parser[Any] = term ~ rep("+" ~ term | "-" ~ term)
-//      def term: Parser[Any] = factor ~ rep("*" ~ factor | "/" ~ factor)
-//      def factor: Parser[Any] = floatingPointNumber | "(" ~ expr ~ ")"
+      def expr: Parser[Any] = term ~ rep("+" ~ term | "-" ~ term)
+      def term: Parser[Any] = factor ~ rep("*" ~ factor | "/" ~ factor)
+      def factor: Parser[Any] = floatingPointNumber | "(" ~ expr ~ ")" | ident
       override def ident = "[a-zA-Z0-9_]+".r
-      def callFun  = ident ~ "(" ~ repsep(floatingPointNumber, ",")  ~ ")" ^^ {
+      def callFun  = ident ~ "(" ~ repsep(expr, ",")  ~ ")" ^^ {
         case name ~ "(" ~ args ~ ")" => (name, args)
       }
       def defFun = "def" ~ callFun ^^ {
