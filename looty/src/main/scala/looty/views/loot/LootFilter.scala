@@ -44,7 +44,7 @@ object LootFilterColumn {
     val LT = "<(.*)".r
     val LTE = "<=(.*)".r
     val EQ = "=(.*)".r
-    val NUM = "([0-9]+)".r
+    val NUM = "([0-9.-]+)".r
 
     try {
       text.trim match {

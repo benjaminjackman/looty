@@ -325,7 +325,6 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
   }
 
 
-  js.Dictionary
   private def addSort() {
     grid.onSort.subscribe((e: js.Dynamic, args: js.Dynamic) => {
       val cols = args.sortCols.asInstanceOf[js.Array[js.Dynamic]]

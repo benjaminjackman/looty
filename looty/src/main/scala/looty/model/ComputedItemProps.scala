@@ -272,7 +272,7 @@ object ComputedItemProps {
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
   val LifeRegen          = pno("LifeRegen", "lireg")(Regen)(_.regeneratedPerSecond.life)
   val IncreasedManaRegen = pno("IncreasedManaRegen", "+%mareg")(Regen)(_.increased.manaRegenerationRate)
-  val MinusToManaCostOfSkills = nno("MinusToManaCostOfSkills", "-mcos")(Regen)(_.minusToManaCostOfSkills)
+  val MinusToManaCostOfSkills = pno("MinusToManaCostOfSkills", "-mcos")(Regen)(_.minusToManaCostOfSkills)
   LifeLeech !?= "Life Leech from Physical Attack Damage"
   LifeGainOnHit !?= "Life Gain on Hit"
   ManaGainOnHit !?= "Mana Gain on Hit"
