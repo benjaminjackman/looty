@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.55 (2015-08-20)
+# Bug fix for issues from from RNJoy's video (-mana cost of skills / life leech don't sort/filter properly)
+
 ## 0.2.1.54 (2015-08-20)
 # <<M:Thanks>><<S:A Lot>><<MS:GGG>>Fix for GGG breaking all community tools without notice.
 
@@ -233,7 +236,7 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         |GGG seems to only refresh items and gem information when a character changes zones,
         |so keep that in mind if things aren't showing up.<br>
         |source code available on <a href="https://github.com/benjaminjackman/looty">github</a>.<br>
-        |<h3>Help and more info available <a href="http://blog.jackman.biz/looty">here</a> (eventually)</h3>
+        |<h3><a href="https://www.youtube.com/watch?v=q6Fgrqg4HQs" target="_blank">Watch an overview video by By RNJoy </a></h3>
         |<h4> Tips & Tricks & Miscellaneous Details </h4>
         |<ul>
         |<li>You can type things to search for into the empty row at the top of the grids.
