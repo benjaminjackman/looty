@@ -151,7 +151,7 @@ object ComputedItemProps {
   val ExplicitModCount = nno("ExplicitModCount", "emc")(General)(_.item.explicitMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
-  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.item.typeLine)
+  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.cleanTypeLine)
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"

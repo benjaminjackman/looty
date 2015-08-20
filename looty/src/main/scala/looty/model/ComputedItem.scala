@@ -50,11 +50,13 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem && !item.isJewel && !item.isDivinationCard
 
-  def displayName = {
-    var n = item.name
-    if (n.nullSafe.isEmpty || n.isEmpty) n = item.typeLine
+  lazy val displayName = {
+    var n = item.getName
+    if (n.nullSafe.isEmpty || n.isEmpty) n = item.getTypeLine
     n
   }
+
+  lazy val cleanTypeLine = item.getTypeLine
 
   def forumLocationName = {
     //[linkItem location="Stash4" league="Rampage" x="0" y="0"]

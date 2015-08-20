@@ -89,8 +89,8 @@ class ItemDetailHover {
       item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
     }
 
-    val itemName = item.item.name
-    val typeLine = item.item.typeLine
+    val itemName = item.item.getName
+    val typeLine = item.item.getTypeLine
     val titleName = if (itemName.isEmpty) {
       s"""<span class="item-name">${typeLine.toString}</span>"""
     } else {

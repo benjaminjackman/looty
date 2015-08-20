@@ -6,7 +6,7 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.1")
 
 addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.5.1")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.0.2")
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.1.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-twirl" % "1.0.4")
 

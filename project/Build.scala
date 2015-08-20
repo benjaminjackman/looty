@@ -128,7 +128,7 @@ object Build extends sbt.Build {
         "biz.cgta" %%% "oscala-sjs" % cgtaOpenVersion,
         "biz.cgta" %%% "serland-sjs" % cgtaOpenVersion,
         "biz.cgta" %%% "cenum-sjs" % cgtaOpenVersion,
-        "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
+        "be.doeraene" %%% "scalajs-jquery" % "0.8.0" exclude ("org.webjars", "jquery"),
         "com.github.japgolly.scalajs-react" %%% "core" % "0.8.2"
       )
     )
