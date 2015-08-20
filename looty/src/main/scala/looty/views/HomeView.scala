@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.54 (2015-08-20)
+# <<M:Thanks>><<S:A Lot>><<MS:GGG>>Fix for GGG breaking all community tools without notice.
+
 ## 0.2.1.53 (2015-07-11)
 # Added Basic Jewel Support
 
