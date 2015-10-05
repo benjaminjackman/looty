@@ -113,8 +113,8 @@ class WealthView(implicit val pc: PoeCacher) extends View {
       selEl.get(0).asInstanceOf[dom.Element],
       180,
       "League",
-      (x) => Future.successful(Leagues.all.filter(l => x.isEmpty || l.displayName.toLowerCase.trim.contains(x.toLowerCase))).map(_.map(_.displayName))) { l =>
-      setLeague(Leagues.all.find(_.displayName == l).get, gridEl)
+      (x) => Future.successful(Leagues.all.filter(l => x.isEmpty || l.rpcName.toLowerCase.trim.contains(x.toLowerCase))).map(_.map(_.rpcName))) { l =>
+      setLeague(Leagues.all.find(_.rpcName =?= l).get, gridEl)
     }
   }
 

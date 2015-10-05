@@ -1,13 +1,14 @@
 package looty
 package poeapi
 
-import cgta.cenum.CEnum
-import cgta.oscala.util.debugging.PRINT
+import cgta.serland.SerBuilder
 import looty.model.CharClasses.CharClass
 import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
 import util.Optional
 
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 import scala.scalajs.js
 
 
@@ -37,19 +38,39 @@ object PoeTypes {
   //    val all = List(Standard, Hardcore, Warbands, Tempest)
   //  }
 
-  object Leagues extends CEnum {
-    final type EET = League
-    sealed trait League extends EnumElement {
-      def displayName = toString
-      def rpcName = toString
+//  object Leagues extends CEnum {
+//    final type EET = League
+//    sealed trait League extends EnumElement {
+//      def displayName = toString
+//      def rpcName = toString
+//    }
+//    case object Standard extends League
+//    case object Hardcore extends League
+//    case object Warbands extends League
+//    case object Tempest extends League
+//    //Needs to be overrided in child class with
+//    final override val elements = CEnum.getElements(this)
+//    def all = toIVec
+//  }
+
+  object Leagues {
+    object League {implicit val ser = SerBuilder.forCase(this.apply _)}
+    case class League(rpcName : String) {
+      val uriName =  js.URIUtils.encodeURIComponent(rpcName)
+
+      override def toString = rpcName
     }
-    case object Standard extends League
-    case object Hardcore extends League
-    case object Warbands extends League
-    case object Tempest extends League
-    //Needs to be overrided in child class with
-    final override val elements = CEnum.getElements(this)
-    def all = toIVec
+
+    def fromString(s : String): Option[League] = all.find(_.rpcName == s)
+
+
+    def init(pc : PoeCacher)(implicit context: ExecutionContext): Future[Unit] = {
+      pc.getAllLeagues().map { leagues =>
+        all = leagues
+      }
+    }
+
+    var all : IVec[League] = null
   }
 
   trait PassivesTree extends js.Object {

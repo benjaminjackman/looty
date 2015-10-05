@@ -26,10 +26,10 @@ object SelectLeagueWidget {
       selection = props.league,
       width = 120,
       placeholder = "League",
-      elements = Future(Leagues.elements),
+      elements = Future(Leagues.all),
       onChange = props.onLeagueChanged,
       toString = x => x.toString,
-      fromString = Leagues.fromString
+      fromString = x => Leagues.fromString(x).get
     ))
       .build
   }

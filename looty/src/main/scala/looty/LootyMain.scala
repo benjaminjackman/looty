@@ -1,7 +1,7 @@
 package looty
 
 
-import looty.poeapi.PoeRpcs
+
 import looty.views.ScriptView
 import looty.views.SettingsView
 import looty.views.UnderlayView
@@ -54,11 +54,12 @@ class LootyApp(demoMode: Boolean) {
     val banner = if (demoMode) demoBanner else ""
     val version = if (demoMode) "Demo" else Try(global.chrome.app.getDetails().version.asInstanceOf[String]).getOrElse("Unknown")
     crossroads.addRoute("home", () => setView(new HomeView(banner = banner, version = version)))
+    console.debug("Adding league routes")
     for (league <- Leagues.all) {
       if (demoMode) {
-        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
+//        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
       } else {
-        val l = league.toString.toLowerCase
+        val l = league.uriName
         crossroads.addRoute(s"$l-grid", () => setView(new LootView(league)))
       }
     }
@@ -88,7 +89,7 @@ class LootyApp(demoMode: Boolean) {
     if (demoMode) {
       Future.successful(())
     } else {
-      Future.sequence(List(StoreMaster.init()))
+      Future.sequence(List(StoreMaster.init(), Leagues.init(pc)))
     }
   }
 
@@ -96,7 +97,22 @@ class LootyApp(demoMode: Boolean) {
     console.log(s"Starting Looty in ${if (demoMode) "Demo" else "Extension"}")
     initComponents().foreach { _ =>
       addRoutes
+      console.log("Adding league buttons")
+      Leagues.all.filterNot(l => l.rpcName == "Standard" || l.rpcName == "Hardcore")foreach { league =>
+        val uri = league.uriName
+        val name = league.rpcName
+        jq(".views-menu").append(
+          s"""<menu-item><a class="view-btn grid" href="#/$uri-grid">$name</a></menu-item>""")
+      }
     }
+    //Add in the additional buttons
+//    <menu-bar class="views-menu">
+//
+//      <menu-item><a class="view-btn tempest grid" href="#/tempest-grid">Tempest</a></menu-item>
+//
+
+
+
   }
 }
 

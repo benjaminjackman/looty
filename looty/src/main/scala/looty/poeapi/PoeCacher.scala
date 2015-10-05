@@ -1,6 +1,9 @@
 package looty
 package poeapi
 
+import looty.poeapi.PoeTypes.Leagues.League
+
+import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import looty.poeapi.PoeTypes.{ItemContainer, StashTab, StashTabInfos, Inventory, Characters}
 import looty.model.{CharInvId, StashTabIdx, LootContainerId, ComputedItem}
@@ -15,6 +18,8 @@ import looty.model.parsers.ItemParser
 //////////////////////////////////////////////////////////////
 
 trait PoeCacher {
+
+
   def getAccountNameOverride() : Option[String]
   def setAccountNameOverride(accountName : Option[String]) : Unit
   def getAccountName : Future[String]
@@ -23,6 +28,12 @@ trait PoeCacher {
   def getStashTabInfos(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]
   def getStashTab(league: String, tabIdx: Int, forceNetRefresh: Boolean = false): Future[StashTab]
   def clearLeague(league: String): Future[Unit]
+
+  def getAllLeagues()(implicit ec : ExecutionContext) : Future[IVec[League]] = {
+    getChars(forceNetRefresh = false).map { chars =>
+      chars.map(c => League(c.league)).toVector
+    }
+  }
 
   def getContainer(league : String, conId : LootContainerId) : Future[ItemContainer] = {
     conId match {
