@@ -56,7 +56,9 @@ object PoeTypes {
   object Leagues {
     object League {implicit val ser = SerBuilder.forCase(this.apply _)}
     case class League(rpcName : String) {
-      val uriName =  js.URIUtils.encodeURIComponent(rpcName)
+      val uriName =  js.URIUtils.encodeURIComponent(rpcName).toLowerCase
+      def isStandard = rpcName.toLowerCase == "standard"
+      def isHardcore = rpcName.toLowerCase == "hardcore"
 
       override def toString = rpcName
     }

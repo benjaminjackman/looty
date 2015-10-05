@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.57 (2015-10-05)
+# Attempting to dynamically add leagues ... try again
+
 ## 0.2.1.56 (2015-10-05)
 # Attempting to dynamically add leagues
 

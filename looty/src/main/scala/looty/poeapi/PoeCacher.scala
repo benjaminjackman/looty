@@ -31,7 +31,7 @@ trait PoeCacher {
 
   def getAllLeagues()(implicit ec : ExecutionContext) : Future[IVec[League]] = {
     getChars(forceNetRefresh = false).map { chars =>
-      chars.map(c => League(c.league)).toVector
+      chars.map(c => League(c.league)).toVector.distinct
     }
   }
 

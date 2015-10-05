@@ -60,7 +60,7 @@ class RefreshPane(league: League,
     buttons = buttons.filterKeys(!_.isCharInv)
     elChars.empty()
     chars.sortBy(_.name.toUpperCase).foreach { char =>
-      if (char.league.toString =?= league.rpcName) {
+      if (char.league =?= league.rpcName) {
         val conId: LootContainerId = CharInvId(char.name)
         val button = jq(s"""<a class='char-btn' title="$refreshBtnTitle" href="javascript:void(0)">${char.name}</a>""")
         button.data("charName", char.name)

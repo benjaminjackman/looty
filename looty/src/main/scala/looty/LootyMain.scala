@@ -59,8 +59,8 @@ class LootyApp(demoMode: Boolean) {
       if (demoMode) {
 //        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
       } else {
-        val l = league.uriName
-        crossroads.addRoute(s"$l-grid", () => setView(new LootView(league)))
+        val uri = league.uriName
+        crossroads.addRoute(s"$uri-grid", () => setView(new LootView(league)))
       }
     }
     crossroads.addRoute("xp", () => setView(new XpView))
@@ -98,7 +98,7 @@ class LootyApp(demoMode: Boolean) {
     initComponents().foreach { _ =>
       addRoutes
       console.log("Adding league buttons")
-      Leagues.all.filterNot(l => l.rpcName == "Standard" || l.rpcName == "Hardcore")foreach { league =>
+      Leagues.all.filterNot(l => l.isStandard || l.isHardcore).foreach { league =>
         val uri = league.uriName
         val name = league.rpcName
         jq(".views-menu").append(
