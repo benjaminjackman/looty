@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.56 (2015-10-05)
+# Attempting to dynamically add leagues
+
 ## 0.2.1.55 (2015-08-20)
 # Bug fix for issues from from RNJoy's video (-mana cost of skills / life leech don't sort/filter properly)
 
