@@ -248,7 +248,7 @@ object PoeTypes {
       def getMapLevel: Option[Int] = {
         (for {
           props <- x.properties.toOption.toList
-          prop <- props.toList.find(_.name.toString == "Map Level").toList
+          prop <- props.toList.find(_.name.toString == "Map Tier").toList
           lvss <- prop.values.toList
           lv <- lvss.toList.headOption
           l = lv.toString.trim.takeWhile(isDigit).toInt
