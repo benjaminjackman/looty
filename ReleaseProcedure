@@ -4,8 +4,9 @@ gmocff
 #commit changes
 
 #bump version number in
-manifest
-homeview (copy to commit)
+vim ./looty/src/main/public/manifest.json
+vim ./looty/src/main/scala/looty/views/HomeView.scala 
+#copy homeview to commit
 
 gg (commit)
 
