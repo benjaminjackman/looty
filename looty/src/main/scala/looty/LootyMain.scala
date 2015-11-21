@@ -50,6 +50,7 @@ class LootyApp(demoMode: Boolean) {
     console.debug("Adding routes")
     val crossroads = global.crossroads
     val hasher = global.hasher
+    hasher.raw = true
     val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, if you like what you see."""
     val banner = if (demoMode) demoBanner else ""
     val version = if (demoMode) "Demo" else Try(global.chrome.app.getDetails().version.asInstanceOf[String]).getOrElse("Unknown")
