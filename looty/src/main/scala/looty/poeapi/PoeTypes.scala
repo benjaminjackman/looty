@@ -376,6 +376,7 @@ object PoeTypes {
     val frameType: Int = js.native
     val socketedItems: js.Array[AnyItem] = js.native
     val flavourText: Optional[js.Array[String]] = js.native
+    val ilvl: Optional[Int] = js.native
 
     //For items that are not socketed in other items
     val x: Optional[Int] = js.native

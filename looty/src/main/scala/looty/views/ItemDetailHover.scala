@@ -101,6 +101,7 @@ class ItemDetailHover {
       s"<br><hr>Location: ${item.locAndCoords}",
       if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
       properties,
+      item.item.ilvl.toOption.map(x=>s"Item Level: $x").getOrElse(""),
       requirements,
       item.item.descrText.toOption.map(_.toString).getOrElse(""),
       item.item.implicitModList.mkString("<br>"),

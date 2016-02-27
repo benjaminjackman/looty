@@ -148,6 +148,7 @@ object ComputedItemProps {
   val Sockets          = str("Sockets", "sockets", 100)(General)(_.socketColors)
   val Misc             = pno("Misc", "misc")(General)(_.misc)
   val Quality          = pno("Quality", "qual")(General)(_.properties.quality)
+  val Ilvl             = pno("ItemLevel", "ilvl")(General)(_.item.ilvl.toOption.getOrElse(0).toDouble)
   val ExplicitModCount = nno("ExplicitModCount", "emc")(General)(_.item.explicitMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
@@ -160,6 +161,7 @@ object ComputedItemProps {
   Sockets ?= "The sockets sorted by number in group, then by color"
   Misc !?= "Gem level / Items in Stack / # of Sockets /  Map Level"
   Quality !?= "The quality of the item"
+  Ilvl ?= "The item level"
   ExplicitModCount !?= "The number of explicit mods on an item"
   CraftedModCount !?= "The number crafted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
