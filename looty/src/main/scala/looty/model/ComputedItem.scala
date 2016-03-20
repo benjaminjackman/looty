@@ -346,11 +346,11 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var removesBleeding         = false
     var removesCurses           = false
 
-    var frozenAndChilledImmunity = false
-    var shockedImmunity          = false
-    var burningImmunity          = false
-    var bleedingImmunity         = false
-    var cursesImmunity           = false
+//    var frozenAndChilledImmunity = false
+//    var shockedImmunity          = false
+//    var burningImmunity          = false
+//    var bleedingImmunity         = false
+//    var cursesImmunity           = false
 
     var knockback              = false
     var instantRecovery        = false

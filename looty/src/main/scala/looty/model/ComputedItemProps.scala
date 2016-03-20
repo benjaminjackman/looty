@@ -406,7 +406,7 @@ object ComputedItemProps {
   val FlaskDispelsShocked          = boo("FlaskDispelsShocked", "fashock")(FlasksActions)(_.flask.removesShocked)
   val FlaskDispelsBurning          = boo("FlaskDispelsBurning", "faburn")(FlasksActions)(_.flask.removesBurning)
   val FlaskRemovesBleeding         = boo("FlaskRemovesBleeding", "fableed")(FlasksActions)(_.flask.removesBleeding)
-  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.cursesImmunity)
+  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.removesCurses)
   val FlaskKnockback               = boo("FlaskKnockback", "fknock")(FlasksActions)(_.flask.knockback)
   val FlaskInstant                 = boo("FlaskInstant", "finstant")(FlasksActions)(_.flask.instantRecovery)
 
