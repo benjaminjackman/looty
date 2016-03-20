@@ -1,21 +1,28 @@
 package looty
 
 
-
 import looty.views.ScriptView
 import looty.views.SettingsView
 import looty.views.UnderlayView
 
 import scala.scalajs.js
-
 import scala.concurrent.Future
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
-import looty.poeapi.{PoeCacherDemo, PoeCacher, PoeCacherChrome}
-import looty.views.{MapsView, GlobalView, Alerter, PoeBuilderView, WealthView, XpView, LootView, HomeView, View}
+import looty.poeapi.PoeCacher
+import looty.poeapi.PoeCacherChrome
+import looty.poeapi.PoeCacherExileTools
+import looty.views.GlobalView
+import looty.views.HomeView
+import looty.views.LootView
+import looty.views.MapsView
+import looty.views.PoeBuilderView
+import looty.views.View
+import looty.views.WealthView
+import looty.views.XpView
+
 import scala.util.Try
 import scala.scalajs.js.annotation.JSExport
-import looty.chrome.StoreMaster
 
 
 //////////////////////////////////////////////////////////////
@@ -27,10 +34,14 @@ import looty.chrome.StoreMaster
 //////////////////////////////////////////////////////////////
 
 
-class LootyApp(demoMode: Boolean) {
+class LootyApp(extensionMode: Boolean) {
 
   implicit val pc: PoeCacher = {
-    if (demoMode) new PoeCacherDemo() else new PoeCacherChrome()
+    if (extensionMode) {
+      new PoeCacherChrome()
+    } else {
+      new PoeCacherExileTools()
+    }
   }
 
   var curView: View = null
@@ -51,18 +62,17 @@ class LootyApp(demoMode: Boolean) {
     val crossroads = global.crossroads
     val hasher = global.hasher
     hasher.raw = true
-    val demoBanner = """!! THIS IS JUST A DEMO !! Please visit <a href="http://blog.jackman.biz/looty">here</a> to download the chrome extension, if you like what you see."""
-    val banner = if (demoMode) demoBanner else ""
-    val version = if (demoMode) "Demo" else Try(global.chrome.app.getDetails().version.asInstanceOf[String]).getOrElse("Unknown")
+    val banner = ""
+    val version = if (extensionMode) {
+      Try(global.chrome.app.getDetails().version.asInstanceOf[String]).getOrElse("Unknown")
+    } else {
+      "Unknown Version"
+    }
     crossroads.addRoute("home", () => setView(new HomeView(banner = banner, version = version)))
     console.debug("Adding league routes")
     for (league <- Leagues.all) {
-      if (demoMode) {
-//        crossroads.addRoute(s"$league-grid", () => setView(new LootView(Leagues.Standard)))
-      } else {
-        val uri = league.uriName
-        crossroads.addRoute(s"$uri-grid", () => setView(new LootView(league)))
-      }
+      val uri = league.uriName
+      crossroads.addRoute(s"$uri-grid", () => setView(new LootView(league)))
     }
     crossroads.addRoute("xp", () => setView(new XpView))
     crossroads.addRoute("global", () => setView(new GlobalView))
@@ -87,15 +97,17 @@ class LootyApp(demoMode: Boolean) {
 
   def initComponents(): Future[_] = {
     //ModsCsvParser.init()
-    if (demoMode) {
-      Future.successful(())
-    } else {
-      Future.sequence(List(StoreMaster.init(), Leagues.init(pc)))
-    }
+    //    if (demoMode) {
+    //      Future.successful(())
+    //    } else {
+    //
+    //    }
+
+    pc.init
   }
 
   def start() {
-    console.log(s"Starting Looty in ${if (demoMode) "Demo" else "Extension"}")
+    console.log(s"Starting Looty in ${if (extensionMode) "ExtensionMode" else "WebMode"}")
     initComponents().foreach { _ =>
       addRoutes
       console.log("Adding league buttons")
@@ -107,11 +119,10 @@ class LootyApp(demoMode: Boolean) {
       }
     }
     //Add in the additional buttons
-//    <menu-bar class="views-menu">
-//
-//      <menu-item><a class="view-btn tempest grid" href="#/tempest-grid">Tempest</a></menu-item>
-//
-
+    //    <menu-bar class="views-menu">
+    //
+    //      <menu-item><a class="view-btn tempest grid" href="#/tempest-grid">Tempest</a></menu-item>
+    //
 
 
   }
@@ -121,20 +132,21 @@ class LootyApp(demoMode: Boolean) {
 object LootyMain {
   @JSExport
   def main() {
-    new LootyApp(demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-//    Alerter.info("Looking up accountName from GGGs website")
-//    PoeRpcs.getAccountName().foreach {
-//      case Some(accountName) =>
-//        console.log(accountName)
-//
-//        Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
-//      case _ =>
-//        console.log("NO MATCH FOUND")
-//        new LootyApp(None, demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
-//        Alerter.error("Unable to locate account name, You are probably not logged into path of exile account, please log in. If you are logged in specify your account name manually <a href=\"#/settings\">here</a>")
-//      //Allow user to manually enter account name
-//
-//    }
+    val nonExtensionMode = global.chrome.isUndefined || global.chrome.storage.isUndefined
+    new LootyApp(extensionMode = !nonExtensionMode).start()
+    //    Alerter.info("Looking up accountName from GGGs website")
+    //    PoeRpcs.getAccountName().foreach {
+    //      case Some(accountName) =>
+    //        console.log(accountName)
+    //
+    //        Alerter.info(s"Looty Loaded! If you need help or want to help promote Looty please stop and leave a comment ${Alerter.featuresLink("here")}. Type 28 in the rLvl column to filter to pvp eligible items!")
+    //      case _ =>
+    //        console.log("NO MATCH FOUND")
+    //        new LootyApp(None, demoMode = global.chrome.isUndefined || global.chrome.storage.isUndefined).start()
+    //        Alerter.error("Unable to locate account name, You are probably not logged into path of exile account, please log in. If you are logged in specify your account name manually <a href=\"#/settings\">here</a>")
+    //      //Allow user to manually enter account name
+    //
+    //    }
   }
 
 }

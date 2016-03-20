@@ -1,16 +1,60 @@
 package looty
 package poeapi
 
-import scala.concurrent.Future
+import looty.chrome.ChromeStorage
+import looty.poeapi.PoeTypes.Characters
+import looty.poeapi.PoeTypes.Inventory
+import looty.poeapi.PoeTypes.StashTab
+import looty.poeapi.PoeTypes.StashTabInfos
+import looty.poeapi.PoeTypes.Leagues
 
-import looty.poeapi.PoeTypes.{StashTab, StashTabInfos, Inventory, Characters}
-import looty.chrome.StoreMaster
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.scalajs.js
 
 
 //////////////////////////////////////////////////////////////
 // Created by bjackman @ 3/13/14 2:01 AM
 //////////////////////////////////////////////////////////////
 
+
+object PoeCacherChrome {
+  object ChromeExtensionStoreMaster {
+    private val backingStore = ChromeStorage.local
+
+    private val values = scala.collection.mutable.Map.empty[String, js.Any]
+
+
+    def init()(implicit context: ExecutionContext): Future[Unit] = {
+      console.debug("Store Master Init")
+      backingStore.getAll().map { allObjs =>
+        val dict = allObjs.asInstanceOf[js.Dictionary[js.Any]]
+        val obj = allObjs.asInstanceOf[js.Object]
+        js.Object.properties(obj).iterator.foreach { key =>
+          values(key) = dict(key)
+        }
+        console.debug("Store Master Complete")
+        Unit
+      }
+    }
+
+    def get[A <: js.Any](key: String): Option[A] = {
+      values.get(key).map(_.asInstanceOf[A])
+    }
+
+    def set(key: String, value: js.Any): Future[Unit] = {
+      values.put(key, value)
+      backingStore.futSet(key, value)
+    }
+
+    def clear(key: String): Future[Unit] = {
+      values.remove(key)
+      backingStore.futClear(key)
+    }
+
+  }
+
+}
 
 /**
  * This class will cache the data from the website in localstorage
@@ -22,7 +66,7 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
   val account = "UnknownAccount!"
 
   private object Store {
-    val store = StoreMaster
+    val store = PoeCacherChrome.ChromeExtensionStoreMaster
 
     def clearLeague(league: String): Future[Unit] = {
       val otherLeagueChars = for {
@@ -173,5 +217,8 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
   override def setAccountNameOverride(accountName: Option[String]): Unit = accountName match {
     case Some(accountName) => Store.setAccountNameOverride(accountName)
     case None => Store.clearAccountNameOverride()
+  }
+  override def init(implicit ec: ExecutionContext): Future[_] = {
+    Future.sequence(List(Store.store.init, Leagues.init(this)))
   }
 }

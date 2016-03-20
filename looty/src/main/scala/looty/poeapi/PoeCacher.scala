@@ -18,7 +18,7 @@ import looty.model.parsers.ItemParser
 //////////////////////////////////////////////////////////////
 
 trait PoeCacher {
-
+  def init(implicit ec: ExecutionContext): Future[_]
 
   def getAccountNameOverride() : Option[String]
   def setAccountNameOverride(accountName : Option[String]) : Unit

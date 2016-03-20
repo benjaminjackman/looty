@@ -27,32 +27,6 @@ object PoeTypes {
 
   type StashTabInfos = js.Array[StashTabInfo]
 
-  //  object Leagues {
-  //    case class League(name: String, poeName: String)
-  //
-  //    val Standard = League("Standard", "Standard")
-  //    val Hardcore = League("Hardcore", "Hardcore")
-  //    val Warbands = League("Warbands", "Warbands")
-  //    val Tempest = League("Tempest", "Tempest")
-  //
-  //    val all = List(Standard, Hardcore, Warbands, Tempest)
-  //  }
-
-//  object Leagues extends CEnum {
-//    final type EET = League
-//    sealed trait League extends EnumElement {
-//      def displayName = toString
-//      def rpcName = toString
-//    }
-//    case object Standard extends League
-//    case object Hardcore extends League
-//    case object Warbands extends League
-//    case object Tempest extends League
-//    //Needs to be overrided in child class with
-//    final override val elements = CEnum.getElements(this)
-//    def all = toIVec
-//  }
-
   object Leagues {
     object League {implicit val ser = SerBuilder.forCase(this.apply _)}
     case class League(rpcName : String) {
