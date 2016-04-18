@@ -76,7 +76,7 @@ class UpgradesPane(
       val items = inventory.allItems(Some(name)).toList
 
       chars.find(_.name =?= name).foreach { charInfo =>
-        val cls = CharClasses.allMap(charInfo.`class`)
+        val cls = CharClasses.allIdMap(charInfo.`classId`)
         val pAttrs = PassiveSkillTreeHelp.hashesToAttributes(passives.hashes)
         val attrs = cls.startingAttributes.reduceWith(pAttrs)(_ + _)
         displayLevelAndAttributes(charInfo.level.toInt, attrs)
