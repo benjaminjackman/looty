@@ -109,7 +109,7 @@ object AffixesParser {
   def reduced(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
   def plusTo(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
   def addsDamage(element: String, suffix : String = "")(f: (ComputedItem, Double, Double) => Unit) = {
-    regex2(s"^Adds ([\\d]+)-([\\d]+) $element Damage${suffix}$$")(f)
+    regex2(s"^Adds ([\\d]+) to ([\\d]+) $element Damage${suffix}$$")(f)
   }
   def level(name: String)(f: (ComputedItem, Double) => Unit) = {
     val a = if (name.isEmpty) "" else name + " "
