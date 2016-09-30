@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.64 (2016-05-27)
+# Fix for affix
+
 ## 0.2.1.63 (2016-05-27)
 # Use poe website passive tree instead of poebuilder
 
