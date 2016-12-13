@@ -153,6 +153,12 @@ object PoeTypes {
       "Mortal Hope",
       "Mortal Ignorance")
 
+    // add offering to the goddess
+    // add prophecy fragments
+    // add atlas fragments
+    // add breach splinters
+    // add breach fragments
+
     implicit class AnyItemExtensions(val x: AnyItem) extends AnyVal {
       def isGem = x.getFrameType == FrameTypes.gem
       def isSupportGem = isGem && x.support
