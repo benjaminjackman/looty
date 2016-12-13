@@ -54,7 +54,8 @@ class PoeBuilderView(implicit val pc: PoeCacher) extends View {
           PoeRpcs.getPassiveSkills(accountName = accountName, character = charName).foreach { data =>
             val base64 = PassiveSkillTreeHelp.decode(charMap(charName).getCharClass, data.hashes.asJsArr[Int])
             //iframe.attr("src", s"http://poebuilder.com/character/$base64")
-            window.open(s"http://poebuilder.com/character/$base64")
+            //window.open(s"http://poebuilder.com/character/$base64")
+            window.open(s"https://www.pathofexile.com/passive-skill-tree/$base64")
           }
         case Failure(ex) =>
           Alerter.error(s"""No account name specified ($ex) please set it manually here: <a href="#/settings">here</a>""")

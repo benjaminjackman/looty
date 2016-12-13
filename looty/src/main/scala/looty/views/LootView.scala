@@ -223,7 +223,16 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
       val cols = columns.all
       val header = cols.map(_.fullName).mkString(",")
       val rows = dataView.getItems().asJsArr[ComputedItem].toList.map { row =>
-        cols.map(_.getJs(row)).mkString(",")
+        cols.map{ col =>
+          val v = ""+col.getJs(row)
+          if (v.contains(",")) {
+            //Quote items which contain a ,
+            val q = '"'
+            s"$q$v$q"
+          } else {
+            v
+          }
+        }.mkString(",")
       }
       val csv = header + "\n" + rows.mkString("\n")
       val blob = new Blob(js.Array(csv), O(`type` = "text/plain;charset=utf-8").asInstanceOf[BlobPropertyBag])
