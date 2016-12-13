@@ -13,6 +13,15 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.65 (2016-12-06)
+# Quote commas in csv
+
+## 0.2.1.64 (2016-05-27)
+# Fix for affix
+
+## 0.2.1.63 (2016-05-27)
+# Use poe website passive tree instead of poebuilder
+
 ## 0.2.1.61 (2016-03-19)
 #  Accepted PR from PetePete1984 that fixes upgrade panes to work with Ascendancy Classes
 
