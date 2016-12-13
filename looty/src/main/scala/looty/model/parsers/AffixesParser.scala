@@ -158,7 +158,9 @@ object AffixesParser {
   increased("Quantity of Items found")(_.increased.quantityOfItemsFound += _)
   increased("Rarity of Items found")(_.increased.rarityOfItemsFound += _)
   increased("Movement Speed")(_.increased.movementSpeed += _)
-  increased("Stun Recovery")(_.increased.blockAndStunRecovery += _)
+  //increased("Stun Recovery")(_.increased.blockAndStunRecovery += _)
+  // Stun Recovery is now Stun and Block Recovery
+  increased("Stun and Block Recovery")(_.increased.blockAndStunRecovery += _)
   increased("Spell Damage")(_.increased.spellDamage += _)
   increased("Mana Regeneration Rate")(_.increased.manaRegenerationRate += _)
   increased("Elemental Damage with Weapons")(_.increased.elementalDamageWithWeapons += _)
@@ -243,7 +245,9 @@ object AffixesParser {
 
   increased("Flask Charges gained")(_.flask.increased.chargesGained += _)
   increased("Flask Mana Recovery rate")(_.flask.increased.manaRecoveryRate += _)
-  increased("Flask effect duration")(_.flask.increased.effectDuration += _)
+  //increased("Flask effect duration")(_.flask.increased.effectDuration += _)
+  // renamed to "x% increased Duration"
+  increased("Duration")(_.flask.increased.effectDuration += _)
   increased("Flask Life Recovery rate")(_.flask.increased.lifeRecoveryRate += _)
   increased("Flask Recovery Speed")(_.flask.increased.flaskRecoverySpeed += _)
   increased("Charge Recovery")(_.flask.increased.chargeRecovery += _)
@@ -261,7 +265,11 @@ object AffixesParser {
   simple0("Immunity to Shock during Flask effect\nRemoves Shock on use")(_.flask.removesShocked = true)
   simple0("Immunity to Ignite during Flask effect\nRemoves Burning on use")(_.flask.removesBurning = true)
   simple0("Immunity to Bleeding during Flask effect\nRemoves Bleeding on use")(_.flask.removesBleeding = true)
-  simple0("Immunity to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
+  //simple0("Immunity to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
+  // curse immunities have been reworded?
+  simple0("Immune to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
+  // new poison immune Flasks
+  //simple0("Immune to Poison during Flask effect\nRemoves Poison on use")(_.flask.removesPoison = true)
 
   simple0("Adds Knockback to Melee Attacks during Flask effect")(_.flask.knockback = true)
   simple0("Instant Recovery")(_.flask.instantRecovery = true)
@@ -269,13 +277,17 @@ object AffixesParser {
 
   reduced("Amount Recovered")(_.flask.reduced.amountRecovered += _)
   reduced("Recovery Speed")(_.flask.reduced.recoverySpeed += _)
-  reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
+  //reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
+  // renamed to "x% reduced Charges used"
+  reduced("Charges used")(_.flask.reduced.flaskChargesUsed += _)
 
   simple1("", "Extra Charges")(_.flask.extraCharges += _)
   simple1("", "of Recovery applied Instantly")(_.flask.amountAppliedInstantly += _)
 
   simple1("Recharges", "Charges when you take a Critical Strike")(_.flask.chargesOnCriticalStrikeTaken += _)
-  simple1("Recharges", "Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
+  //simple1("Recharges", "Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
+  // surgeon's was remodeled to 20% on crit; probably needs more changes elsewhere (computedItem)
+  simple1("", "chance to gain a Flask Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
   simple1("Removes", "of Life Recovered from Mana when used")(_.flask.lifeFromMana += _)
   simple1("Removes", "of Mana Recovered from Life when used")(_.flask.manaFromLife += _)
 
