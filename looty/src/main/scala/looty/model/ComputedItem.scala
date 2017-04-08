@@ -111,6 +111,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isQuest) "QuestItem"
     else if (item.isJewel) "Jewel"
     else if (item.isDivinationCard) "DivCard"
+    else if (item.isLeaguestone) "Leaguestone"
+    else if (item.isProphecy) "SealedProphecy"
     else "UNKNOWN"
   }
 
