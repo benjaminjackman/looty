@@ -10,7 +10,6 @@ import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 object Build extends sbt.Build {
   import web.Import._
 
-
   val handleLootyHtml = Def.task {
     val css = """
   <link rel="stylesheet" href="jslib/slickgrid/css/smoothness/jquery-ui-1.8.16.custom.css"/>
@@ -68,7 +67,15 @@ object Build extends sbt.Build {
         val content = IO.read(in)
         val outDir = out0.getParentFile
         val regex = """.*/([^/]+)\.template\.html""".r
-        val basename = regex.findFirstMatchIn(in.getPath).get.group(1)
+        val regexWindows = """.*\\([^\\]+)\.template\.html""".r
+        var basename = regex.findFirstMatchIn(in.getPath) match {
+          case Some(mat) =>
+            mat.group(1)
+          case None =>
+          // fallback for windows case let it just blow up if get fails here
+          regexWindows.findFirstMatchIn(in.getPath).getOrElse(sys.error(s"cannot resolve path ${in.getPath}")).group(1)
+        }
+
         //Make a dev version and a release version
         val devFile = outDir / (basename + "-dev.html")
         val releaseFile = outDir / (basename + ".html")
@@ -155,4 +162,3 @@ object Build extends sbt.Build {
   }
 
 }
-

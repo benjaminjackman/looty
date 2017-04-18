@@ -43,12 +43,13 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   object Scores {
     lazy val default: ItemScore = ItemScorer(ComputedItem.this).getOrElse(ItemScore(Nil, 0))
     lazy val custom : ItemScore = ItemScorer(ComputedItem.this).getOrElse(ItemScore(Nil, 0))
+    lazy val custom2: HighScore = HighScorer(ComputedItem.this).getOrElse(HighScore(Nil, 0))
   }
 
   def maxResist = plusTo.resistance.all.max
   def magicFind = increased.quantityOfItemsFound + increased.rarityOfItemsFound
 
-  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem && !item.isJewel && !item.isDivinationCard
+  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem && !item.isJewel && !item.isDivinationCard && !item.isProphecy && !item.isLeaguestone
 
   lazy val displayName = {
     var n = item.getName
@@ -111,6 +112,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isQuest) "QuestItem"
     else if (item.isJewel) "Jewel"
     else if (item.isDivinationCard) "DivCard"
+    else if (item.isLeaguestone) "Leaguestone"
+    else if (item.isProphecy) "SealedProphecy"
     else "UNKNOWN"
   }
 

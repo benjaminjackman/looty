@@ -139,11 +139,13 @@ object PoeTypes {
       val currency = FrameType(5, "currency", "rgb(165,146,99)")
       val divCard = FrameType(6, "card", "rgb(165,146,99)")
       val quest = FrameType(7, "quest", "rgb(0,255,0)")
+      val prophecy = FrameType(8, "prophecy", "rgb(128,128,0)")
+      val relic = FrameType(9, "relic", "rgb(64,192,64)")
 
-      val all = Array(normal, magic, rare, unique, gem, currency, divCard, quest)
+      val all = Array(normal, magic, rare, unique, gem, currency, divCard, quest, prophecy, relic)
     }
 
-    val vaalFragments = ISet(
+    /*val mapFragments = ISet(
       "Sacrifice at Dusk",
       "Sacrifice at Midnight",
       "Sacrifice at Dawn",
@@ -151,7 +153,18 @@ object PoeTypes {
       "Mortal Grief",
       "Mortal Rage",
       "Mortal Hope",
-      "Mortal Ignorance")
+      "Mortal Ignorance",
+      "Offering to the Goddess",
+      "Volkuur's Key",
+      "Yriel's Key",
+      "Eber's Key",
+      "Inya's Key",
+      "Fragment of the Minotaur",
+      "Fragment of the Chimera",
+      "Fragment of the Phoenix",
+      "Fragment of the Hydra",
+      "Ancient Reliquary Key")
+    */
 
     implicit class AnyItemExtensions(val x: AnyItem) extends AnyVal {
       def isGem = x.getFrameType == FrameTypes.gem
@@ -161,12 +174,16 @@ object PoeTypes {
       def isCurrency = x.getFrameType == FrameTypes.currency && !isHideoutItem
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
-      def isFragment = vaalFragments(x.typeLine)
+      // all map fragments that can be used in the map device contain this bit of text in their description
+      def isFragment = x.descrText.toOption.exists(_ contains "Eternal Laboratory or a personal")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
       def isDivinationCard = x.getFrameType == FrameTypes.divCard
 
       def isInSocket = x.socket.toOption.isDefined
+
+      def isProphecy = x.getFrameType == FrameTypes.prophecy
+      def isLeaguestone = x.descrText.toOption.exists(_ contains "place a Leaguestone")
 
       def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList

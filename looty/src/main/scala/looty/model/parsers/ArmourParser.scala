@@ -22,7 +22,7 @@ object ArmourParser {
   val boots        = List("Boots", "Greaves", "Slippers", "Shoes")
   val chest        = List("Robe", "Jacket", "Leather", "Plate", "Brigandine", "Chainmail", "Garb", "Vestment",
     "Tunic", "Lamellar", "Ringmail", "Coat", "Silks", "Doublet", "Armour", "Hauberk", "Regalia", "Raiment",
-    "Wyrmscale", "Silken Wrap", "Vest", "Jerkin", "Chestplate", "Dire Cloak", "Dire Jack")
+    "Wyrmscale", "Full Dragonscale", "Silken Wrap", "Vest", "Jerkin", "Chestplate", "Dire Cloak", "Dire Jack")
   val spiritShield = List("Spirit Shield")
   val shield       = List("Buckler", "Shield", "Spiked Bundle")
   val quiver       = List("Quiver")
