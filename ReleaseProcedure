@@ -5,7 +5,7 @@ gmocff
 
 #bump version number in
 vim ./looty/src/main/public/manifest.json
-vim ./looty/src/main/scala/looty/views/HomeView.scala 
+vim ./looty/src/main/scala/looty/views/HomeView.scala
 #copy homeview to commit
 
 gg (commit)

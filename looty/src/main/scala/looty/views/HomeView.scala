@@ -13,8 +13,16 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
-## 0.2.1.66 (2016-12-06)
-# fix for GGG change of API with no forewarning
+## 0.2.1.67 (2017-08-05)
+# fix for GGG change of API with no forewarning cleaning up their mess
+
+## 0.2.1.66 (2017-04-18)A
+  Thanks to PetePete1984 for uploading several fixes and patches to enhance looty
+  as well as getting to compile on windows!
+  @PetePete1984 Moves windows build script to bin folder      49f56c6
+  @PetePete1984 Enables parsing Full Dragonscale Armour  …      7636cf3
+  @PetePete1984 Improves handling for map fragments  …      267b11d
+  @PetePete1984 Adds a unique custom2 column for the new scoring system
 
 ## 0.2.1.65 (2016-12-06)
 # Quote commas in csv
