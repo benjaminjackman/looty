@@ -27,8 +27,8 @@ object PoeRpcs {
 
   import PoeTypes._
 
-  def getAccountName() : Future[String] = {
-    AjaxHelp[String](s"$basePoeUrl/my-account", HttpRequestTypes.Get, None).flatMap{ html =>
+  def getAccountName(): Future[String] = {
+    AjaxHelp[String](s"$basePoeUrl/my-account", HttpRequestTypes.Get, None).flatMap { html =>
       val Regex = "href=\"/account/view-profile/([^\"]*)".r.unanchored
       html match {
         case Regex(accountName) => Future.successful(accountName)
@@ -51,14 +51,14 @@ object PoeRpcs {
     )
   }
 
-  def getCharacterInventory(accountName : String, character: String): Future[Inventory] = {
+  def getCharacterInventory(accountName: String, character: String): Future[Inventory] = {
     val p = newObject
     p.character = character
     p.accountName = accountName
     enqueue[Inventory](url = s"$basePoeUrl/character-window/get-items", params = p)
   }
 
-  def getStashTab(accountName : String, league: String, tabIdx: Int): Future[StashTab] = {
+  def getStashTab(accountName: String, league: String, tabIdx: Int): Future[StashTab] = {
     val p = newObject
     p.accountName = accountName
     p.league = league.toString
@@ -67,7 +67,7 @@ object PoeRpcs {
     enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p)
   }
 
-  def getStashTabInfos(accountName : String, league: String): Future[StashTabInfos] = {
+  def getStashTabInfos(accountName: String, league: String): Future[StashTabInfos] = {
     val p = newObject
     p.accountName = accountName
     p.league = league.toString
@@ -92,20 +92,30 @@ object PoeRpcs {
 
   def get[A](url: String, params: js.Any, reqType: HttpRequestType): Future[A] = {
     val jQuery = global.jQuery.asInstanceOf[JQueryStatic]
-    AjaxHelp(url, reqType, params.nullSafe.map(s => jQuery.param(s))).flatMap { res: js.Any =>
-      res.asInstanceOf[Any] match {
-        case x: Boolean =>
-          //GGG sends back "false" when the parameters aren't valid
-          Future.failed(BadParameters(s"called $url with ${JSON.stringify(params)}"))
-        case res => res.asInstanceOf[js.Dynamic].error.nullSafe match {
-          case Some(reason) =>
-            //Typically this is a throttle was tripped failure
-            Future.failed(ThrottledFailure(reason.toString))
-          //Therefore we schedule a re-attempt in the future
-          case None => Future(res.asInstanceOf[A])
+    val p = Promise[A]()
+
+    AjaxHelp[js.Any](url, reqType, params.nullSafe.map(s => jQuery.param(s))).onComplete {
+      case Success(res) =>
+        res match {
+          case x if x == "false".asJsAny =>
+            //GGG sends back "false" when the parameters aren't valid
+            console.log("boolean")
+            p.completeWith(Future.failed(BadParameters(s"called $url with ${JSON.stringify(params)}")))
+          case res => res.asInstanceOf[js.Dynamic].error.nullSafe match {
+            case Some(reason) =>
+              console.log("reason", reason)
+              //Typically this is a throttle was tripped failure
+              p.completeWith(Future.failed(ThrottledFailure(reason.toString)))
+            //Therefore we schedule a re-attempt in the future
+            case None =>
+              p.completeWith(Future(res.asInstanceOf[A]))
+          }
         }
-      }
+      case Failure(res) =>
+        window.console.log("Recevied a failure, probably throttling", res.asJsAny)
+        p.completeWith(Future.failed(ThrottledFailure(""+res)))
     }
+    p.future
   }
 
   def scheduleQueueCheck(wasThrottled: Boolean) {
@@ -134,6 +144,7 @@ object PoeRpcs {
             scheduleQueueCheck(wasThrottled = true)
           case Failure(t) =>
             qi.debugLog(s"#### Get => Other Failure: $t")
+            console.debug(s"#### Get $qi => Other Failure: $t")
             Q.remove(qi)
             Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
             qi.failure(t)
@@ -149,7 +160,7 @@ object PoeRpcs {
     val id = Q.nextId
     private val promise = Promise[Any]()
     debugLog("Created Queue Item")
-    def success(x : Any) = {
+    def success(x: Any) = {
       debugLog("Success")
       if (!promise.isCompleted) {
         promise.success(x)
@@ -157,7 +168,7 @@ object PoeRpcs {
         debugLog("#### DUPLICATE SUCCESS")
       }
     }
-    def failure(t : Throwable) = {
+    def failure(t: Throwable) = {
       debugLog("Failure")
       if (!promise.isCompleted) {
         promise.failure(t)
@@ -165,7 +176,7 @@ object PoeRpcs {
         debugLog("#### DUPLICATE FAILURE")
       }
     }
-    def debugLog(msg : String) = {
+    def debugLog(msg: String) = {
       //console.debug(msg, id, promise.isCompleted, url, params)
     }
     def getFuture = promise.future
@@ -178,21 +189,21 @@ object PoeRpcs {
       id += 1
       id
     }
-    def peek() : Option[QueueItem] = {
+    def peek(): Option[QueueItem] = {
       val r = requestList.reverse.headOption
       r.map(_.debugLog("Peek"))
       r
     }
 
-    def addToQueue(q : QueueItem) {
+    def addToQueue(q: QueueItem) {
       q.debugLog("Add To Queue")
-      requestList = q ::requestList
+      requestList = q :: requestList
     }
     def remove(q: QueueItem) {
       requestList = requestList.filter(_.id != q.id)
     }
 
-    private var requestList   = List.empty[QueueItem]
+    private var requestList = List.empty[QueueItem]
   }
 
   private var willCheckQueue = false
