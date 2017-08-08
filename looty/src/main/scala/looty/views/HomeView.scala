@@ -13,8 +13,11 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.68 (2017-08-05)
+# 20% Less ornery commit message
+
 ## 0.2.1.67 (2017-08-05)
-# fix for GGG change of API with no forewarning cleaning up their mess
+# fix for GGG change of API
 
 ## 0.2.1.66 (2017-04-18)A
   Thanks to PetePete1984 for uploading several fixes and patches to enhance looty
