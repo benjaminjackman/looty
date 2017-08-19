@@ -201,11 +201,13 @@ object ComputedItemProps {
   val IncreasedAccuracy    = pno("IncreasedAccuracy", "+%acc")(Attack)(_.increased.accuracyRating)
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
   val ArrowPierceChance = pno("ArrowPierceChance", "+%apc")(Attack)(_.arrowPierceChance)
+  val WeaponRange = pno("WeaponRange", "+weprng")(Attack)(_.properties.weaponRange)
   AttacksPerSecond !?= "AttacksPerSecond"
   PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
   IncreasedAccuracy !?= "Increased Accuracy Rating"
   IncreasedAttackSpeed !?= "Increased Attack Speed"
   ArrowPierceChance !?= "Chance of Arrows Piercing"
+  WeaponRange !?= "Weapon Range"
 
   //Dps
   val DpsTotal     = pno("DpsTotal", "dps")(Dps)(_.total.dps.round)
@@ -250,10 +252,12 @@ object ComputedItemProps {
   val RequiredDex   = nno("RequiredDex", "rDex")(Requirements)(_.requirements.attribute.dexterity)
   val RequiredStr   = nno("RequiredStr", "rStr")(Requirements)(_.requirements.attribute.strength)
   val RequiredInt   = nno("RequiredInt", "rInt")(Requirements)(_.requirements.attribute.intelligence)
+  val ReducedRequirements   = pno("ReducedRequirements", "rreq")(Requirements)(_.reduced.attributeRequirements)
   RequiredLevel ?= "Level Required to Equip the Item"
   RequiredDex !?= "Dex Required to Equip the Item"
   RequiredStr !?= "Str Required to Equip the Item"
   RequiredInt !?= "Int Required to Equip the Item"
+  ReducedRequirements !?= "Reduced Requirements"
 
   //Efficiency
   val MagicFind                = pno("MagicFind", "mf")(Efficiency)(_.magicFind)
@@ -360,6 +364,9 @@ object ComputedItemProps {
   val IncreasedLightningDamage = pno("IncreasedLightningDamage", "+%lDmg")(IncreasedDamage)(_.increased.damage.lightning)
   val IncreasedChaosDamage     = pno("IncreasedChaosDamage", "+%xDmg")(IncreasedDamage)(_.increased.damage.chaos)
   val IncreasedPhysicalDamage  = pno("IncreasedPhysicalDamage", "+%pDmg")(IncreasedDamage)(_.increased.damage.physical)
+  val IncreasedBleedingDamage  = pno("IncreasedBleedingDamage", "+%blDmg")(IncreasedDamage)(_.increased.bleedingDamage)
+  val IncreasedBurningDamage  = pno("IncreasedBurningDamage", "+%buDmg")(IncreasedDamage)(_.increased.burningDamage)
+  val IncreasedElementalAttackDamage  = pno("IncreasedElementalAttackDamage", "+%eaDmg")(IncreasedDamage)(_.increased.elementalAttackDamage)
   IncreasedElementalDamage !?= "Increased Elemental Damage"
   IncreasedElementalDamageWithWeapons !?= "Increased Elemental Damage With Weapons"
   IncreasedFireDamage !?= "Increased Fire Damage + Elemental Damage"
@@ -367,6 +374,9 @@ object ComputedItemProps {
   IncreasedLightningDamage !?= "Increased Lightning Damage + Elemental Damage"
   IncreasedChaosDamage !?= "Increased Chaos Damage"
   IncreasedPhysicalDamage !?= "Increased Physical Damage"
+  IncreasedBleedingDamage !?= "Increased Bleeding Damage"
+  IncreasedBurningDamage !?= "Increased Burning Damage"
+  IncreasedElementalAttackDamage !?= "Increased Elemental Attack Damage"
 
   //Gems
   val IncreasedGemLevelBow          = pno("IncreasedGemLevelBow", "+gBow")(Gems)(_.gemLevel.bow)
@@ -394,11 +404,13 @@ object ComputedItemProps {
 
   //Flask
   val FlaskExtraCharges                 = pno("FlaskExtraCharges", "fextrac")(FlasksMods)(_.flask.extraCharges)
+  val FlaskChargesUsed                 = pno("FlaskChargesUsed", "freducc")(FlasksMods)(_.flask.reduced.flaskChargesUsed)
   val FlaskChargesOnCriticalStrikeGiven = pno("FlaskChargesOnCriticalStrikeGiven", "fsurgeon")(FlasksMods)(_.flask.chargesOnCriticalStrikeGiven)
   val FlaskLifeRecoveryToMinions        = pno("FlaskLifeRecoveryToMinions", "fminion")(FlasksMods)(_.flask.lifeRecoveryToMinions)
   val FlaskAmountAppliedInstantly       = pno("FlaskAmountAppliedInstantly", "f%instant")(FlasksMods)(_.flask.amountAppliedInstantly)
 
   FlaskExtraCharges !?= "Flask Extra Charges"
+  FlaskChargesUsed !?= "Flask Charges Used"
   FlaskChargesOnCriticalStrikeGiven !?= "Flask Charges On Critical Strike Given"
   FlaskLifeRecoveryToMinions !?= "Flask Life Recovery To Minions"
   FlaskAmountAppliedInstantly !?= "Flask Amount Applied Instantly"

@@ -86,6 +86,7 @@ object PropertyParsers {
   named("Critical Strike Chance")((i, p) => i.properties.criticalStrikeChance = prunePercent(p.firstValue))
   named("Attacks per Second")((i, p) => i.properties.attacksPerSecond = p.firstValue.toDouble)
   named("Chance to Block")((i, p) => i.properties.chanceToBlock = prunePercent(p.firstValue))
+  named("Weapon Range")((i, p) => i.properties.weaponRange = p.firstValue.toDouble)
 
 
   named("Stack Size") { (i, p) =>
