@@ -145,7 +145,7 @@ object PoeTypes {
       val all = Array(normal, magic, rare, unique, gem, currency, divCard, quest, prophecy, relic)
     }
 
-    val mapFragments = ISet(
+    /*val mapFragments = ISet(
       "Sacrifice at Dusk",
       "Sacrifice at Midnight",
       "Sacrifice at Dawn",
@@ -164,12 +164,7 @@ object PoeTypes {
       "Fragment of the Phoenix",
       "Fragment of the Hydra",
       "Ancient Reliquary Key")
-
-    // add offering to the goddess
-    // add prophecy fragments
-    // add atlas fragments
-    // add breach splinters
-    // add breach fragments
+    */
 
     implicit class AnyItemExtensions(val x: AnyItem) extends AnyVal {
       def isGem = x.getFrameType == FrameTypes.gem
@@ -179,7 +174,8 @@ object PoeTypes {
       def isCurrency = x.getFrameType == FrameTypes.currency && !isHideoutItem
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
-      def isFragment = mapFragments(x.typeLine)
+      // all map fragments that can be used in the map device contain this bit of text in their description
+      def isFragment = x.descrText.toOption.exists(_ contains "Eternal Laboratory or a personal")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
       def isDivinationCard = x.getFrameType == FrameTypes.divCard

@@ -68,11 +68,12 @@ object Build extends sbt.Build {
         val outDir = out0.getParentFile
         val regex = """.*/([^/]+)\.template\.html""".r
         val regexWindows = """.*\\([^\\]+)\.template\.html""".r
-        var basename = ""
-        if (regex.findFirstMatchIn(in.getPath) == None) {
-          basename = regexWindows.findFirstMatchIn(in.getPath).get.group(1)
-        } else {
-          basename = regex.findFirstMatchIn(in.getPath).get.group(1)
+        var basename = regex.findFirstMatchIn(in.getPath) match {
+          case Some(mat) =>
+            mat.group(1)
+          case None =>
+          // fallback for windows case let it just blow up if get fails here
+          regexWindows.findFirstMatchIn(in.getPath).getOrElse(sys.error(s"cannot resolve path ${in.getPath}")).group(1)
         }
 
         //Make a dev version and a release version

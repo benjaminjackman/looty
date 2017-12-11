@@ -161,6 +161,7 @@ object AffixesParser {
   //increased("Stun Recovery")(_.increased.blockAndStunRecovery += _)
   // Stun Recovery is now Stun and Block Recovery
   increased("Stun and Block Recovery")(_.increased.blockAndStunRecovery += _)
+  increased("Block and Stun Recovery during Flask effect")(_.increased.blockAndStunRecovery += _)
   increased("Spell Damage")(_.increased.spellDamage += _)
   increased("Mana Regeneration Rate")(_.increased.manaRegenerationRate += _)
   increased("Elemental Damage with Weapons")(_.increased.elementalDamageWithWeapons += _)
@@ -175,6 +176,9 @@ object AffixesParser {
     i.increased.damage.cold += n
     i.increased.damage.lightning += n
   }
+  increased("Damage with Bleeding")(_.increased.bleedingDamage += _)
+  increased("Burning Damage")(_.increased.burningDamage += _)
+  increased("Elemental Damage with Attack Skills")(_.increased.elementalAttackDamage += _)
 
   increased("Armour")(_.increased.armour += _)
   increased("Evasion Rating")(_.increased.evasion += _)
@@ -242,10 +246,12 @@ object AffixesParser {
   simple1("", "to Mana Cost of Skills")(_.minusToManaCostOfSkills += _.abs)
   simple1("", "chance of Arrows Piercing")(_.arrowPierceChance += _)
 
+  simple1("", "chance to cause Bleeding on Hit")(_.bleedingChance += _)
+
 
   increased("Flask Charges gained")(_.flask.increased.chargesGained += _)
   increased("Flask Mana Recovery rate")(_.flask.increased.manaRecoveryRate += _)
-  //increased("Flask effect duration")(_.flask.increased.effectDuration += _)
+  increased("Flask effect duration")(_.flask.increased.effectDuration += _)
   // renamed to "x% increased Duration"
   increased("Duration")(_.flask.increased.effectDuration += _)
   increased("Flask Life Recovery rate")(_.flask.increased.lifeRecoveryRate += _)
@@ -280,8 +286,10 @@ object AffixesParser {
   //reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
   // renamed to "x% reduced Charges used"
   reduced("Charges used")(_.flask.reduced.flaskChargesUsed += _)
+  reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
 
   simple1("", "Extra Charges")(_.flask.extraCharges += _)
+  simple1("", "to Maximum Charges")(_.flask.extraCharges += _)
   simple1("", "of Recovery applied Instantly")(_.flask.amountAppliedInstantly += _)
 
   simple1("Recharges", "Charges when you take a Critical Strike")(_.flask.chargesOnCriticalStrikeTaken += _)
