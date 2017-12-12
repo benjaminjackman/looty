@@ -112,7 +112,7 @@ object PoeRpcs {
           }
         }
       case Failure(res) =>
-        window.console.log("Recevied a failure, probably throttling", res.asJsAny)
+        window.console.log("Received a failure, probably throttling", res.asJsAny)
         p.completeWith(Future.failed(ThrottledFailure(""+res)))
     }
     p.future
