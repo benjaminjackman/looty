@@ -17,6 +17,7 @@ object SocketColors {
   case object Green extends SocketColor
   case object Blue extends SocketColor
   case object White extends SocketColor
+  case object Abyssal extends SocketColor
 
-  def all = List(Red, Green, Blue, White)
+  def all = List(Red, Green, Blue, White, Abyssal)
 }

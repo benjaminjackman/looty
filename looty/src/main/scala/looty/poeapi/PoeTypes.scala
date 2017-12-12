@@ -71,13 +71,24 @@ object PoeTypes {
     implicit class ItemContainerExtensions(val ic: ItemContainer) extends AnyVal {
       def allItems(character: Option[String]): List[AnyItem] = {
         ic.items.toList.flatMap { item =>
-          (item :: item.socketedItems.toList.map { i =>
-            i.inItem = item
-            i
-          }) map { i =>
-            character.foreach(c => i.character = c)
-            i.locationId = i.getLocationId
-            i
+        // socketedItems is now optional
+        // if it's not empty..
+          if (item.socketedItems.nonEmpty) {
+            // get its contents, transform them to a list
+            // return all socketed items in a list with their parent
+            (item :: item.socketedItems.get.toList.map { i =>
+              i.inItem = item
+              i
+            }) map { i =>
+              character.foreach(c => i.character = c)
+              i.locationId = i.getLocationId
+              i
+            }
+          } else {
+            // when there are no socketed items, just return a list with the item
+            character.foreach(c => item.character = c)
+            item.locationId = item.getLocationId
+            List(item)
           }
         }
       }
@@ -316,7 +327,8 @@ object PoeTypes {
           if (afn.startsWith("http")) {
             afn
           } else {
-            "https://www.pathofexile.com/image/" + afn + ".png"
+            //"https://www.pathofexile.com/image/" + afn + ".png"
+            "http://web.poecdn.com/image/gen/divination_cards/" + afn + ".png"
           }
 
         } else if (x.icon.startsWith("/")) {
@@ -354,6 +366,11 @@ object PoeTypes {
     val corrupted: Optional[Boolean] = js.native
     //Mirrored
     val duplicated: Optional[Boolean] = js.native
+    // Shaper items
+    var shaper: Optional[Boolean] = js.native
+    // Elder items
+    var elder: Optional[Boolean] = js.native
+    
     val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
     val sockets: Optional[js.Array[Socket]] = js.native
     val properties: Optional[js.Array[ItemProperty]] = js.native
@@ -365,7 +382,7 @@ object PoeTypes {
     val craftedMods: Optional[js.Array[String]] = js.native
     val implicitMods: Optional[js.Array[String]] = js.native
     val frameType: Int = js.native
-    val socketedItems: js.Array[AnyItem] = js.native
+    val socketedItems: Optional[js.Array[AnyItem]] = js.native
     val flavourText: Optional[js.Array[String]] = js.native
     val ilvl: Optional[Int] = js.native
 
@@ -402,6 +419,7 @@ object PoeTypes {
         case "S" => "R"
         case "D" => "G"
         case "I" => "B"
+        case "false" => "A"
         case _ => "W"
       }
     }
@@ -410,7 +428,8 @@ object PoeTypes {
   trait Socket extends js.Object {
     val group: Int = js.native
     //used for socket groups, aka a 6 linked would have all sockets in group 0
-    val attr: String = js.native //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
+    //val attr: String = js.native //Seems to be DSI not sure what white is as I don't have a Tabula Rasa ... yet...
+    val attr: Any = js.native
   }
 
   object ItemProperty {
