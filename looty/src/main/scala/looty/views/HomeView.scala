@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.70 (2017-12-12)
+Thanks to PetePete1984 for updating Looty to work with the
+latest changes to the APIs from the abyssal leagues.
+
 ## 0.2.1.69 (2017-08-19)
 # adding more parsers
 
