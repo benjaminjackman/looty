@@ -41,8 +41,6 @@ object Build extends sbt.Build {
     """
 
     val analytics = """
-<script type="text/javascript" src="jslib/analytics.js"></script>
-<script src="https://ssl.google-analytics.com/ga.js" async="true"></script>
 <script type="text/javascript" src="jslib/startup.js"></script>
     """
 
