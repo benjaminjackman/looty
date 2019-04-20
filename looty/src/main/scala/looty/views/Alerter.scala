@@ -87,21 +87,21 @@ object Alerter {
     (math.floor(math.random * (max - min)) + min).toInt
   }
 
-  lazy val speaker = {
-    global.meSpeak.loadConfig("jslib/mespeak/mespeak_config.json")
-    global.meSpeak.loadVoice("jslib/mespeak/voices/en/en-us.json")
-    global.meSpeak
-  }
+//  lazy val speaker = {
+//    global.meSpeak.loadConfig("jslib/mespeak/mespeak_config.json")
+//    global.meSpeak.loadVoice("jslib/mespeak/voices/en/en-us.json")
+//    global.meSpeak
+//  }
 
-  def stopSpeak(msg: String) {
-    speaker.stop()
-    speaker.speak(msg)
-  }
+//  def stopSpeak(msg: String) {
+//    speaker.stop()
+//    speaker.speak(msg)
+//  }
 
 
   def infoSpeak(msg: String) {
     info(msg)
-    stopSpeak(msg)
+//    stopSpeak(msg)
   }
 
   def reloadMsg() {
@@ -114,8 +114,8 @@ object Alerter {
     if (msg.contains("llama")) {
       jq("body").addClass("llama-mode")
       info("LLAMA MODE!!!!")
-      speaker.stop()
-      speaker.speak(llamas, js.Dynamic.literal(pitch = 800, speed = 300))
+//      speaker.stop()
+//      speaker.speak(llamas, js.Dynamic.literal(pitch = 800, speed = 300))
     } else {
       jq("body").removeClass("llama-mode")
       infoSpeak(msg)

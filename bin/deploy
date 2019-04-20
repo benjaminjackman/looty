@@ -12,8 +12,8 @@ if [ ! -d "$DEPLOY_DIR" ]; then
   exit 2
 fi
 
-sbt clean
-sbt fullOptJS 
+bin/sbt clean
+bin/sbt fullOptJS
 
 rm -rf build
 mkdir build

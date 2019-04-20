@@ -12,7 +12,11 @@ gg (commit)
 
 bin/deploy
 
-#upload to chrome web store
+#upload
+./build/build.zip
+/home/bjackman/dev/github/looty/build/build.zip
+
+#to chrome web store
 https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US
 
 #location of development file:

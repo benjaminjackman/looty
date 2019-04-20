@@ -27,10 +27,8 @@ object Build extends sbt.Build {
 <script type="text/javascript" src="jslib/signals.js"></script>
 <script type="text/javascript" src="jslib/crossroads.js"></script>
 <script type="text/javascript" src="jslib/hasher.js"></script>
-<script type="text/javascript" src="jslib/mespeak/mespeak.full.js"></script>
 <script type="text/javascript" src="jslib/esprima.js"></script>
 <script type="text/javascript" src="jslib/vm.js"></script>
-<script type="text/javascript" src="jslib/ace/ace.js" charset="utf-8"></script>
 <script type="text/javascript" src="jslib/select2/select2.js"></script>
 <script type="text/javascript" src="jslib/filesaver.js"></script>
 <script type="text/javascript" src="jslib/slickgrid/lib/jquery.event.drag-2.0.min.js"></script>

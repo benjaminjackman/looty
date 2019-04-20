@@ -8,10 +8,21 @@ Built using [ScalaJs](http://www.scala-js.org/)
 
 ## Development instructions
 
+### How to build for firefox reviewers:
+#### Prequisites
+1. Have nvs (https://github.com/jasongin/nvs) installed for node (This version of ScalaJS needs node version 8 installed)
+2. Have java8 installed (This version of Scala doesn't support later jvms)
+
+run bin/deploy
+
+build/build.zip will have the packaged file
+
+### How to build for iterative development
+
 in the project root at command line:  
-    sbt
+    bin/sbt
     
-once in sbt:  
+build a development version with:  
     fastOptJS
 
 A javascript fill will be built at:  
@@ -20,8 +31,9 @@ looty/target/web/public/main/looty-fastopt.js
 This folder has the manifest and can be used with firefox for debugging:
 looty/target/web/public/
 
-
 Load it with about:debugging
+
+
  
 
 

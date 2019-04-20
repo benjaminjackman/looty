@@ -1,0 +1,41 @@
+#!/bin/bash
+
+CGTA_NO_GC_LOGS=1
+
+JVM_ARGS=""
+JVM_ARGS="$JVM_ARGS -XX:+UseStringDeduplication"
+JVM_ARGS="$JVM_ARGS -server"
+JVM_ARGS="$JVM_ARGS -Xss4M"
+JVM_ARGS="$JVM_ARGS -Djava.net.preferIPv4Stack=true"
+JVM_ARGS="$JVM_ARGS -Xms512m"
+JVM_ARGS="$JVM_ARGS -Xmx3g"
+JVM_ARGS="$JVM_ARGS -Xverify:none"
+JVM_ARGS="$JVM_ARGS -XX:+CMSClassUnloadingEnabled"
+JVM_ARGS="$JVM_ARGS -XX:+TieredCompilation"
+JVM_ARGS="$JVM_ARGS -XX:+UseCodeCacheFlushing"
+JVM_ARGS="$JVM_ARGS -XX:+UseCompressedOops"
+JVM_ARGS="$JVM_ARGS -XX:+UseConcMarkSweepGC"
+JVM_ARGS="$JVM_ARGS -XX:+UseParNewGC"
+JVM_ARGS="$JVM_ARGS -XX:CodeCacheMinimumFreeSpace=32m"
+JVM_ARGS="$JVM_ARGS -XX:MaxGCPauseMillis=5"
+#JVM_ARGS="$JVM_ARGS -XX:ReservedCodeCacheSize=512m"
+
+SBT_JAR=`dirname $0`/sbt-launch-0.13.0.jar
+
+# echo "Starting SBT With the following JVM Options"
+# echo "-------------------------------------------"
+# echo "Jvm configuration options set by opt/bin/CGTA_JVM_OPTS"
+# echo "Please set CGTA_XMS=NNNN and CGTA_XMX=NNNN (in megabytes) to increase"
+# echo "$CGTA_JVM_OPTS"
+# echo "-------------------------------------------"
+
+#This has to be set or else jline and sbt go bananas
+TERM=xterm-color
+
+#This requires nvs is installed see: https://github.com/jasongin/nvs
+export NVS_HOME="$HOME/.nvs"
+[ -s "$NVS_HOME/nvs.sh" ] && . "$NVS_HOME/nvs.sh"
+echo "Using node v8"
+nvs use 8
+
+java8 $JVM_ARGS -jar $SBT_JAR "$@"
