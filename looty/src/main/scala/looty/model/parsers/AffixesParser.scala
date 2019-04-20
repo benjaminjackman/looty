@@ -16,9 +16,10 @@ import looty.model.{LifeAndMana, Elements, Attributes, ComputedItem}
 
 object AffixesParser {
   def parse(item: ComputedItem, s: String): Boolean = {
+    val lowS = s.toLowerCase()
     var parsed = false
-    all.toList.foreach { parser =>
-      if (parser.parse(s, item)) parsed = true
+    all.foreach { parser =>
+      if (parser.parse(lowS, item)) parsed = true
     }
     parsed
   }
@@ -40,7 +41,8 @@ object AffixesParser {
 
   trait BinaryAffixParser extends AffixParser {
     def str: String
-    def parse(s: String, i: ComputedItem): Boolean = if (s =?= str) {
+    def lowerString: String
+    def parse(s: String, i: ComputedItem): Boolean = if (s =?= lowerString) {
       process(i)
       true
     } else {
@@ -52,6 +54,7 @@ object AffixesParser {
     add {
       new BinaryAffixParser {
         def str: String = s
+        val lowerString: String = s.toLowerCase()
         def process(i: ComputedItem): Unit = f(i)
       }
     }
@@ -75,7 +78,7 @@ object AffixesParser {
     val r = regex
     add {
       new RegexAffixParser1() {
-        val regex = new js.RegExp(r)
+        val regex = new js.RegExp(r, "i")
         def process(i: ComputedItem, x: Double): Unit = f(i, x)
       }
     }
@@ -98,7 +101,7 @@ object AffixesParser {
     val r = regex
     add {
       new RegexAffixParser2() {
-        val regex = new js.RegExp(r)
+        val regex = new js.RegExp(r, "i")
         def process(i: ComputedItem, x: Double, y: Double): Unit = f(i, x, y)
       }
     }
@@ -134,7 +137,7 @@ object AffixesParser {
     plusTo(s"${x.cap} Resistance")(_.plusTo.resistance.+=(x, _))
     addsDamage(x.cap)(_.damages(x).+=(_, _))
     addsDamage(x.cap, " to Attacks")(_.damages(x).+=(_, _))
-    addsDamage(x.cap, " to Attacks with Bows")(_.damagesWithBows(x).+=(_, _))
+    addsDamage(x.cap, " to Bow Attacks")(_.damagesWithBows(x).+=(_, _))
     addsDamage(x.cap, " to Spells")(_.addDamagesToSpells(x).+=(_, _))
     level(x.cap)(_.gemLevel.element.+=(x, _))
   }
@@ -148,6 +151,8 @@ object AffixesParser {
     simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
   }
 
+  //On belts
+  increased("Global Physical Damage")(_.increased.damage.physical += _)
   increased("Attack Speed")(_.increased.attackSpeed += _)
   increased("Stun Duration on Enemies")(_.increased.stunDurationOnEnemies += _)
   increased("Chill Duration on enemies")(_.increased.chillDurationOnEnemies += _)
@@ -168,7 +173,7 @@ object AffixesParser {
   increased("Light Radius")(_.increased.lightRadius += _)
   increased("Cast Speed")(_.increased.castSpeed += _)
   increased("Projectile Speed")(_.increased.projectileSpeed += _)
-  increased("Accuracy Rating")(_.increased.accuracyRating += _)
+  increased("Global Accuracy Rating")(_.increased.accuracyRating += _)
   increased("Block Recovery")(_.increased.blockRecovery += _)
   increased("Elemental Damage") { (i, n) =>
     i.increased.elementalDamage += n
@@ -241,12 +246,16 @@ object AffixesParser {
   simple1("Reflects", "Physical Damage to Melee Attackers")(_.reflectsPhysicalDamageToAttackers += _)
   simple1("", "additional Block Chance")(_.blockChance += _)
   simple1("", "Chance to Block")(_.blockChance += _)
+  simple1("", "Chance to Block Attack Damage")(_.blockChance += _)
+  simple1("", "Chance to Block Attack Damage while wielding a Staff")(_.blockChance += _)
   simple1("Has","Socket.?")(_.numExplicitModSockets += _ )
 
-  simple1("", "to Mana Cost of Skills")(_.minusToManaCostOfSkills += _.abs)
+  simple1("", "to Total Mana Cost of Skills")(_.minusToManaCostOfSkills += _.abs)
   simple1("", "chance of Arrows Piercing")(_.arrowPierceChance += _)
 
   simple1("", "chance to cause Bleeding on Hit")(_.bleedingChance += _)
+  simple1("", "chance to Freeze")(_.freezeChance += _)
+  simple1("", "chance to Shock")(_.shockChance += _)
 
 
   increased("Flask Charges gained")(_.flask.increased.chargesGained += _)
@@ -259,6 +268,7 @@ object AffixesParser {
   increased("Charge Recovery")(_.flask.increased.chargeRecovery += _)
   increased("Stun Recovery during Flask effect")(_.flask.increased.stunRecovery += _)
   increased("Recovery Speed")(_.flask.increased.recoverySpeed += _)
+  increased("Recovery rate")(_.flask.increased.recoverySpeed += _)
   increased("Amount Recovered")(_.flask.increased.amountRecovered += _)
   increased("Recovery when on Low Life")(_.flask.increased.recoveryOnLowLife += _)
   increased("Life Recovered")(_.flask.increased.lifeRecovered += _)
@@ -275,7 +285,7 @@ object AffixesParser {
   // curse immunities have been reworded?
   simple0("Immune to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
   // new poison immune Flasks
-  //simple0("Immune to Poison during Flask effect\nRemoves Poison on use")(_.flask.removesPoison = true)
+  simple0("Immune to Poison during Flask effect\nRemoves Poison on use")(_.flask.removesPoison = true)
 
   simple0("Adds Knockback to Melee Attacks during Flask effect")(_.flask.knockback = true)
   simple0("Instant Recovery")(_.flask.instantRecovery = true)
@@ -283,6 +293,7 @@ object AffixesParser {
 
   reduced("Amount Recovered")(_.flask.reduced.amountRecovered += _)
   reduced("Recovery Speed")(_.flask.reduced.recoverySpeed += _)
+  reduced("Recovery rate")(_.flask.reduced.recoverySpeed += _)
   //reduced("Flask Charges used")(_.flask.reduced.flaskChargesUsed += _)
   // renamed to "x% reduced Charges used"
   reduced("Charges used")(_.flask.reduced.flaskChargesUsed += _)
@@ -296,6 +307,7 @@ object AffixesParser {
   //simple1("Recharges", "Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
   // surgeon's was remodeled to 20% on crit; probably needs more changes elsewhere (computedItem)
   simple1("", "chance to gain a Flask Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += _)
+  simple0("Recharges 1 Charge when you deal a Critical Strike")(_.flask.chargesOnCriticalStrikeGiven += 100)
   simple1("Removes", "of Life Recovered from Mana when used")(_.flask.lifeFromMana += _)
   simple1("Removes", "of Mana Recovered from Life when used")(_.flask.manaFromLife += _)
 

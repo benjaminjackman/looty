@@ -4,8 +4,26 @@ A Google Chrome extension for Path of Exile that makes inventory searching fun!
 
 Available in the [Chrome Web Store](https://chrome.google.com/webstore/detail/looty/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en&gl=US)
 
-
 Built using [ScalaJs](http://www.scala-js.org/)
+
+## Development instructions
+
+in the project root at command line:  
+    sbt
+    
+once in sbt:  
+    fastOptJS
+
+A javascript fill will be built at:  
+looty/target/web/public/main/looty-fastopt.js
+
+This folder has the manifest and can be used with firefox for debugging:
+looty/target/web/public/
+
+
+Load it with about:debugging
+ 
+
 
 ##Statement of Inspiration
 Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/2012/10/the-borderlands-2-gun-discarders-club.html) About Borderlands 2, which is another loot game
@@ -16,7 +34,6 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 >What BL1 needed was a way for you to effectively manage a collection of a thousand guns. What if you want to look at all your Mashers? Or all your weapons by type, or by elemental damage, or by manufacturer? I'm not asking for a data warehouse here, or for some fancy text-based console-query UI. I mean, -I- would use it, but obviously we want to keep this mainstream.
 >
 >If you start by formulating the basic problem as: "How do I manage a collection of a thousand guns," then your UX guys should be able to come up with something acceptable. No — you know what? Fuck acceptable. They should be able to come up with something awesome, something in keeping with the innovation and forward-looking badassery that we've all come to associate with Gearbox and Borderlands.
-
 
 ## Developer Log
 2014.03.13  -- [DEMO]    [v0.1.2] Working on abstracting on chrome specific parts and made a [demo page](http://blog.jackman.biz/looty/demo/looty.html#/home).

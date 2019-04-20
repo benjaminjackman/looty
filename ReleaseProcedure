@@ -4,8 +4,8 @@ gmocff
 #commit changes
 
 #bump version number in
-vim ./looty/src/main/public/manifest.json
-vim ./looty/src/main/scala/looty/views/HomeView.scala
+e ./looty/src/main/public/manifest.json
+e ./looty/src/main/scala/looty/views/HomeView.scala
 #copy homeview to commit
 
 gg (commit)
@@ -14,3 +14,6 @@ bin/deploy
 
 #upload to chrome web store
 https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US
+
+#location of development file:
+/home/bjackman/dev/github/looty/looty/target/web/public/main/manifest.json

@@ -13,9 +13,12 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.72 (2019-04-20)
+Holy Saturday, I must be high, Looty Lives! It's a miracle!
+Updating Affixes
+
 ## 0.2.1.71 (2018-03-15)
 Remove google analytics code
-
 
 ## 0.2.1.70 (2017-12-12)
 Thanks to PetePete1984 for updating Looty to work with the

@@ -308,7 +308,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   var numExplicitModSockets             = 0.0
   var minusToManaCostOfSkills           = 0.0
   var arrowPierceChance                 = 0.0
-  var bleedingChance                 = 0.0
+  var bleedingChance                    = 0.0
+  var freezeChance                      = 0.0
+  var shockChance                       = 0.0
 
   val regeneratedPerSecond = LifeAndMana mutable 0.0
 
@@ -353,6 +355,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var removesBurning          = false
     var removesBleeding         = false
     var removesCurses           = false
+    var removesPoison           = false
 
 //    var frozenAndChilledImmunity = false
 //    var shockedImmunity          = false

@@ -18,7 +18,7 @@ import looty.model.{Elements, WeaponTypes, MinMaxDamage, ComputedItem}
 object PropertyParsers {
   def parse(item: ComputedItem, property: ItemProperty): Boolean = {
     var parsed = false
-    all.toList.foreach { parser =>
+    all.foreach { parser =>
       if (parser.parse(item, property)) {
         parsed = true
       }
@@ -71,6 +71,7 @@ object PropertyParsers {
   named("Energy Shield")((i, p) => i.properties.energyShield = p.firstValue.toDouble)
   named("Evasion Rating")((i, p) => i.properties.evasionRating = p.firstValue.toDouble)
   named("Physical Damage")((i, p) => i.properties.damages.physical set parseDamage(p.firstValue))
+  named("Chaos Damage")((i, p) => i.properties.damages.chaos set parseDamage(p.firstValue))
   named("Elemental Damage") { (i, p) =>
     p.values.foreach { xs =>
       val ele = xs(1).toString.toInt match {
@@ -81,7 +82,6 @@ object PropertyParsers {
       i.properties.damages(ele) set parseDamage(xs(0).toString)
     }
   }
-
   named("Quality")((i, p) => i.properties.quality = prunePercent(p.firstValue))
   named("Critical Strike Chance")((i, p) => i.properties.criticalStrikeChance = prunePercent(p.firstValue))
   named("Attacks per Second")((i, p) => i.properties.attacksPerSecond = p.firstValue.toDouble)
