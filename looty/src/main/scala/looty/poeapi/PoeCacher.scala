@@ -21,8 +21,12 @@ trait PoeCacher {
   def init(implicit ec: ExecutionContext): Future[_]
 
   def getAccountNameOverride() : Option[String]
+  def getRealmOverride() : Option[String]
   def setAccountNameOverride(accountName : Option[String]) : Unit
+  def setRealmOverride(realm : Option[String]) : Unit
   def getAccountName : Future[String]
+  def getRealm : Future[Option[String]]
+  def getAccountNameAndRealm: Future[(String, Option[String])]
   def getChars(forceNetRefresh: Boolean = false): Future[Characters]
   def getInv(char: String, forceNetRefresh: Boolean = false): Future[Inventory]
   def getStashTabInfos(league: String, forceNetRefresh: Boolean = false): Future[StashTabInfos]

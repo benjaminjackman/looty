@@ -16,21 +16,44 @@ import org.scalajs.jquery.JQuery
 class SettingsView(implicit val pc: PoeCacher) extends View {
   override def start(el: JQuery): Unit = {
 
-    val txt = jq("<input></input>")
-    val btn = jq("<button>Save</button>")
-    el.append("<span>Override Account Name (try manually entering your account name here if you have issues):</span> ")
-    pc.getAccountNameOverride.foreach(n=>txt.value(n))
-    el.append(txt).append(btn)
-    btn.on("click", () => {
-      val n = txt.value().toString
-      if (n.nonEmpty) {
-        pc.setAccountNameOverride(Some(n))
-        Alerter.info(s"Account name override set to $n")
-      } else {
-        pc.setAccountNameOverride(None)
-        Alerter.info(s"Account name override cleared")
-      }
-    })
+    locally{
+      val txt = jq("<input></input>")
+      val btn = jq("<button>Save</button>")
+      el.append("<span>Override Account Name (try manually entering your account name here if you have issues):</span> ")
+      pc.getAccountNameOverride().foreach(n=>txt.value(n))
+      el.append(txt).append(btn)
+      btn.on("click", () => {
+        val n = txt.value().toString
+        if (n.nonEmpty) {
+          pc.setAccountNameOverride(Some(n))
+          Alerter.info(s"Account name override set to $n")
+        } else {
+          pc.setAccountNameOverride(None)
+          Alerter.info(s"Account name override cleared")
+        }
+      })
+    }
+    el.append(jq("<br/>"))
+
+    locally{
+      val txt = jq("<input></input>")
+      val btn = jq("<button>Save</button>")
+      el.append("<span>Override Realm Name (try manually entering your realm name here, for ps4 it's sony):</span> ")
+      pc.getRealmOverride().foreach(n=>txt.value(n))
+      el.append(txt).append(btn)
+      btn.on("click", () => {
+        val n = txt.value().toString
+        if (n.nonEmpty) {
+          pc.setRealmOverride(Some(n))
+          Alerter.info(s"Realm override set to $n")
+        } else {
+          pc.setRealmOverride(None)
+          Alerter.info(s"Realm  override cleared")
+        }
+      })
+    }
+
+
 
   }
   override def stop(): Unit = {}

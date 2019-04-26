@@ -41,39 +41,44 @@ object PoeRpcs {
     enqueue[js.Array[CharacterInfo]](url = s"$basePoeUrl/character-window/get-characters", params = null)
   }
 
-  def getPassiveSkills(accountName: String, character: String): Future[PassivesTree] = {
+  def getPassiveSkills(accountNameRealm: (String, Option[String]), character: String): Future[PassivesTree] = {
     //Also reqData=0 is sent sometimes
     //TODO
+    val anrs = {
+      s"accountName=${accountNameRealm._1}" +
+        accountNameRealm._2.map(r => s"&realm=$r").getOrElse("")
+    }
     enqueue[PassivesTree](
-      url = s"$basePoeUrl/character-window/get-passive-skills?accountName=$accountName&character=$character",
+      url = s"$basePoeUrl/character-window/get-passive-skills?$anrs&character=$character",
       params = null,
       reqType = HttpRequestTypes.Get
     )
   }
 
-  def getCharacterInventory(accountName: String, character: String): Future[Inventory] = {
+  def getCharacterInventory(accountNameRealm: (String, Option[String]), character: String): Future[Inventory] = {
     val p = newObject
     p.character = character
-    p.accountName = accountName
+    p.accountName = accountNameRealm._1
+    accountNameRealm._2.foreach(r => p.realm = r)
     enqueue[Inventory](url = s"$basePoeUrl/character-window/get-items", params = p)
   }
 
-  def getStashTab(accountName: String, league: String, tabIdx: Int): Future[StashTab] = {
+  def getStashTab(accountNameRealm: (String, Option[String]), league: String, tabIdx: Int): Future[StashTab] = {
     val p = newObject
-    p.accountName = accountName
+    p.accountName = accountNameRealm._1
     p.league = league.toString
     p.tabIndex = tabIdx
-
+    accountNameRealm._2.foreach(r => p.realm = r)
     enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p)
   }
 
-  def getStashTabInfos(accountName: String, league: String): Future[StashTabInfos] = {
+  def getStashTabInfos(accountNameRealm: (String, Option[String]), league: String): Future[StashTabInfos] = {
     val p = newObject
-    p.accountName = accountName
+    p.accountName = accountNameRealm._1
+    accountNameRealm._2.foreach(r => p.realm = r)
     p.league = league.toString
     p.tabIndex = 0
     p.tabs = 1
-
     enqueue[StashTab](url = s"$basePoeUrl/character-window/get-stash-items", params = p).map { stab =>
       stab.tabs.toOption.getOrElse(sys.error(s"Stash tab was not set in ${stab.toJsonString}"))
     }

@@ -28,4 +28,8 @@ class PoeCacherExileTools extends PoeCacher {
   override def getChars(forceNetRefresh: Boolean): Future[Characters] = ???
   override def clearLeague(league: String): Future[Unit] = ???
   override def getAccountName: Future[String] = ???
+  override def getRealmOverride(): Option[String] = ???
+  override def setRealmOverride(realm: Option[String]): Unit = ???
+  override def getRealm : Future[Option[String]] = ???
+  override def getAccountNameAndRealm: Future[(String, Option[String])] = ???
 }

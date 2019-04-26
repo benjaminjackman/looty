@@ -94,6 +94,10 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
     def clearAccountNameOverride() = store.clear("accountNameOverride")
     def getAccountNameOverride(): Option[String] = store.get("accountNameOverride")
 
+    def setRealmOverride(realm: String) = store.set("realmOverride", realm)
+    def clearRealmOverride() = store.clear("realmOverride")
+    def getRealmOverride(): Option[String] = store.get("realmOverride")
+
     def setAccountNameNet(accountName: String) = store.set("accountNameNet", accountName)
     def getAccountNameNet(): Option[String] = store.get("accountNameNet")
 
@@ -125,7 +129,7 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
 
     //Use the accountName variable here, in the future do this better
     def getInvAndStore(char: String): Future[Inventory] = {
-      cacher.getAccountName.flatMap { accountName =>
+      cacher.getAccountNameAndRealm.flatMap { accountName =>
         PoeRpcs.getCharacterInventory(accountName, char) map { inv =>
           Store.setInv(char, inv)
           inv
@@ -134,7 +138,7 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
     }
 
     def getStisAndStore(league: String) = {
-      cacher.getAccountName.flatMap { accountName =>
+      cacher.getAccountNameAndRealm.flatMap { accountName =>
         PoeRpcs.getStashTabInfos(accountName, league) map { stis =>
           Store.setStis(league, stis)
           stis
@@ -143,7 +147,7 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
     }
 
     def getStashTabAndStore(league: String, tabIdx: Int) = {
-      cacher.getAccountName.flatMap { accountName =>
+      cacher.getAccountNameAndRealm.flatMap { accountName =>
         PoeRpcs.getStashTab(accountName, league, tabIdx) map { stab =>
           Store.setStashTab(league, tabIdx, stab)
           stab
@@ -161,6 +165,24 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
           case None => Net.getAccountName
         }
     }
+  }
+
+  override def getRealm: Future[Option[String]] = {
+    Store.getRealmOverride() match {
+      case Some(realm) =>
+        if (realm.trim().nonEmpty) {
+          Future.successful(Some(realm.trim()))
+        } else {
+          Future.successful(None)
+        }
+      case None => Future.successful(None)
+    }
+  }
+
+  override def getAccountNameAndRealm: Future[(String, Option[String])] = {
+    val f1 = getAccountName
+    val f2 = getRealm
+    f1.zip(f2)
   }
 
 
@@ -213,11 +235,17 @@ class PoeCacherChrome() extends PoeCacher {cacher =>
 
   override def clearLeague(league: String): Future[Unit] = Store.clearLeague(league)
   override def getAccountNameOverride(): Option[String] = Store.getAccountNameOverride()
-
   override def setAccountNameOverride(accountName: Option[String]): Unit = accountName match {
     case Some(accountName) => Store.setAccountNameOverride(accountName)
     case None => Store.clearAccountNameOverride()
   }
+
+  override def getRealmOverride(): Option[String] = Store.getRealmOverride()
+  override def setRealmOverride(realm: Option[String]): Unit = realm match {
+    case Some(realm) => Store.setRealmOverride(realm)
+    case None => Store.clearRealmOverride()
+  }
+
   override def init(implicit ec: ExecutionContext): Future[_] = {
     Future.sequence(List(Store.store.init, Leagues.init(this)))
   }
