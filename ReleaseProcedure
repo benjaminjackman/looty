@@ -4,8 +4,8 @@ gmocff
 #commit changes
 
 #bump version number in
-e ./looty/src/main/public/manifest.json
-e ./looty/src/main/scala/looty/views/HomeView.scala
+c ./looty/src/main/public/manifest.json
+c ./looty/src/main/scala/looty/views/HomeView.scala
 #copy homeview to commit
 
 gg (commit)
@@ -14,10 +14,14 @@ bin/deploy
 
 #upload
 ./build/build.zip
-/home/bjackman/dev/github/looty/build/build.zip
+~/dev/github/looty/build/build.zip
 
 #to chrome web store
 https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US
 
+
+#to firefox
+https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find/versions/submit/
+
 #location of development file:
-/home/bjackman/dev/github/looty/looty/target/web/public/main/manifest.json
+~/dev/github/looty/looty/target/web/public/main/manifest.json

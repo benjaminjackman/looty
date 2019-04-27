@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.74 (2019-04-26)
+Realm can be set under settings, set it to sony in order for looty to
+work with the ps4 version of PoE, other realms may work as well.
+
 ## 0.2.1.73 (2019-04-20)
 The Computer Speaking Gibberish, in Llama Mode had to be removed to placate Firefox Add-on Validation.
 jQuery upgraded to version produced this decade, again at the behest of Firefox Add-on Validation.
