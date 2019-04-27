@@ -27,6 +27,22 @@ cp -r $SRC/less "$OUT"
 cd $OUT
 zip -r build.zip *
 
+cd ../
+rm -rf buildffsrc
+mkdir buildffsrc
+OUT="$(pwd)/buildffsrc"
+SRC=looty
+cp -r looty "$OUT"
+cp -r project "$OUT"
+cp -r bin "$OUT"
+cp README.md "$OUT"
+
+cd $OUT
+zip -r buildffsrc.zip *
+
+
+
+
 #zip "$OUT"
 
 # google-chrome --pack-extension=build --pack-extension-key=$HOME/looty.pem

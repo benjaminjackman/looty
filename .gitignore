@@ -1,4 +1,5 @@
 build/
+buildffsrc/
 build.pem
 .idea/
 .idea_modules/
