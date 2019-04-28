@@ -4,11 +4,13 @@ package poeapi
 import looty.util.AjaxHelp
 import AjaxHelp.HttpRequestTypes
 import AjaxHelp.HttpRequestTypes.HttpRequestType
+import looty.util.JsPromises.JsFutureFailure
 
 import scala.scalajs.js
 import org.scalajs.jquery.JQueryStatic
-import scala.concurrent.{Promise, Future}
-import scala.util.{Failure, Success}
+
+import scala.concurrent.{Future, Promise}
+import scala.util.{Success, Failure}
 import looty.views.Alerter
 
 
@@ -117,8 +119,27 @@ object PoeRpcs {
           }
         }
       case Failure(res) =>
-        window.console.log("Received a failure, probably throttling", res.asJsAny)
-        p.completeWith(Future.failed(ThrottledFailure(""+res)))
+        res match {
+          case JsFutureFailure(reason) =>
+            //Reason is from the jquery request
+            reason.asJsAny.asJsDyn.status.asInstanceOf[Any] match {
+              case status : Int =>
+                if (status == 429) {
+                  window.console.log("Received JSFuture Failure, no status == 429 Definitely throttling", res.asJsAny)
+                  p.completeWith(Future.failed(ThrottledFailure(""+res)))
+                } else {
+                  window.console.log(s"Received JSFuture Failure, status == $status not sure maybe throttling", res.asJsAny)
+                  p.completeWith(Future.failed(ThrottledFailure(""+res)))
+                }
+              case _ =>
+                window.console.log("Received JSFuture Failure, no status checking for throttling", res.asJsAny)
+                p.completeWith(Future.failed(ThrottledFailure(""+res)))
+            }
+          case _ =>
+            window.console.log("Received an unknown failure, probably throttling", res.asJsAny)
+            p.completeWith(Future.failed(ThrottledFailure(""+res)))
+        }
+
     }
     p.future
   }

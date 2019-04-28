@@ -23,5 +23,7 @@ https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgeh
 #to firefox
 https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find/versions/submit/
 
+~/dev/github/looty/buildffsrc/buildffsrc.zip
+
 #location of development file:
 ~/dev/github/looty/looty/target/web/public/main/manifest.json
