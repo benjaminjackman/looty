@@ -25,5 +25,6 @@ https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find
 
 ~/dev/github/looty/buildffsrc/buildffsrc.zip
 
-#location of development file:
+#firefox location of development file:
+about:debugging
 ~/dev/github/looty/looty/target/web/public/main/manifest.json
