@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.75 (2019-05-01)
+Jewel Support
+
 ## 0.2.1.74 (2019-04-26)
 Realm can be set under settings, set it to sony in order for looty to
 work with the ps4 version of PoE, other realms may work as well.

@@ -49,7 +49,16 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   def maxResist = plusTo.resistance.all.max
   def magicFind = increased.quantityOfItemsFound + increased.rarityOfItemsFound
 
-  def isEquippable = !item.isGem && !item.isCurrency && !item.isMap && !item.isQuest && !item.isFragment && !item.isHideoutItem && !item.isJewel && !item.isDivinationCard && !item.isProphecy && !item.isLeaguestone
+  def isEquippable = !item.isGem &&
+    !item.isCurrency &&
+    !item.isMap &&
+    !item.isQuest &&
+    !item.isFragment &&
+    !item.isHideoutItem &&
+    !item.isJewel &&
+    !item.isDivinationCard &&
+    !item.isProphecy &&
+    !item.isLeaguestone
 
   lazy val displayName = {
     var n = item.getName
