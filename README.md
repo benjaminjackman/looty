@@ -34,7 +34,20 @@ looty/target/web/public/
 Load it with about:debugging
 
 
- 
+##
+Newer todos:
+- Card Views
+  - allows seeing gems / uniques etc as items in a 2d grid of cells
+    - each cell is like a card
+  - beefs up the map view
+    - though replace the map view with an atlas view
+
+- Quick comparision of item to all other items in the stash
+  - allows for seeing how the item stacks up to all other items
+    - maybe use something like spark-line bar charts
+    - will be great for ssf
+
+
 
 
 ##Statement of Inspiration
