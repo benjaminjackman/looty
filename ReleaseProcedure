@@ -12,9 +12,6 @@ gg (commit)
 
 bin/deploy
 
-#upload
-./build/build.zip
-~/dev/github/looty/build/build.zip
 
 #to chrome web store
 https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US
@@ -23,7 +20,12 @@ https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgeh
 #to firefox
 https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find/versions/submit/
 
-~/dev/github/looty/buildffsrc/buildffsrc.zip
+#upload
+./build/build.zip
+~/dev/github/looty/build/build.zip
+
+# firefox also needs:
+~/dev/github/looty/build/buildffsrc.zip
 
 #firefox location of development file:
 about:debugging

@@ -39,7 +39,7 @@ cp README.md "$OUT"
 
 cd $OUT
 zip -r buildffsrc.zip *
-
+cp buildffsrc.zip ../build/
 
 
 
