@@ -186,9 +186,13 @@ object PoeTypes {
       def isQuest = x.getFrameType == FrameTypes.quest
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
       // all map fragments that can be used in the map device contain this bit of text in their description
-      def isFragment = x.descrText.toOption.exists(_ contains "Templar Laboratory or a personal")
+			// special case Offering to the Goddess was included in fragment stash tab
+      def isFragment = (x.descrText.toOption.exists(_ contains "Map Device")
+				|| x.descrText.toOption.exists(_ contains "Aspirants' Plaza"))
+      def isSplinter = x.descrText.toOption.exists(_ contains "Combine 100")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
+			def isAbyssJewel = x.abyssJewel.toOption.isDefined
       def isDivinationCard = x.getFrameType == FrameTypes.divCard
 
       def isInSocket = x.socket.toOption.isDefined
@@ -328,7 +332,7 @@ object PoeTypes {
             afn
           } else {
             //"https://www.pathofexile.com/image/" + afn + ".png"
-            "http://web.poecdn.com/image/gen/divination_cards/" + afn + ".png"
+            "https://web.poecdn.com/image/divination-card/" + afn + ".png"
           }
 
         } else if (x.icon.startsWith("/")) {
@@ -370,7 +374,10 @@ object PoeTypes {
     var shaper: Optional[Boolean] = js.native
     // Elder items
     var elder: Optional[Boolean] = js.native
-    
+
+		//abyss jewel
+		val abyssJewel: Optional[Boolean] = js.native
+
     val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
     val sockets: Optional[js.Array[Socket]] = js.native
     val properties: Optional[js.Array[ItemProperty]] = js.native

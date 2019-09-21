@@ -38,4 +38,12 @@ export NVS_HOME="$HOME/.nvs"
 echo "Using node v8"
 nvs use 8
 
-java8 $JVM_ARGS -jar $SBT_JAR "$@"
+JAVA_CMD=java8
+
+#this allows building with java8 if such an executable exists
+# otherwise fallback to the system java
+if ! [ -x "$(command -v java8)" ]; then
+  JAVA_CMD=java
+fi
+
+$JAVA_CMD $JVM_ARGS -jar $SBT_JAR "$@"

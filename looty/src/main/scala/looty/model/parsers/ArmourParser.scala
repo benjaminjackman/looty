@@ -29,7 +29,7 @@ object ArmourParser {
 
   def parse(ci: ComputedItem, typeLine: String): Boolean = {
     if (ci.item.h =?= 1 && ci.item.w =?= 1) {
-      if (typeLine.contains("Amulet")) {
+      if (typeLine.contains("Amulet") || typeLine.contains("Talisman")) {
         ci.slots.isAmulet = true
         true
       } else if (typeLine.contains("Ring")) {

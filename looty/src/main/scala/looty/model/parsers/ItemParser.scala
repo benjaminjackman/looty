@@ -46,7 +46,10 @@ object ItemParser {
     } {
       if (!AffixesParser.parse(ci, mod)
           && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {
-        console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
+        //Silence these warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
+        if (window.localStorage.getItem("SQUELCH_WARNINGS") != "true") {
+          console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
+        }
       }
     }
   }

@@ -49,6 +49,14 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
+## 0.2.1.77 (2019-11-18)
+Special thanks to Traf27 for contributing several fixes that keep looty going!
+Chrome extension works again, hurray
+Silence some console warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
+
+## 0.2.1.76 (2019-10-30)
+firefox review placation
+
 ## 0.2.1.75 (2019-05-01)
 Jewel Support
 
