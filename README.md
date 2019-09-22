@@ -429,7 +429,7 @@ A javascript fill will be built at:
 
 This folder has the manifest and can be used with firefox for debugging:  
 
-    looty/target/web/public/
+    looty/target/web/public/main/
 
 Load it in firefox with `about:debugging`
 
