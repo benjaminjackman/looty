@@ -19,9 +19,8 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 >
 >If you start by formulating the basic problem as: "How do I manage a collection of a thousand guns," then your UX guys should be able to come up with something acceptable. No — you know what? Fuck acceptable. They should be able to come up with something awesome, something in keeping with the innovation and forward-looking badassery that we've all come to associate with Gearbox and Borderlands.
 
-
-##### If you would like to improve Looty, here are:
-#### [**Development instructions**](#development-instructions)  
+##
+#### If you would like to improve Looty, here are  [**Development Instructions**](#development instructions)  
 ##
 #### Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
 ##
@@ -331,13 +330,12 @@ latest changes to the APIs from the abyssal leagues.
 
  
 
-
+##
 #### Public [trello board](https://trello.com/b/xr7dx96M/looty) for tracking progress on tasks I am actively working on.
 
 
 
 ## Todo
-
 ### For pure love of the loot
 - [ ] Collectors view for Uniques (grayed out pictures for Uniques not obtained)
 - [ ] Trophy room that allows for displaying epic items. With categories (Best DPS Item, Highest Score By Slot)
@@ -387,9 +385,9 @@ latest changes to the APIs from the abyssal leagues.
 - [ ] Better refresh logic, remove only stash tabs might be left behind after a refresh
 
 ### User Help
+- [x] Messaging Area To Help players understand what is going on as it loads
 - [ ] Turn guide in this format, progress meter at top is neat http://gitbookio.github.io/javascript/README.html
 - [ ] Simplify Demo Home Page to be a lot more like http://haste-lang.org/
-- [x] Messaging Area To Help players understand what is going on as it loads
 - [ ] Tutorial video on searches operators within the boxes
 - [ ] Add feedback / suggestion options inside of the extension itself
 
