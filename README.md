@@ -431,17 +431,23 @@ This folder has the manifest and can be used with firefox for debugging:
 
     looty/target/web/public/main/
 
-Load it in firefox with `about:debugging`
+Load it in firefox with `about:debugging` use looty-dev.html
 
 ### How to build for firefox reviewers and release:
-See [ReleaseProcedure](https://github.com/benjaminjackman/looty/blob/master/ReleaseProcedure) file for clues.
+
 Note: Firefox Add-on's come in form of .ixr files. Which are simply zip files with different extension. 
 
-#### Linux:
+Bump version number in:
+    
+    ./looty/src/main/public/manifest.json
+    ./looty/src/main/scala/looty/views/HomeView.scala
+    
+ ### Linux:
  
     bin/deploy
 
-`/build/build.zip` will have the packaged file
+`/build/build.zip` will have the packaged file  
+`/build/buildffsrc.zip` will have firefox release package file
 
 #### Windows:
 
