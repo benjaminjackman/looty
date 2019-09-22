@@ -24,6 +24,8 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ##
 #### Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
 ##
+#### PathofExile forum [post](http://www.pathofexile.com/forum/view-thread/832233)
+##
 ### Newer todos:
 - Card Views
   - allows seeing gems / uniques etc as items in a 2d grid of cells
