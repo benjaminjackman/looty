@@ -385,7 +385,7 @@ latest changes to the APIs from the abyssal leagues.
 
 ### User Help
 - [x] Messaging Area To Help players understand what is going on as it loads
-- [ ] Turn guide in this format, progress meter at top is neat http://gitbookio.github.io/javascript/README.html
+- [ ] Turn guide in this format, progress meter at top is neat [gitbookio](http://web.archive.org/web/20140404205153/http://gitbookio.github.io/javascript/README.html)
 - [ ] Simplify Demo Home Page to be a lot more like http://haste-lang.org/
 - [ ] Tutorial video on searches operators within the boxes
 - [ ] Add feedback / suggestion options inside of the extension itself
