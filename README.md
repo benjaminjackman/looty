@@ -8,7 +8,7 @@ Available on the [Firefox Marketplace](https://addons.mozilla.org/en-US/firefox/
 
 Built using [ScalaJs](http://www.scala-js.org/) based on [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)
 
-##Statement of Inspiration
+## Statement of Inspiration
 
 Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/2012/10/the-borderlands-2-gun-discarders-club.html) About Borderlands 2, which is another loot game
 >Here's the thing, though. It's not just about capacity. If Gearbox wants to do this Right, by which I mean pull their heads out and do something that nobody in the game industry has ever done before, what they really need to do is give players a database.
@@ -20,12 +20,12 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 >If you start by formulating the basic problem as: "How do I manage a collection of a thousand guns," then your UX guys should be able to come up with something acceptable. No — you know what? Fuck acceptable. They should be able to come up with something awesome, something in keeping with the innovation and forward-looking badassery that we've all come to associate with Gearbox and Borderlands.
 
 
-#####If you would like to improve Looty, here are:
-####[**Development instructions**](#development-instructions)  
+##### If you would like to improve Looty, here are:
+#### [**Development instructions**](#development-instructions)  
 ##
-####Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
+#### Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
 ##
-###Newer todos:
+### Newer todos:
 - Card Views
   - allows seeing gems / uniques etc as items in a 2d grid of cells
     - each cell is like a card
@@ -336,7 +336,7 @@ latest changes to the APIs from the abyssal leagues.
 
 
 
-##Todo
+## Todo
 
 ### For pure love of the loot
 - [ ] Collectors view for Uniques (grayed out pictures for Uniques not obtained)
