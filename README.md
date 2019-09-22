@@ -20,7 +20,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 >If you start by formulating the basic problem as: "How do I manage a collection of a thousand guns," then your UX guys should be able to come up with something acceptable. No — you know what? Fuck acceptable. They should be able to come up with something awesome, something in keeping with the innovation and forward-looking badassery that we've all come to associate with Gearbox and Borderlands.
 
 ##
-#### If you would like to improve Looty, here are [**Development Instructions**](#development-instructions)
+#### If you would like to improve Looty, here are [**Development Instructions**](#development instructions)  
 ##
 #### Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
 ##
@@ -340,7 +340,6 @@ latest changes to the APIs from the abyssal leagues.
 - [ ] Collectors view for Uniques (grayed out pictures for Uniques not obtained)
 - [ ] Trophy room that allows for displaying epic items. With categories (Best DPS Item, Highest Score By Slot)
 
-
 ### Loot Management
 - [x] Odd / even row colors (fph)
 - [x] Allow users to save filter sets
@@ -368,13 +367,11 @@ latest changes to the APIs from the abyssal leagues.
 - [ ] Upload builds / equipment to the http://poebuilds.com
 - [ ] Get stats for current character's build from http://poebuilds.com and use it to calculate actual dps and so on for a character with an item and for a skill
 
-
 ### Trading help
 - [ ] Templating to automatically create shop posts, via custom filters.
 - [ ] Search for similar items on http://poe.xy.is [reddit post](http://www.reddit.com/r/pathofexile/comments/1vodwm/faster_trading_with_poexyz/ceu9n5m)
 - [ ] User online tracking that can be sent to third party sites, to indicate that the user is able to trade
 - [ ] Integrate with instant messaging platforms / chat rooms and provide those hooks up to trading sites (web-rtc?) to allow users to trade with each other
-
 
 ### Improved Program Logic
 - [ ] Smart detection of moved items
@@ -393,61 +390,89 @@ latest changes to the APIs from the abyssal leagues.
 
 ## Development instructions
 
-### How to build for firefox reviewers:
-Firefox Add-on's come in form of .ixr files. Which are simply zip files with different extension. 
+#### Useful links:
 
+- [Firefox extension documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+- [Scala documentation](https://docs.scala-lang.org/)
+- [Scala 2.12 Library](https://devdocs.io/scala~2.12_library/) parsed doc from previous site Library API but easier to search
+- [RePoe](https://github.com/brather1ng/RePoE) repository of Path of Exile resources. Contains the generated data from GGPK file in JSON format  
+- [Itellij IDEA](https://www.jetbrains.com/idea/) Java IDE with native Scala support
+
+### How to build for iterative development
 #### Prequisites
 
 1. Have nvs (https://github.com/jasongin/nvs) installed for node (This version of ScalaJS needs node version 8 installed)
 2. Have java8 installed (https://github.com/frekele/oracle-java/releases) (This version of Scala doesn't support later jvms)
-3. Have SBT (Simple Build Tool) for compiling Scala into JS. This is already __included__ in looty project (sbt-launch-0.13.0.jar).
+3. Have SBT (Simple Build Tool) for compiling Scala into js. This is already __included__ in looty project (sbt-launch-0.13.0.jar).
 And is run via sbt or sbt-win.cmd commands.
 
-*Linux*
+in the project root at command line:  
+#### Linux:
+
+    bin/sbt
+#### Windows:
+
+	bin\sbt-win.cmd
+    
+Build a development version with:  
+
+    fastOptJS
+    
+To generate .js on the fly, while you save any changes in code use:
+
+	~fastOptJS
+
+
+A javascript fill will be built at:  
+
+    looty/target/web/public/main/looty-fastopt.js
+
+This folder has the manifest and can be used with firefox for debugging:  
+
+    looty/target/web/public/
+
+Load it in firefox with `about:debugging`
+
+### How to build for firefox reviewers and release:
+See [ReleaseProcedure](https://github.com/benjaminjackman/looty/blob/master/ReleaseProcedure) file for clues.
+Note: Firefox Add-on's come in form of .ixr files. Which are simply zip files with different extension. 
+
+#### Linux:
  
     bin/deploy
 
-build/build.zip will have the packaged file
+`/build/build.zip` will have the packaged file
 
-(on windows)
-Sorry, you have to zip files yourself.
-Because windows does not come with default zip command line tool, which could automate this part for you.
-Zip following files and directories into choose-some-name.zip and rename it to build.irx (for installation in ff)
+#### Windows:
+
+    bin\sbt-win.cmd
+    
+in sbt, optional 
+
+    clean
+and    
+    
+    compile
+    fullOptJS    
+
+Because windows does not come with default zip command line tool, which could automate this part, we have to zip files ourselves. :crying_cat_face:  
+Zip following files and directories into choose-some-name.zip 
+(for installation in ff change extension to irx)
     
     jslib/
     images/
     less/
-    META-INF/   
     looty.html
     popup.html
     looty-opt.js
     manifest.json
-
-
-
-### How to build for iterative development
-
-in the project root at command line:  
-(linux)
- 
-    bin/sbt
-
-(windows)
-
-	bin\sbt-win.cmd
     
-(inside sbt console) build a development version with:  
+Additionaly for release version:    
+    
+    looty/
+    project/
+    bin/
+    README.md
 
-    fastOptJS
-or
 
-	~fastOptJS
-to generate .js on the fly, while you save any changes in code.
 
-A javascript fill will be built at:  
-`looty/target/web/public/main/looty-fastopt.js`
-
-This folder has the manifest and can be used with firefox for debugging:  
-`looty/target/web/public/`
-
-Load it with `about:debugging`
