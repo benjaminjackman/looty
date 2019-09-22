@@ -344,12 +344,13 @@ latest changes to the APIs from the abyssal leagues.
 
 
 ### Loot Management
-- [ ] Require ctrl to show tooltips (fph suggestion)
-- [ ] Add / Remove Columns (prioritized for fph)
 - [x] Odd / even row colors (fph)
+- [x] Allow users to save filter sets
+- [x] Load StashTab on click
+- [x] Add / Remove Columns (prioritized for fph)
+- [ ] Require ctrl to show tooltips (fph suggestion)
 - [ ] Custom and better default item scoring options [reddit post](http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/)
 - [ ] Show reason for score in the item detail.
-- [x] Load StashTab on click
 - [ ] Ability to click on a row and label the item in that row
 - [ ] Column for recipes for an item (chromatics mostly)
 - [ ] Recipes view
@@ -362,7 +363,6 @@ latest changes to the APIs from the abyssal leagues.
 - [ ] Custom Filter sets (can be tied to store pages)
 - [ ] Decode an item's affixes and show how it matches up to best ones available in the item detail display
 - [ ] Show how good an item is compared to the best in slot for the level compared to other items the player has
-- [ ] Allow users to save filter sets
 
 ### Extensibility and compatability with other sites
 - [ ] Act as a secure API that can get data up to other sites and act as a Pseudo API until GGG makes one (if they do, *cough* item level *ahem* item uuids *ATAZIRIQUADSWTFCHOO* last mod time get-stash-items/{tabs:1} *hack*)
@@ -449,7 +449,7 @@ to generate .js on the fly, while you save any changes in code.
 A javascript fill will be built at:  
 `looty/target/web/public/main/looty-fastopt.js`
 
-This folder has the manifest and can be used with firefox for debugging:
-looty/target/web/public/
+This folder has the manifest and can be used with firefox for debugging:  
+`looty/target/web/public/`
 
 Load it with `about:debugging`
