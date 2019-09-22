@@ -20,7 +20,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 >If you start by formulating the basic problem as: "How do I manage a collection of a thousand guns," then your UX guys should be able to come up with something acceptable. No — you know what? Fuck acceptable. They should be able to come up with something awesome, something in keeping with the innovation and forward-looking badassery that we've all come to associate with Gearbox and Borderlands.
 
 ##
-#### If you would like to improve Looty, here are [**Development Instructions**](#development instructions)  
+#### If you would like to improve Looty, here are [**Development Instructions**](#development-instructions)  
 ##
 #### Feel free to post bugs, questions, or feature requests [here](https://github.com/benjaminjackman/looty/issues).
 ##
