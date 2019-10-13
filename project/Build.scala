@@ -49,11 +49,11 @@ object Build extends sbt.Build {
       val srcDir = (sourceDirectory in Assets).value
       val lessSrcs = (sourceDirectory in Assets).value ** (i -- x)
       val f = lessSrcs.pair(relativeTo(srcDir))
-      f.map(_._2).map(_.replace(".less", ".css"))
+        //path delimiter fix for windows builds in css paths
+        //.replace("\\","/")
+          f.map(_._2).map(_.replace(".less", ".css").replace("\\","/"))
     }
-
     val less = lessFiles.map(f => s"""<link rel="stylesheet" href="$f"/>""").mkString("\n")
-
     val htmlSrcDir: File = (sourceDirectory in Assets).value
     val htmlSrcs: PathFinder = htmlSrcDir * "*.template.html"
     val outDir: File = WebKeys.webTarget.value / "public" / "main"
