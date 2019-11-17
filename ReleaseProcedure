@@ -6,6 +6,8 @@ gmocff
 #bump version number in
 c ./looty/src/main/public/manifest.json
 c ./looty/src/main/scala/looty/views/HomeView.scala
+# consider updating release notes in:
+c ./README.md 
 #copy homeview to commit
 
 gg (commit)

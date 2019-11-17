@@ -8,6 +8,15 @@ Available on the [Firefox Marketplace](https://addons.mozilla.org/en-US/firefox/
 
 Built using [ScalaJs](http://www.scala-js.org/) based on [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)
 
+### How to build for firefox reviewers:
+#### Prequisites
+1. Have nvs (https://github.com/jasongin/nvs) installed for node (This version of ScalaJS needs node version 8 installed)
+2. Have java8 installed (This version of Scala doesn't support later jvms)
+
+run bin/deploy
+
+build/build.zip will have the packaged file
+
 ## Statement of Inspiration
 
 Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/2012/10/the-borderlands-2-gun-discarders-club.html) About Borderlands 2, which is another loot game
