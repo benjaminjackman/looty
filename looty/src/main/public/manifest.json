@@ -16,7 +16,7 @@
     "default_popup" : "popup.html"
   },
 
-  "content_security_policy": "object-src 'self'; script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'",
+  "content_security_policy": "object-src 'self'; script-src 'self' 'unsafe-eval'",
 
-  "permissions": ["https://www.pathofexile.com/*", "https://webcdn.pathofexile.com/*", "http://www.pathofexile.com/*", "http://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
+  "permissions": ["https://www.pathofexile.com/*", "https://webcdn.pathofexile.com/*", "clipboardWrite", "clipboardRead", "storage", "unlimitedStorage"]
 }
