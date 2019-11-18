@@ -13,6 +13,9 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
+## 0.2.1.77 (2019-11-18)
+Chrome extension works again, hurray
+
 ## 0.2.1.76 (2019-10-30)
 firefox review placation
 
