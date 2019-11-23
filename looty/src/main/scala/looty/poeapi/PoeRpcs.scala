@@ -90,7 +90,7 @@ object PoeRpcs {
   //We send all rpc calls through a queue, since GGG throttles
   //the calls to their api we will need to re-attempt certain
   //calls on throttle failures
-  def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Post): Future[A] = {
+  def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Get): Future[A] = {
     val qi = QueueItem(url, params, reqType)
     Q.addToQueue(qi)
     scheduleQueueCheck(wasThrottled = false)

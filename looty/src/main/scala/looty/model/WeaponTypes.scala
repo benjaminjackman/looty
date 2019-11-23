@@ -25,9 +25,12 @@ object WeaponTypes {
     def isSword: Boolean = false
     def isAxe: Boolean = false
     def isMace: Boolean = false
+    def isSceptre: Boolean = false
     def isStaff: Boolean = false
+    def isWarstaff: Boolean = false
     def isWand: Boolean = false
     def isDagger: Boolean = false
+    def isRuneDagger: Boolean = false
     def isClaw: Boolean = false
     def isBow: Boolean = false
     override def toString = name
@@ -37,9 +40,12 @@ object WeaponTypes {
       if (isSword) prefix + "Sword"
       else if (isAxe) prefix + "Axe"
       else if (isMace) prefix + "Mace"
+      else if (isSceptre) prefix + "Sceptre"
       else if (isStaff) prefix + "Staff"
+      else if (isWarstaff) prefix + "Staff"
       else if (isWand) prefix + "Wand"
       else if (isDagger) prefix + "Dagger"
+      else if (isRuneDagger) prefix + "Dagger"
       else if (isClaw) prefix + "Claw"
       else if (isBow) "Bow"
       else "UnknownWeaponType"
@@ -79,6 +85,12 @@ object WeaponTypes {
     override def isMace = true
   }
   add(OneHandedMace)
+  object Sceptre extends WeaponType("Sceptre") {
+    override def isWeapon = true
+    override def is1H = true
+    override def isSceptre = true
+  }
+  add(Sceptre)
   object TwoHandedMace extends WeaponType("Two Handed Mace") {
     override def isWeapon = true
     override def is2H = true
@@ -91,6 +103,12 @@ object WeaponTypes {
     override def isStaff = true
   }
   add(Staff)
+  object Warstaff extends WeaponType("Warstaff") {
+    override def isWeapon = true
+    override def is2H = true
+    override def isWarstaff = true
+  }
+  add(Warstaff)
   object Claw extends WeaponType("Claw") {
     override def isWeapon = true
     override def is1H = true
@@ -109,6 +127,12 @@ object WeaponTypes {
     override def isDagger = true
   }
   add(Dagger)
+  object RuneDagger extends WeaponType("Rune Dagger") {
+    override def isWeapon = true
+    override def is1H = true
+    override def isRuneDagger = true
+  }
+  add(RuneDagger)
   object Bow extends WeaponType("Bow") {
     override def isWeapon = true
     override def is2H = true

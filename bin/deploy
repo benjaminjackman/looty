@@ -5,12 +5,12 @@ if [ "$0" != "bin/deploy" ]; then
   exit 1
 fi
 
-DEPLOY_DIR=../looty-deploy
+# DEPLOY_DIR=../looty-deploy
 
-if [ ! -d "$DEPLOY_DIR" ]; then
-  echo "Need to have a ../looty-deploy directory relative to the looty checkout"
-  exit 2
-fi
+# if [ ! -d "$DEPLOY_DIR" ]; then
+#   echo "Need to have a ../looty-deploy directory relative to the looty checkout"
+#   exit 2
+# fi
 
 bin/sbt clean
 bin/sbt fullOptJS
