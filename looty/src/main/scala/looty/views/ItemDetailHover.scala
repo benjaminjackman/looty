@@ -116,7 +116,7 @@ class ItemDetailHover {
     ).filter(_.nonEmpty)
     val h = s"""
         <div style="padding:5px">
-        <img src="${item.item.getIconUrl}"></img>
+        <img src="${item.item.getIconUrl}"></img><br>
         $titleName
         ${sections.mkString("<hr>")}
         </div>
