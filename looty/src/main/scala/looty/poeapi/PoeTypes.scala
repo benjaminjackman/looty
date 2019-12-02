@@ -187,7 +187,11 @@ object PoeTypes {
       def isMap = x.descrText.toOption.exists(_ contains "Travel to this Map")
       // all map fragments that can be used in the map device contain this bit of text in their description
 			// special case Offering to the Goddess was included in fragment stash tab
-      def isFragment = x.descrText.toOption.exists(_ contains "Templar Laboratory or a personal") || x.descrText.toOption.exists(_ contains "Aspirants' Plaza")
+      def isFragment = (x.descrText.toOption.exists(_ contains "Map Device")
+				|| x.descrText.toOption.exists(_ contains "Aspirants' Plaza")
+				//for splinters
+				|| x.descrText.toOption.exists(_ contains "Combine 100")
+				)
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
 			def isAbyssJewel = x.abyssJewel.toOption.isDefined
@@ -330,7 +334,7 @@ object PoeTypes {
             afn
           } else {
             //"https://www.pathofexile.com/image/" + afn + ".png"
-            "http://web.poecdn.com/image/divination-card/" + afn + ".png"
+            "https://web.poecdn.com/image/divination-card/" + afn + ".png"
           }
 
         } else if (x.icon.startsWith("/")) {

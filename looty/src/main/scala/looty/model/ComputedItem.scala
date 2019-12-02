@@ -113,18 +113,21 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (slots.isFlask) "Flask"
     else if (slots.isWeapon) "Wep " + properties.weaponType.toShortString
     else if (item.isHideoutItem) "Hideout"
-    else if (item.isCurrency) "Currency"
     else if (item.isSupportGem) "Support Gem"
-    else if (item.isSkillGem) "Skill Gem"
-    else if (item.isMap) "Map"
-    else if (item.isFragment) "Fragment"
-    else if (item.isQuest) "QuestItem"
-    else if (item.isJewel && !item.isAbyssJewel) "Jewel"
-    else if (item.isAbyssJewel) "Abyss Jewel"
-    else if (item.isDivinationCard) "DivCard"
-    else if (item.isLeaguestone) "Leaguestone"
-    else if (item.isProphecy) "SealedProphecy"
-    else "UNKNOWN"
+		else if (item.isSkillGem) "Skill Gem"
+		else if (item.isMap) "Map"
+		else if (item.isFragment) "Fragment"
+		else if (item.isQuest) "QuestItem"
+		else if (item.isJewel && !item.isAbyssJewel) "Jewel"
+		else if (item.isAbyssJewel) "Abyss Jewel"
+		else if (item.isDivinationCard) "DivCard"
+		else if (item.isLeaguestone) "Leaguestone"
+		else if (item.isProphecy) "SealedProphecy"
+		// moving it as the last one to not include possible fragments catches as currency
+		// which are recognized via description text
+		// thanks GGG for lack of proper handling it :/
+		else if (item.isCurrency) "Currency"
+		else "UNKNOWN"
   }
 
   object increased {
