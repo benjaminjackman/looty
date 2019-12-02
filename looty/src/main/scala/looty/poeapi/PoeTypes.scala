@@ -189,6 +189,7 @@ object PoeTypes {
       def isFragment = x.descrText.toOption.exists(_ contains "Templar Laboratory or a personal")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
+			def isAbyssJewel = x.abyssJewel.toOption.isDefined
       def isDivinationCard = x.getFrameType == FrameTypes.divCard
 
       def isInSocket = x.socket.toOption.isDefined
@@ -370,7 +371,10 @@ object PoeTypes {
     var shaper: Optional[Boolean] = js.native
     // Elder items
     var elder: Optional[Boolean] = js.native
-    
+
+		//abyss jewel
+		val abyssJewel: Optional[Boolean] = js.native
+
     val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
     val sockets: Optional[js.Array[Socket]] = js.native
     val properties: Optional[js.Array[ItemProperty]] = js.native
