@@ -13,8 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 
   def versionHistory = """
 # Version History
-## 0.2.1.77 (2019-11-18)
-Chrome extension works again, hurray
+## 0.2.1.77 (2019-12-03)
+Special thanks to Traf27 for contributing several fixes that keep looty going!
+- Chrome extension works again, hurray
+- Silence some console warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
 
 ## 0.2.1.76 (2019-10-30)
 firefox review placation

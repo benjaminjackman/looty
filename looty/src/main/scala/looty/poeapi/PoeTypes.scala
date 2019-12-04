@@ -188,10 +188,9 @@ object PoeTypes {
       // all map fragments that can be used in the map device contain this bit of text in their description
 			// special case Offering to the Goddess was included in fragment stash tab
       def isFragment = (x.descrText.toOption.exists(_ contains "Map Device")
-				|| x.descrText.toOption.exists(_ contains "Aspirants' Plaza")
-				//for splinters
-				|| x.descrText.toOption.exists(_ contains "Combine 100")
-				)
+				|| x.descrText.toOption.exists(_ contains "Aspirants' Plaza"))
+      def isSplinter = x.descrText.toOption.exists(_ contains "Combine 100")
+
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
 			def isAbyssJewel = x.abyssJewel.toOption.isDefined
