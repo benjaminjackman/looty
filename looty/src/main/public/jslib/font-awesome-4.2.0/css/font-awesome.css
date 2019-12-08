@@ -18,6 +18,11 @@
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+/* for correct positioning icons in Alerter */
+  font-size: 1.5em;
+  vertical-align: middle;
+  margin-right: 4px;
 }
 /* makes the font 33% larger relative to the icon container */
 .fa-lg {

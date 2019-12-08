@@ -70,14 +70,24 @@ object Alerter {
   private def display(cls: String, msg: String) {
     val el = jq("#alerter")
     el.empty()
-    el.html(s"""<div class="$cls">$msg</div>""")
+		// using Font Awesome icons   to explain alert status more clearly
+		// as follows .info - question mark in circle, .warn - exclamation mark in triangle, .error - exclamation mark in circle
+		var fontAwesomeSignClass = ""
+		cls match {
+			case "info" => fontAwesomeSignClass = "<i class='fa fa-question-circle'></i>"
+			case "warn" => fontAwesomeSignClass = "<i class='fa fa-exclamation-triangle'></i>"
+			case "error" => fontAwesomeSignClass = "<i class='fa fa-exclamation-circle'></i>"
+			case default => fontAwesomeSignClass = ""
+		}
+
+    el.html(s"""<div class="$cls">$fontAwesomeSignClass $msg</div>""")
   }
 
 //  private val feedback_0_2_1_10 = "http://www.reddit.com/r/pathofexile/comments/2ek6da/tools_looty_stash_searching_and_gem_xp_tracking/"
 //  private def redditLink(msg: String) = s"""<a target="_blank" href="$feedback_0_2_1_10">$msg</a>"""
 
 
-  private val mainGGGForumUrl = "http://www.pathofexile.com/forum/view-thread/832233"
+  private val mainGGGForumUrl = "https://www.pathofexile.com/forum/view-thread/832233"
   private def mainGGGForumLink(msg: String) = s"""<a target="_blank" href="$mainGGGForumUrl">$msg</a>"""
 
   def featuresLink(msg: String) = mainGGGForumLink(msg: String)
