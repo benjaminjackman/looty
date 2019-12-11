@@ -24,6 +24,8 @@ import looty.views.Alerter
 
 
 object PoeRpcs {
+  //catching some bugs, lets go fishing!
+  val debugMode = false;
 
   val basePoeUrl = "https://www.pathofexile.com"
 
@@ -93,7 +95,7 @@ object PoeRpcs {
   def enqueue[A](url: String, params: js.Any, reqType: HttpRequestType = HttpRequestTypes.Get): Future[A] = {
     val qi = QueueItem(url, params, reqType)
     Q.addToQueue(qi)
-    scheduleQueueCheck(wasThrottled = false)
+    scheduleQueueCheck(connectionRefused = false)
     qi.getFuture.asInstanceOf[Future[A]]
   }
 
@@ -124,8 +126,11 @@ object PoeRpcs {
             //Reason is from the jquery request
             reason.asJsAny.asJsDyn.status.asInstanceOf[Any] match {
               case status : Int =>
-                if (status == 429) {
-                  window.console.log("Received JSFuture Failure, no status == 429 Definitely throttling", res.asJsAny)
+                if (status == 401) {
+                  window.console.log("Received JSFuture Failure, status == 401 You are not logged into wwww.pathofexile.com site", res.asJsAny)
+                  p.completeWith(Future.failed(UnauthorizedAccessFailure(""+res)))
+                } else if (status == 429) {
+                  window.console.log("Received JSFuture Failure, status == 429 Definitely throttling", res.asJsAny)
                   p.completeWith(Future.failed(ThrottledFailure(""+res)))
                 } else {
                   window.console.log(s"Received JSFuture Failure, status == $status not sure maybe throttling", res.asJsAny)
@@ -144,10 +149,10 @@ object PoeRpcs {
     p.future
   }
 
-  def scheduleQueueCheck(wasThrottled: Boolean) {
+  def scheduleQueueCheck(connectionRefused: Boolean) {
     if (!willCheckQueue) {
       willCheckQueue = true
-      global.setTimeout(() => checkQueue(), if (wasThrottled) coolOffMs else 0)
+      global.setTimeout(() => checkQueue(), if (connectionRefused) coolOffMs else 0)
     }
   }
 
@@ -160,14 +165,19 @@ object PoeRpcs {
           case Success(x) =>
             qi.debugLog("Get => Success")
             Q.remove(qi)
-            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! ")
+            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.showLink("http://www.pathofexile.com/forum/view-thread/832233", "here")} so more people find out about it! ")
             qi.success(x)
             checkQueue()
+          case Failure(UnauthorizedAccessFailure(msg)) =>
+            qi.debugLog(s"Get => Unauthorized Failure $msg")
+            console.debug("Unauthorized, reconnecting ... ", qi.url, qi.params, msg)
+            Alerter.error(s"""Unauthorized access to ${Alerter.showLink("https://www.pathofexile.com", "www.pathofexile.com")}, please log in there first.""")
+            scheduleQueueCheck(connectionRefused = true)
           case Failure(ThrottledFailure(msg)) =>
             qi.debugLog(s"Get => Throttled Failure $msg")
             console.debug("Throttled, cooling off ", qi.url, qi.params, msg)
-            Alerter.warn(s"""Throttled by pathofexile.com, while you wait stop by ${Alerter.featuresLink("here")} and help other players discover the tool!""")
-            scheduleQueueCheck(wasThrottled = true)
+            Alerter.warn(s"""Throttled by www.pathofexile.com, while you wait stop by ${Alerter.showLink("http://www.pathofexile.com/forum/view-thread/832233","here")} and help other players discover the tool!""")
+            scheduleQueueCheck(connectionRefused = true)
           case Failure(t) =>
             qi.debugLog(s"#### Get => Other Failure: $t")
             console.debug(s"#### Get $qi => Other Failure: $t")
@@ -202,9 +212,8 @@ object PoeRpcs {
         debugLog("#### DUPLICATE FAILURE")
       }
     }
-    def debugLog(msg: String) = {
-      //console.debug(msg, id, promise.isCompleted, url, params)
-    }
+    def debugLog(msg: String) = if (debugMode) console.debug(msg, id, promise.isCompleted, url, params)
+
     def getFuture = promise.future
     def isCompleted = promise.isCompleted
   }
@@ -236,8 +245,16 @@ object PoeRpcs {
   //How long to wait after we hit the throttle before checking again
   val coolOffMs = 10000
 
+  //TODO?
+  //connections are handled by response headers
+  //x-rate-limit-account: 45:60:60,240:240:900
+  //x-rate-limit-account-state: 23:60:0,23:240:0
+  //limit is 45 requests per 60s time frame, 60s counting from time of 1req
+  //here we made 23 already
+  //if we hit 45 req in 12 sec (which for me - looty makes 4req/s is totaly achievable) than we wait next 48s idle :(
+
   case class BadParameters(msg: String) extends Exception
   case class ThrottledFailure(msg: String) extends Exception
-
+  case class UnauthorizedAccessFailure(msg: String) extends Exception
 
 }
