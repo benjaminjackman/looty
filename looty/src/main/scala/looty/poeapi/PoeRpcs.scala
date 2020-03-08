@@ -124,6 +124,10 @@ object PoeRpcs {
             //Reason is from the jquery request
             reason.asJsAny.asJsDyn.status.asInstanceOf[Any] match {
               case status : Int =>
+                if (status == 401) {
+                  window.console.log("Received JSFuture Failure, status == 401 You are not logged into wwww.pathofexile.com site", res.asJsAny)
+                  p.completeWith(Future.failed(UnauthorizedAccessFailure(""+res)))
+                } else
                 if (status == 429) {
                   window.console.log("Received JSFuture Failure, no status == 429 Definitely throttling", res.asJsAny)
                   p.completeWith(Future.failed(ThrottledFailure(""+res)))
@@ -160,19 +164,24 @@ object PoeRpcs {
           case Success(x) =>
             qi.debugLog("Get => Success")
             Q.remove(qi)
-            Alerter.info(s"Downloaded some data from pathofexile.com! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! ")
+            Alerter.info(s"Downloaded some data from ${basePoeUrl}! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! ")
             qi.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             qi.debugLog(s"Get => Throttled Failure $msg")
             console.debug("Throttled, cooling off ", qi.url, qi.params, msg)
-            Alerter.warn(s"""Throttled by pathofexile.com, while you wait stop by ${Alerter.featuresLink("here")} and help other players discover the tool!""")
-            scheduleQueueCheck(wasThrottled = true)
+            Alerter.warn(s"""Throttled by ${basePoeUrl}, while you wait stop by ${Alerter.featuresLink("here")} and help other players discover the tool!""")
+            scheduleQueueCheck(true)
+          case Failure(UnauthorizedAccessFailure(msg)) =>
+            qi.debugLog(s"Get => Unauthorized Access Failure $msg")
+            console.debug(s"Unauthorized Access, waiting for logging into ${basePoeUrl} account, reconnecting ... ", qi.url, qi.params, msg)
+            Alerter.error("You are probably not logged into path of exile account, please log in. If you are logged in specify your account name manually <a href=\"#/settings\">here</a>")
+            scheduleQueueCheck(true)
           case Failure(t) =>
             qi.debugLog(s"#### Get => Other Failure: $t")
             console.debug(s"#### Get $qi => Other Failure: $t")
             Q.remove(qi)
-            Alerter.error("Unexpected connection error when talking to pathofexile.com, ensure that you are logged in.")
+            Alerter.error(s"Unexpected connection error when talking to ${basePoeUrl}, ensure that you are logged in.")
             qi.failure(t)
             checkQueue()
         }
@@ -238,6 +247,8 @@ object PoeRpcs {
 
   case class BadParameters(msg: String) extends Exception
   case class ThrottledFailure(msg: String) extends Exception
+  case class UnauthorizedAccessFailure(msg: String) extends Exception
+
 
 
 }
