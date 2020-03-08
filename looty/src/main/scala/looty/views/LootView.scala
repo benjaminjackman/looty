@@ -281,6 +281,14 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
       o.showHeaderRow = true
       o.headerRowHeight = 30
       o.explicitInitialization = true
+      
+      // option fullWidthRows = true 
+      // fill all window width with stretched columns width.
+      // Although we should add sufficient minimum column width 
+      // for particular ex. alphanumeric fields
+      // so their data visiblity would not be obscured
+      o.fullWidthRows = true 
+
       o.dataItemColumnValueExtractor = (item: ComputedItem, column: js.Dynamic) => {
         renderCell(item, column)
       }
