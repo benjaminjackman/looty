@@ -119,6 +119,7 @@ class ItemDetailHover {
         <img src="${item.item.getIconUrl}"></img><br>
         $titleName
         ${sections.mkString("<hr>")}
+        <span class="authors-note">Shift+Clicking refreshes (char/tab) item is in.</span>
         </div>
         """
     el.attr("class", s"item-detail frame-type-$frameTypeName")
