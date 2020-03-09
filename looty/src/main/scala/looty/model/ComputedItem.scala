@@ -233,6 +233,11 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var energyShield  = 0.0
   }
 
+  object regenPerSecond {
+    var flat = LifeAndMana mutable 0.0 // Regenerate 1.2 Life per second  or  Regenerate 1.2 Mana per second
+    var percent = LifeAndMana mutable 0.0 // Regenerate 2.0% Life per second  or  Regenerate 2.0% Mana per second
+  }
+
   object leech {var physical = LifeAndMana mutable 0.0}
   object onKill {var lifeAndMana = LifeAndMana mutable 0.0}
   object onAttackHit {var lifeAndMana = LifeAndMana mutable 0.0}
@@ -327,8 +332,6 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   var bleedingChance                    = 0.0
   var freezeChance                      = 0.0
   var shockChance                       = 0.0
-
-  val regeneratedPerSecond = LifeAndMana mutable 0.0
 
   object flask {
     object increased {
