@@ -90,7 +90,9 @@ object PropertyParsers {
   //dirty hack (and get rid of console warning) to parse Abyss property of Abyss Jewels , which does nothing? we match them by "abyssJewel": true item field
   named("Abyss")((i, p) => i.properties.abyss == p.name)
   //for example unique jewels can have "limited to 2" property
-  named("Limited to")((i,p) => i.properties.limitedTo = p.firstValue.toDouble)
+  named("Limited to")((i,p) => i.properties.limitedTo = "(\\d+)\\.*".r.findFirstIn(p.firstValue).getOrElse("0").toDouble)
+
+
 
   named("Stack Size") { (i, p) =>
     p.firstValue.split("/").headOption.foreach(x => i.properties.stackSize = x.toDouble)
