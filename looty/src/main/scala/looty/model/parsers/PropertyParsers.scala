@@ -87,6 +87,8 @@ object PropertyParsers {
   named("Attacks per Second")((i, p) => i.properties.attacksPerSecond = p.firstValue.toDouble)
   named("Chance to Block")((i, p) => i.properties.chanceToBlock = prunePercent(p.firstValue))
   named("Weapon Range")((i, p) => i.properties.weaponRange = p.firstValue.toDouble)
+  //dirty hack (and get rid of console warning) to parse Abyss property of Abyss Jewels , which does nothing? we match them by "abyssJewel": true item field
+  named("Abyss")((i, p) => i.properties.abyss == p.name)
 
 
   named("Stack Size") { (i, p) =>
