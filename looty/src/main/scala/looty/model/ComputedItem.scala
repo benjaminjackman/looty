@@ -59,7 +59,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     !item.isJewel &&
     !item.isDivinationCard &&
     !item.isProphecy &&
-    !item.isLeaguestone
+    !item.isLeaguestone &&
+    !item.isOrgan
 
   lazy val displayName = {
     var n = item.getName
