@@ -189,6 +189,7 @@ object PoeTypes {
 			// special case Offering to the Goddess was included in fragment stash tab
       def isFragment = (x.descrText.toOption.exists(_ contains "Map Device")
 				|| x.descrText.toOption.exists(_ contains "Aspirants' Plaza"))
+      def isOrgan = x.descrText.toOption.exists(_ contains "in Tane's Laboratory")
       def isSplinter = x.descrText.toOption.exists(_ contains "Combine 100")
       def isFlask = x.descrText.toOption.exists(_ contains "Right click to drink.")
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
