@@ -143,10 +143,11 @@ object AffixesParser {
   }
 
   for (x <- LifeAndMana.all) {
+    regex1(s"^Regenerate ([.\\d]+) ${x.cap} per second")(_.regenPerSecond.flat.+=(x, _))
+    regex1(s"^Regenerate ([.\\d]+)% of ${x.cap} per second")(_.regenPerSecond.percent(x) += _)
     regex1(s"^([+-\\d]+) ${x.cap} [gG]ained on Kill")(_.onKill.lifeAndMana(x) += _)
     regex1(s"^([+-\\.\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
     plusTo(s"maximum ${x.cap}")(_.plusTo.lifeAndMana.+=(x, _))
-    simple1("", s"${x.cap} Regenerated per second")(_.regeneratedPerSecond.+=(x, _))
     simple1("", s"${x.cap} gained for each Enemy hit by Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
   }

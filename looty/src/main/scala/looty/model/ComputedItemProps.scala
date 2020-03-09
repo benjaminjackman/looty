@@ -47,7 +47,7 @@ object ComputedItemProps {
     }
 
   }
-
+  //affixes Group names for use in Column Select Panel
   val General         = "General"
   val Scores          = "Score"
   val Defensive       = "Defensive"
@@ -278,16 +278,26 @@ object ComputedItemProps {
   val LifeGainOnKill     = pno("LifeGainOnKill", "lgok")(Regen)(_.onKill.lifeAndMana.life)
   val ManaGainOnKill     = pno("ManaGainOnKill", "mgok")(Regen)(_.onKill.lifeAndMana.mana)
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
-  val LifeRegen          = pno("LifeRegen", "lireg")(Regen)(_.regeneratedPerSecond.life)
+
+  val flatLifeRegen          = pno("RegenerateLifePerSecond", "lireg")(Regen)(_.regenPerSecond.flat.life)
+  val percentLifeRegen          = pno("%RegenerateLifePerSecond", "%lireg")(Regen)(_.regenPerSecond.percent.life)
+
+  val flatManaRegen          = pno("RegenerateManaPerSecond", "mreg")(Regen)(_.regenPerSecond.flat.mana)
+  val percentManaRegen          = pno("%RegenerateManaPerSecond", "%mreg")(Regen)(_.regenPerSecond.percent.mana)
+
   val IncreasedManaRegen = pno("IncreasedManaRegen", "+%mareg")(Regen)(_.increased.manaRegenerationRate)
   val MinusToManaCostOfSkills = pno("MinusToManaCostOfSkills", "-mcos")(Regen)(_.minusToManaCostOfSkills)
+
   LifeLeech !?= "Life Leech from Physical Attack Damage"
   LifeGainOnHit !?= "Life Gain on Hit"
   ManaGainOnHit !?= "Mana Gain on Hit"
   LifeGainOnKill !?= "Life Gain on Kill"
   ManaGainOnKill !?= "Mana Gain on Kill"
   ManaLeech !?= "Mana Leech from Physical Attack Damage"
-  LifeRegen !?= "Life Regeneration Rate"
+  flatLifeRegen !?= "Regenerate Life per second"
+  percentLifeRegen !?= "Regenerate % of Life per second"
+  flatManaRegen !?= "Regenerate Mana per second"
+  percentManaRegen !?= "Regenerate % of Mana per second"
   IncreasedManaRegen !?= "Increased Mana Regeneration Rate"
   MinusToManaCostOfSkills !?= "Mana Cost of Skills"
 
