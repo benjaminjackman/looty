@@ -73,6 +73,18 @@ object AffixesParser {
     def process(i: ComputedItem, x: Double)
   }
 
+  trait StringRegexAffixParser1 extends RegexAffixParser {
+    override def parse(s: String, i: ComputedItem): Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList match {
+        case null => false
+        case x :: y :: zs =>
+          process(i, y.toString)
+          true
+        case xs => false
+      }
+    }
+    def process(i: ComputedItem, x: String)
+  }
 
   def regex1(regex: String)(f: (ComputedItem, Double) => Unit) = {
     val r = regex
@@ -80,6 +92,17 @@ object AffixesParser {
       new RegexAffixParser1() {
         val regex = new js.RegExp(r, "i")
         def process(i: ComputedItem, x: Double): Unit = f(i, x)
+      }
+    }
+  }
+
+  //should process affixes like "Adds Krillson to your Hideout"
+  def strRegex1(regex: String)(f: (ComputedItem, String) => Unit) = {
+    val r = regex
+    add {
+      new StringRegexAffixParser1() {
+        val regex = new js.RegExp(r, "i")
+        def process(i: ComputedItem, x: String): Unit = f(i, x)
       }
     }
   }
@@ -125,6 +148,7 @@ object AffixesParser {
     val r = s"^$a([.+-\\d]+)%*$b$$"
     regex1(r)(f)
   }
+
 
 //BEGIN AFFIXES
   for (x <- Attributes.all) {
@@ -316,6 +340,9 @@ object AffixesParser {
 
   simple1("", "additional Elemental Resistances during Flask effect")(_.flask.additionalResistances += _)
   simple1("Grants", "of Life Recovery to Minions")(_.flask.lifeRecoveryToMinions += _)
+
+  strRegex1(s"^Grants Level \\d+ ([\\w ]+) Skill")(_.skill.name += _)
+  regex1(s"^Grants Level (\\d+) [\\w ]+ Skill")(_.skill.level += _)
 
   val all = _all.toList
 

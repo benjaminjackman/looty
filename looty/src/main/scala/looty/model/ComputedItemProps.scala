@@ -66,6 +66,7 @@ object ComputedItemProps {
   val Gems            = "Gems"
   val FlasksMods      = "FlaskMods"
   val FlasksActions   = "FlaskActions"
+  val Special        = "Special"
 
   def str(
     fullName: String,
@@ -446,5 +447,11 @@ object ComputedItemProps {
   FlaskKnockback !?= "Flask adds Knockback"
   FlaskInstant !?= "Flask Instant Recovery"
 
+  //Special
+  val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
+  val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 80)(Special)(_.skill.level)
+
+  GrantsSkill !?= "Granted Skill"
+  GrantsSkillLevel !?= "Level of Granted Skill"
 
 }
