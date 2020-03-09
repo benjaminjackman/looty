@@ -386,4 +386,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var instantRecovery        = false
     var instantRecoveryLowLife = false
   }
+
+	object skill {
+		var name = ""
+		var level = 0.0
+	}
 }
