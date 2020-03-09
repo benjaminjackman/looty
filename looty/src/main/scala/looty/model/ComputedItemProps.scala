@@ -450,8 +450,10 @@ object ComputedItemProps {
   //Special
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
   val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 80)(Special)(_.skill.level)
+  val limitedTo                   = pno("LimitedTo","limited",50)(Special)(_.properties.limitedTo)
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
+  limitedTo !?= "Limited to"
 
 }
