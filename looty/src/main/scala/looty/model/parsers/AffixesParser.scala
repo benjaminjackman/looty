@@ -189,6 +189,8 @@ object AffixesParser {
   increased("Evasion Rating")(_.increased.evasion += _)
   increased("Energy Shield")(_.increased.energyShield += _)
   increased("maximum Energy Shield")(_.increased.maximumEnergyShield += _)
+  increased("maximum Life")(_.increased.maximumLife += _)
+
   increased("Armour and Evasion") { (i, a) => i.increased.armour += a; i.increased.evasion += a}
   increased("Armour and Energy Shield") { (i, a) => i.increased.armour += a; i.increased.energyShield += a}
   increased("Evasion and Energy Shield") { (i, a) => i.increased.evasion += a; i.increased.energyShield += a}

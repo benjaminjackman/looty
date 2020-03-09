@@ -148,6 +148,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var evasion                        = 0.0
     var energyShield                   = 0.0
     var maximumEnergyShield            = 0.0
+    var maximumLife                    = 0.0
     var quantityOfItemsFound           = 0.0
     var rarityOfItemsFound             = 0.0
     var movementSpeed                  = 0.0

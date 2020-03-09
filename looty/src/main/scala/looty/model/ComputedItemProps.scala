@@ -293,11 +293,15 @@ object ComputedItemProps {
 
   //Attributes
   val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
+  val IncreasedMaxLife      = pno("IncreasedMaxLife", "+%Life")(Attributes)(_.increased.maximumLife)
+
+
   val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndManaWithStrInt.mana)
   val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
   val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
   val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
   PlusLife ?= "Adds this amount of life (includes strength bonus)"
+  IncreasedMaxLife ?= "Increased Maximum Life"
   PlusMana ?= "Adds this amount of mana (includes intelligence bonus)"
   PlusDex !?= "Adds this amount of dex"
   PlusStr !?= "Adds this amount of str"
