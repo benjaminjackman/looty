@@ -204,6 +204,7 @@ object PoeTypes {
       def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
+      def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
 
       def getFrameType = {
         val ft = x.frameType.toInt
@@ -389,6 +390,7 @@ object PoeTypes {
     val explicitMods: Optional[js.Array[String]] = js.native
     val craftedMods: Optional[js.Array[String]] = js.native
     val implicitMods: Optional[js.Array[String]] = js.native
+    val enchantMods: Optional[js.Array[String]] = js.native
     val frameType: Int = js.native
     val socketedItems: Optional[js.Array[AnyItem]] = js.native
     val flavourText: Optional[js.Array[String]] = js.native
