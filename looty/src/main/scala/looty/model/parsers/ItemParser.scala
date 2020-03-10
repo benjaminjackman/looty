@@ -25,6 +25,7 @@ object ItemParser {
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.explicitMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.implicitMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.craftedMods.toOption)
+      if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.enchantMods.toOption)
       if (ci.isEquippable || ci.item.isJewel || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
       if (ci.isEquippable || ci.item.isJewel || ci.item.isGem) parseRequirements(ci)
       if (ci.isEquippable || ci.item.isJewel) parseTypeLine(ci)

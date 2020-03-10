@@ -152,6 +152,7 @@ object ComputedItemProps {
   val Ilvl             = pno("ItemLevel", "ilvl")(General)(_.item.ilvl.toOption.getOrElse(0).toDouble)
   val ExplicitModCount = nno("ExplicitModCount", "emc")(General)(_.item.explicitMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
+  val EnchantedModCount  = pno("EnchantedModCount", "enchc")(General)(_.item.enchantMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
   val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.cleanTypeLine)
   Location ?= "The name of the character / stash tab that contains the item."
@@ -165,6 +166,7 @@ object ComputedItemProps {
   Ilvl ?= "The item level"
   ExplicitModCount !?= "The number of explicit mods on an item"
   CraftedModCount !?= "The number crafted mods on an item"
+  EnchantedModCount !?= "The number crafted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
   TypeLine !?= "The type line of an item"
 
@@ -451,9 +453,11 @@ object ComputedItemProps {
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
   val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 80)(Special)(_.skill.level)
   val limitedTo                   = pno("LimitedTo","limited",50)(Special)(_.properties.limitedTo)
+  val Enchantments  = str("Enchantments", "ench", 160)(Special)(_.item.enchantModsList.mkString(", "))
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
   limitedTo !?= "Limited to"
+  Enchantments !?= "Enchantments"
 
 }
