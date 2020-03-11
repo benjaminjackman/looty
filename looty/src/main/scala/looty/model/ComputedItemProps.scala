@@ -453,11 +453,13 @@ object ComputedItemProps {
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
   val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 80)(Special)(_.skill.level)
   val limitedTo                   = pno("LimitedTo","limited",50)(Special)(_.properties.limitedTo)
+  val Radius                   = str("Radius","radius",50)(Special)(_.properties.radius)
   val Enchantments  = str("Enchantments", "ench", 160)(Special)(_.item.enchantModsList.mkString(", "))
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
   limitedTo !?= "Limited to"
+  Radius !?= "Radius"
   Enchantments !?= "Enchantments"
 
 }
