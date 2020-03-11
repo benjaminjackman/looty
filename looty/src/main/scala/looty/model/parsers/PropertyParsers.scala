@@ -89,8 +89,10 @@ object PropertyParsers {
   named("Weapon Range")((i, p) => i.properties.weaponRange = p.firstValue.toDouble)
   //dirty hack (and get rid of console warning) to parse Abyss property of Abyss Jewels , which does nothing? we match them by "abyssJewel": true item field
   named("Abyss")((i, p) => i.properties.abyss == p.name)
-  //for example unique jewels can have "limited to 2" property
-  named("Limited to")((i,p) => i.properties.limitedTo = "(\\d+)\\.*".r.findFirstIn(p.firstValue).getOrElse("0").toDouble)
+  //for example unique jewels can be limited to 2
+  //here regexp is for special case with timeless jewels having in this field "1 Historic" instead of 1
+  named("Limited to")((i, p) => i.properties.limitedTo = "(\\d+)\\.*".r.findFirstIn(p.firstValue).getOrElse("0").toDouble)
+  named("Radius")((i, p) => if (i.item.isJewel) i.properties.radius = p.firstValue)
 
 
 

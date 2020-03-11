@@ -326,6 +326,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var stackSize              = 0.0
     var abyss                  = "Abyss"
     var limitedTo              = 0.0
+	  var radius                 = ""
   }
 
   var reflectsPhysicalDamageToAttackers = 0.0
