@@ -455,11 +455,13 @@ object ComputedItemProps {
   val limitedTo                   = pno("LimitedTo","limited",50)(Special)(_.properties.limitedTo)
   val Radius                   = str("Radius","radius",50)(Special)(_.properties.radius)
   val Enchantments  = str("Enchantments", "ench", 160)(Special)(_.item.enchantModsList.mkString(", "))
+  val NotParsedYet = str("NotParsedYet", "unparsed", 160)(Special)(_.notParsedYet.name)
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
   limitedTo !?= "Limited to"
   Radius !?= "Radius"
   Enchantments !?= "Enchantments"
+  NotParsedYet ?= "Could not be parsed"
 
 }

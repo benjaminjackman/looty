@@ -96,13 +96,13 @@ object AffixesParser {
     }
   }
 
-  //should process affixes like "Adds Krillson to your Hideout"
+  //should process affixes like "Grants Level 666 Apocalypse Skill"
   def strRegex1(regex: String)(f: (ComputedItem, String) => Unit) = {
     val r = regex
     add {
       new StringRegexAffixParser1() {
         val regex = new js.RegExp(r, "i")
-        def process(i: ComputedItem, x: String): Unit = f(i, x)
+        def process(i: ComputedItem, s: String): Unit = f(i, s)
       }
     }
   }

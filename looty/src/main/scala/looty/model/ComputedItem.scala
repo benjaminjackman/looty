@@ -391,6 +391,12 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var instantRecovery        = false
     var instantRecoveryLowLife = false
   }
+  //field for mods which we could not/will not parse
+  //so we could search through column with them anyway
+  object  notParsedYet {
+    var name = ""
+    //count - maybe?
+  }
 
 	object skill {
 		var name = ""

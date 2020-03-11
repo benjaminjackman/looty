@@ -47,6 +47,8 @@ object ItemParser {
     } {
       if (!AffixesParser.parse(ci, mod)
           && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {
+        //adding column for not parsed yet affixes
+        ci.notParsedYet.name += mod ++ "| "
         //Silence these warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
         if (window.localStorage.getItem("SQUELCH_WARNINGS") != "true") {
           console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
