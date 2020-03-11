@@ -89,7 +89,9 @@ object ComputedItemProps {
   def pno(
     fullName: String,
     shortName: String,
-    width: Int = 50)(
+    //numbers in format ddd.d has to have at least that much width to show
+    //more width means more stretching grid view. Not always we have 1900px wide screen :(
+    width: Int = 43)(
     groups: String*)(
     f: ComputedItem => Double): ComputedItemProp[Double] = {
     val res = new ComputedItemProp[Double](
@@ -107,7 +109,7 @@ object ComputedItemProps {
   def nno(
     fullName: String,
     shortName: String,
-    width: Int = 50)(
+    width: Int = 43)(
     groups: String*)(
     f: ComputedItem => Double): ComputedItemProp[Double] = {
     val res = new ComputedItemProp[Double](
@@ -145,6 +147,7 @@ object ComputedItemProps {
   val Rarity           = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
   val DisplayName      = str("DisplayName", "name", 160)(General)(_.displayName)
   val TypeName         = str("TypeName", "type", 100)(General)(_.typeName)
+  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.cleanTypeLine)
   val Cosmetics        = str("Cosmetics", "cosmetics", 80)(General)(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   val Sockets          = str("Sockets", "sockets", 100)(General)(_.socketColors)
   val Misc             = pno("Misc", "misc")(General)(_.misc)
@@ -154,21 +157,20 @@ object ComputedItemProps {
   val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val EnchantedModCount  = pno("EnchantedModCount", "enchc")(General)(_.item.enchantMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
-  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.cleanTypeLine)
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
   TypeName ?= "The name of the base item type"
+  TypeLine !?= "The type line of an item"
   Cosmetics ?= "A list of all cosmetic effects applied to the item"
   Sockets ?= "The sockets sorted by number in group, then by color"
-  Misc !?= "Gem level / Items in Stack / # of Sockets /  Map Level"
+  Misc ?= "Gem level / Items in Stack / # of Sockets /  Map Level"
   Quality !?= "The quality of the item"
   Ilvl ?= "The item level"
   ExplicitModCount !?= "The number of explicit mods on an item"
   CraftedModCount !?= "The number crafted mods on an item"
   EnchantedModCount !?= "The number enchanted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
-  TypeLine !?= "The type line of an item"
 
   //Score
   val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
@@ -268,7 +270,7 @@ object ComputedItemProps {
   val IncreasedItemQuantity    = pno("IncreasedItemQuantity", "iiq")(Efficiency)(_.increased.quantityOfItemsFound)
   val IncreasedMoveSpeed       = pno("IncreasedMoveSpeed", "+%move")(Efficiency)(_.increased.movementSpeed)
   val IncreasedProjectileSpeed = pno("IncreasedProjectileSpeed", "+%projSpeed")(Efficiency)(_.increased.projectileSpeed)
-  MagicFind ?= "Total of Increased Item Rarity and Increased Item Quantity"
+  MagicFind !?= "Total of Increased Item Rarity and Increased Item Quantity"
   IncreasedItemRarity !?= "Increased Rarity of Items Found"
   IncreasedItemQuantity !?= "Increased Quantity of Items Found"
   IncreasedMoveSpeed ?= "Increased Movement Speed"
@@ -307,17 +309,15 @@ object ComputedItemProps {
   //Attributes
   val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
   val IncreasedMaxLife      = pno("IncreasedMaxLife", "+%Life")(Attributes)(_.increased.maximumLife)
-
-
   val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndManaWithStrInt.mana)
   val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
   val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
   val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
   PlusLife ?= "Adds this amount of life (includes strength bonus)"
-  IncreasedMaxLife ?= "Increased Maximum Life"
-  PlusMana ?= "Adds this amount of mana (includes intelligence bonus)"
+  IncreasedMaxLife !?= "Increased Maximum Life"
+  PlusMana !?= "Adds this amount of mana (includes intelligence bonus)"
   PlusDex !?= "Adds this amount of dex"
-  PlusStr !?= "Adds this amount of str"
+  PlusStr ?= "Adds this amount of str"
   PlusInt !?= "Adds this amount of int"
 
   //Resists
@@ -352,7 +352,7 @@ object ComputedItemProps {
   val IncreasedColdSpellDamage      = pno("IncreasedColdSpellDamage", "+%spCDmg")(Spells)(_.increasedSpell.elements.cold)
   val IncreasedLightningSpellDamage = pno("IncreasedLightningSpellDamage", "+%spLDmg")(Spells)(_.increasedSpell.elements.lightning)
   val IncreasedChaosSpellDamage     = pno("IncreasedChaosSpellDamage", "+%spXDmg")(Spells)(_.increasedSpell.elements.lightning)
-  IncreasedCastSpeed ?= "Increased Cast Speed"
+  IncreasedCastSpeed !?= "Increased Cast Speed"
   IncreasedSpellDamage ?= "Increased Spell Damage"
   IncreasedElementalSpellDamage !?= "Increased Elemental Damage + Spell Damage"
   IncreasedFireSpellDamage !?= "Increased Fire Damage + Elemental Damage + Spell Damage"
@@ -451,17 +451,17 @@ object ComputedItemProps {
 
   //Special
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
-  val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 80)(Special)(_.skill.level)
-  val limitedTo                   = pno("LimitedTo","limited",50)(Special)(_.properties.limitedTo)
-  val Radius                   = str("Radius","radius",50)(Special)(_.properties.radius)
-  val Enchantments  = str("Enchantments", "ench", 160)(Special)(_.item.enchantModsList.mkString(", "))
-  val NotParsedYet = str("NotParsedYet", "unparsed", 160)(Special)(_.notParsedYet.name)
+  val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 30)(Special)(_.skill.level)
+  val Enchantments  = str("Enchantments", "ench", 80)(Special)(_.item.enchantModsList.mkString(", "))
+  val NotParsedYet = str("NotParsedYet", "unparsed", 120)(Special)(_.notParsedYet.name)
+  val limitedTo                   = pno("LimitedTo","limited",30)(Special)(_.properties.limitedTo)
+  val Radius                   = str("Radius","radius",30)(Special)(_.properties.radius)
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
-  limitedTo !?= "Limited to"
-  Radius !?= "Radius"
   Enchantments !?= "Enchantments"
   NotParsedYet ?= "Could not be parsed"
+  limitedTo !?= "Limited to"
+  Radius !?= "Radius"
 
 }
