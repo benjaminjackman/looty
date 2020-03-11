@@ -166,7 +166,7 @@ object ComputedItemProps {
   Ilvl ?= "The item level"
   ExplicitModCount !?= "The number of explicit mods on an item"
   CraftedModCount !?= "The number crafted mods on an item"
-  EnchantedModCount !?= "The number crafted mods on an item"
+  EnchantedModCount !?= "The number enchanted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
   TypeLine !?= "The type line of an item"
 
