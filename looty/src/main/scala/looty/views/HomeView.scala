@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQuery
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 
 //////////////////////////////////////////////////////////////
@@ -10,7 +10,7 @@ import org.scalajs.jquery.JQuery
 
 
 class HomeView(val banner: String, val version: String) extends View {
-
+	val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   def versionHistory = """
 # Version History
 ## 0.2.1.77 (2019-12-03)
@@ -299,19 +299,21 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
    """
 
 
-  def start(el: JQuery) {
+  def start(ele: JQuery) {
+    var el = ele.append("<div id='home'></div>")
+    el = jq("#home")
     el.html {
-      """<div class="home">""" +
-        s"""<h1 style="color:red">$banner</h1>""" +
-        """<h2><img src="images/coin16.png">Welcome to <span id="gold-looty" style="color:gold">Looty!</span><img src="images/coin16.png">""" +
+      """<div id="welcome">""" +
+        s"""<h1>$banner</h1>""" +
+        """<h2><img src="images/coin16.png">Welcome to <span id="gold-looty">Looty!</span><img src="images/coin16.png">""" +
         s"""</h2>Version: ($version)<p>""" +
-        """<span style="color:gold">Looty</span> was created to make it easier to search inventories in Path of Exile.<br>
+        """Looty was created to make it easier to search inventories in Path of Exile.<br>
         |It provides a grid interface to search for items in different leagues.<br>
         |The XP view will attempt to predict when a gem will level up.<br>
-        |GGG seems to only refresh items and gem information when a character changes zones,
+        |GGG seems to only <strong>refresh items</strong> and gem information when a <strong>character changes zones</strong>,
         |so keep that in mind if things aren't showing up.<br>
-        |source code available on <a href="https://github.com/benjaminjackman/looty">github</a>.<br>
-        |<h3><a href="https://www.youtube.com/watch?v=q6Fgrqg4HQs" target="_blank">Watch an overview video by By RNJoy </a></h3>
+        |Source code available on <a href="https://github.com/benjaminjackman/looty">github</a>.<br>
+        |<h3><a href="https://youtu.be/vcbU84R8nso?t=146" target="_blank">Watch an overview video by AngryRoleplayer </a></h3>
         |<h4> Tips & Tricks & Miscellaneous Details </h4>
         |<ul>
         |<li>You can type things to search for into the empty row at the top of the grids.
@@ -341,7 +343,7 @@ The [ScalaJS](http://www.scala-js.org/) based [GPLv2](http://www.gnu.org/license
         |</div>
         """.stripMargin
     }
-    val ta = el.append(s"""<textarea rows="60" cols="120" readonly>$versionHistory</textarea>""")
+    el.append(s"""<textarea rows="60" cols="120" readonly>$versionHistory</textarea>""")
     jq("#gold-looty", el).on("click", () => console.log("Clickity"))
   }
 

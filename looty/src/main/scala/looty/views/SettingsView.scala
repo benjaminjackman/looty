@@ -2,7 +2,7 @@ package looty
 package views
 
 import looty.poeapi.PoeCacher
-import org.scalajs.jquery.JQuery
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 
 //////////////////////////////////////////////////////////////
@@ -14,7 +14,10 @@ import org.scalajs.jquery.JQuery
 //////////////////////////////////////////////////////////////
 
 class SettingsView(implicit val pc: PoeCacher) extends View {
-  override def start(el: JQuery): Unit = {
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+  override def start(ele: JQuery): Unit = {
+    var el = ele.append("<div id='settings'></div>")
+    el = jq("#settings")
 
     locally{
       val txt = jq("<input></input>")
@@ -52,7 +55,6 @@ class SettingsView(implicit val pc: PoeCacher) extends View {
         }
       })
     }
-
 
 
   }
