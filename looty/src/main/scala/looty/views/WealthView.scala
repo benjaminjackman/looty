@@ -5,7 +5,7 @@ import cgta.oscala.util.debugging.PRINT
 import looty.poeapi.PoeTypes.Leagues.League
 import looty.views.snippets.Select2Wrapper
 import org.scalajs.dom
-import org.scalajs.jquery.JQuery
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 import looty.poeapi.PoeTypes.Leagues
 import looty.poeapi.PoeCacher
 
@@ -76,6 +76,8 @@ class CurrencyConversionRow(var cc: CurrencyConversion)(onChange: () => Unit) {
   val dInput  = "input".jq
   val cntSpan = "span".jq
   val totSpan = "span".jq
+  nInput.attr("size","6")
+  dInput.attr("size","6")
   nInput.on("keyup", { () => cc = cc.copy(n = nInput.value().toString.toDouble); onChange()}: js.Function)
   dInput.on("keyup", { () => cc = cc.copy(d = dInput.value().toString.toDouble); onChange()}: js.Function)
 
@@ -101,8 +103,10 @@ class CurrencyConversionRow(var cc: CurrencyConversion)(onChange: () => Unit) {
 }
 
 class WealthView(implicit val pc: PoeCacher) extends View {
-  def start(el: JQuery): Unit = {
-    el.empty()
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+   def start(ele: JQuery): Unit = {
+    var el = ele.append("<div id='wealth'></div>")
+    el = jq("#wealth")
     val selEl = "div".jq
     val gridEl = "div".jq
     el.append(selEl)
@@ -131,23 +135,23 @@ class WealthView(implicit val pc: PoeCacher) extends View {
     val table = "table".jq
     locally {
       val th = "tr".jq
-      th.append("td".jq.append("Name"))
-      th.append("td".jq.append("Chaos"))
-      th.append("td".jq.append("Self"))
-      th.append("td".jq.append("Count"))
-      th.append("td".jq.append("Total"))
+      th.append("th".jq.append("Currency name"))
+      th.append("th".jq.append("Chaos"))
+      th.append("th".jq.append("Self"))
+      th.append("th".jq.append("You have"))
+      th.append("th".jq.append("Is worth"))
       table.append("thead".jq.append(th))
     }
     val tbody = "tbody".jq
     table.append(tbody)
     val tfoot = "tfoot".jq
-    val totSpan = "span".jq
+    val totalWorth = "td".jq
     locally {
       tfoot.append("td".jq.text("Total"))
       tfoot.append("td".jq)
       tfoot.append("td".jq)
       tfoot.append("td".jq)
-      tfoot.append(totSpan)
+      tfoot.append(totalWorth)
     }
     table.append(tfoot)
     var rowMap = Map.empty[String, CurrencyConversionRow]
@@ -162,7 +166,7 @@ class WealthView(implicit val pc: PoeCacher) extends View {
       val ccs = global.JSON.stringify(rowMap.toList.map(_._2.cc.toJs).toJsArr).asJsStr
       LocalStorageSaver.save(lsKey, ccs)
       val tot = rowMap.map(_._2.total).sum
-      totSpan.text(global.d3.round(tot, 2).toString)
+      totalWorth.text(global.d3.round(tot, 2).toString)
     }
 
 

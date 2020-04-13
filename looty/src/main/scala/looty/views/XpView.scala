@@ -1,7 +1,7 @@
 package looty
 package views
 
-import org.scalajs.jquery.JQuery
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 import util.DurationText
 
 import scala.scalajs.js
@@ -167,10 +167,13 @@ case class Session(character: CharacterInfo, checkpoints: Vector[Checkpoint]) {
 
 
 class XpView(implicit val pc: PoeCacher) extends View {
+	val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   var curChar   : Option[CharacterInfo] = None
   var curSession: Option[Session]       = None
-
-  def start(el: JQuery) {
+	
+	override def start(ele: JQuery): Unit = {
+		var el = ele.append("<div id='xp'></div>")
+		el = jq("#xp")
     el.append("<h2>Gem XP Tracker</h2>")
     el.append("Please note that the Path of Exile API only provides updates your inventory after you change zones. " +
       "Therefore the suggested way to use this tool is to: <br>" +
@@ -207,6 +210,7 @@ class XpView(implicit val pc: PoeCacher) extends View {
     sessionBtns.append(addCheckpointBtn)
     addCheckpointBtn.on("click", () => {tryAddCheckpoint()})
     el.append("""<div id="xp-session"></div>""")
+
   }
 
   def tryBeginSession() {
