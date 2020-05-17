@@ -36,7 +36,7 @@ object ArmourParser {
         ci.slots.isRing = true
         true
       } else {
-        console.warn("1x1 Non Jewelery", ci.item.getTypeLine, ci.asJsAny)
+        console.warn("1x1 Non Jewelery", ci.item.typeLine, ci.asJsAny)
         false
       }
     } else if (ci.item.h =?= 1 && ci.item.w =?= 2) {
@@ -61,7 +61,7 @@ object ArmourParser {
         ci.slots.isShield = true
         true
       } else {
-        console.warn("2x2 Unknown", ci.cleanTypeLine, ci.asJsAny)
+        console.warn("2x2 Unknown", ci.item.typeLine, ci.asJsAny)
         false
       }
     } else if (ci.item.h =?= 3 && ci.item.w =?= 2) {
@@ -75,7 +75,7 @@ object ArmourParser {
         ci.slots.isQuiver = true
         true
       } else {
-        console.warn("3x2 Unknown", ci.cleanTypeLine, ci.asJsAny)
+        console.warn("3x2 Unknown", ci.item.typeLine, ci.asJsAny)
         false
       }
     } else if (ci.item.h =?= 4 && ci.item.w =?= 2) {
@@ -83,11 +83,11 @@ object ArmourParser {
         ci.slots.isShield = true
         true
       } else {
-        console.warn("4x2 Unknown", ci.cleanTypeLine, ci.asJsAny)
+        console.warn("4x2 Unknown", ci.item.typeLine, ci.asJsAny)
         false
       }
     } else {
-      console.warn("Unknown", ci.cleanTypeLine, ci.asJsAny)
+      console.warn("Unknown", ci.item.typeLine, ci.asJsAny)
       false
     }
 
