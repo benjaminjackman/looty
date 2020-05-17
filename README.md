@@ -408,6 +408,26 @@ latest changes to the APIs from the abyssal leagues.
 - [ ] Add feedback / suggestion options inside of the extension itself
 
 ## Development instructions
+#### Offline development
+**You can switch data source for Looty**  
+https://github.com/benjaminjackman/looty/blob/master/looty/src/main/scala/looty/LootyMain.scala#L40  
+
+
+```scala
+ implicit val pc: PoeCacher = {
+    if (extensionMode) {
+      // load data from /data/sample-items.json instead of GGG servers
+      //new PoeCacherDemo()
+      // fetch data from GGG API
+      new PoeCacherChrome()
+    } else {
+      new PoeCacherExileTools()
+    }
+  }
+```  
+Now you are free to use whatever item data you wish, and test it to your heart content without worrying for download API limits.
+
+If you would like to prepare your own sample-item.json file. Here's [how-to](./HowTo-sample-items-file.md).
 
 #### Useful links:
 
