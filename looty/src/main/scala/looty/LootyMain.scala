@@ -9,9 +9,7 @@ import scala.scalajs.js
 import scala.concurrent.Future
 import org.scalajs.jquery.JQueryStatic
 import looty.poeapi.PoeTypes.Leagues
-import looty.poeapi.PoeCacher
-import looty.poeapi.PoeCacherChrome
-import looty.poeapi.PoeCacherExileTools
+import looty.poeapi.{PoeCacher, PoeCacherChrome, PoeCacherDemo, PoeCacherExileTools}
 import looty.views.GlobalView
 import looty.views.HomeView
 import looty.views.LootView
@@ -38,6 +36,9 @@ class LootyApp(extensionMode: Boolean) {
 
   implicit val pc: PoeCacher = {
     if (extensionMode) {
+      // load data from /data/sample-items.json instead of GGG servers
+      //new PoeCacherDemo()
+      // fetch data from GGG API
       new PoeCacherChrome()
     } else {
       new PoeCacherExileTools()
