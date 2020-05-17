@@ -64,11 +64,11 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   lazy val displayName = {
     var n = item.getName
-    if (n.nullSafe.isEmpty || n.isEmpty) n = item.getTypeLine
+    if (n.nullSafe.isEmpty || n.isEmpty) n = item.typeLine
     n
   }
 
-  lazy val cleanTypeLine = item.getTypeLine
+
 
   def forumLocationName = {
     //[linkItem location="Stash4" league="Rampage" x="0" y="0"]

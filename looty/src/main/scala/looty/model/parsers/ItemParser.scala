@@ -78,8 +78,8 @@ object ItemParser {
   }
 
   def parseTypeLine(ci: ComputedItem) {
-    if (ci.isEquippable && !ci.slots.isWeapon && !ci.slots.isFlask  && !ArmourParser.parse(ci, ci.cleanTypeLine)) {
-      console.warn("Unable to parse typeline", ci.item.getFrameType.name, ci.cleanTypeLine, ci.item.getName, ci.item)
+    if (ci.isEquippable && !ci.slots.isWeapon && !ci.slots.isFlask  && !ArmourParser.parse(ci, ci.item.typeLine)) {
+      console.warn("Unable to parse typeline", ci.item.getFrameType.name, ci.item.typeLine, ci.item.getName, ci.item)
     }
   }
 

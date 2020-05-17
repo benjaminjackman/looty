@@ -90,7 +90,7 @@ class ItemDetailHover {
     }
 
     val itemName = item.item.getName
-    val typeLine = item.item.getTypeLine
+    val typeLine = item.item.typeLine
     val titleName = if (itemName.isEmpty) {
       s"""<span class="item-name">${typeLine.toString}</span>"""
     } else {

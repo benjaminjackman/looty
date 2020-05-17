@@ -348,10 +348,6 @@ object PoeTypes {
         x.name.replaceAll("<<.*>>", "")
       }
 
-      def getTypeLine: String = {
-        x.typeLine.replaceAll("<<.*>>", "")
-      }
-
     }
   }
 
@@ -366,7 +362,7 @@ object PoeTypes {
     val support: Boolean = js.native
     val league: String = js.native
     private val name: String = js.native
-    private val typeLine: String = js.native
+    val typeLine: String = js.native
     val cosmeticMods: Optional[js.Array[String]] = js.native
     val identified: Optional[Boolean] = js.native
     val corrupted: Optional[Boolean] = js.native

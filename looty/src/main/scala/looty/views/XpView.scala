@@ -20,7 +20,7 @@ object GemId {
          socket <- item.socket.toOption
     } yield {
       GemId(
-        name = item.getTypeLine,
+        name = item.typeLine,
         inventoryId = inventoryId,
         socket = socket
       )

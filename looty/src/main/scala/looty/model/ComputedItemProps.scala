@@ -147,7 +147,7 @@ object ComputedItemProps {
   val Rarity           = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
   val DisplayName      = str("DisplayName", "name", 160)(General)(_.displayName)
   val TypeName         = str("TypeName", "type", 100)(General)(_.typeName)
-  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.cleanTypeLine)
+  val TypeLine         = str("TypeLine", "tpeln", 120)(General)(_.item.typeLine)
   val Cosmetics        = str("Cosmetics", "cosmetics", 80)(General)(_.item.cosmeticMods.toOption.map(_.mkString(";")).getOrElse(""))
   val Sockets          = str("Sockets", "sockets", 100)(General)(_.socketColors)
   val Misc             = pno("Misc", "misc")(General)(_.misc)
