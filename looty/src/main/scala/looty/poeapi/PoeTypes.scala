@@ -205,6 +205,13 @@ object PoeTypes {
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
       def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
+      def getInfluences:String = {
+        if (x.influences.toOption.isDefined) {
+          x.influences.toOption.get.map(_._1).mkString(" ")
+
+        } else ""
+      }
+
 
       def getFrameType = {
         val ft = x.frameType.toInt
@@ -368,10 +375,15 @@ object PoeTypes {
     val corrupted: Optional[Boolean] = js.native
     //Mirrored
     val duplicated: Optional[Boolean] = js.native
+
+    //Depraciated and replaced by "influences"
     // Shaper items
-    var shaper: Optional[Boolean] = js.native
+    //var shaper: Optional[Boolean] = js.native
     // Elder items
-    var elder: Optional[Boolean] = js.native
+    //var elder: Optional[Boolean] = js.native
+
+    var influences: Optional[js.Dictionary[Influence]] = js.native
+
 
 		//abyss jewel
 		val abyssJewel: Optional[Boolean] = js.native
@@ -454,6 +466,15 @@ object PoeTypes {
     val name: Optional[String] = js.native
     val values: js.Array[js.Array[js.Array[String]]] = js.native
     val displayMode: Int = js.native
+  }
+
+  trait Influence extends js.Object {
+    val elder: Optional[Boolean] = js.native
+    val shaper: Optional[Boolean] = js.native
+    val crusader: Optional[Boolean] = js.native
+    val redeemer: Optional[Boolean] = js.native
+    val hunter: Optional[Boolean] = js.native
+    val warlord: Optional[Boolean] = js.native
   }
 
 }

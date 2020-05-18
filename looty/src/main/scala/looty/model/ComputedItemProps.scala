@@ -456,6 +456,7 @@ object ComputedItemProps {
   val NotParsedYet = str("NotParsedYet", "unparsed", 120)(Special)(_.notParsedYet.name)
   val limitedTo                   = pno("LimitedTo","limited",30)(Special)(_.properties.limitedTo)
   val Radius                   = str("Radius","radius",30)(Special)(_.properties.radius)
+  val Influences = str("Influences", "infl", width = 70)(Special)(_.item.getInfluences)
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
@@ -463,5 +464,6 @@ object ComputedItemProps {
   NotParsedYet ?= "Could not be parsed"
   limitedTo !?= "Limited to"
   Radius !?= "Radius"
+  Influences !?= "Influances"
 
 }
