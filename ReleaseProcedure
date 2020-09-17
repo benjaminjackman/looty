@@ -19,15 +19,18 @@ bin/deploy
 
 
 #to chrome web store
-https://chrome.google.com/webstore/detail/looty-for-path-of-exile/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US
 https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US#
-
-#to firefox
-https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find/versions/submit/
 
 #upload
 ./build/build.zip
 ~/dev/github/looty/build/build.zip
+
+# TODO: Github releases!
+
+
+## NO LONGER SUPPORTED
+#to firefox
+https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find/versions/submit/
 
 # firefox also needs:
 ~/dev/github/looty/build/buildffsrc.zip
