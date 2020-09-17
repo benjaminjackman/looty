@@ -7,7 +7,10 @@ gmocff
 c ./looty/src/main/public/manifest.json
 c ./looty/src/main/scala/looty/views/HomeView.scala
 # consider updating release notes in:
-c ./README.md 
+c ./README.md
+webpage
+https://www.pathofexile.com/forum/view-thread/832233
+
 #copy homeview to commit
 
 gg (commit)

@@ -49,6 +49,40 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
+## 0.2.1.78 (2019-09-17)
+- Added types
+	- "Organs" (from Metamorph league)
+	- Timeless Jewel
+- Added columns for affixes like :
+	- "Regenerate (amount) Life/Mana per Second"
+	- "Regenerate (amount)% of Life/Mana per Second"
+	- "Grants LeveL (skillLevel) (skillName) Skill" - skillLevel
+	- "Grants LeveL (skillLevel) (skillName) Skill" - skillName
+	- added +% maximum life affix
+	- influences (elder, shaper, crusader, redeemer, hunter, warlord)
+	- enchantments for gloves, boots, helmets from Labirynth,
+	  rings and amulets (from Cassia - Blight league), cluster jewels (Delirium)
+- Added properties (mostly used by jewels)
+	- "Limited to"
+	- "Radius"
+- You can now see names and quantity for enchantments
+	- for gloves, boots, helmets from Labirynth
+	- rings and amulets (from Cassia - Blight league)
+	- cluster jewels, "Adds x Passive Skills", "Added Small Passive Skills grant: xxx" (Delirium)
+- Added column mod "unparsed"
+	It gathers mods without its own proper column, it looks like "a| b| c| ..."
+	You can search them via matching text.
+	For example: when want to find all "zombie" items you have,
+	type "zombies" into "unparsed" column field and it should show all items, with word "zombie"
+	in affixes. I don't have any other solution for now. :)
+
+- UI background readability improvements on Home, Xp, Wealth, Maps, Settings pages
+  - table columns can be resized again
+  - switched off Maps and Poebuilder subpages
+	- adjusted mod button position
+  - increased font size from 14px to 16px
+	- changed color of disabled column to light grey
+
 ## 0.2.1.77 (2019-11-18)
 Special thanks to Traf27 for contributing several fixes that keep looty going!
 Chrome extension works again, hurray
