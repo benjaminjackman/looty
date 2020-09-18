@@ -37,7 +37,7 @@ class LootyApp(extensionMode: Boolean) {
   implicit val pc: PoeCacher = {
     if (extensionMode) {
       // load data from /data/sample-items.json instead of GGG servers
-      //new PoeCacherDemo()
+      //new PoeCacherJSON()
       // fetch data from GGG API
       new PoeCacherChrome()
     } else {
@@ -112,20 +112,16 @@ class LootyApp(extensionMode: Boolean) {
     initComponents().foreach { _ =>
       addRoutes
       console.log("Adding league buttons")
-      Leagues.all.filterNot(l => l.isStandard || l.isHardcore).foreach { league =>
+      // only Standard league is always existing, if player has no characters in hardcore its irrelevant
+      //Leagues.all.filterNot(l => l.isStandard || l.isHardcore).foreach { league =>
+      Leagues.all.filterNot(l => l.isStandard ).foreach { league =>
         val uri = league.uriName
         val name = league.rpcName
-        jq(".views-menu").append(
-          s"""<menu-item><a class="view-btn grid" href="#/$uri-grid">$name</a></menu-item>""")
+        jq(".views-league").append(
+          //s"""<menu-item><a class="view-btn grid" href="#/$uri-grid">$name</a></menu-item>""")
+          s"""<a class="view-btn grid" href="#/$uri-grid">$name</a>""")
       }
     }
-    //Add in the additional buttons
-    //    <menu-bar class="views-menu">
-    //
-    //      <menu-item><a class="view-btn tempest grid" href="#/tempest-grid">Tempest</a></menu-item>
-    //
-
-
   }
 }
 

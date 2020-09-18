@@ -1,43 +1,78 @@
+
 @import "material/colors.less";
 @import "material/buttons.less";
 
 #alerter {
+
+    margin-bottom: 10px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+    text-align: center;
+    
+  a, a:visited {
+    text-decoration: none;
+    padding-left: 0.3em;
+	padding-right: 0.3em;
+	font-size: 1.2em;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
   .info {
-    background: @green-A700;
-    color: black;
-    font-weight: bold;
+    background: @alerter-info-bg;
+    color: @alerter-info-text;
     margin: 5px;
     .BoxShadowHelper(2);
-    padding-top: 2px;
+    padding-top: 3px;
     padding-bottom: 2px;
     padding-left: 10px;
     padding-right: 10px;
+    /* border has the same color as background because its styling roundish corners*/
+    border: 1px solid @alerter-info-bg;
+    border-radius: 6px;
+  }
 
+  .info a, .info a:visited {
+  	color: @alerter-info-link;
   }
 
   .warn {
-    background: @yellow-A200;
-    color: black;
-    font-weight: bold;
+    background: @alerter-warning-bg;
+    color: @alerter-warning-text;
     margin: 5px;
     .BoxShadowHelper(2);
+    padding-top: 3px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* border has the same color as background because its styling roundish corners*/
+    border: 1px solid @alerter-warning-bg;
+    border-radius: 6px;
   }
 
-  a, a:visited {
-    color: @red-A400;
-    text-decoration: none;
-  }
-
-  .warn a:hover {
-    color: pink;
+  .warn a, .war a:visited {
+  	color: @alerter-warning-link;
   }
 
   .error {
-    background: red;
-    color: white;
-    font-weight: bold;
+    background: @alerter-error-bg;
+    color: @alerter-error-text;
     margin: 5px;
     .BoxShadowHelper(2);
+
+
+
+    a, a:visited {
+        color: @black;
+    }
   }
+
+  .error a, .error a:visited {
+  	color: @alerter-error-link;
+  }
+
 }
+
 

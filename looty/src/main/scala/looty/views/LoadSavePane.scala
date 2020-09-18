@@ -19,13 +19,13 @@ import scala.scalajs.js
 class LoadSavePane(columns: Columns, containers: Containers, filters: Filters) {
   def start(): JQuery = {
     //Load / Save Stuff
-    val loadSaveDiv = jq("""<div style="display:inline-block" class="load-save"></div>""")
+    val loadSaveDiv = jq("""<div title="Views are customizable groups of columns" class="load-save"></div>""")
     val loadDiv = jq("<div></div>")
     val loadBtn = jq("""<a href="javascript:void(0)" class="ls-btn" title="Loads the view with the name">Load</a>""")
     val saveBtn = jq("""<a href="javascript:void(0)" class="ls-btn" title="Saves the currently visible columns as a view">Save</a>""")
-    val deleteBtn = jq("""<a href="javascript:void(0)" class="ls-btn" title="Deletes the current view">Delete</a>""")
+    val deleteBtn = jq("""<a href="javascript:void(0)" class="ls-btn del" title="Deletes the current view">Delete</a>""")
     val saveWithFiltersBtn = jq("""<a href="javascript:void(0)" class="ls-btn" title="Saves the currently visible columns as well as any filters that are currently active">Save+Filters</a>""")
-    loadSaveDiv.append("""<span title="Views are customizable groups of columns" class="view-span">Views:</span>""")
+    loadSaveDiv.append("""<span title="Views are customizable groups of columns" class="view-span">Views: </span>""")
     loadSaveDiv.append(loadDiv)
     loadSaveDiv.append(loadBtn)
     loadSaveDiv.append(saveBtn)

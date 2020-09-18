@@ -14,7 +14,7 @@ import org.scalajs.jquery.JQuery
 
 class ColumnsPane(columns: Columns) {
   def start(): JQuery = {
-    val el = jq("""<div class="columns-controls"></div>""")
+    val el = jq("<div class='columns-controls'></div>")
     val showDefault = jq("<a href='javascript:void(0)'class='col-btn'>Default</a>")
     val showAll = jq("<a href='javascript:void(0)' class='col-btn'>All +</a>")
     showAll.on("click", () => {
@@ -30,29 +30,38 @@ class ColumnsPane(columns: Columns) {
       columns.all.foreach(_.setDefaultVisibility())
       false
     })
-    el.append(showAll)
-    el.append(hideAll)
-    el.append(showDefault)
+    val mainColControls = jq("<div class='col-main'></div>")
+    mainColControls.append(showAll)
+    mainColControls.append(hideAll)
+    mainColControls.append(showDefault)
+    el.append(mainColControls)
+
     val grouped = columns.all.groupBy(_.groups.head)
     val groups = columns.all.map(_.groups.head).distinct
     groups.foreach { groupName =>
       val group = grouped(groupName)
-      val grpDiv = jq(s"""<div class='group-div'></div>""")
-      val grpOn = jq("<a href='javascript:void(0)' class='col-btn'>+</a>")
+      val grpDiv = jq("<div class='group-div'></div>")
+
+      grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
+
+      val grpOff = jq("<a href='javascript:void(0)' class='col-btn hide'>-</a>")
+      grpOff.on("click", () => {
+        group.foreach(_.hide())
+        false
+      })
+      val grpOn = jq("<a href='javascript:void(0)' class='col-btn show'>+</a>")
       grpOn.on("click", () => {
         group.foreach(_.show())
         false
       })
 
-      val grpOff = jq("<a href='javascript:void(0)' class='col-btn'>-</a>")
-      grpOff.on("click", () => {
-        group.foreach(_.hide())
-        false
-      })
+      val grpToggle = jq("<span class='col-btn-toggle'></span>")
 
-      grpDiv.append(grpOn)
-      grpDiv.append(grpOff)
-      grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
+      grpToggle.append(grpOn)
+      grpToggle.append(grpOff)
+      grpDiv.append(grpToggle)
+
+
 
       group.foreach { c =>
         val colDiv = jq(s"""<div style="display:inline-block" title="${c.fullName}: ${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")

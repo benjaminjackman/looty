@@ -14,6 +14,7 @@ import org.scalajs.jquery.JQuery
 
 
 class ControlPane(val name: String, val cssCls : String) {
+  //lazy val el = jq(s""".${cssCls}""")
   lazy val el = jq("""<div style="display:none"></div>""")
   def toggle() {
     if (el.is(":visible")) {
@@ -25,12 +26,24 @@ class ControlPane(val name: String, val cssCls : String) {
 }
 
 class Controls(gOnClick: () => Unit) {
-  lazy val el   = jq("""<div id="controls"></div>""")
-  lazy val menu = {
-    val m = jq("<div></div>")
-    el.append(m)
-    m
-  }
+  lazy val el = jq("""<div id="controls"></div>""")
+  //that html element should be parent of all created panes
+  // leaguePane consist of
+  // add contain also created ControlPanes
+  //lazy val leaguePane = jq("""<div id="league-pane pane"></div>""")
+  // league-buttons-pane =
+      //.buttons: clear, upgrades,refresh/tabs, select columns, export csv,
+      //.load_save: views
+
+  //"Clear Filters" "Upgrades" "Refresh/Tabs" "Select Columns" "Export Csv"
+  lazy val leagueButtonsPane = jq("""<div id="league-buttons-pane"></div>""")
+  lazy val buttons = jq("""<div id="buttons"></div>""")
+
+  leagueButtonsPane.append(buttons)
+
+  el.append(leagueButtonsPane)
+
+
   var panes: List[ControlPane] = Nil
   def add(text: String, cssCls: String)(onClick: => Unit) {
     val m = jq(s"""<a href="javascript:void(0)" class="ctrl-btn $cssCls">$text</a>""")
@@ -39,7 +52,7 @@ class Controls(gOnClick: () => Unit) {
       gOnClick()
       false
     })
-    menu.append(m)
+    buttons.append(m)
   }
   def add(pane: ControlPane) {
     val m = jq(s"""<a href="javascript:void(0)" class="pane-btn ${pane.cssCls}">${pane.name}</a>""")
@@ -49,11 +62,11 @@ class Controls(gOnClick: () => Unit) {
       gOnClick()
       false
     })
-    menu.append(m)
+    buttons.append(m)
     el.append(pane.el)
     panes :+= pane
   }
   def add(html : JQuery) {
-    menu.append(html)
+    leagueButtonsPane.append(html)
   }
 }

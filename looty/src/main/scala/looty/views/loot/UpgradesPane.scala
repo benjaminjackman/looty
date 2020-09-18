@@ -27,13 +27,13 @@ class UpgradesPane(
   setUpgradeItemFn: (Option[ComputedItem]) => Unit,
   setRequiredLvlFn: Int => Unit
   )(implicit val pc: PoeCacher) {
-  val el     = jq("<div class='upgrades-pane'></div>")
-  val dollEl = jq("<div></div>")
-  val lvlEl  = jq("<div></div>")
+  val el     = jq("<div class='upgrades-pane pane'></div>")
+  val dollEl = jq("<div class='equip-slots'></div>")
+  val lvlEl  = jq("<div class='char-lvl'></div>")
 
   def start(): JQuery = {
     val playerDiv = jq("<div></div>")
-    el.append("<div>Use this pane to find upgrades for a character's items. Simply select a character then click on the item you wish to upgrade. The grid will show deltas of the values of other items.</div>")
+    el.append("<div class='info'>Use this pane to find upgrades for a character's items. Simply select a character then click on the item you wish to upgrade. The grid will show deltas of the values of other items.</div>")
     el.append(playerDiv)
     val playerSel = {
       val O = js.Dynamic.literal

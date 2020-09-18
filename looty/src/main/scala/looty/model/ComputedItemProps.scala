@@ -53,7 +53,7 @@ object ComputedItemProps {
   val Defensive       = "Defensive"
   val Attack          = "Attack"
   val Dps             = "Dps"
-  val AverageDamage   = "AverageDamage"
+  val AverageDamage   = "Average Damage"
   val Requirements    = "Requirements"
   val Efficiency      = "Efficiency"
   val Regen           = "Regen"
@@ -61,12 +61,12 @@ object ComputedItemProps {
   val Resists         = "Resists"
   val Crit            = "Crit"
   val Spells          = "Spells"
-  val DamageToSpells  = "DamageToSpells"
-  val IncreasedDamage = "IncreasedDamage"
+  val DamageToSpells  = "Damage to Spells"
+  val IncreasedDamage = "Increased Damage"
   val Gems            = "Gems"
-  val FlasksMods      = "FlaskMods"
-  val FlasksActions   = "FlaskActions"
-  val Special        = "Special"
+  val FlasksMods      = "Flask Mods"
+  val FlasksActions   = "Flask Actions"
+  val Special         = "Special"
 
   def str(
     fullName: String,
@@ -142,6 +142,12 @@ object ComputedItemProps {
     res
   }
 
+  //TODO
+  //add to arguments "columnName" to show "human readable" names? like Location instead of loc
+
+  //TODO
+  //add 5th argument with help? or just use ?= text, but elaborate on subject
+
   //General
   val Location         = str("Location", "loc", 130)(General)(_.locAndCoords)
   val Rarity           = str("Rarity", "rarity", 60)(General)(_.item.getFrameType.name)
@@ -160,7 +166,7 @@ object ComputedItemProps {
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
-  TypeName ?= "The name of the base item type"
+  TypeName ?= "The name of the base item type, you can enter more then one separating them with | which act as \"or\" "
   TypeLine !?= "The type line of an item"
   Cosmetics ?= "A list of all cosmetic effects applied to the item"
   Sockets ?= "The sockets sorted by number in group, then by color"
@@ -172,15 +178,18 @@ object ComputedItemProps {
   EnchantedModCount !?= "The number enchanted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
 
+  //Turning off until I will have time and idea how to implement it
   //Score
-  val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
-  val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
-  val CustomScore2 = pno("CustomScore2", "custom2")(Scores)(_.Scores.custom2.score)
-  DefaultScore !?= "An experimental score assigned to assess the desirability of the item"
-  CustomScore !?= "The result of the user definable score"
-  CustomScore2 !?= "Score according to semi-strict high value rules (roughly tier 2 and higher)"
+//  val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
+//  val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
+//  val CustomScore2 = pno("CustomScore2", "custom2")(Scores)(_.Scores.custom2.score)
+//  DefaultScore !?= "An experimental score assigned to assess the desirability of the item"
+//  CustomScore !?= "The result of the user definable score"
+//  CustomScore2 !?= "Score according to semi-strict high value rules (roughly tier 2 and higher)"
 
   //Defensive
+  //TODO
+  //Inconsistencies there is no differentiation between displaying global defense values, and local ones, also ES is calculated with Int bonus included, Armor with Str or Evasion widt dex dont
   val Armour                        = pno("Armour", "AR")(Defensive)(_.total.armour)
   val Evasion                       = pno("Evasion", "EV")(Defensive)(_.total.evasionRating)
   val ArmourPlusEvasion             = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
@@ -188,6 +197,8 @@ object ComputedItemProps {
   val IncreasedMaxEnergyShield      = pno("IncreasedMaxEnergyShield", "+%ES")(Defensive)(_.total.globalEnergyShield)
   val IncreasedArmour               = pno("IncreasedArmour", "+%AR")(Defensive)(_.increased.armour)
   val IncreasedEvasion              = pno("IncreasedEvasion", "+%EV")(Defensive)(_.increased.evasion)
+  //TODO
+  //add dodge chance and block spell
   val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
   Armour ?= "Armour"

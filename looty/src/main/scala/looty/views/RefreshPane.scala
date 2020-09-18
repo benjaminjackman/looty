@@ -123,7 +123,7 @@ class RefreshPane(league: League,
 
 
   def start(): (JQuery, Future[Unit]) = {
-    val el = jq("<div class='refresh-pane'></div>")
+    val el = jq("<div class='refresh-pane pane'></div>")
 
     val showAllBtn = jq(s"""<a class="${Container.visCls} show-all-btn" href="javascript:void(0)" title="Will show all inventories and stash tabs">Show All</a>""")
     showAllBtn.click { () =>
@@ -180,7 +180,7 @@ class RefreshPane(league: League,
       }
     })
 
-    el.append("Click to select/unselect characters/tabs. Shift+Click will refresh them from the server.<br>")
+    el.append("<div class='info'>Click to select/unselect characters/tabs. Shift+Click will refresh them from the server.</div>")
     el.append(elChars)
     el.append(elTabs)
     el.append(showAllBtn)
