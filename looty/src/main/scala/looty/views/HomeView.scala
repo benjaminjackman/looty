@@ -13,7 +13,7 @@ class HomeView(val banner: String, val version: String) extends View {
 	val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   def versionHistory = """
 # Version History
-## 0.2.1.78 (2019-09-17)
+## 0.2.1.78 
 - Added types
 	- "Organs" (from Metamorph league)
 	- Timeless Jewel
