@@ -6,63 +6,134 @@
   box-sizing: border-box;
   .MaterialBtn
 }
-
 .slick-headerrow-column.ui-state-default {
   padding: 1px;
 }
-
 .slick-headerrow-column input {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  /* fixing problem with filter input having bigger font and hidding self under grid widget*/
+  font-size: 0.9em;
 }
-
 .slick-header-column.ui-state-default {
+  .header-filter {
+    font-size: @grid-header-filter-text-size;
+  }
+  &:hover {
+    /*visual clue for user to wait and see title attr with description*/
+    cursor: help;
+  }
   .MaterialBtn;
   background: none;
-  background-color: @yellow-800;
-  color: black;
-  border-color: @brown-500;
-  /* header titles names will take all available space to display their name*/
-  text-overflow: unset !important;
+  color: @grid-header-title-color;
+  font-size: @grid-header-title-font-size;
+  font-family: @grid-header-title-font-family;
+  background-color: @grid-header-background-color;
+  border-color: @grid-header-border-color;
+  text-overflow: @grid-header-title-overflow; /*text-overflow: ellipsis;*/
   padding: 0px;
   /*centered column header names*/
   text-align: center;
   /*border: none;*/
   /*padding: 0;*/
   /*text-shadow: none;*/
-  /*font-family: Arial, Verdana, Helvetica, sans-serif;*/
-  font-size: 9px;
   /*height: 40px;*/
   /*line-height: 40px;*/
 }
-
-.slick-row.ui-widget-content.odd, .slick-cell {
-  background-color: @brown-300;
+.slick-row.ui-widget-content.odd {
+  background-color: @grid-body-row-odd-background-color;
 }
-
-.slick-row.ui-widget-content.even, .slick-cell {
+.slick-row.ui-widget-content.even {
   background-color: @brown-200;
 }
-
-.slick-row.ui-widget-content, .slick-cell {
-  background: none;
-
+.slick-row.ui-widget-content {
   color: black;
-
+  font-size: @grid-body-font-size;
+  background: none;
   /*background-color: #eeeeee;*/
   /*color: #666666;*/
   /*border: none;*/
   /*border-bottom: solid 1px #ffffff;*/
-  font-size: 13px;
   /*height: 60px;*/
   /*line-height: 60px;*/
   /*padding: 0 5px;*/
 }
+.slick-cell {
+  background: none;
+}
 
 /* hovered row indicator */
 .ui-widget-content.slick-row:hover {
-  background-color: #8e5642;
+  background-color: @grid-body-row-indicator-background-color;
 }
+
+/* DEFAUTL STYLESHEEET slick.grid.css OVERRIDES */
+/* below you will find overrides for default slickgrid stylesheet thus we need to use !important to cover those*/
+/* uncomment and override what you need */
+/* leave commented originals below what you've overriden, just for reference*/
+
+.slick-cell, .slick-headerrow-imagecolumn {
+
+    border-right: @grid-body-cell-border-right !important;
+    /*border-right: 1px dotted silver;*/
+
+    border-bottom-color: @grid-body-cell-border-bottom-color !important;
+    /*border-bottom-color: silver;*/
+
+    /* a bit of "breathing" space so cell content would not be squeezed to the left column border*/
+    padding-left: 5px;
+    /*position: absolute;*/
+    /*border: 1px solid transparent;*/
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    /*vertical-align: middle;*/
+    /*z-index: 1;*/
+    /*padding: 1px 2px 2px 1px;*/
+    /*margin: 0;*/
+    /*white-space: nowrap;*/
+    /*cursor: default;*/
+}
+/* jquery.css*/
+/* dangerous :/ should find other way*/
+/* if we use other jq-ui item it could break*/
+.ui-widget {
+
+  font-size: unset !important;
+  /*font-size: 1.1em*/
+}
+
+/* Grid config */
+/* if you use some variable with @placeholder, switch it to desired value, its just dummy text*/
+
+@grid-header-title-color: @black;
+@grid-header-title-font-size: 9px;
+@grid-header-title-font-family: Arial, Verdana, Helvetica, sans-serif;
+/* header titles names will take all available space to display their name with "none"
+it overrides grid default ("ellipsis") option so !important is neeeded*/
+@grid-header-title-overflow: none !important;
+@grid-header-background-color: @yellow-800;
+@grid-header-border-color: @brown-500;
+@grid-header-filter-text-color: @black;
+@grid-header-filter-text-size: 13px;
+
+@grid-body-text-color: @black;
+@grid-body-font-size: 13px;
+/*@grid-body-text-font: @placeholder;*/
+
+/*@grid-body-row-odd-color: @placeholder;*/
+@grid-body-row-odd-background-color: @brown-300;
+/* setting columns border  */
+@grid-body-cell-border-right: 1px dotted silver;
+/* setting row border  */
+@grid-body-cell-border-bottom-color: silver;
+
+/*@grid-body-row-even-color: @placeholder;*/
+@grid-body-row-even-background-color: @brown-200;
+
+/*@grid-body-row-indicator-color: @black;*/
+@grid-body-row-indicator-background-color: #8e5642;
+/*@grid-body-row-indicator-border: @black*/
