@@ -4,6 +4,7 @@ package views
 import looty.model.ComputedItem
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
+import util.ProgressBar._
 
 import scala.scalajs.js
 
@@ -17,9 +18,11 @@ import scala.scalajs.js
 //////////////////////////////////////////////////////////////
 
 class ItemDetailHover {
+  val styles = jq(insertProgressBarStyling)
   val el  = jq("""<div id="item-details" style="display:inline-block"></div>""")
   val el1 = jq("""<div></div>""")
   val el2 = jq("""<div></div>""")
+  el.append(styles)
   el.append(el1)
   el.append(el2)
 
@@ -103,17 +106,28 @@ class ItemDetailHover {
       properties,
 	    item.item.ilvl.toOption.map(x=>s"Item Level: $x").getOrElse(""),
 	    requirements,
-	    item.item.enchantModsList.mkString("<br>"),
+	    s"""<span style="color: lightblue;">${item.item.enchantModsList.mkString("<br>")}</span>""",
 	    item.item.descrText.toOption.map(_.toString).getOrElse(""),
-	    item.item.implicitModList.mkString("<br>"),
+	    item.item.implicitModList.mkString("<br><hr>"),
+      item.item.fracturedModsList.mkString("<br>"),
 	    item.item.explicitModList.mkString("<br>"),
 	    item.item.craftedModList.mkString("<br>"),
+      //if (item.item.incubatedItem.toOption.isDefined) s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}" else "",
+      if (item.item.incubatedItem.toOption.isDefined) {
+        //s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}"
+        s"Incubating: ${item.item.incubatedItem.get.name}<br>" +
+        addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total)
+
+      } else "",
+
+
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
       item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
       flavorText,
       if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else "Not Identified",
       if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) "Corrupted" else "",
-      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else ""
+      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else "",
+      if (item.item.getInfluences.length > 0 ) s"<br><hr>Influence: ${item.item.getInfluences}" else ""
     ).filter(_.nonEmpty)
     val h = s"""
         <div style="padding:5px">

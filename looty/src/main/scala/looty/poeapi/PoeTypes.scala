@@ -2,10 +2,12 @@ package looty
 package poeapi
 
 import cgta.serland.SerBuilder
+import javafx.scene.control.ProgressBar
 import looty.model.CharClasses.CharClass
 import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
-import util.Optional
+import looty.util.ProgressBar.addProgressBar
+import util.{Optional, ProgressBar}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -195,7 +197,38 @@ object PoeTypes {
       def isJewel = x.descrText.toOption.exists(_ contains "Jewel Socket")
 			def isAbyssJewel = x.abyssJewel.toOption.isDefined
       def isDivinationCard = x.getFrameType == FrameTypes.divCard
+      //QUESTION maybe all which people treat as currency would be "something | Currency", or just "Currency - Delirium Orb", or just leave it as "Currency"
+      //Official list of currency :
 
+
+      //TODO add other types then currency-->
+      //Fossil - Delve league 3.4
+      def isFossil = x.typeLine.contains("Fossil")
+      //QUESTION how to make so user could search for incubators which are also attached currently to items?
+      //Incubator - Legion league 3.7
+      def isIncubator = x.typeLine.contains("Incubator")
+      //Delirium Orb - Blight league 3.8
+      def isDeliriumOrb = x.typeLine.contains("Delirium Orb")
+
+      //Timeless Jewel - Legion league 3.7
+      def isTimelessJewel = x.typeLine.contains("Timeless Jewel")
+      //Cluster Jewel - Blight league 3.8
+      def isClusterJewel = x.typeLine.contains("Cluster Jewel")
+      //Resonator - Delve league 3.4
+      def isResonator = x.typeLine.contains("Resonator")
+      //Essence - Essence league 2.4
+      def isEssence = x.typeLine.contains("Essence")
+      //Scarab - Betrayal league 3.5
+      def isScarab = x.typeLine.contains("Scarab")
+      //Oil - Blight league 3.8
+      def isOil = x.typeLine.contains("Oil")
+      //Watchstone
+      def isWatchstone = x.typeLine.contains("Watchstone")
+      //Beast
+      def isBeast = x.typeLine.contains("Beast")
+      //Hireling Equipment - Heist league 3.12
+      def isHirelingE = x.typeLine.contains("Hireling Equipment")
+      // TODO --
       def isInSocket = x.socket.toOption.isDefined
 
       def isProphecy = x.getFrameType == FrameTypes.prophecy
@@ -205,6 +238,14 @@ object PoeTypes {
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
       def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
+      def fracturedModsList = x.fracturedMods.toOption.getOrElse(js.Array()).toList
+      //    def incubatedItem: Incubation = x.incubatedItem.toOption.getOrElse(js.Any)
+      def getIncubator: String = {
+        if (x.incubatedItem.toOption.isDefined) {
+          val i = x.incubatedItem.toOption.get
+          addProgressBar(i.progress, i.total)
+        } else ""
+      }
       def getInfluences:String = {
         if (x.influences.toOption.isDefined) {
           x.influences.toOption.get.map(_._1).mkString(" ")
@@ -375,6 +416,9 @@ object PoeTypes {
     val corrupted: Optional[Boolean] = js.native
     //Mirrored
     val duplicated: Optional[Boolean] = js.native
+    //TODO add ItemDetailHover.scala
+    //Introduced in league Legion 3.7. Item incubators, which are attached to any item equipped by character, when incubation is complete (you killed x number of mobs) item of specific type drops
+    val incubatedItem: Optional[Incubator] = js.native
 
     //Depraciated and replaced by "influences"
     // Shaper items
@@ -383,11 +427,14 @@ object PoeTypes {
     //var elder: Optional[Boolean] = js.native
 
     var influences: Optional[js.Dictionary[Influence]] = js.native
+    //item can have fracture mods - one of affixes is permament, and stays after scouring
+    //TODO add ItemDetailHover.scala
+    val fractured: Optional[Boolean] = js.native
+    val fracturedMods: Optional[js.Array[String]] = js.native
 
-
-		//abyss jewel
+		//Abyss jewel that is socketed only in item with abyss sockets, or in sockets of skille tree
 		val abyssJewel: Optional[Boolean] = js.native
-
+    //used for gem experience, incubator progress
     val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
     val sockets: Optional[js.Array[Socket]] = js.native
     val properties: Optional[js.Array[ItemProperty]] = js.native
@@ -476,5 +523,24 @@ object PoeTypes {
     val hunter: Optional[Boolean] = js.native
     val warlord: Optional[Boolean] = js.native
   }
+  // excerpt from JSON
+  //    "incubatedItem": {
+  //      "name": "Rare Abyss Item",
+  //      "level": 40,
+  //      "progress": 4571,
+  //      "total": 5532
+  //    }
 
+  //TODO add to ItemHoverDetail.scala
+  trait Incubator extends js.Object {
+    //What kind of items you will get after incubation is over, which means after you kill "total" number of monsters
+    //ex. "Rare Abyss Item", "Currency Item" and others...
+    val name:String = js.native
+    //Kill monsters of higher or equal level
+    val level:Int = js.native
+    //How many monsters you already killed with incubator equipped
+    val progress:Int = js.native
+    //How many monsters you have to kill
+    val total:Int = js.native
+  }
 }
