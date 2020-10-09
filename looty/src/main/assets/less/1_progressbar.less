@@ -1,0 +1,131 @@
+/* Credits: http://www.useragentman.com/blog/2012/01/03/cross-browser-html5-progress-bars-in-depth/ */
+
+/*---------------------progress bars ---------------------------*/
+
+progress,          /* All HTML5 progress enabled browsers */
+progress[role]     /* polyfill */ {
+	/* Turns off styling - not usually needed, but good to know. */
+	appearance: none;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+
+	/* gets rid of default border in Firefox and Opera. */
+	border: none;
+
+	/* Needs to be in here for Safari polyfill so background images work as expected. */
+	background-size: auto;
+
+	/* Dimensions */
+	height: @progress-bar-height;
+	width: @progress-bar-width;
+}
+
+/* Polyfill */
+progress[role]:after {
+	background-image: none; /* removes default background from polyfill */
+}
+
+/* Ensure fallback text doesn't appear in polyfill */
+progress[role] strong {
+	display: none;
+}
+
+/* ------------------progress-bar-background--------------------*/
+
+progress,                          /* Firefox  */
+progress[role][aria-valuenow] {
+	/* Polyfill */
+	background: @progress-bar-background !important; /* !important is needed by the polyfill */
+}
+
+/* Chrome */
+progress::-webkit-progress-bar {
+	background: @progress-bar-background;
+}
+
+/* ------------------progress-bar-foreground---(value)----------*/
+
+/* IE10 */
+progress {
+	color: black;
+}
+
+/* Firefox */
+progress::-moz-progress-bar {
+	background: @progress-bar-foreground;
+}
+
+/* Chrome */
+progress::-webkit-progress-value {
+	background: @progress-bar-foreground;
+}
+
+/* Polyfill */
+progress[aria-valuenow]:before {
+	background: @progress-bar-foreground;
+}
+/*-----------------------progress bar indeterminate value------ */
+
+/* Firefox */
+progress:not([value])::-moz-progress-bar {
+	background-image: @progress-bar-indeterminate-background-image;
+}
+
+/* Chrome */
+progress:not([value])::-webkit-progress-bar {
+	background-image: @progress-bar-indeterminate-background-image;
+}
+
+/* Polyfill - IE */
+progress[role] {
+	background-image: @progress-bar-indeterminate-background-image !important;
+}
+
+/* Polyfill - Safari */
+progress:not([value]) {
+	background-image: @progress-bar-indeterminate-background-image !important;
+	background-size: auto; /* Needs to be in here for Safari */
+}
+
+/*----------end-------------*/
+
+/* styling */
+
+@progress-bar-height: 8px;
+@progress-bar-width: 100%;
+
+@progress-bar-background:  #dadada;
+/*@progress-bar-background: #F1F1F1;*/
+@progress-bar-background-border: none;
+
+@progress-bar-foreground: #5facb2;
+/*@progress-bar-foreground: #37A0CA;*/
+@progress-bar-foreground-border: none;
+
+@progress-bar-indeterminate-background-image: none;
+
+
+progress::-webkit-progress-value {
+
+    border:1px solid #535353;
+    /*border:none !important;*/
+    border-right:2px solid #2d939b;
+    border-top: none !important;
+    border-left:none !important;
+    border-radius: 0 10px 10px 0;
+}
+
+
+progress::-webkit-progress-bar {
+    border-right:1px solid #000000;
+    border-bottom: 1px solid #dadada;
+    border: 1px solid #adadad;
+    border-left: 0px;
+    border-top: none;
+}
+
+progress, progress[role], progress::-webkit-progress-bar, progress::-webkit-progress-value {
+    border-radius: 10px;
+    margin-bottom: 9px;
+}
+

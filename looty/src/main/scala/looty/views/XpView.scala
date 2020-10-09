@@ -20,11 +20,11 @@ object GemId {
     for {inventoryId <- item.inItem.toOption.flatMap(_.inventoryId.toOption)
          socket <- item.socket.toOption
     } yield {
-      //item -> gem
       GemId(
         name = item.typeLine,
         inventoryId = inventoryId,
-        socket = socket
+        socket = socket,
+        gcolor = item.colour.toOption.getOrElse("None")
       )
     }
   }
@@ -33,7 +33,7 @@ object GemId {
 case class GemId(
   name: String,
   inventoryId: String,
-  socket: Double) extends Ordered[GemId] {
+  socket: Double, gcolor:String) extends Ordered[GemId] {
   override def compare(that: GemId): Int = implicitly[Ordering[(String, String, Double)]].compare(tupled, that.tupled)
   def tupled = (name, inventoryId, socket)
 }
@@ -149,14 +149,16 @@ case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
 				 |<span id="total">Total Xp: $totalXpStr</span>""".stripMargin)
     $html.append($summary)
 
-    val $table = jq("""<table id="xp-progress"></table>""")
+    val $table = jq("""<table class="xp-progress"></table>""")
     $html.append($table)
 
     $table.append("<thead>" +
       "<th>Name</th>" +
-      "<th>Slot - socket nr.</th>" +
+      //"<th>Slot - socket nr.</th>" +
+      "<th>Slot</th>" +
       "<th>Level</th>" +
-      "<th>Remaining Xp / Progress</th>" +
+      //"<th>Remaining Xp / Progress</th>" +
+      "<th>Xp to Level</th>" +
       "<th>Xp In Run</th>" +
       "<th>Xp/Hour</th>" +
       "<th>Time To Level</th>" +
@@ -166,11 +168,13 @@ case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
     $table.append($tbody)
     changedGems.foreach { gem =>
       $tbody.append(s"<tr>" +
-        s"<td>${gem.newer.id.name}</td>" +
-        s"<td>${gem.newer.id.inventoryId} - ${gem.newer.id.socket}</td>" +
+        /* adding class s/i/d to show gem color as visual clue*/
+        s"<td><span class='${gem.newer.id.gcolor.toLowerCase}'>${gem.newer.id.name}</span></td>" +
+        //s"<td>${gem.newer.id.inventoryId} - ${gem.newer.id.socket}</td>" +
+        s"<td>${gem.newer.id.inventoryId}</td>" +
         s"<td>${gem.newer.level}</td>" +
         s"<td><span class='progress-value'>${format(gem.newer.xpRemaining)}</span>" +
-            s"<span class='progress-percent'>${format2(gem.newer.progressPct * 100)}</span>" +
+            //s"<span class='progress-percent'>${format2(gem.newer.progressPct * 100)}%</span>" +
             s"<progress class='gem-xp' max='${gem.newer.getXpForLevel}' value='${gem.newer.getXpTotal}'></progress> </td>" +
         s"<td>${format(gem.xpGained)}</td>" +
         s"<td>${format(gem.xpPerHour)}</td>" +
@@ -231,7 +235,8 @@ class XpView(implicit val pc: PoeCacher) extends View {
 
       btns.append(btn)
       btn.on("click", (e: js.Any) => {
-        btns.children().css("background-color","buttonface")
+        //return background-color from before, so previous selected button would not stay at color of selection
+        btns.children().css("background-color","rgb(239, 239, 239)")
         btn.css("background-color","rgb(117, 220, 255)")
         setChar(char)
         display()
@@ -303,26 +308,4 @@ class XpView(implicit val pc: PoeCacher) extends View {
   def stop() {
 
   }
-
-  val xp = jq("#xp-progress")
-
-
-//  private def addMouseover() {
-//
-//    xp.onMouseEnter.subscribe((e: js.Dynamic, args: js.Any) => {
-//
-//    val row = xp.getCellFromEvent(e).row
-//    if (row.nullSafe.isDefined) {
-//      itemDetailHover.setFirstItem(Some(grid.getDataItem(row).asInstanceOf[ComputedItem]))
-//      itemDetailHover.show(
-//      x = e.clientX.asInstanceOf[Double],
-//      y = e.clientY.asInstanceOf[Double],
-//      compare = true
-//      )
-//    }
-//  })
-//    xp.onMouseLeave.subscribe((e: js.Dynamic, args: js.Any) => {
-//      itemDetailHover.hide()
-//    })
-//  }
 }

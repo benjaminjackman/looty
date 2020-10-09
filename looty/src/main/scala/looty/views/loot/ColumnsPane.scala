@@ -42,29 +42,30 @@ class ColumnsPane(columns: Columns) {
       val group = grouped(groupName)
       val grpDiv = jq("<div class='group-div'></div>")
 
-      grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
-
-      val grpOff = jq("<a href='javascript:void(0)' class='col-btn hide'>-</a>")
-      grpOff.on("click", () => {
-        group.foreach(_.hide())
-        false
-      })
       val grpOn = jq("<a href='javascript:void(0)' class='col-btn show'>+</a>")
       grpOn.on("click", () => {
         group.foreach(_.show())
         false
       })
 
+      val grpOff = jq("<a href='javascript:void(0)' class='col-btn hide'>-</a>")
+      grpOff.on("click", () => {
+        group.foreach(_.hide())
+        false
+      })
+
+      //putting "show" and "hide" buttons together in "col-btn-toggle" class for easier styling
       val grpToggle = jq("<span class='col-btn-toggle'></span>")
 
       grpToggle.append(grpOn)
       grpToggle.append(grpOff)
       grpDiv.append(grpToggle)
-
-
+      grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
 
       group.foreach { c =>
-        val colDiv = jq(s"""<div style="display:inline-block" title="${c.fullName}: ${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
+        //val colDiv = jq(s"""<div style="display:inline-block" title="${c.fullName}: ${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
+        //Got rid of c.fullName as c.description says much more then that field.
+        val colDiv = jq(s"""<div style="display:inline-block" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
         colDiv.on("click", () => {
           c.toggle()
           false

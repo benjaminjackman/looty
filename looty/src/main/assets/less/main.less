@@ -1,6 +1,7 @@
 @import "material/buttons";
 @import "material/colors";
 
+
 body {
   /* css global reset*/
   margin:0;
@@ -10,18 +11,21 @@ body {
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
   /*font-family: Helvetica, Arial, sans-serif;*/
   background: @brown-600;
-  background-image: url("/images/brown-600-45-degree-fabric-light.png");
+  background-image: var(--bg-image);
+  /*background-image: url("/images/brown-600-45-degree-fabric-light.png");*/
   /*background-image: url("/images/main-bg-heist.jpg");*/
   font-size: 16px;
-}
 
+}
 
 /* == Header ==*/
 
 #header {
   margin: 0 5px;
   /* alerter styling in alerter.less */
-
+  a {
+    text-decoration: none;
+  }
   .views-menu {
 
     margin: 0px;
@@ -32,21 +36,22 @@ body {
     width: 100%;
     .views {
       width: max-content;
-      .home, .xp, .wealth, poebuilder, .maps, .settings{
+      .home, .xp, .wealth, .poebuilder, .maps, .settings{
       /*whitespace between menu <a> tags is messing proximity of buttons, dirty fix*/
-        margin-right: -4px;
+        margin-right: -2px;
       }
       .settings {
-        background-color: #a8bad0;
+        /* optional button color */
+        /*background-color: #a8bad0;*/
       }
     }
 
     .views-league {
-    display: inline-block;
+     display: inline-block;
       margin-left: 20px;
       .standard {
       /*whitespace between menu <a> tags is messing proximity of buttons, dirty fix*/
-        margin-right: -4px;
+        margin-right: -2px;
       }
       .grid {
       }
@@ -60,11 +65,6 @@ body {
   height: 100%;
   padding: 5px;
   margin: 1em 0;
-
-
-
-/* ==== Page ==== */
-/* ==== Page ==== */
 
 /* ==== Home Page ==== */
   #home {
@@ -116,63 +116,164 @@ body {
       padding: 0 2em 2em 2em;
       border: 1px solid black;
 
-    progress[value]::-moz-progress-bar {
-      appearance: none;
-      -webkit-appearance: none;
-      background-color: #3fb3ce;
-      border: 1px solid #17424d;
-      background-size: 35px 20px, 100% 100%, 100% 100%;
-      background-image: -moz-linear-gradient( top, rgba(255, 255, 255, 0.25), rgba(37, 181, 160, 0.77) ), -moz-linear-gradient( left, #3c98b7, #1df2f2 );
+    /*progress bar*/
+    #gem-xp {
+      /*width:150px !important;*/
+      position: relative;
+      bottom: 9px;
     }
 
+    /*remaining xp*/
     .progress-value {
-      position: absolute;
-      margin-left: 5px;
-      font-size: 0.9em;
-      font-weight: 600;
-    }
-    .progress-percent {
-        /*try flex between*/
-        margin-left: 108px;
-        position: absolute;
-        font-size: 0.9em;
-        font-weight: 600;
+      /*for number to stay on top of progressbar*/
+      display:block;
+      font-size: 0.8em;
+      margin-left: -2em;
     }
     .info {
-        padding: 0.5em 0;
-        line-height: 1.3em;
+      padding: 0.5em 0;
+      line-height: 1.3em;
 
-        #start {
-          display: block;
-        }
-        #end {
-          display: block;
-        }
-        #elapsed {
-          display: block;
-        }
-        #total {
-        }
+      #start {
+        display: block;
+      }
+      #end {
+        display: block;
+      }
+      #elapsed {
+        display: block;
+      }
+      #total {
+      }
+    }
+    #btns {
+      button {
+      /* commented out were default browser styles*/
+        appearance: button;
+        /*-webkit-writing-mode: horizontal-tb !important;*/
+        text-rendering: auto;
+        /*color: -internal-light-dark(buttontext, rgb(170, 170, 170));*/
+        letter-spacing: normal;
+        word-spacing: normal;
+        text-transform: none;
+        text-indent: 0px;
+        text-shadow: none;
+        display: inline-block;
+        text-align: center;
+        align-items: flex-start;
+        cursor: default;
+        /*background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));*/
+        background-color: rgb(239, 239, 239);
+        box-sizing: border-box;
+        margin: 0em;
+        font: 400 13.3333px Arial;
+        padding: 1px 6px;
+        border-width: 1px;
+        border-radius:3px;
+        /*border-style: outset;*/
+        border-style: solid;
+        /*border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));*/
+        border-color: black;
+        /*border-image: initial;*/
+      }
     }
 
     #session-buttons {
       margin-top: 1em;
     }
 
-    table, tr, td, th {
-      border: 1px solid black;
+    .xp-progress, .current {
+    /*user checkpoint tables*/
       border-collapse: collapse;
-      padding: 4px;
+      text-align: center;
 
-      tbody {
+      tr, td, th {
+        border-collapse: collapse;
         text-align: center;
       }
-    }
+      thead {
+        tr {
+          background-color: #f9a825;
+          th {
+            background-color: #f9a825;
+            border: 1px solid black;
+            padding: 5px 10px;
+          }
+        }
+      }
+      tbody {
+        tr {
+          border: 1px solid #d9dadb;
+          &:nth-child(even) {
+            background-color: #f3f3f3;
+          }
+          &:nth-child(odd) {
+            background-color: #e5e5e5;
+          }
+          &:hover {
+            background-color: #d1dce3;
+          }
+          td {
+            &:nth-child(4) {
+              height: 1.5em;
+              width:12%;
+            }
+            &:nth-child(1) {
+              text-align:left;
+              padding: 0 15px;
+            }
+            span:before {
+              content: '';
+              padding-left:10px;
+              display: inline-block;
+              margin-right: 5px;
+              border-radius: 1em;
+              width: 0.2em;
+              height: 0.7em;
+            }
+            /*TODO  test with real gem icons*/
+            /* styling for visual clue of gem type str/int/dex */
+            span.s:before {
+              background-color:#e32121;
+            }
+            span.i:before {
+              background-color:#498ff3;
+            }
+            span.d:before {
+              background-color:#72f30b;
+            }
+          }
+        }
+      }
+    }/* block end - .xp-progress, current  */
 
-}
+     /* QUESTION check XpViewer, how to add css class to previous checkpoint*/
+    .past {
+      color: #c0c0c0 !important;
+      /*user past checkpoints*/
+      progress, progress[role], progress::-webkit-progress-bar, progress::-webkit-progress-value {
+        background: #dadada !important;
+        opacity: 0.8 !important;
+      }
+      thead {
+       background-color: #ffeac8 !important;
+      }
+      thead tr th {
+        border: 1px solid #cecece !important;
+      }
+      tr {
+        border: 1px solid #d9dadb !important;
+      }
+      tr td:nth-child(1):before {
+        background-color: #8ac0f37 !important;
+        /*hex string + "77" (to dim past table)-> set s"background-color" ${hex_string}77 !important;"*/
+      }
+    }
+  }
+
 
 /* ==== Wealth Page ==== */
-    #wealth {
+  #wealth {
     background-color: #fcfeff;
     padding: 1em;
     border: 1px solid black;
@@ -182,8 +283,15 @@ body {
       border: 1px solid #38678f;
       margin-top: 1em;
       background: white;
-    }
-     thead th {
+      &::-moz-selection {
+        background: steelblue;
+        color: white;
+      }
+      &::selection {
+        background: steelblue;
+        color: white;
+      }
+      thead th {
         background: steelblue;
         height: 2.5em;
         text-shadow: 0 1px 0 #38678f;
@@ -194,54 +302,47 @@ body {
         word-break: keep-all;
         padding: 0 0.5em;
       }
+      tbody {
+        tr {
+          border-bottom: 1px solid #cccccc;
+          &:last-child {
+            border-bottom: 1px solid black;
+          }
+          td {
+            border-right: 1px solid #cccccc;
+            padding: 0.5em;
+            transition: all 0.2s;
+            text-align:center
+            &:first-child {
+              text-align:left;
+            }
+            &:last-child {
+              border-right: 0px;
+            }
+            .selected {
+              background: #d7e4ef;
+            }
+            input {
+              text-align: center;
+              background: linear-gradient(33deg, #fffcef, #f6f2ee);
+              box-shadow: inset 1px 1px 2px 0px #c8c8c8;
+              outline: none;
+              border: 0;
+              display: table-cell;
+              border-bottom: 1px solid #ddecf4;
+            }
+            input:focus {
+              color: steelblue;
+              background:#d2eaff;
+            }
+          }
+        }
+      }
       tfoot {
         font-weight:bolder;
       }
-      tr {
-        border-bottom: 1px solid #cccccc;
-      }
-      td:first-child {
-        text-align:left;
-      }
-      tr:last-child {
-        border-bottom: 1px solid black;
-      }
-      td {
-        border-right: 1px solid #cccccc;
-        padding: 0.5em;
-        transition: all 0.2s;
-        text-align:center
-      }
-      td:last-child {
-        border-right: 0px;
-      }
-      td.selected {
-        background: #d7e4ef;
-      }
-      td input {
-        text-align: center;
-        background: linear-gradient(33deg, #fffcef, #f6f2ee);
-        box-shadow: inset 1px 1px 2px 0px #c8c8c8;
-        outline: none;
-        border: 0;
-        display: table-cell;
-        border-bottom: 1px solid #ddecf4;
-      }
-      td input:focus {
-
-        color: steelblue;
-        background:#d2eaff;
-
-      }
-      ::-moz-selection {
-        background: steelblue;
-        color: white;
-      }
-      ::selection {
-        background: steelblue;
-        color: white;
-      }
-    }
+    } /* block end - table */
+  } /* block end - #wealth */
 
 /* ==== Settings Page ==== */
   #settings {
@@ -250,11 +351,9 @@ body {
     border: 1px solid black;
     height: 120px
   }
-}
+}/* end of #content block*/
 
-a {
-  text-decoration: none;
-}
+
 
 @-webkit-keyframes llama-mode {
   0% {
@@ -283,21 +382,15 @@ a {
 /* ==== PoeBuilder Page ==== */
 
 
-/* ==== LootView Grid Page ==== */
-
+/*buttons*/
 .view-btn, .ctrl-btn, .pane-btn, .ls-btn, .col-btn, .col-div,
 .upgrade-btn, .char-btn, .tab-btn, .show-all-btn, .hide-all-btn,
 .reload-all-btn, .reload-visible-btn, .refresh-characters-btn {
-  /*margin-right: 2px;*/
+  margin-right: 2px;
   .MaterialBtn;
-  /*turning shadow - making buttons flat*/
-  box-shadow:none !important;
-
-  /*"3d" illusion with borders*/
-  border-right: 1px solid #00000094;
-  border-bottom: 1px solid #0000007d;
-
 }
+
+/* ==== LootView Grid Page ==== */
 
 /* "upgrades" "Refresh/Tabs" "Select Columns" */
 
@@ -314,26 +407,30 @@ a {
 
 /* ---- League Pane ---- */
 /* ---- buttons "Clear Filters" "Upgrades" "Refresh/Tabs" "Select Columns" "Export Csv" ---- */
-/* league-button-pane chyba tak to powininem nazwac a league pane i to i paney i grid razem*/
-#league-buttons-pane {
+/* league-button-pane */
 
+#league-buttons-pane {
   display: inline-flex;
   justify-content: space-between;
   flex-direction: row;
   align-items: first baseline;
   width: 100%;
-
   #buttons {
     display: inline-block;
     margin-top: 12px;
-
+    a {
+      text-decoration: none;
+    }
     .clear-filters {
     }
     .upgrades {
+      background-color: @yellow-500;
     }
     .refresh-tabs {
+      background-color: @light-blue-100;
     }
     .select-columns {
+      background-color: @light-green-100;
     }
     .export-csv {
     }
@@ -343,15 +440,23 @@ a {
   .load-save {
   /*background-color: @blue-100;*/
   /*background-image: url("/images/blue-100-linen.png");*/
+    a {
+      text-decoration: none;
+    }
     .select2-container .select2-choice{
       /*background-color: @blue-500;*/
     }
     .view-span {
         color: white;
     }
+    /* Load, Save, Save+Filters, Delete buttons*/
+    .ls-btn {
+      /* optional buttons color*/
+      /*background-color: @blue-400;*/
+    }
     .del {
-        background-color: #f09478;
-        //margin-right: 0;
+      /* optional buttons color*/
+      /*background-color: #f09478;*/
     }
     display: inline-block;
     padding: 5px 0x 0 12px;
@@ -378,19 +483,12 @@ a {
       text-overflow: clip !important;
     }
   }
-
-  .ls-btn {
-    background-color: @blue-400;
-  }
 }
 
 
 /* ---- Upgrades Pane ---- */
 .pane-btn.upgrades {
-  background-color: @yellow-500;
-  &:hover {
-    background: #c2c2c2;
-  }
+
 }
 
 .upgrades-pane {
@@ -422,13 +520,6 @@ a {
 }
 
 /* ---- Refresh Tabs Pane ---- */
-.pane-btn.refresh-tabs {
-  background-color: @light-blue-100;
-  &:hover {
-    background: #c2c2c2;
-  }
-}
-
 .refresh-pane {
   background-color: @light-blue-100;
   background-image: url("/images/light-blue-100-linen.png");
@@ -486,49 +577,38 @@ a {
   }
 }
 
-
-
-.pane-btn.select-columns {
-  background-color: @light-green-100;
-  &:hover {
-    background: #c2c2c2;
-  }
-}
-
 /* ---- Columns Controls Pane ---- */
 .columns-controls {
   background-color: @light-green-100;
-  /*background-color: rgba(0,0,0,0.5);*/
   background-image: url("/images/light-green-100-linen.png");
   padding-bottom: 5px;
-
+  padding-left: 5px;
+  a {
+    text-decoration: none;
+  }
 
   .col-main {
     margin-bottom: 5px;
-    padding: 5px 0 0 5px;
+    padding-top: 5px;
   }
 
   .group-div {
-
+    /* container for .col-btn show, .col-btn hide */
     .col-btn-toggle {
       /*margin-left:5px;*/
-      /*now toggle buttons are after group-name so they have to had a little space between them and affix buttons*/
       margin-right: 12px;
       box-shadow: none !important;
     }
     .group-name {
       color: black;
       font-size: 1.1em;
-
-        color: #ffffff;
-        width: 174px;
-        display: inline-block;
-        text-align: right;
-        padding-right: 11px;
-        font-size: 1.1em;
-        font-weight: bold;
-        text-shadow: 1px 1px 0px #000;
-        padding-bottom: 7px;
+      width: 174px;
+      display: inline-block;
+      text-align: right;
+      padding-right: 11px;
+      font-size: 1.1em;
+      font-weight: bold;
+      padding-bottom: 7px;
     }
 
     .col-div {
@@ -545,28 +625,19 @@ a {
     /* mod disabled  */
     .col-div.off-col {
       color: black;
-      background-color: #ececec;
-      /*background-color: @red-300;*/
+      background-color: @red-300;
     }
   }
 }
 
 /* ==== Grid ==== */
 #grid {
-
 }
 
-/* item tooltip */
-#item-details {
-  max-width: 900px;
-  position: fixed;
-  z-index: 100;
-  overflow: hidden;
-}
 
 /* ==== Footer ==== */
-
 #footer {
+  margin-left: 5px;
   .license {
     transform:scaleX(-1);
     transform:scaleX(-1);
