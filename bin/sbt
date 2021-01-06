@@ -20,7 +20,7 @@ JVM_ARGS="$JVM_ARGS -XX:CodeCacheMinimumFreeSpace=32m"
 JVM_ARGS="$JVM_ARGS -XX:MaxGCPauseMillis=5"
 #JVM_ARGS="$JVM_ARGS -XX:ReservedCodeCacheSize=512m"
 
-SBT_JAR=`dirname $0`/sbt-launch-0.13.0.jar
+SBT_JAR=`dirname $0`/sbt-launch-0.13.6.jar
 
 # echo "Starting SBT With the following JVM Options"
 # echo "-------------------------------------------"
