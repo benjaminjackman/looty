@@ -25,10 +25,10 @@ object ItemParser {
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.explicitMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.implicitMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.craftedMods.toOption)
-      if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.enchantMods.toOption)
       if (ci.isEquippable || ci.item.isJewel || ci.item.isCurrency || ci.item.isGem) parseProperties(ci)
       if (ci.isEquippable || ci.item.isJewel || ci.item.isGem) parseRequirements(ci)
       if (ci.isEquippable || ci.item.isJewel) parseTypeLine(ci)
+      if (ci.isEquippable || ci.item.isJewel) parseEnchants(ci)
       if (ci.isEquippable) parseSockets(ci)
 
     } catch {
@@ -46,9 +46,9 @@ object ItemParser {
       mod <- emods
     } {
       if (!AffixesParser.parse(ci, mod)
-          && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {
-        //adding column for not parsed yet affixes
-        ci.notParsedYet.name += mod ++ "| "
+        && ((ci.item.getFrameType !=?= FrameTypes.unique) || !ci.isEquippable)) {
+        //adding column for not recognized affixes
+        ci.notParsedYet.name += mod ++ " |"
         //Silence these warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
         if (window.localStorage.getItem("SQUELCH_WARNINGS") != "true") {
           console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
@@ -57,6 +57,15 @@ object ItemParser {
     }
   }
 
+  def parseEnchants(ci: ComputedItem) {
+    // For now enchants are added in form as they are, without checking for errors in parsing
+    // because they are vastly different from any affix we parse
+    // Therefore i'm not adding any console warnings
+    for {
+      enchants <- ci.item.enchantMods.toOption
+      enchant <- enchants
+    } AffixesParser.parse(ci, enchant)
+  }
 
   def parseProperties(ci: ComputedItem) {
     for {
