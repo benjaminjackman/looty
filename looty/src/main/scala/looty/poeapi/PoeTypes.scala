@@ -243,7 +243,6 @@ object PoeTypes {
       def getIncubator: String = {
         if (x.incubatedItem.toOption.isDefined) {
           val i = x.incubatedItem.toOption.get
-          addProgressBar(i.progress, i.total)
         } else ""
       }
       def getInfluences:String = {
