@@ -406,6 +406,10 @@ body {
 }
 
 /* ==== Maps Page ==== */
+#maps {
+  padding: 5px;
+  border: 1px solid black;
+}
 /* ==== PoeBuilder Page ==== */
 
 
@@ -569,10 +573,10 @@ body {
 }
 
 #upgrades-pane {
-  background-color: @yellow-500;
-  background-image: url("/images/yellow-500-linen.png");
+  //background-color: @yellow-500;
+  background-color: #debe00;
+  //background-image: url("/images/yellow-500-linen.png");
   padding: 5px 5px 10px 10px;
-
   .info {
     /* display: inline-block; */
     font-size: 1.2em;
@@ -599,8 +603,13 @@ body {
 /* ---- Refresh Tabs Pane ---- */
 #refresh-pane {
   background-color: @light-blue-100;
-  background-image: url("/images/light-blue-100-linen.png");
-
+  padding: 5px 5px 10px 10px;
+  //background-image: url("/images/light-blue-100-linen.png");
+  .info {
+    padding: 5px 5px 10px 10px;
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+  }
   .chars, .tabs {
     padding: 5px;
   }
