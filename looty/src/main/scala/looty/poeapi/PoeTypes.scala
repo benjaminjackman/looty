@@ -2,11 +2,10 @@ package looty
 package poeapi
 
 import cgta.serland.SerBuilder
-import javafx.scene.control.ProgressBar
 import looty.model.CharClasses.CharClass
 import looty.model.{CharClasses, InventoryIds}
 import looty.model.InventoryIds.InventoryId
-import looty.util.ProgressBar.addProgressBar
+import looty.views.CheckpointFmts.format2
 import util.{Optional, ProgressBar}
 
 import scala.concurrent.ExecutionContext
@@ -239,12 +238,15 @@ object PoeTypes {
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
       def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
       def fracturedModsList = x.fracturedMods.toOption.getOrElse(js.Array()).toList
-      //    def incubatedItem: Incubation = x.incubatedItem.toOption.getOrElse(js.Any)
-      def getIncubator: String = {
+
+      def getIncubatorRewardName: String = {
         if (x.incubatedItem.toOption.isDefined) {
-          val i = x.incubatedItem.toOption.get
+          x.incubatedItem.get.name.toString
         } else ""
       }
+//      def getIncubator: Optional[Incubator] = {
+//          x.incubatedItem.get
+//      }
       def getInfluences:String = {
         if (x.influences.toOption.isDefined) {
           x.influences.toOption.get.map(_._1).mkString(" ")
@@ -352,12 +354,12 @@ object PoeTypes {
         } yield {
           var res = prop.name
           var didInterpol = false
-          if (prop.name.contains("%0")) {
-            res = res.replaceAll("%0", prop.values(0)(0).toString)
+          if (prop.name.contains("{0}")) {
+            res = res.replaceAll("\\{0\\}", prop.values(0)(0).toString)
             didInterpol = true
           }
-          if (prop.name.contains("%1")) {
-            res = res.replaceAll("%1", prop.values(1)(0).toString)
+          if (prop.name.contains("{1}")) {
+            res = res.replaceAll("\\{1\\}", prop.values(1)(0).toString)
             didInterpol = true
           }
 
@@ -380,7 +382,6 @@ object PoeTypes {
           if (afn.startsWith("http")) {
             afn
           } else {
-            //"https://www.pathofexile.com/image/" + afn + ".png"
             "https://web.poecdn.com/image/divination-card/" + afn + ".png"
           }
 
@@ -399,65 +400,103 @@ object PoeTypes {
   }
 
   trait AnyItem extends js.Object {
+    //items id - string of 64 hex chars
+    val id: String = js.native
+    //Used in div cards, name without spaces in it
     val artFilename: js.UndefOr[String] = js.native
+    //true if the item has not changed since it was linked
     val verified: Boolean = js.native
     //width and height a big two handed is 2w by 3h a currency item 1w1h a dagger 1w3h
     val w: Int = js.native
     val h: Int = js.native
-    //a Url
+    //Icon Url on ggg site
     val icon: String = js.native
+    //Found only on gems, which can be support for spells (true) or active spells (false)
     val support: Boolean = js.native
+    //Standard, Standard Solo Self Found (SSF), Hardcore, Hardcore SSF, Temp League, Temp League SSF, Temp League Hardcore, Temp League Hardcore SSF, Private league...
     val league: String = js.native
+    //Item name, except div cards has empty string ""
     private val name: String = js.native
+    //Specific item type like, Vaal Regalia - ES chest
     val typeLine: String = js.native
+    //Cosmetic assigned to that item
     val cosmeticMods: Optional[js.Array[String]] = js.native
+    //On gems/currency/fragments always true, other items ture/false
     val identified: Optional[Boolean] = js.native
+    //Corrupted by use of vaal orb, temple of corruption or other source
     val corrupted: Optional[Boolean] = js.native
     //Mirrored
     val duplicated: Optional[Boolean] = js.native
-    //TODO add ItemDetailHover.scala
+    //Veiled - added in 3.5 Betrayal league - sadly modlist property not available
+    val veiled: Optional[Boolean] = js.native
     //Introduced in league Legion 3.7. Item incubators, which are attached to any item equipped by character, when incubation is complete (you killed x number of mobs) item of specific type drops
     val incubatedItem: Optional[Incubator] = js.native
-
-    //Depraciated and replaced by "influences"
-    // Shaper items
+    //Shaper items - Depraciated and replaced by "influences"
     //var shaper: Optional[Boolean] = js.native
-    // Elder items
+    //Elder items - Depraciated and replaced by "influences"
     //var elder: Optional[Boolean] = js.native
-
+    //Introduced in 3.9 when map system was reworked, and besides shaper and elder, item can be influenced by Crusader, Hunter, Redeemer or Warlord
+    //Thus new artwork of top corners of tooltips was introduced. You can have up to two influences at once.
     var influences: Optional[js.Dictionary[Influence]] = js.native
     //item can have fracture mods - one of affixes is permament, and stays after scouring
-    //TODO add ItemDetailHover.scala
     val fractured: Optional[Boolean] = js.native
+    //introduced in 3.6 Synthesis league //double with "fractured" property
+    val synthesised: Optional[Boolean] = js.native
     val fracturedMods: Optional[js.Array[String]] = js.native
-
 		//Abyss jewel that is socketed only in item with abyss sockets, or in sockets of skille tree
 		val abyssJewel: Optional[Boolean] = js.native
     //used for gem experience, incubator progress
     val additionalProperties: Optional[js.Array[AdditionalProperty]] = js.native
+    //As name suggests socket to put gems/jewels(abyss) there
     val sockets: Optional[js.Array[Socket]] = js.native
+    //Array of various properties like gem level, cast time, mana cost, chance to block, energy shield ...
     val properties: Optional[js.Array[ItemProperty]] = js.native
+
+    val hybrid: Optional[Hybrid] = js.native
+    //used in gems for stating attribute, level requirements for next level
     val nextLevelRequirements: Optional[js.Array[ItemRequirement]] = js.native
+    //used in items for stating require attributes, level to equip that item
     val requirements: Optional[js.Array[ItemRequirement]] = js.native
+    //description on Gems/Flasks
     val descrText: Optional[String] = js.native
+    //if description text is longer, ex. description of gem effect
     val secDescrText: Optional[String] = js.native
-    val explicitMods: Optional[js.Array[String]] = js.native
-    val craftedMods: Optional[js.Array[String]] = js.native
+    //mods that can include for example corruption effects
     val implicitMods: Optional[js.Array[String]] = js.native
+    //up to 6 mods/affixes on item
+    val explicitMods: Optional[js.Array[String]] = js.native
+    //Mods crafted with crafting bench
+    val craftedMods: Optional[js.Array[String]] = js.native
+    //mods added in Lords Labirytnh (gloves/boots/helms), in Cluster Jewels (Delirium league), from anointment with oils (rings/amulet) (Blight league)
     val enchantMods: Optional[js.Array[String]] = js.native
+    //Normal, Magic, Rare, Unique type of items, also Gems
+    //0 - normal items
+    //1 - magic items
+    //2 - rare items
+    //3 - unique items
+    //4 - gems
     val frameType: Int = js.native
+    //List of items that are socketed into the sockets of the item. Gems/Abyssal Jewel in abyssal socket
     val socketedItems: Optional[js.Array[AnyItem]] = js.native
+    //Array of lines of the flavour text of e.g. unique items.
     val flavourText: Optional[js.Array[String]] = js.native
+    //Item level of item - if dropped from monster then level of area
+    //Gem ilvl is equal 0
     val ilvl: Optional[Int] = js.native
 
     //For items that are not socketed in other items
     val x: Optional[Int] = js.native
     //The top left corner, when in an item slot, this is 0,0 from what i can tell
     val y: Optional[Int] = js.native
+    //"MainInventory" if in character inventory, otherwise item slot on character
+    //"Amulet" "Belt", "BodyArmour", "Boots", "Flask" "Gloves", "Helm", "Offhand", "Offhand2", "Ring" "Ring2" "Weapon", "Weapon2",
     val inventoryId: Optional[String] = js.native
 
-    //For items that are socketed in other items
+    //TODO check placement
+    //Placement (upper left, upper right, lower right, lower left)
+    // of socket in item 0, 1, 2, 3 for 4 socketed items (gloves/boots/helms), 4, 5 for 6 socketed (body armor, 2h weapons) (upper left, upper right, middle right, lower right, lower left, middle left)
     val socket: Optional[Int] = js.native
+    //letter of main attribute required by gem (str,dex,int) "S" "D" "I", null for Abyss jewel
     val colour: Optional[String] = js.native
 
     //Added by allItems
@@ -475,6 +514,14 @@ object PoeTypes {
     val progress: Int = js.native
     //For XP in Gems: Typically the 0th element of the inner array is a string like "175815/175816"
     val values: js.Array[js.Array[js.Any]] = js.native
+  }
+
+  trait Hybrid extends js.Object { //in vaal gems Vaal part is discribed with hybrid object
+    val isVaalGem: Boolean = js.native
+    val baseTypeName: String = js.native
+    val properties: js.Array[AdditionalProperty] = js.native
+    val explicitMods: js.Array[String] = js.native
+    val secDescrText: String = js.native
   }
 
   object Socket {

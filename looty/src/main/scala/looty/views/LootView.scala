@@ -2,14 +2,18 @@ package looty
 package views
 
 import looty.poeapi.PoeTypes.Leagues.League
-import looty.views.loot.{Columns, ColumnsPane, Containers, Filters, UpgradesPane}
-import org.scalajs.dom.{Blob, BlobPropertyBag}
+import looty.views.loot.{Columns, ColumnsPane, Containers, Filters, LootFilterColumn, UpgradesPane}
+import org.scalajs.dom.{Blob, BlobPropertyBag, KeyboardEvent}
 import org.scalajs.jquery.JQuery
 
 import scala.scalajs.js
 import looty.model.{ComputedItem, ComputedItemProps, LootContainerId}
+
 import scala.concurrent.Future
 import looty.poeapi.PoeCacher
+import looty.util.Settings
+import org.scalajs.dom.ext.KeyCode
+
 import scala.language.postfixOps
 
 
@@ -320,7 +324,6 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
       }
 
       filterCells += args.column.id.asJsStr -> cell
-
       cell.el.appendTo(args.node)
     })
 
@@ -329,8 +332,7 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
       if (e.shiftKey.asJsBool) {
         refreshPane.refreshContainer(item.containerId)
       }
-
-      console.log(e, "GRIDMINI CLICK", args, item.asJsAny, item.item.inventoryId)
+      //console.log(e, "GRIDMINI CLICK", args, item.asJsAny, item.item.inventoryId)
     }
 
     addSort()
@@ -379,16 +381,27 @@ class LootView(val league: League)(implicit val pc: PoeCacher) extends View {
     })
   }
 
+  private def showItemDetails(e:js.Dynamic, args: js.Any) {
+    val row = grid.getCellFromEvent(e).row
+    if (row.nullSafe.isDefined) {
+      itemDetailHover.setFirstItem(Some(grid.getDataItem(row).asInstanceOf[ComputedItem]))
+      itemDetailHover.show(
+        x = e.clientX.asInstanceOf[Double],
+        y = e.clientY.asInstanceOf[Double],
+        compare = true
+      )
+    }
+  }
+
   private def addMouseover() {
     grid.onMouseEnter.subscribe((e: js.Dynamic, args: js.Any) => {
-      val row = grid.getCellFromEvent(e).row
-      if (row.nullSafe.isDefined) {
-        itemDetailHover.setFirstItem(Some(grid.getDataItem(row).asInstanceOf[ComputedItem]))
-        itemDetailHover.show(
-          x = e.clientX.asInstanceOf[Double],
-          y = e.clientY.asInstanceOf[Double],
-          compare = true
-        )
+      if (Settings.isSet(Settings.SHOW_TOOLTIP_ON_KEY_PRESS)) {
+        if (e.ctrlKey.asJsBool) {
+          showItemDetails(e, args)
+          //console.log(e, "GRIDMINI CTRL", args)
+        }
+      } else { //if showItemDetailOnKeyPress is not set show itemDetails
+        showItemDetails(e, args)
       }
     })
     grid.onMouseLeave.subscribe((e: js.Dynamic, args: js.Any) => {

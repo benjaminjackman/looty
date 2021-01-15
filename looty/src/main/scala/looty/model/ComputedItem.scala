@@ -134,6 +134,11 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else "UNKNOWN"
   }
 
+  object chanceTo {
+    var blockSpellDamage               = 0.0
+    var dodgeSpellHits                 = 0.0
+  }
+
   object increased {
     val damage                         = Elements mutable 0.0
     var bleedingDamage                 = 0.0
@@ -146,9 +151,11 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var globalCriticalStrikeChance     = 0.0
     var criticalStrikeChance           = 0.0
     var criticalStrikeChanceForSpells  = 0.0
-    var armour                         = 0.0
-    var evasion                        = 0.0
-    var energyShield                   = 0.0
+    var globalArmour                   = 0.0
+    var globalEvasionRating            = 0.0
+    var localArmour                    = 0.0
+    var localEvasionRating             = 0.0
+    var localEnergyShield              = 0.0
     var maximumEnergyShield            = 0.0
     var maximumLife                    = 0.0
     var quantityOfItemsFound           = 0.0
@@ -164,6 +171,19 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var accuracyRating                 = 0.0
     var blockRecovery                  = 0.0
     var elementalDamage                = 0.0
+//    var meleeDamage                    = 0.0 //TODO add mods increased
+//    var mineDamage                     = 0.0 //TODO add mods increased
+//    var trapDamage                     = 0.0 //TODO add mods increased
+//    var dotDamage                     = 0.0 //TODO add mods increased
+//    var mineThrowingSpeed              = 0.0 //TODO add mods increased
+//    var maximumMana                    = 0.0 //TODO add mods increased
+//Minions
+//    var totemDamage                    = 0.0 //TODO add mods increased
+//    var minionDamage                    = 0.0 //TODO add mods increased
+//    var minionLife                    = 0.0 //TODO add mods increased
+//    var minionCastSpeed                    = 0.0 //TODO add mods increased
+//    var minionMovementSpeed                    = 0.0 //TODO add mods increased
+//    var minionAllRes                    = 0.0 //TODO add mods increased
   }
 
   object increasedSpell {
@@ -180,6 +200,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   object reduced {
     var attributeRequirements = 0.0
     var enemyStunThreshold    = 0.0
+//    var reducedTrapDuration   = 0.0 //TODO add mods reduced
+//    var costOfSkills          = 0.0 //TODO add mods reduced
+//    var manaReserved          = 0.0 //TODO add mods reduced
   }
 
   var sockets: List[List[String]] = Nil
@@ -248,6 +271,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     val attribute = Attributes mutable 0.0
     var melee     = 0.0
     var minion    = 0.0
+//    var trapOrMine = 0.0 //TODO add mod - + level to socketed gem
     var bow       = 0.0
     var any       = 0.0
     var support   = 0.0
@@ -282,15 +306,17 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
         damages(element).avg
       }
     }
+    def roundingDexToEvasionRating(dex:Double): Double = {
+      //Every 5 points of dexterity provide 1% increased Evasion Rating. Non-multiples of 5 will be rounded up to the nearest multiple of 5 (e.g. 142 dexterity will be rounded to 145)
+      if (dex % 5 > 0) math.ceil(dex / 5) else (dex / 5)
+    }
 
     def armour = properties.armour.oIf(_ == 0.0, x => plusTo.armour, x => x)
-    def evasionRating = properties.evasionRating.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
+    def evasion = properties.evasion.oIf(_ == 0.0, x => plusTo.evasionRating, x => x)
+    def globalEvasionRating = increased.globalEvasionRating + roundingDexToEvasionRating(plusTo.attribute.dexterity)
     def energyShield = properties.energyShield.oIf(_ == 0.0, x => plusTo.energyShield, x => x)
-    def globalEnergyShield = increased.maximumEnergyShield + plusTo.attribute.intelligence * .2
-    def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 *
-      properties.criticalStrikeChance
-
-
+    def globalEnergyShield = increased.maximumEnergyShield + math.ceil(plusTo.attribute.intelligence * .2)
+    def critChance = (100 + increased.globalCriticalStrikeChance) / 100.0 * properties.criticalStrikeChance
   }
 
   object slots {
@@ -316,7 +342,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var weaponType: WeaponType = WeaponTypes.NoWeaponType
     var armour                 = 0.0
     var energyShield           = 0.0
-    var evasionRating          = 0.0
+    var evasion                = 0.0
     val damages                = Elements of MinMaxDamage(0, 0)
     var quality                = 0.0
     var criticalStrikeChance   = 0.0
@@ -355,12 +381,15 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
       var armour             = 0.0
       var evasion            = 0.0
       var movementSpeed      = 0.0
+      //var increasedEffect  = 0.0 //TODO add flask mod
+
     }
 
     object reduced {
       var amountRecovered  = 0.0
       var recoverySpeed    = 0.0
       var flaskChargesUsed = 0.0
+      //var duration         = 0.0 //TODO add flask mod
     }
 
     var extraCharges                 = 0.0
