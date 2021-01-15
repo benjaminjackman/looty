@@ -39,7 +39,39 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
-## 0.2.1.78 (2019-09-17)
+## 0.2.1.79 (2021-01-15)
+
+Design
+- Added dark theme! to easy strain on your eyes at night - switch is on the right side
+- item tooltips in dark theme now closer resemble those on official site/in game
+- added Incubators to item tooltips - fancy progressbar with current/total kills and what it's incubating into
+- added improvements to XP page and its gem experience tables
+
+Features
+- Added option to Settings panel to show tooltip when CTRL key is pressed, solving issue with tooltip obscuring vision.
+  note: When pressing ctrl being on some row, you have to reenter this row with mouse pointer to show tooltip - thats best I can do right now
+- Added option to Settings panel to align text in tooltip to the left - in dark theme is centered - so you can override it here.
+
+- Added following columns
+	- IncubatorReward - what incubator on item is going to drop
+	- % Armor local to item
+	- % Evasion Rating local to item
+	- % Energy Shield local to item
+	- % Armor global to character stats - now recognize "% increased Armor" on talismans, rings, belts, jewels
+	- % Evasion Rating global to character stats - now recognize "% increased Evasion Rating" on talismans, rings, belts, jewels
+	- % chance to Dodge Spell Hits
+	- % chance to Block Spells Damage
+	- Added columns for checking if items are: Identified, Crafted, Corrupted, Veiled, Synthesised (has fractured modes), Mirrored to new group Miscellaneous, moved also influences there which shows list of influences on item
+	note: Enchanted items has own columns enchc (enchants count) and ench (enchants list)
+
+- Bug fixes
+	- flasks display now their real values instead of "{0}" and "{1}"
+	- enchants are not duplicated anymore in column "unparsed"
+	- changed behavior of Evasion Rating and Armor increased mods, added their local variations, and added local Energy Shield increase
+	- armor and evasion rating are correctly calculated and now are global - it recognize "% increased Armor" and "% increased Evasion Rating" on talismans, rings, belts, jewels
+	- items with dexterity include "global Evasion Rating" column (as every 5 dexterity increases Evasion Rating by 1 %)
+
+## 0.2.1.78 (2020-09-17)
 - Added types
 	- "Organs" (from Metamorph league)
 	- Timeless Jewel
