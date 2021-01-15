@@ -26,8 +26,6 @@ object Column {
       groups = p.groups,
       defaultNumFilter = p.defaultNumFilter,
       getJs = p.getJs,
-      hiddenColumn = p.hiddenColumn,
-      headerFilterValue = p.headerFilterValue,
       defaultVisible = p.defaultVisible
     )
   }
@@ -41,8 +39,6 @@ class Column(
   val groups: Vector[String],
   val defaultNumFilter: Option[NumFilter],
   val getJs: (ComputedItem) => js.Any,
-  val headerFilterValue: String, // WIP -value we want to add to filter box when we show column
-  val hiddenColumn: Boolean, // WIP - its used just for toggling filter of column filter box
   val defaultVisible: Boolean
   ) {
   def id = shortName
