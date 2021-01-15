@@ -7,6 +7,7 @@ import util.DurationText
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.{AnyItem, CharacterInfo}
 import looty.poeapi.PoeCacher
+import looty.util.ProgressBar.addProgressBar
 import looty.views.CheckpointFmts.format2
 
 
@@ -132,10 +133,9 @@ case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
   //  def removedGems = ???
   //  def addedGems = ???
 
-  def toHtml: JQuery = {
+  def toHtml(isOldCheckpoint:Boolean): JQuery = {
     import looty.views.CheckpointFmts._
-    val $html = jq("""<div></div>""")
-
+    val $html = jq(s"""<div ${if (isOldCheckpoint) "class='oldCheckpoint'" else ""}></div>""")
     val $summary = jq("""<div class="info"></div>""")
     val startStr = js.Dynamic.newInstance(global.Date)(older.utcMs).toString
     val endStr = js.Dynamic.newInstance(global.Date)(newer.utcMs).toString
@@ -158,7 +158,8 @@ case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
       "<th>Slot</th>" +
       "<th>Level</th>" +
       //"<th>Remaining Xp / Progress</th>" +
-      "<th>Xp to Level</th>" +
+      "<th>Level %</th>" +
+      "<th>Remaining Xp to Level</th>" +
       "<th>Xp In Run</th>" +
       "<th>Xp/Hour</th>" +
       "<th>Time To Level</th>" +
@@ -173,9 +174,12 @@ case class CheckpointDelta(older: Checkpoint, newer: Checkpoint) {
         //s"<td>${gem.newer.id.inventoryId} - ${gem.newer.id.socket}</td>" +
         s"<td>${gem.newer.id.inventoryId}</td>" +
         s"<td>${gem.newer.level}</td>" +
-        s"<td><span class='progress-value'>${format(gem.newer.xpRemaining)}</span>" +
-            //s"<span class='progress-percent'>${format2(gem.newer.progressPct * 100)}%</span>" +
-            s"<progress class='gem-xp' max='${gem.newer.getXpForLevel}' value='${gem.newer.getXpTotal}'></progress> </td>" +
+        s"<td>" +
+        //s"<span class='progress-value'>${format(gem.newer.xpRemaining)}</span>" +
+        //s"<span class='progress-percent'>${format2(gem.newer.progressPct * 100)}%</span>" +
+        addProgressBar(gem.newer.getXpTotal.toInt, gem.newer.getXpForLevel.toInt, "xp", false) +
+        s"</td>" +
+        s"<td><span class='progress-value'>${format(gem.newer.xpRemaining)}</span></td>" +
         s"<td>${format(gem.xpGained)}</td>" +
         s"<td>${format(gem.xpPerHour)}</td>" +
         s"<td>${gem.msToLevel}</td>" +
@@ -224,23 +228,28 @@ class XpView(implicit val pc: PoeCacher) extends View {
     el.append(stepsListXp)
     el.append("<p>You can add as many checkpoint as you like.<br>Currently the information is not saved, " +
       "however in the future the plan is to save it and notes you record in a journal. For now just use it as a fun way to see how fast you are progressing.</p>")
-    val btns = jq("""<div id="btns"></div>""")
-    el.append(btns)
+    val leaguesList = jq("""<div id="leaguesList"></div>""")
+    el.append(leaguesList)
+    //Group all characters by their league
     //Add a list of buttons one per character
     for {
-      chars <- pc.getChars()
-      char <- chars.sortBy(_.name.toUpperCase())
+        chars <- pc.getChars()
+        charsInLeague <- chars.groupBy(_.league)
     } {
-      val btn = jq(s"""<button>${char.name}</button>""")
-
-      btns.append(btn)
-      btn.on("click", (e: js.Any) => {
-        //return background-color from before, so previous selected button would not stay at color of selection
-        btns.children().css("background-color","rgb(239, 239, 239)")
-        btn.css("background-color","rgb(117, 220, 255)")
-        setChar(char)
-        display()
-      })
+      val leagueTag = jq(s"""<div class="league">""")
+      leagueTag.append(s"""<span class="leagueName">${charsInLeague._1}</span>""")
+      for (char <- charsInLeague._2.sortBy(_.name.toUpperCase)) {
+        val btn = jq(s"""<button class="charName">${char.name}</button>""")
+        leagueTag.append(btn)
+        btn.on("click", (e: js.Any) => {
+          //return background-color from before, so previous selected button would not stay at color of selection
+          leaguesList.find("button").css("background-color", "rgb(239, 239, 239)")
+          btn.css("background-color", "rgb(117, 220, 255)")
+          setChar(char)
+          display()
+        })
+      }
+      leagueTag.appendTo(leaguesList)
     }
     el.append("""<div id="session-buttons"></div>""")
     val sessionBtns = jq("#session-buttons")
@@ -254,7 +263,6 @@ class XpView(implicit val pc: PoeCacher) extends View {
     el.append("""<div id="xp-session"></div>""")
 
   }
-
   def tryBeginSession() {
     curChar match {
       case None => Alerter.error("Please select a character.")
@@ -277,6 +285,7 @@ class XpView(implicit val pc: PoeCacher) extends View {
     }
   }
 
+  def isFirstCheckpointAdded:Boolean = jq("#xp-session").find(".xp-progress").length != 0
   def display() {
     val el = jq("#xp-session")
     el.empty()
@@ -284,7 +293,7 @@ class XpView(implicit val pc: PoeCacher) extends View {
       el.append(s"""<h2>${session.character.name}</h2>""")
       if (session.checkpoints.size >= 2) {
         session.checkpoints.sliding(2).map(w => CheckpointDelta(w(0), w(1))).toList.reverse.foreach { delta =>
-          el.append(delta.toHtml)
+            el.append(delta.toHtml(isFirstCheckpointAdded))
         }
       } else if (session.checkpoints.size == 1) {
         el.append("<br>Press add checkpoint to add another checkpoint.<br>")
