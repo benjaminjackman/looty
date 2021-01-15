@@ -12,6 +12,12 @@
   unicode-range: U+000-5FF; /* Latin glyphs */
 }
 
+/* ugly styling hack */
+.user-settings-item-details {
+  text-align: left !important; //Settings.TOOLTIP_TEXT_ALIGN
+  //...place for other settings like font-size etc
+}
+
 /* item tooltip */
 #item-details {
   .BoxShadowHelper(5);
@@ -70,9 +76,12 @@
   .enchantMod, .craftedMod {
     //color: lightblue;
     color:#b4b4ff;
-
     word-wrap: break-word;
   }
+  .explicitMod, .implicitMod {
+    color: @item-detail-explicit-mod-font-color;
+  }
+
   .veiled {
     text-transform: capitalize;
     color: black;
@@ -175,3 +184,4 @@
 @item-detail-property-descrtext-font-color: var(--item-detail-property-descrtext-font-color);
 @item-detail-property-valuetext-font-color: var(--item-detail-property-valuetext-font-color);
 @item-detail-text-align: var(--item-detail-text-align);
+@item-detail-explicit-mod-font-color: var(--item-detail-explicit-mod-font-color);

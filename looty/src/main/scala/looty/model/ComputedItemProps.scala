@@ -15,6 +15,8 @@ import scala.scalajs.js
 
 
 object ComputedItemProps {
+  //seting object which is used to build up Columns Select pane, so all
+  // mod buttons->adding columns
   private var _all = Vector.empty[ComputedItemProp[_]]
   def all = _all
 
@@ -49,7 +51,8 @@ object ComputedItemProps {
   }
   //affixes Group names for use in Column Select Panel
   val General         = "General"
-  val Scores          = "Score"
+  val Miscellaneous   = "Miscellaneous"
+  val Scores          = "Score" //unused
   val Defensive       = "Defensive"
   val Attack          = "Attack"
   val Dps             = "Dps"
@@ -86,10 +89,10 @@ object ComputedItemProps {
     res
   }
 
-  def pno(
+  def pno( // filter is showing numbers greater then given value
     fullName: String,
     shortName: String,
-    //numbers in format ddd.d has to have at least that much width to show
+    //numbers in format ddd.d has to have at least 43px width to show as whole
     //more width means more stretching grid view. Not always we have 1900px wide screen :(
     width: Int = 43)(
     groups: String*)(
@@ -106,7 +109,7 @@ object ComputedItemProps {
     res
   }
 
-  def nno(
+  def nno( // filter is showing numbers lesser then given value
     fullName: String,
     shortName: String,
     width: Int = 43)(
@@ -127,7 +130,7 @@ object ComputedItemProps {
   def boo(
     fullName: String,
     shortName: String,
-    width: Int = 50)(
+    width: Int = 30)(
     groups: String*)(
     f: ComputedItem => Boolean): ComputedItemProp[Double] = {
     val res = new ComputedItemProp[Double](
@@ -141,12 +144,6 @@ object ComputedItemProps {
     add(res)
     res
   }
-
-  //TODO
-  //add to arguments "columnName" to show "human readable" names? like Location instead of loc
-
-  //TODO
-  //add 5th argument with help? or just use ?= text, but elaborate on subject
 
   //General
   val Location         = str("Location", "loc", 130)(General)(_.locAndCoords)
@@ -162,6 +159,7 @@ object ComputedItemProps {
   val ExplicitModCount = nno("ExplicitModCount", "emc")(General)(_.item.explicitMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val CraftedModCount  = nno("CraftedModCount", "cmc")(General)(_.item.craftedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val EnchantedModCount  = pno("EnchantedModCount", "enchc")(General)(_.item.enchantMods.toOption.map(_.length.toDouble).getOrElse(0.0))
+  val FracturedModCount  = pno("FractureModCount (Synthesised)", "frmc")(General)(_.item.fracturedMods.toOption.map(_.length.toDouble).getOrElse(0.0))
   val GemKeywords      = str("GemKeywords", "kws", 120)(General)(_.item.getGemKeywords.getOrElse(""))
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
@@ -176,7 +174,26 @@ object ComputedItemProps {
   ExplicitModCount !?= "The number of explicit mods on an item"
   CraftedModCount !?= "The number crafted mods on an item"
   EnchantedModCount !?= "The number enchanted mods on an item"
+  FracturedModCount !?= "The number enchanted mods on an item"
   GemKeywords !?= "The keywords on a skill gem"
+
+  //Misc
+  val IsCrafted = boo("Crafted", "crafted",20)("Misc")(_.item.identified.toOption.getOrElse(false))
+  val IsCorrupted = boo("Corrupted", "corrupted",20)("Misc")(_.item.corrupted.toOption.getOrElse(false))
+  val IsMirrored = boo("Mirrored", "mirrored",20)("Misc")(_.item.duplicated .toOption.getOrElse(false))
+  val IsIdentified = boo("Identified", "identified",20)("Misc")(_.item.identified .toOption.getOrElse(false))
+  val IsVeiled = boo("Veiled", "veiled",20)("Misc")(_.item.veiled.toOption.getOrElse(false))
+  val IsSynthesised = boo("Synthesised", "synthesised",20)("Misc")(c => c.item.fractured.toOption.getOrElse(false) || c.item.synthesised.toOption.getOrElse(false) )
+  //isEnchanted - check mod enchlist - redundant button, but more obvious
+  val Influences = str("Influences", "influences", width = 70)("Misc")(_.item.getInfluences)
+
+  IsSynthesised !?= "Item is Syntesised (have fractured mods)"
+  IsIdentified !?= "Item is Identified"
+  IsCrafted !?= "Item is Crafted"
+  IsCorrupted !?= "Item is Corrupted"
+  IsVeiled !?= "Item is Veiled"
+  IsMirrored !?= "Item is Mirrored"
+  Influences !?= "Influances"
 
   //Turning off until I will have time and idea how to implement it
   //Score
@@ -188,28 +205,41 @@ object ComputedItemProps {
 //  CustomScore2 !?= "Score according to semi-strict high value rules (roughly tier 2 and higher)"
 
   //Defensive
-  //TODO
-  //Inconsistencies there is no differentiation between displaying global defense values, and local ones, also ES is calculated with Int bonus included, Armor with Str or Evasion widt dex dont
   val Armour                        = pno("Armour", "AR")(Defensive)(_.total.armour)
-  val Evasion                       = pno("Evasion", "EV")(Defensive)(_.total.evasionRating)
-  val ArmourPlusEvasion             = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasionRating + i.total.armour)
+  val Evasion                       = pno("Evasion", "EV")(Defensive)(_.total.evasion)
+  val ArmourPlusEvasion             = pno("ArmourPlusEvasion", "AR+EV")(Defensive)(i => i.total.evasion + i.total.armour)
   val EnergyShield                  = pno("EnergyShield", "ES")(Defensive)(_.total.energyShield)
   val IncreasedMaxEnergyShield      = pno("IncreasedMaxEnergyShield", "+%ES")(Defensive)(_.total.globalEnergyShield)
-  val IncreasedArmour               = pno("IncreasedArmour", "+%AR")(Defensive)(_.increased.armour)
-  val IncreasedEvasion              = pno("IncreasedEvasion", "+%EV")(Defensive)(_.increased.evasion)
-  //TODO
-  //add dodge chance and block spell
+  //global increase
+  val IncreasedGlobalArmour               = pno("IncreasedGlobalArmour", "+%AR")(Defensive)(_.increased.globalArmour)
+  val IncreasedGlobalEvasionRating        = pno("IncreasedGlobalEvasionRating", "+%EV")(Defensive)(_.total.globalEvasionRating)
+  //local increase
+  val IncreasedLocalEnergyShield               = pno("IncreasedLocalEnergyShield", "+%lES")(Defensive)(_.increased.localEnergyShield)
+  val IncreasedLocalArmour               = pno("IncreasedLocalArmour", "+%lAR")(Defensive)(_.increased.localArmour)
+  val IncreasedLocalEvasionRating        = pno("IncreasedLocalEvasionRating", "+%lEV")(Defensive)(_.increased.localEvasionRating)
+
+  //val AttackBlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
+  //val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
+  val DodgeSpellHits = pno("ChanceToDodgeSpellHits","SpDg%")(Defensive)(_.chanceTo.dodgeSpellHits)
+  val BlockSpellDamage = pno("ChanceToBlockSpellDamage","SpBlk%")(Defensive)(_.chanceTo.blockSpellDamage)
+
+
   Armour ?= "Armour"
   Evasion ?= "Evasion"
   ArmourPlusEvasion !?= "Armour + Evasion"
   EnergyShield ?= "Energy Shield"
   IncreasedMaxEnergyShield !?= "Increased Max Energy Shield Includes Intelligence Bonus"
-  IncreasedArmour !?= "Increased Armour Rating"
-  IncreasedEvasion !?= "Increased Evasion Rating"
-  BlockChance !?= "Block Chance"
+  IncreasedGlobalArmour !?= "Increased global Armour"
+  IncreasedGlobalEvasionRating !?= "Increased global Evasion Rating Includes Dexterity Bonus"
+  IncreasedLocalEnergyShield ?= "Increased local % Energy Shield"
+  IncreasedLocalArmour !?= "Increased local % Armour"
+  IncreasedLocalEvasionRating !?= "Increased local % Evasion Rating"
+  BlockChance !?= "Chance to Block"
   IncreasedBlockAndStunRecovery !?= "Increased Block and Stun Recovery"
+  DodgeSpellHits !?= "Adds Chance to Dodge Spell Hits"
+  BlockSpellDamage !?= "Adds Chance to Block Spell Damage"
 
   //Attack
   val AttacksPerSecond     = pno("AttacksPerSecond", "aps")(Attack)(_.properties.attacksPerSecond)
@@ -464,17 +494,22 @@ object ComputedItemProps {
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
   val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 30)(Special)(_.skill.level)
   val Enchantments  = str("Enchantments", "ench", 80)(Special)(_.item.enchantModsList.mkString(", "))
-  val NotParsedYet = str("NotParsedYet", "unparsed", 120)(Special)(_.notParsedYet.name)
+  val Unparsed = str("Unparsed", "unparsed", 120)(Special)(_.notParsedYet.name)
   val limitedTo                   = pno("LimitedTo","limited",30)(Special)(_.properties.limitedTo)
   val Radius                   = str("Radius","radius",30)(Special)(_.properties.radius)
-  val Influences = str("Influences", "infl", width = 70)(Special)(_.item.getInfluences)
+  val IncubationReward = str("IncubationReward","incubReward",100)(Special)(_.item.getIncubatorRewardName)
+  //TODO how to make variables below return default value = make it as string ?
+//  val IncubationProgress = pno("IncubationProgress","incubProg",50)(Special)(_.item.incubatedItem.get.progress))
+//  val IncubationKillsRemaining = pno("IncubationKillsRemaining","incubRem",50)(Special)(_.item.incubatedItem.get.total )
 
   GrantsSkill !?= "Granted Skill"
   GrantsSkillLevel !?= "Level of Granted Skill"
   Enchantments !?= "Enchantments"
-  NotParsedYet ?= "Could not be parsed"
+  Unparsed ?= "Could not be parsed"
   limitedTo !?= "Limited to"
   Radius !?= "Radius"
-  Influences !?= "Influances"
+  IncubationReward !?= "Incubation Reward"
+//  IncubationProgress !?= "Incubation Kill Progress"
+//  IncubationKillsRemaining !?= "Incubation Kills Remaining"
 
 }

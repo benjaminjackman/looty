@@ -1,9 +1,9 @@
 package looty
 package views
 
+import util.Settings
 import looty.model.ComputedItem
 import looty.poeapi.PoeTypes
-import looty.util.Settings
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 import util.ProgressBar._
@@ -22,6 +22,7 @@ import scala.scalajs.js
 class ItemDetailHover {
 
   val el  = jq(s"""<div id="item-details" style="display:inline-block;"></div>""")
+
   val el1 = jq("""<div></div>""")
   val el2 = jq("""<div></div>""")
   el.append(el1)
@@ -58,10 +59,12 @@ class ItemDetailHover {
     val yRat = y / dom.window.innerHeight
     val h = el.height()
     val top = Some(y - yRat * h)
+    //changing frame distance from cursor
+    val const = 10
     val (right, left) = if (x / window.innerWidth < .5) {
-      None -> Some(x + 10)
+      None -> Some(x + const)
     } else {
-      Some(global.window.innerWidth.asInstanceOf[Double] - x + 10) -> None
+      Some(global.window.innerWidth.asInstanceOf[Double] - x + const) -> None
     }
     def cssValueOf(x: Option[Double]): js.Any = x.map(x => x: js.Any).getOrElse[js.Any]("")
     el.css("top", cssValueOf(top))
@@ -69,9 +72,16 @@ class ItemDetailHover {
     el.css("left", cssValueOf(left))
   }
 
+  def insertPropStyle(property: String, styling:String): String = {
+    styling match {
+      case "descr" => s"<span class='propertyDescr'>$property</span>"
+      case "value" => s"<span class='propertyValue'>$property</span>"
+    }
+  }
   def insertStyling(className:String, text:String) = s"<span class='$className'>$text</span>"
   def insertSocketColoring(sockets:String): String = {
     var sockRepl = sockets
+
       val s =sockRepl.replaceAll("G", insertStyling("G","G"))
       .replaceAll("R",insertStyling("R","R"))
       .replaceAll("B",insertStyling("B","B"))
@@ -87,67 +97,66 @@ class ItemDetailHover {
         n <- r.name.toOption.toList
         vs <- r.values.toList
       } yield {
-        s"$n ${vs(0).toString}"
+        s"""${insertStyling("propertyDescr",n)} ${insertStyling("propertyValue",vs(0).toString)}"""
       }
-      xs.oIf(_.nonEmpty, _ => xs.mkString("Requires ", ", ", ""), _ => "")
+      xs.oIf(_.nonEmpty, _ => xs.mkString(insertStyling("propertyDescr","Requires "), ", ", ""), _ => "")
     }
+
+
     def properties = {
       (for {
         prop <- item.item.getPropertiesInterpolated
       } yield {
-        prop
+        insertStyling("propertyDescr",prop)
       }).mkString("<br>")
     }
+
     def flavorText = {
       item.item.flavourText.toOption.map(_.toList.mkString("<br>")).getOrElse("")
     }
-
     val itemName = item.item.getName
     val typeLine = item.item.typeLine
+    val separator = s"""<div class='separator'></div>""" // before it was <hr>
     val titleName = if (itemName.isEmpty) {
       s"""<span class="item-name">${typeLine.toString}</span>"""
-    } else {
-      s"""<span class="item-name">${itemName.toString}</span><br><hr>${typeLine.toString}"""
-    }
-
+    } else s"""<span class="item-name">${itemName.toString}</span><br>${separator}${typeLine.toString}"""
     val sections = List(
-      s"<br><hr>Location: ${item.locAndCoords}",
-      if (item.socketColors.nonEmpty) "Sockets: " + item.socketColors else "",
-      properties,
-	    item.item.ilvl.toOption.map(x=>s"Item Level: $x").getOrElse(""),
+      s"${insertStyling("propertyDescr","Location: ")}${insertStyling("propertyValue",item.locAndCoords)}",
+      if (item.socketColors.nonEmpty) s"${insertStyling("propertyDescr", s"Sockets: ")}${insertStyling("propertyValue",insertSocketColoring(item.socketColors))}" else "",
+      properties.replaceAll("([0-9\\-\\.\\%\\+]+)",insertStyling("propertyValue","$1")),
+	    if (item.item.ilvl.toOption.get != 0) item.item.ilvl.toOption.map(value=> s"${insertStyling("propertyDescr","Item Level: ")}${insertStyling("propertyValue",value.toString)}").getOrElse("")
+      else "",
 	    requirements,
-	    s"""<span style="color: lightblue;">${item.item.enchantModsList.mkString("<br>")}</span>""",
-	    item.item.descrText.toOption.map(_.toString).getOrElse(""),
-	    item.item.implicitModList.mkString("<br><hr>"),
-      item.item.fracturedModsList.mkString("<br>"),
-	    item.item.explicitModList.mkString("<br>"),
-	    item.item.craftedModList.mkString("<br>"),
-      //if (item.item.incubatedItem.toOption.isDefined) s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}" else "",
-      if (item.item.incubatedItem.toOption.isDefined) {
-        //s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}"
-        addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total, "incubator", true)
-        addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total)
-
-      } else "",
-
-
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
+      if (!item.item.enchantModsList.isEmpty) s"""<span class='enchantMod'>${item.item.enchantModsList.mkString("<br>")}</span>""" else "",
+      //item.item.implicitModList.mkString("<br>"),
+      item.item.implicitModList.map(affix => s"<div class='mod implicitMod'>$affix</div>").mkString("\n"),
+      item.item.fracturedModsList.map(affix => s"<div class='mod fracturedMod'>$affix</div>").mkString("\n"),
+      item.item.explicitModList.map(affix => s"<div class='mod explicitMod'>$affix</div>").mkString("\n"),
+      item.item.craftedModList.map(affix => s"<div class='mod craftedMod'>$affix</div>").mkString("\n"),
+      if (item.item.incubatedItem.toOption.isDefined) {
+        s"${insertStyling("propertyDescr","Incubating: ")}${insertStyling("propertyValue",item.item.incubatedItem.get.name)}<br>" +
+        addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total, "incubator", true)
+      } else "",
       item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
-      flavorText,
-      if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else "Not Identified",
-      if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) "Corrupted" else "",
-      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) "Mirrored" else "",
-      if (item.item.getInfluences.length > 0 ) s"<br><hr>Influence: ${item.item.getInfluences}" else ""
+      if (!flavorText.isEmpty) s"""<span class="flavorText">${flavorText}</span>""" else "",
+      if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else insertStyling("unidentified","Unidentified"),
+      if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("corrupted","Corrupted") else "",
+      if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("mirrored","Mirrored") else "",
+      if (item.item.veiled.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("veiled","veiled") else "",
+      if (item.item.getInfluences.length > 0 ) s"Influence: ${item.item.getInfluences}" else "",
+      s"""<span class="descrText">${item.item.descrText.toOption.getOrElse("")}</span>"""
     ).filter(_.nonEmpty)
     val h = s"""
-        <div style="padding:5px">
         <img src="${item.item.getIconUrl}"></img><br>
         $titleName
-        ${sections.mkString("<hr>")}
+        $separator
+        ${sections.mkString(separator)}
         <span class="authors-note">Shift+Clicking refreshes (char/tab) item is in.</span>
-        </div>
+
         """
     el.attr("class", s"item-detail frame-type-$frameTypeName")
+    if (Settings.isSet(Settings.TOOLTIP_TEXT_ALIGN)) el.addClass("user-settings-item-details") else el.removeClass("user-settings-item-details")
     el.html(h)
     el.show()
   }

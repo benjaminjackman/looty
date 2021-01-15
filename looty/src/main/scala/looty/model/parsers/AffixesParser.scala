@@ -131,6 +131,7 @@ object AffixesParser {
   }
 
 
+  def chanceTo(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* chance to $name$$")(f) }
   def increased(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
   def reduced(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* reduced $name$$")(f) }
   def plusTo(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* to $name$$")(f) }
@@ -176,6 +177,8 @@ object AffixesParser {
     simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
   }
 
+  chanceTo("Block Spell Damage")(_.chanceTo.blockSpellDamage += _)
+  chanceTo("Dodge Spell Hits")(_.chanceTo.dodgeSpellHits += _)
   //On belts
   increased("Global Physical Damage")(_.increased.damage.physical += _)
   increased("Attack Speed")(_.increased.attackSpeed += _)
@@ -209,16 +212,18 @@ object AffixesParser {
   increased("Damage with Bleeding")(_.increased.bleedingDamage += _)
   increased("Burning Damage")(_.increased.burningDamage += _)
   increased("Elemental Damage with Attack Skills")(_.increased.elementalAttackDamage += _)
-
-  increased("Armour")(_.increased.armour += _)
-  increased("Evasion Rating")(_.increased.evasion += _)
-  increased("Energy Shield")(_.increased.energyShield += _)
-  increased("maximum Energy Shield")(_.increased.maximumEnergyShield += _)
+  //global "x% increased armour" appears only on talisman, amulet, belt, jewel
+  increased("Armour")( (i, a) => {val itemType = i.item.typeLine; if (itemType.indexOf("Talisman") + itemType.indexOf("Amulet") + itemType.indexOf("Belt") + itemType.indexOf("Jewel") > 0) i.increased.globalArmour += a })
+  //global "x% increased evasion rating" appears only on talisman, amulet, belt, jewel
+  increased("Evasion Rating")( (i, a) => { val itemType = i.item.typeLine; if (itemType.indexOf("Talisman") + itemType.indexOf("Amulet") + itemType.indexOf("Belt") + itemType.indexOf("Jewel") > 0) i.increased.globalEvasionRating += a})
+  increased("Energy Shield")(_.increased.localEnergyShield += _)
+  increased("maximum Energy Shield")(_.increased.maximumEnergyShield += _) //from jewelry
   increased("maximum Life")(_.increased.maximumLife += _)
-
-  increased("Armour and Evasion") { (i, a) => i.increased.armour += a; i.increased.evasion += a}
-  increased("Armour and Energy Shield") { (i, a) => i.increased.armour += a; i.increased.energyShield += a}
-  increased("Evasion and Energy Shield") { (i, a) => i.increased.evasion += a; i.increased.energyShield += a}
+  increased("Armour") { (i, a) => i.increased.localArmour += a}
+  increased("Evasion Rating") { (i, a) => i.increased.localEvasionRating += a}
+  increased("Armour and Evasion") { (i, a) => i.increased.localArmour += a; i.increased.localEvasionRating += a}
+  increased("Evasion and Energy Shield") { (i, a) => i.increased.localEvasionRating += a; i.increased.localEnergyShield += a}
+  increased("Armour and Energy Shield") { (i, a) => i.increased.localArmour += a; i.increased.localEnergyShield += a}
 
   plusTo("Accuracy Rating")(_.plusTo.accuracyRating += _)
   plusTo("Armour")(_.plusTo.armour += _)

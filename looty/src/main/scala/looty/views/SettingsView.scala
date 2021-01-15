@@ -2,6 +2,7 @@ package looty
 package views
 
 import looty.poeapi.PoeCacher
+import looty.util.Settings
 import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 
@@ -14,17 +15,26 @@ import org.scalajs.jquery.{JQuery, JQueryStatic}
 //////////////////////////////////////////////////////////////
 
 class SettingsView(implicit val pc: PoeCacher) extends View {
+  def insertLabel(fieldId:String, labeltext:String): String = {
+    s"""<label for='$fieldId'>$labeltext</label>"""
+  }
+
   val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+
   override def start(ele: JQuery): Unit = {
     var el = ele.append("<div id='settings'></div>")
     el = jq("#settings")
-
+    //el.append()
+    //Account name override
+    var option = jq("<div class='settingsOption'>")
+    el.append(option)
     locally{
-      val txt = jq("<input></input>")
+      val txt = jq("<input id='account-name-override'></input>")
       val btn = jq("<button>Save</button>")
-      el.append("<span>Override Account Name (try manually entering your account name here if you have issues):</span> ")
+      //el.append("<label for='account-name-override'>Override Account Name (try manually entering your account name here if you have issues):</label> ")
+      option.append(insertLabel("account-name-override","Override Account Name (try manually entering your account name here if you have issues)"))
       pc.getAccountNameOverride().foreach(n=>txt.value(n))
-      el.append(txt).append(btn)
+      option.append(txt).append(btn)
       btn.on("click", () => {
         val n = txt.value().toString
         if (n.nonEmpty) {
@@ -36,14 +46,16 @@ class SettingsView(implicit val pc: PoeCacher) extends View {
         }
       })
     }
-    el.append(jq("<br/>"))
 
+    val option2 = jq("<div class='settingsOption'>")
+    //Realm Name override
     locally{
-      val txt = jq("<input></input>")
+      val txt = jq("<input id='realm-override'></input>")
       val btn = jq("<button>Save</button>")
-      el.append("<span>Override Realm Name (try manually entering your realm name here, for ps4 it's sony):</span> ")
+      option2.append(insertLabel("realm-override","Override Realm Name (try manually entering your realm name here, for ps4 it's sony"))
       pc.getRealmOverride().foreach(n=>txt.value(n))
-      el.append(txt).append(btn)
+      option2.append(txt).append(btn)
+      option2.append("</div>")
       btn.on("click", () => {
         val n = txt.value().toString
         if (n.nonEmpty) {
@@ -55,7 +67,11 @@ class SettingsView(implicit val pc: PoeCacher) extends View {
         }
       })
     }
-
+    el.append(option2)
+    //for showing item detail tooltip only when pressed ctrl key
+    Settings.insertHtmlElement(Settings.SHOW_TOOLTIP_ON_KEY_PRESS,Settings.SHOW_TOOLTIP_ON_KEY_PRESS_DESCR, el, "settingsOption")
+    //display ggg like tooltip instead of standard
+    Settings.insertHtmlElement(Settings.TOOLTIP_TEXT_ALIGN,Settings.TOOLTIP_TEXT_ALIGN_DESCR, el, "settingsOption")
 
   }
   override def stop(): Unit = {}

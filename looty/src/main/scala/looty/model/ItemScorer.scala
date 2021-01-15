@@ -47,12 +47,12 @@ object ItemScorer {
     fscore1("60+ max Life")(_.plusTo.lifeAndMana.life >= 60)
     fscore1("60+ max Mana")(_.plusTo.lifeAndMana.mana >= 40)
 
-    fscore1("60%+ armour")(_.increased.armour >= 60)
-    fscore1("60%+ evasion")(_.increased.evasion >= 60)
-    fscore1("60%+ energyShield")(_.increased.energyShield >= 60)
+    fscore1("60%+ armour")(_.increased.globalArmour >= 60)
+    fscore1("60%+ evasion")(_.increased.localEvasionRating >= 60)
+    fscore1("60%+ energyShield")(_.increased.localEnergyShield >= 60)
 
     fscore1("200+ energy shield")(_.properties.energyShield >= 200)
-    fscore1("1000+ armour + evasion")(i => i.properties.evasionRating + i.properties.armour >= 1000)
+    fscore1("1000+ armour + evasion")(i => i.properties.evasion + i.properties.armour >= 1000)
 
     fscore1("200+ armour belt")(_.slots.isBelt, _.plusTo.armour >= 200)
 

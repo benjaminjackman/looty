@@ -69,7 +69,7 @@ object PropertyParsers {
   }
   named("Armour")((i, p) => i.properties.armour = p.firstValue.toDouble)
   named("Energy Shield")((i, p) => i.properties.energyShield = p.firstValue.toDouble)
-  named("Evasion Rating")((i, p) => i.properties.evasionRating = p.firstValue.toDouble)
+  named("Evasion Rating")((i, p) => i.properties.evasion = p.firstValue.toDouble)
   named("Physical Damage")((i, p) => i.properties.damages.physical set parseDamage(p.firstValue))
   named("Chaos Damage")((i, p) => i.properties.damages.chaos set parseDamage(p.firstValue))
   named("Elemental Damage") { (i, p) =>
@@ -102,4 +102,49 @@ object PropertyParsers {
 
   val all = _all.toList
 }
-
+//for reference
+/*
+"hybrid":
+{
+  "isVaalGem": true,
+  "baseTypeName": "Cyclone",
+  "properties": [
+    {
+      "name": "Souls Per Use",
+      "values": [
+      ["35", 0]
+      ],
+      "displayMode": 0
+    },
+    {
+      "name": "Can Store %0 Use",
+      "values": [
+      ["1", 0]
+      ],
+      "displayMode": 3
+    },
+    {
+      "name": "Soul Gain Prevention",
+      "values": [
+      ["7 sec", 0]
+      ],
+      "displayMode": 0
+    },
+    {
+      "name": "Attack Speed",
+      "values": [
+      ["400% of base", 0]
+      ],
+      "displayMode": 0
+    },
+    {
+      "name": "Effectiveness of Added Damage",
+      "values": [
+      ["55%", 0]
+      ],
+      "displayMode": 0
+    }
+  ],
+  "explicitMods": ["Deals 55.4% of Base Damage", "Base duration is 5.00 seconds", "13 to 20 Added Attack Physical Damage", "Modifiers to Skill Effect Duration also apply to this Skill's Soul Gain Prevention", "8% increased Area of Effect per 1 additional Melee Strike Range", "Can't be Evaded"],
+  "secDescrText": "Spin and attack in place, damaging nearby enemies and pulling others towards you. While using this skill, you cannot be stunned or knocked back. Cannot be supported by Ruthless."
+}*/

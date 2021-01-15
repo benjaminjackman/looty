@@ -46,8 +46,8 @@ object HighScorer {
     fscore1("575+ energy shield")(_.slots.isChest, _.properties.energyShield >= 575)
     //350+ Total Energy Shield AND 70+ Life (if energy shield base or energy shield hybrid)
     fscore1("350+ ES, 70+ max life")(_.slots.isChest, _.properties.energyShield >= 350, _.plusTo.lifeAndManaWithStrInt.life >= 70)
-    fscore1("40+ STR armour base")(_.slots.isChest, _.properties.armour > 0, _.properties.evasionRating == 0, _.properties.energyShield == 0, _.plusTo.attribute.strength >= 40)
-    fscore1("40+ INT ES base")(_.slots.isChest, _.properties.armour == 0, _.properties.evasionRating == 0, _.properties.energyShield > 0, _.plusTo.attribute.intelligence >= 40)
+    fscore1("40+ STR armour base")(_.slots.isChest, _.properties.armour > 0, _.properties.evasion == 0, _.properties.energyShield == 0, _.plusTo.attribute.strength >= 40)
+    fscore1("40+ INT ES base")(_.slots.isChest, _.properties.armour == 0, _.properties.evasion == 0, _.properties.energyShield > 0, _.plusTo.attribute.intelligence >= 40)
     fscore1("80+ total res")(_.slots.isChest, _.plusTo.totalResistance >= 80)
 
     //Helmet
@@ -55,7 +55,7 @@ object HighScorer {
     fscore1("300+ energy shield")(_.slots.isHelmet, _.properties.energyShield >= 300)
     fscore1("200+ ES, 60+ max life")(_.slots.isHelmet, _.properties.energyShield >= 200, _.plusTo.lifeAndManaWithStrInt.life >= 65)
     //40+ Intelligence on Armour or Evasion base
-    fscore1("40+ INT armour or evasion base")(i => i.slots.isHelmet && (i.properties.armour > 0 || i.properties.evasionRating > 0) && i.properties.energyShield == 0 && i.plusTo.attribute.intelligence >= 40)
+    fscore1("40+ INT armour or evasion base")(i => i.slots.isHelmet && (i.properties.armour > 0 || i.properties.evasion > 0) && i.properties.energyShield == 0 && i.plusTo.attribute.intelligence >= 40)
     //300+ Accuracy
     fscore1("300+ accuracy total")(_.slots.isHelmet, _.plusTo.accuracyRatingWithDex >= 300)
     //80+ total resistances
@@ -95,7 +95,7 @@ object HighScorer {
 
     //Shield
     //80+ Life (if armor or evasion base)
-    fscore1("80+ life armour or evasion base")(i => i.slots.isShield && (i.properties.armour > 0 || i.properties.evasionRating > 0) && i.properties.energyShield == 0 && i.plusTo.lifeAndManaWithStrInt.life >= 80)
+    fscore1("80+ life armour or evasion base")(i => i.slots.isShield && (i.properties.armour > 0 || i.properties.evasion > 0) && i.properties.energyShield == 0 && i.plusTo.lifeAndManaWithStrInt.life >= 80)
     //350+ Total Energy Shield
     fscore1("350+ energy shield")(_.slots.isShield, _.properties.energyShield >= 350)
     //280+ Total Energy Shield AND 80+ Life (if energy shield base or energy shield hybrid)
@@ -322,7 +322,7 @@ object HighScorer {
     fscore1("30+% Critical Strike Chance")(_.slots.isAmulet, _.increased.criticalStrikeChance >= 30)
     //30+% Total Elemental Spell Damage
     //15+% Energy Shield
-    fscore1("15+% Energy Shield")(_.slots.isAmulet, _.increased.energyShield >= 15)
+    fscore1("15+% Energy Shield")(_.slots.isAmulet, _.increased.localEnergyShield >= 15)
 
 /*    //Quiver
     if (_.slots.isQuiver) {
