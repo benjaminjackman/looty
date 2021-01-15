@@ -1,0 +1,50 @@
+::-webkit-scrollbar {
+  width: 16px;
+  border: 3px solid #6b6b6b;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: @scrollbar-thumb-background-color;
+  background-clip: padding-box;
+  border: @scrollbar-thumb-border;
+}
+
+::-webkit-scrollbar-track {
+  background-color: @scrollbar-track-background-color;
+
+}
+/* Buttons */
+::-webkit-scrollbar-button:single-button {
+  background-color: @scrollbar-button-background-color;
+  display: block;
+  border-style: solid;
+  height: 13px;
+  width: 16px;
+}
+/* Up */
+::-webkit-scrollbar-button:single-button:vertical:decrement {
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent @scrollbar-button-decrement-border-color transparent;
+}
+
+::-webkit-scrollbar-button:single-button:vertical:decrement:hover {
+  border-color: transparent transparent @scrollbar-button-decrement-hover-border-color transparent;
+}
+/* Down */
+::-webkit-scrollbar-button:single-button:vertical:increment {
+  border-width: 8px 8px 0 8px;
+  border-color: @scrollbar-button-increment-border-color transparent transparent transparent;
+}
+
+::-webkit-scrollbar-button:vertical:single-button:increment:hover {
+  border-color: @scrollbar-button-increment-hover-border-color transparent transparent transparent;
+}
+@scrollbar-track-background-color: var(--scrollbar-track-background-color, default);
+/*@scrollbar-track-border: var(--scrollbar-track-border, default);*/
+@scrollbar-thumb-background-color: var(--scrollbar-thumb-background-color, default);
+@scrollbar-thumb-border: var(--scrollbar-thumb-border, default);
+@scrollbar-button-background-color: var(--scrollbar-button-background-color, default);
+@scrollbar-button-increment-border-color: var(--scrollbar-button-increment-border-color, default);
+@scrollbar-button-increment-hover-border-color: var(--scrollbar-button-increment-hover-border-color, default);
+@scrollbar-button-decrement-border-color: var(--scrollbar-button-decrement-border-color, default);
+@scrollbar-button-decrement-hover-border-color: var(--scrollbar-button-decrement-hover-border-color, default);

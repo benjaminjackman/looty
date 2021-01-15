@@ -1,0 +1,148 @@
+@import "material/buttons";
+@import "material/colors";
+@import "material/progressbars";
+
+
+[data-theme="dark"] {
+--font-size: 14px;
+--font-color: #e1e1ff;
+--background: #121212;
+--menu-font-size: 1.2em;
+/*Subpages*/
+  --sub-pages-font-color: #cecece;
+  --sub-pages-background-color: #282828;
+/*default button color*/
+  --default-button-color: #B1B1B3;
+  --default-button-background-color: #0C0C0D;
+  --default-button-hover-background-color: #274065;
+/*Gem XP table*/
+  --table-row-even-background: #171616;
+  --table-row-odd-background: #292929;
+  --table-body-border: 1px solid black;
+  --table-row-hover-indicator: #424242;
+/*Wealth table*/
+  --wealth-table-header-background: #316abf;
+  --wealth-table-body-border: 1px solid @black;
+  --wealth-table-body-font-color:#a2a2a2;
+  --wealth-table-input-background:  #0a0a0a;
+  --wealth-table-input-box-shadow: inset 1px 1px 2px 0px #313131;
+  //--wealth-table-input-font-color: #23d6ff; //a bit lighter
+  --wealth-table-input-font-color: #007dad; //a bit darker
+  --wealth-table-input-border-bottom: 1px solid #313131;
+  --wealth-table-footer-background: #0c0c0c;
+  --wealth-table-footer-font-color: #d2d2d2;
+/*Alerter*/
+  --alerter-info-font-color: @light-blue-600;
+  --alerter-info-background-color: @black;
+  --alerter-info-link-font-color: @white;
+  --alerter-warning-font-color: @yellow-600;
+  --alerter-warning-background-color: @black;
+  --alerter-warning-link-font-color: @white;
+  --alerter-error-font-color: @red;
+  --alerter-error-background-color: @black;
+  --alerter-error-link-font-color: @white;
+/*Refresh/Tabs*/
+  --refresh-tabs-buttons-for-show-hide-reload-refresh-chars: black;
+/*Column Select*/
+  /*menu buttons*/
+    --pane-button-font-color: @black;
+    --pane-button-text-shadow: 2px 2px 3px #000000;
+    --pane-button-box-shadow: none;
+  /*clear filters*/
+    --pane-button-clear-filters-font-color: #bdbdbd;
+  /*refresh/tabs*/
+    --pane-button-refresh-tabs-font-color: #b3e5fca6;
+  /*upgrade*/
+    --pane-button-upgrades-font-color: #ffeb3bb5;
+  /*select columns*/
+    --pane-button-select-columns-font-color: #9bd271ad;
+  /*export csv*/
+    --pane-button-export-csv-font-color: #bdbdbd;
+  /*pane buttons*/
+    --pane-button-clear-filters-background-color: none;
+    --pane-button-refresh-tabs-background-color:none;
+    --pane-button-upgrades-background-color: none;
+    --pane-button-select-columns-background-color: none;
+    --pane-button-export-csv-background-color: none;
+  /*save/load view*/
+    --save-views-choice-background-color: #efefef;
+    --save-views-label-font-color: #efefef;
+    --save-views-choice-hover-background-color: #9bbeff !important;
+    --column-controls-background: #191919;
+    --column-controls-mod-group-name-font-color: #9f9f9f;
+    --column-controls-mod-group-name-font-size: 1.1em;
+    --column-controls-mod-enabled-font-color: #CEA964;
+    --column-controls-mod-enabled-background-color: #563606;
+    --column-controls-mod-enabled-border: 1px solid #8D6D30;
+    --column-controls-mod-disabled-font-color: #727272;
+    --column-controls-mod-disabled-background-color: #1f1f1f;
+    --column-controls-mod-disabled-border: 1px solid #292929;
+/*Grid*/
+  --grid-cell-font-size: 13px;
+  --grid-row-odd-background-color: #1d1d1d; /*#252427;*/
+  --grid-row-even-background-color: #313133; /*#252427;*/
+  --grid-row-border-top: 1px solid @black;
+  --grid-cell-color: @grey-500;
+  --grid-cell-border-right: 1px solid #00000078;
+  --grid-cell-border-bottom: 1px solid @transparent;
+  --grid-cell-border-bottom-color: @transparent;
+  /*row hover indicator*/
+    --grid-row-indicator-background-color: #274065;
+  /*Header*/
+    --grid-header-canvas-background: #101010; /*#0e0e0e;*/
+    /*--grid-header-canvas-background: #252525 url(/images/header-bg-glass-dark.png) 50% 50% repeat-x;*/
+    --grid-header-canvas-border-top: 1px solid black;
+    --grid-header-background-color: #403e3a;
+    --grid-header-padding: 7px 0 !important;
+    --grid-header-title-hover-background-color: #0e4e77;
+    --grid-header-title-color: #c3c3c3;
+    //--grid-header-title-font-size: 0.8em; //that was first idea to have value in ems but column widts are hard to control when title text size is not precize - and em give fraction numbers
+    --grid-header-title-font-size: 12px;
+    --grid-header-title-font-family: Arial, Verdana, Helvetica, sans-serif;
+    --grid-header-title-text-align: center;
+    /* header titles names will take all available space to display their name with "none"
+    it overrides grid default ("ellipsis") option so !important is needed*/
+    /*--grid-header-title-overflow: none !important;*/
+    --grid-header-title-overflow: ellipsis;
+    --grid-header-margin: 0px 0 0px;
+    --grid-header-border-color: @black;
+  /*Filter header row & filter*/
+    /* filter text input*/
+    --grid-header-filter-font-color: #008bce;
+    /*--grid-header-filter-font-size: 13px;*/
+    --grid-header-filter-font-size: 0.9em;
+    --grid-header-filter-background: #101010; /*#999; *//* #101010*/
+    --grid-header-filter-border: 1px solid black;
+    --grid-header-filter-box-shadow: -1px 18px 16px 0px #545454, 4px 3px 0px 0px #000000;
+    /*--grid-header-filter-box-shadow: 2px 14px 16px 0px rgba(84, 84, 84, 1), 4px 3px 0px 0px rgba(0, 0, 0, 1);*/
+    --grid-header-filter-hover-border: 1px solid cornflowerblue;
+    --grid-header-filter-hover-background:none;
+    --grid-header-filter-focus-font-color:#008bce;
+    --grid-header-filter-focus-background-color: #292929;
+    --grid-header-behind-filter-background-color: @transparent;
+/*scrollbar*/
+  --scrollbar-track-background-color: #1f1f1f;
+  /*--scrollbar-track-border: none;*/
+  --scrollbar-thumb-background-color: #6d6d6d;
+  --scrollbar-thumb-border: 0.05em solid #121212;;
+  --scrollbar-button-background-color: #282828;
+  --scrollbar-button-background-color: #282828;
+  --scrollbar-button-decrement-border-color: #808080;
+  --scrollbar-button-decrement-hover-border-color: #ffffff;
+  --scrollbar-button-increment-border-color:  #808080;
+  --scrollbar-button-increment-hover-border-color:  #ffffff;
+/*Item detail*/
+  --item-detail-separator: 1px solid #272727;
+  --item-detail-border-width: 0;
+  --item-detail-font-family: FontinSmallCaps, Verdana, Arial, Helvetica, sans-serif;
+  --item-detail-flavortext-font-style: italic;
+  --item-detail-flavortext-font-color: #af6025;
+  --item-detail-descrtext-font-color: #7d7d7d;
+  --item-detail-descrtext-font-style: italic;
+  --item-detail-property-descrtext-font-color: #7d7d7d;
+  --item-detail-property-valuetext-font-color: white;
+  --item-detail-text-align: center;
+
+}
+
+/* which color from colors.less look like*/

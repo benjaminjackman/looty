@@ -5,10 +5,9 @@ import japgolly.scalajs.react.{BackendScope, React, ReactComponentB}
 import looty.model.ComputedItem
 import looty.poeapi.PoeCacher
 import looty.poeapi.PoeTypes.Leagues.League
-
 import looty.views.widgets.SelectLeagueWidget
 import org.scalajs.dom
-import org.scalajs.jquery.JQuery
+import org.scalajs.jquery.{JQuery, JQueryStatic}
 
 import scala.concurrent.Future
 
@@ -84,11 +83,14 @@ object MapsView {
 
 
 class MapsView(implicit val pc: PoeCacher) extends View {
-  override def start(jq: JQuery) {
-    jq.empty()
-    val el = jq.get(0).asInstanceOf[dom.Element]
+  val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
+  override def start(ele: JQuery) {
+    ele.empty()
+    var page = ele.append("<div id='maps'></div>")
+    page = jq("#maps")
+    val reactdom = page.get(0).asInstanceOf[dom.Element]
 
-    React.render(MapsView.TopComp(pc), el)
+    React.render(MapsView.TopComp(pc), reactdom)
   }
   override def stop() {
 

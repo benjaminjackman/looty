@@ -58,7 +58,6 @@ class RefreshPane(league: League,
 
   def addCharBtns(chars : Seq[CharacterInfo]) {
     buttons = buttons.filterKeys(!_.isCharInv)
-    elChars.empty()
     chars.sortBy(_.name.toUpperCase).foreach { char =>
       if (char.league =?= league.rpcName) {
         val conId: LootContainerId = CharInvId(char.name)
@@ -123,7 +122,7 @@ class RefreshPane(league: League,
 
 
   def start(): (JQuery, Future[Unit]) = {
-    val el = jq("<div class='refresh-pane pane'></div>")
+    val el = jq("<div id='refresh-pane'></div>")
 
     val showAllBtn = jq(s"""<a class="${Container.visCls} show-all-btn" href="javascript:void(0)" title="Will show all inventories and stash tabs">Show All</a>""")
     showAllBtn.click { () =>
