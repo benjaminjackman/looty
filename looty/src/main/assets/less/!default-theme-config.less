@@ -1,0 +1,145 @@
+@import "material/buttons";
+@import "material/colors";
+@import "material/progressbars";
+
+/* name has to begin with ! so it will load first before other theme - otherwise dark theme doesnt work :/ */
+
+:root {  //it is equal to data-theme:default
+  --font-size: 14px;
+  --font-color: #424242;
+  --background: @brown-600 url("/images/brown-600-45-degree-fabric-light.png");
+  --menu-font-size: 1em;
+  /*Subpages*/
+    --sub-pages-font-color: @black;
+    --sub-pages-background-color: #fcfeff;
+  /*Gem XP table*/
+    --table-row-even-background: #f3f3f3;
+    --table-row-odd-background: #e5e5e5;
+    --table-body-border: 1px solid #d9dadb;
+    --table-row-hover-indicator: #d1dce3;
+/*Wealth table*/
+  --wealth-table-header-background: steelblue;
+  --wealth-table-body-border: 1px solid #ccc;
+  --wealth-table-body-font-color: @black;
+
+  --wealth-table-input-background: linear-gradient(33deg, #fffcef, #f6f2ee);
+  --wealth-table-input-box-shadow: inset 1px 1px 2px 0px #c8c8c8;
+  --wealth-table-input-font-color: inherit;
+  --wealth-table-input-border-bottom: 1px solid #ddecf4;
+  --wealth-table-input-font-color-focus: steelblue;
+
+  --wealth-table-footer-background: inherit;
+  --wealth-table-footer-font-color: #1e304c;
+/*default button color*/
+    --default-button-color: @black;
+    --default-button-background-color: #f4f4f4;
+    --default-button-hover-background-color:#c2c2c2;
+  /*Alerter*/
+    --alerter-info-font-color: @black;
+    --alerter-info-background-color: @green-A700;
+    --alerter-info-link-font-color: @white;
+    --alerter-warning-font-color: @black;
+    --alerter-warning-background-color: @yellow-600;
+    --alerter-warning-link-font-color: @black;
+    --alerter-error-font-color: @white;
+    --alerter-error-background-color: @red;
+    --alerter-error-link-font-color: @black;
+  /*Refresh/Tabs*/
+    --refresh-tabs-buttons-for-show-hide-reload-refresh-chars: black;
+  /*Column Select*/
+    /*menu buttons*/
+      --pane-button-font-color: @black;
+      --pane-button-text-shadow: none;
+      --pane-button-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+      /*clear filters*/
+      --pane-button-clear-filters-background-color: var(--default-button-background-color);
+      --pane-button-clear-filters-font-color: @black;
+      /*refresh/tabs*/
+      --pane-button-refresh-tabs-background-color: @light-blue-100;
+      --pane-button-refresh-tabs-font-color: @black;
+      /*upgrade*/
+      --pane-button-upgrades-background-color:@yellow-500;
+      --pane-button-upgrades-font-color: @black;
+      /*select columns*/
+      --pane-button-select-columns-background-color: @light-green-100;
+      --pane-button-select-columns-font-color: @black;
+      /*export csv*/
+      --pane-button-export-csv-background-color: var(--default-button-background-color);
+      --pane-button-export-csv-font-color: @black;
+
+    /*save/load view*/
+    --save-views-choice-background-color: white;
+    --save-views-choice-hover-background-color: white;
+    --save-views-label-font-color: white;
+    --column-controls-background: @light-green-100 url("/images/light-green-100-linen.png");
+    --column-controls-mod-group-name-font-color: @black;
+    --column-controls-mod-group-name-font-size: 1.1em;
+    --column-controls-mod-enabled-font-color: @black;
+    --column-controls-mod-enabled-background-color: @green-300;
+    --column-controls-mod-enabled-border: none;
+    --column-controls-mod-disabled-font-color: @black;
+    --column-controls-mod-disabled-background-color: @red-300;
+    --column-controls-mod-disabled-border: none;
+/*Grid*/
+  --grid-cell-font-size: 13px;
+  --grid-row-odd-background-color: @brown-300;
+  --grid-row-even-background-color: @brown-200;
+  /*--grid-row-border: 1px solid @black;*/
+  --grid-cell-color: @black;
+  --grid-cell-border-right: 1px dotted silver;
+  --grid-cell-border-bottom: 1px solid silver;
+  --grid-cell-border-bottom-color: silver;
+    /*row hover indicator*/
+    --grid-row-indicator-background-color: #8e5642;
+  /*Header*/
+    --grid-header-canvas-background: #e6e6e6 url(/jslib/slickgrid/css/smoothness/images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+    --grid-header-canvas-border-top: 1px solid #d3d3d3;
+    --grid-header-background-color: @yellow-800;
+    --grid-header-padding: 0;
+    --grid-header-title-hover-background-color: #c2c2c2;
+    --grid-header-title-color: @black; /*QUESTION*/
+    --grid-header-title-font-size: 9px;
+    --grid-header-title-font-family: Arial, Verdana, Helvetica, sans-serif;
+    --grid-header-title-text-align: left;
+    /* header titles names will take all available space to display their name with "none"
+    it overrides grid default ("ellipsis") option so !important is needed*/
+    /*--grid-header-title-overflow: none !important;*/
+    --grid-header-title-overflow: ellipsis;
+    --grid-header-margin: 5px 0;
+  /*Filter header row & filter*/
+    /* filter text input*/
+    --grid-header-filter-font-color: @black;
+    --grid-header-filter-font-size: 13px;
+    --grid-header-filter-background: #fff;
+    --grid-header-filter-border: 1px solid black;
+    /*--grid-header-filter-box-shadow: --grid-header-filter-box-shadow;*/
+    --grid-header-filter-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    --grid-header-filter-hover-border: none;
+    --grid-header-filter-hover-background: #c2c2c2;
+    --grid-header-filter-focus-font-color: @black;
+    --grid-header-filter-focus-background-color: @transparent;
+    --grid-header-behind-filter-background-color: none;
+/*scrollbar*/
+  --scrollbar-track-background-color: #f1f1f1;
+  /*--scrollbar-track-border: none;*/
+  --scrollbar-thumb-background-color: #A8A8A8;
+  --scrollbar-thumb-border: 0.05em solid #f1f1f1;
+  --scrollbar-button-background-color: #f1f1f1;
+  --scrollbar-button-decrement-border-color: #808080;
+  --scrollbar-button-decrement-hover-border-color: #ffffff;
+  --scrollbar-button-increment-border-color:  #808080;
+  --scrollbar-button-increment-hover-border-color:  #D2D2D2;
+/*Item detail*/
+  --item-detail-separator: 2px solid #C2BEBC;
+  --item-detail-border-width: 4px;
+  --item-detail-font-family: inherit;
+  --item-detail-flavortext-font-style: normal;
+  --item-detail-flavortext-font-color: inherit;
+  --item-detail-descrtext-font-color: inherit;
+  --item-detail-descrtext-font-style: inherit;
+  --item-detail-property-descrtext-font-color: inherit;
+  --item-detail-property-valuetext-font-color: inherit;
+  --item-detail-text-align: left;
+}
+
+/* which color from colors.less look like*/

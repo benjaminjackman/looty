@@ -1,5 +1,16 @@
 @import "material/buttons";
+@import "material/colors";
+@import "material/ggg-stylesheet";
 
+@font-face {
+  font-family: 'FontinSmallCaps';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap; /* or block, swap, fallback, optional */
+  src: local('FontinSmallCaps'),
+  url('../fonts/fontin-smallcaps.woff') format('woff');
+  unicode-range: U+000-5FF; /* Latin glyphs */
+}
 
 /* item tooltip */
 #item-details {
@@ -8,28 +19,19 @@
   position: fixed;
   z-index: 100;
   overflow: hidden;
+  font-family: @item-detail-font-family;
 }
 
 .item-detail {
-
-  .item-name {
-    font-size: 20px;
-    font-weight: bolder;
-  }
-
-   .authors-note {
-    display:block;
-    margin-top:0.3em;
-    color: #555;
-   }
-
+  text-align: @item-detail-text-align;
+  padding: 5px;
   float: left;
   max-width: 400px;
+  max-width: 550px;
   color: white;
-  border-width: 4px;
+  border-width: @item-detail-border-width;
   border-style: solid;
   border-color: white;
-/*//  border-radius: 10px;*/
   opacity: .9;
   background-color: black;
 
@@ -42,6 +44,62 @@
 //  Rare	#ffff77	255 255 119
 //  Unique	#af6025	175 96 37
 */
+  .separator {
+    height: 1px;
+    border-bottom: @item-detail-separator;
+    margin: 6px 0;
+  }
+  .item-name {
+    font-size: 20px;
+    font-weight: bolder;
+  }
+  .flavorText {
+    font-style: @item-detail-flavortext-font-style;
+    color: @item-detail-flavortext-font-color;
+  }
+  .descrText {
+    font-style: @item-detail-descrtext-font-style;
+    color: @item-detail-descrtext-font-color;
+  }
+  .propertyDescr {
+    color: @item-detail-property-descrtext-font-color;
+  }
+  .propertyValue {
+    color: @item-detail-property-valuetext-font-color;
+  }
+  .enchantMod, .craftedMod {
+    //color: lightblue;
+    color:#b4b4ff;
+
+    word-wrap: break-word;
+  }
+  .veiled {
+    text-transform: capitalize;
+    color: black;
+    font-size: 1.1em;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-shadow: 1px 1px 3px white;
+  }
+  .fracturedMod {
+    color: #a29162;
+  }
+  .unidentified, .corrupted {
+    color: #d20000;
+  }
+  .mirrored {
+    color: #8888ff;
+  }
+  .authors-note {
+    display:block;
+    margin-top:0.3em;
+    color: #555;
+  }
+
+  .R {color:red}
+  .G {color:#1bff00}
+  .B {color:dodgerblue}
+  .W {color:white}
 
   &.unknown {
     border-color: rgb(128, 128, 128);
@@ -94,4 +152,26 @@
     color: rgb(64, 192, 64);
   }
 
+  //header ggg styling
+  .r {
+    text-align: right;
+  }
+  .l {
+    text-align: left;
+  }
+  .synthetic {
+    background-image: url(/image/item/popup/synthetic-symbol.png?1605141671963);
+  }
+
 }
+
+@item-detail-separator: var(--item-detail-separator);
+@item-detail-border-width: var(--item-detail-border-width);
+@item-detail-font-family: var(--item-detail-font-family);
+@item-detail-flavortext-font-style: var(--item-detail-flavortext-font-style);
+@item-detail-flavortext-font-color: var(--item-detail-flavortext-font-color);
+@item-detail-descrtext-font-style: var(--item-detail-descrtext-font-style);
+@item-detail-descrtext-font-color: var(--item-detail-descrtext-font-color);
+@item-detail-property-descrtext-font-color: var(--item-detail-property-descrtext-font-color);
+@item-detail-property-valuetext-font-color: var(--item-detail-property-valuetext-font-color);
+@item-detail-text-align: var(--item-detail-text-align);

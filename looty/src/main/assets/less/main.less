@@ -1,20 +1,19 @@
 @import "material/buttons";
 @import "material/colors";
+@import "material/progressbars";
 
+//@font-face{font-family:FontinSmallCaps;font-weight:400;font-style:normal;src:local("☺"),url(../fonts/fontin-smallcaps.woff) format("woff")}
+//@font-face{font-family:FontinRegular;font-weight:400;font-style:normal;src:local("☺"),url(../fonts/fontin-regular.woff) format("woff")}
+//@font-face{font-family:FontinItalic;font-weight:400;font-style:normal;src:local("☺"),url(../fonts/fontin-italic.woff) format("woff")}
+//@font-face{font-family:FontinBold;font-weight:400;font-style:normal;src:local("☺"),url(../fonts/fontin-bold.woff) format("woff")}
 
 body {
-  /* css global reset*/
-  margin:0;
-  padding:0;
-  /* ----*/
-
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
   /*font-family: Helvetica, Arial, sans-serif;*/
-  background: @brown-600;
-  background-image: var(--bg-image);
+  background: var(--background);
   /*background-image: url("/images/brown-600-45-degree-fabric-light.png");*/
   /*background-image: url("/images/main-bg-heist.jpg");*/
-  font-size: 16px;
+  font-size: @font-size;
 
 }
 
@@ -27,7 +26,6 @@ body {
     text-decoration: none;
   }
   .views-menu {
-
     margin: 0px;
     display: flex;
     align-items: baseline;
@@ -35,8 +33,10 @@ body {
 
     width: 100%;
     .views {
+      font-size: @menu-font-size;
       width: max-content;
       .home, .xp, .wealth, .poebuilder, .maps, .settings{
+      /*TODO get rid of classes for this buttons, we doest not style them differently anyway so classes are not needed*/
       /*whitespace between menu <a> tags is messing proximity of buttons, dirty fix*/
         margin-right: -2px;
       }
@@ -65,16 +65,21 @@ body {
   height: 100%;
   padding: 5px;
   margin: 1em 0;
+  #welcome, #xp, #wealth, #maps, #settings {
+    color: @sub-pages-font-color;
+    background-color: @sub-pages-background-color;
+  }
 
 /* ==== Home Page ==== */
   #home {
-   height: 100%;
+    height: 100%;
     padding: 5px;
-    margin: 1em 0;
+    margin: 0;
 
+    /* version history log */
     textarea {
       display: inline-block;
-      background-color: #ffd87647;
+      background-color: #ababab;
       max-height: 850px;
       min-width: 658px;
       width: 600px;
@@ -84,16 +89,19 @@ body {
       margin-left: 2em;
      /* box-sizing: border-box; */
     }
-  }
+    textarea:focus {
+        outline: none;
+        border: 1px solid #656565;
+    }
 
+    /*TODO fix positioning, after including #welcome into #home block */
     #welcome {
       display: inline-block;
       max-width: 600px;
       min-height: 700px;
       height: auto;
       padding: 0 2em 0 2em;
-      margin-left: 2em;
-      background-color: #fcfeff;
+      color: @sub-pages-font-color;
       border: 1px solid black;
       margin-bottom: 1em;
       font-size: 16px;
@@ -109,126 +117,130 @@ body {
         text-shadow: 1px 1px 1px black;
       }
     }
-
+  }
 /* ==== XP Page ==== */
-    #xp {
-      background-color: #fcfeff;
-      padding: 0 2em 2em 2em;
-      border: 1px solid black;
-
-    /*progress bar*/
-    #gem-xp {
-      /*width:150px !important;*/
-      position: relative;
-      bottom: 9px;
-    }
-
-    /*remaining xp*/
-    .progress-value {
-      /*for number to stay on top of progressbar*/
-      display:block;
-      font-size: 0.8em;
-      margin-left: -2em;
-    }
-    .info {
-      padding: 0.5em 0;
-      line-height: 1.3em;
-
-      #start {
-        display: block;
-      }
-      #end {
-        display: block;
-      }
-      #elapsed {
-        display: block;
-      }
-      #total {
-      }
-    }
-    #btns {
-      button {
-      /* commented out were default browser styles*/
-        appearance: button;
-        /*-webkit-writing-mode: horizontal-tb !important;*/
-        text-rendering: auto;
-        /*color: -internal-light-dark(buttontext, rgb(170, 170, 170));*/
-        letter-spacing: normal;
-        word-spacing: normal;
-        text-transform: none;
-        text-indent: 0px;
-        text-shadow: none;
-        display: inline-block;
-        text-align: center;
-        align-items: flex-start;
-        cursor: default;
-        /*background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));*/
-        background-color: rgb(239, 239, 239);
-        box-sizing: border-box;
-        margin: 0em;
-        font: 400 13.3333px Arial;
-        padding: 1px 6px;
-        border-width: 1px;
-        border-radius:3px;
-        /*border-style: outset;*/
-        border-style: solid;
-        /*border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));*/
-        border-color: black;
-        /*border-image: initial;*/
-      }
-    }
-
+  #xp {
+    padding: 0 2em 2em 2em;
+    border: 1px solid black;
+    color: @sub-pages-font-color;
+    background-color: @sub-pages-background-color;
     #session-buttons {
       margin-top: 1em;
     }
 
-    .xp-progress, .current {
-    /*user checkpoint tables*/
+  #leaguesList {
+    .league {
+      margin: 5px 0;
+      .leagueName {
+        padding-right: 0.5em;
+        font-weight: bold;
+        display: block;
+        font-size: 1.2em;
+      }
+      button.charName {
+        &:hover {
+          cursor: pointer !important;
+        }
+        border: 1px solid #c7c7c7  !important;
+        padding: 5px !important;
+        margin: 2px !important;
+      }
+    }
+
+    button {
+    /* commented out were default browser styles*/
+      appearance: button;
+      /*-webkit-writing-mode: horizontal-tb !important;*/
+      text-rendering: auto;
+      /*color: -internal-light-dark(buttontext, rgb(170, 170, 170));*/
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-transform: none;
+      text-indent: 0px;
+      text-shadow: none;
+      display: inline-block;
+      text-align: center;
+      align-items: flex-start;
+      cursor: default;
+      /*background-color: -internal-light-dark(rgb(239, 239, 239), rgb(74, 74, 74));*/
+      background-color: rgb(239, 239, 239);
+      box-sizing: border-box;
+      margin: 0em;
+      font: 400 13.3333px Arial;
+      padding: 1px 6px;
+      border-width: 1px;
+      border-radius:3px;
+      /*border-style: outset;*/
+      border-style: solid;
+      /*border-color: -internal-light-dark(rgb(118, 118, 118), rgb(195, 195, 195));*/
+      border-color: black;
+      /*border-image: initial;*/
+    }
+  }
+  .info {
+    padding: 0.5em 0;
+    line-height: 1.3em;
+
+    #start {
+      display: block;
+    }
+    #end {
+      display: block;
+    }
+    #elapsed {
+      display: block;
+    }
+    #total {
+    }
+  }
+
+
+  .xp-progress, .current {
+  /*user checkpoint table*/
+    border-collapse: collapse;
+    text-align: center;
+    cursor: pointer;
+
+    tr, td, th {
       border-collapse: collapse;
       text-align: center;
-
-      tr, td, th {
-        border-collapse: collapse;
-        text-align: center;
-      }
-      thead {
-        tr {
+    }
+    thead {
+      tr {
+        background-color: #f9a825;
+        th {
           background-color: #f9a825;
-          th {
-            background-color: #f9a825;
-            border: 1px solid black;
-            padding: 5px 10px;
-          }
+          border: 1px solid black;
+          padding: 5px 10px;
+          color: @black;
+          //color: @table-row-font-color;
         }
       }
-      tbody {
-        tr {
-          border: 1px solid #d9dadb;
-          &:nth-child(even) {
-            background-color: #f3f3f3;
-          }
-          &:nth-child(odd) {
-            background-color: #e5e5e5;
-          }
-          &:hover {
-            background-color: #d1dce3;
-          }
-          td {
-            &:nth-child(4) {
-              height: 1.5em;
-              width:12%;
-            }
-            &:nth-child(1) {
-              text-align:left;
-              padding: 0 15px;
-            }
+    }
+    tbody {
+      tr {
+        border: @table-body-border;
+        &:nth-child(even) {
+          background-color: @table-row-even-background;
+        }
+        &:nth-child(odd) {
+          background-color: @table-row-odd-background;
+        }
+        &:hover {
+          background-color: @table-row-hover-indicator;
+        }
+        td {
+          height: 1.5em;
+          /*gem name*/
+          &:nth-child(1) {
+            text-align:left;
+            padding: 0 15px;
             span:before {
               content: '';
               padding-left:10px;
               display: inline-block;
-              margin-right: 5px;
+              margin-right: 7px;
               border-radius: 1em;
-              width: 0.2em;
               height: 0.7em;
             }
             /*TODO  test with real gem icons*/
@@ -245,44 +257,30 @@ body {
           }
         }
       }
-    }/* block end - .xp-progress, current  */
-
-     /* QUESTION check XpViewer, how to add css class to previous checkpoint*/
-    .past {
-      color: #c0c0c0 !important;
-      /*user past checkpoints*/
-      progress, progress[role], progress::-webkit-progress-bar, progress::-webkit-progress-value {
-        background: #dadada !important;
-        opacity: 0.8 !important;
-      }
-      thead {
-       background-color: #ffeac8 !important;
-      }
-      thead tr th {
-        border: 1px solid #cecece !important;
-      }
-      tr {
-        border: 1px solid #d9dadb !important;
-      }
-      tr td:nth-child(1):before {
-        background-color: #8ac0f37 !important;
-        /*hex string + "77" (to dim past table)-> set s"background-color" ${hex_string}77 !important;"*/
-      }
     }
+  }/* block end - .xp-progress, current  */
+
+   /*previous checkpoint*/
+  .oldCheckpoint {
+    opacity: 0.6;
   }
+}
 
 
 /* ==== Wealth Page ==== */
   #wealth {
-    background-color: #fcfeff;
     padding: 1em;
     border: 1px solid black;
-    width: fit-content;
+    color: @sub-pages-font-color;
+    background-color: @sub-pages-background-color;
+    /*width: fit-content;*/
     table {
       border-collapse: collapse;
-      border: 1px solid #38678f;
+      //border: 1px solid #38678f;
+      border:@table-body-border;
       margin-top: 1em;
       background: white;
+      color: @wealth-table-body-font-color;
       &::-moz-selection {
         background: steelblue;
         color: white;
@@ -292,7 +290,7 @@ body {
         color: white;
       }
       thead th {
-        background: steelblue;
+        background: @wealth-table-header-background;
         height: 2.5em;
         text-shadow: 0 1px 0 #38678f;
         color: white;
@@ -304,49 +302,68 @@ body {
       }
       tbody {
         tr {
-          border-bottom: 1px solid #cccccc;
+          //border-bottom: 1px solid #cccccc;
           &:last-child {
             border-bottom: 1px solid black;
           }
+          &:nth-child(even) {
+            background-color: @table-row-even-background;
+            //background-color: @wealth-table-row-even-background;
+          }
+          &:nth-child(odd) {
+            background-color: @table-row-odd-background;
+          }
+          &:hover {
+            background-color: @table-row-hover-indicator;
+          }
+
           td {
-            border-right: 1px solid #cccccc;
+            border: @wealth-table-body-border;
+            color: @wealth-table-body-font-color;
             padding: 0.5em;
             transition: all 0.2s;
-            text-align:center
+            text-align: center;
             &:first-child {
               text-align:left;
-            }
-            &:last-child {
-              border-right: 0px;
             }
             .selected {
               background: #d7e4ef;
             }
             input {
+
               text-align: center;
-              background: linear-gradient(33deg, #fffcef, #f6f2ee);
-              box-shadow: inset 1px 1px 2px 0px #c8c8c8;
+              background: @wealth-table-input-background;
+              box-shadow: @wealth-table-input-box-shadow;
+              color: @wealth-table-input-font-color;
               outline: none;
               border: 0;
               display: table-cell;
-              border-bottom: 1px solid #ddecf4;
+              border-bottom: @wealth-table-input-border-bottom;
             }
             input:focus {
               color: steelblue;
               background:#d2eaff;
+
             }
           }
         }
       }
       tfoot {
+
         font-weight:bolder;
+        background: @wealth-table-footer-background;
+        color: @wealth-table-footer-font-color;
+        td {
+          padding: 4px 10px;
+        }
       }
     } /* block end - table */
   } /* block end - #wealth */
 
 /* ==== Settings Page ==== */
   #settings {
-    background-color: #fcfeff;
+    color: @sub-pages-font-color;
+    background-color: @sub-pages-background-color;
     padding: 1em;
     border: 1px solid black;
     height: 120px
@@ -384,26 +401,19 @@ body {
 
 /*buttons*/
 .view-btn, .ctrl-btn, .pane-btn, .ls-btn, .col-btn, .col-div,
-.upgrade-btn, .char-btn, .tab-btn, .show-all-btn, .hide-all-btn,
-.reload-all-btn, .reload-visible-btn, .refresh-characters-btn {
+.upgrade-btn, .char-btn, .tab-btn {
   margin-right: 2px;
   .MaterialBtn;
 }
 
-/* ==== LootView Grid Page ==== */
-
-/* "upgrades" "Refresh/Tabs" "Select Columns" */
-
-.pane {
-	padding: 10px 5px 5px 10px;
-
-	.info {
-    /*! display: inline-block; */
-    font-size: 1.2em;
-    margin-top: 7px;
-    margin-bottom: 10px;
-  }
+.show-all-btn, .hide-all-btn, .reload-all-btn, .reload-visible-btn, .refresh-characters-btn {
+  margin-right: 2px;
+  .MaterialBtn;
+  //override for dark-theme, otherwise it makes them same color and render less visible
+  color: @refresh-tabs-buttons-for-show-hide-reload-refresh-chars;
 }
+
+/* ==== LootView Grid Page ==== */
 
 /* ---- League Pane ---- */
 /* ---- buttons "Clear Filters" "Upgrades" "Refresh/Tabs" "Select Columns" "Export Csv" ---- */
@@ -415,68 +425,107 @@ body {
   flex-direction: row;
   align-items: first baseline;
   width: 100%;
+
   #buttons {
     display: inline-block;
     margin-top: 12px;
+
     a {
+      color: @pane-button-font-color;
       text-decoration: none;
+      text-shadow: @pane-button-text-shadow;
+      box-shadow: @pane-button-box-shadow;
     }
+
     .clear-filters {
+      background-color: @pane-button-clear-filters-background-color;
+      color: @pane-button-clear-filters-font-color;
     }
+
     .upgrades {
-      background-color: @yellow-500;
+      background-color: @pane-button-upgrades-background-color;
+      color: @pane-button-upgrades-font-color
     }
+
     .refresh-tabs {
-      background-color: @light-blue-100;
+      background-color: @pane-button-refresh-tabs-background-color;
+      color: @pane-button-refresh-tabs-font-color;
     }
+
     .select-columns {
-      background-color: @light-green-100;
+      background-color: @pane-button-select-columns-background-color;
+      /*color: #9bd271ad;*/
+      color: @pane-button-select-columns-font-color;
+      /*#9bd271ad;*/
     }
+
     .export-csv {
+      background-color: @pane-button-export-csv-background-color;
+      color: @pane-button-export-csv-font-color;
     }
   }
 
-/* ==== View Load/Save ==== */
+  /* ==== View Load/Save ==== */
+
   .load-save {
-  /*background-color: @blue-100;*/
-  /*background-image: url("/images/blue-100-linen.png");*/
+    /*old values*/
+    /*background-color: @blue-100;*/
+    /*background-image: url("/images/blue-100-linen.png");*/
+
     a {
       text-decoration: none;
     }
-    .select2-container .select2-choice{
-      /*background-color: @blue-500;*/
+
+    .select2-container .select2-choice {
+      background-color: @save-views-choice-background-color;
+
+      &:hover {
+        background-color: @save-views-choice-hover-background-color;
+      }
     }
+
     .view-span {
-        color: white;
+      color: @save-views-label-font-color;
     }
+
     /* Load, Save, Save+Filters, Delete buttons*/
+
     .ls-btn {
       /* optional buttons color*/
       /*background-color: @blue-400;*/
     }
+
     .del {
       /* optional buttons color*/
       /*background-color: #f09478;*/
     }
+
     display: inline-block;
-    padding: 5px 0x 0 12px;
+    padding: 5px 0 0 12px;
     border-radius: 5px 5px 0 0;
   }
 
   .select2-container {
     margin-right: 2px;
     margin-bottom: 2px;
+
     .select2-choice {
       height: inherit;
       line-height: normal;
 
       border: none;
       border-radius: 0px;
+
       .select2-arrow {
         display: none;
       }
+
+      /*todo*/
       .MaterialBtn;
+      /*todo find better way to style that, how to make fallbacks?*/
+      /*background-color: white;*/
     }
+
     .select2-chosen {
       color: black;
       margin-right: 0px !important;
@@ -486,12 +535,30 @@ body {
 }
 
 
+/* "upgrades" "Refresh/Tabs" "Select Columns" */
+
+/*all pane general class*/
+.pane {
+  .info {
+    /*! display: inline-block; */
+    font-size: 1.2em;
+    margin-top: 7px;
+    margin-bottom: 10px;
+    padding: 5px;
+  }
+  margin-bottom: 5px;
+}
+
+.invisible {
+/*class used to hide pane windows*/
+  display:none;
+}
 /* ---- Upgrades Pane ---- */
 .pane-btn.upgrades {
 
 }
 
-.upgrades-pane {
+#upgrades-pane {
   background-color: @yellow-500;
   background-image: url("/images/yellow-500-linen.png");
   padding: 5px 5px 10px 10px;
@@ -520,9 +587,13 @@ body {
 }
 
 /* ---- Refresh Tabs Pane ---- */
-.refresh-pane {
+#refresh-pane {
   background-color: @light-blue-100;
   background-image: url("/images/light-blue-100-linen.png");
+
+  .chars, .tabs {
+    padding: 5px;
+  }
   .reload-all-btn {
     background-color: @red-600;
   }
@@ -579,8 +650,7 @@ body {
 
 /* ---- Columns Controls Pane ---- */
 .columns-controls {
-  background-color: @light-green-100;
-  background-image: url("/images/light-green-100-linen.png");
+  background: @column-controls-background;
   padding-bottom: 5px;
   padding-left: 5px;
   a {
@@ -592,6 +662,15 @@ body {
     padding-top: 5px;
   }
 
+  /*todo add this class to html, to be free of all btn changes*/
+  .col-toggle-btn {
+  /*button which toggle set of cols*/
+    /*all+ all- default*/
+    /*+ - group*/
+    color: #808080;
+    background: #252427;
+  }
+
   .group-div {
     /* container for .col-btn show, .col-btn hide */
     .col-btn-toggle {
@@ -601,12 +680,14 @@ body {
     }
     .group-name {
       color: black;
-      font-size: 1.1em;
+      font-size: 1em;
+      /*dark theme*/
+      font-size: @column-controls-mod-group-name-font-size;
+      color: @column-controls-mod-group-name-font-color;
       width: 174px;
       display: inline-block;
       text-align: right;
       padding-right: 11px;
-      font-size: 1.1em;
       font-weight: bold;
       padding-bottom: 7px;
     }
@@ -614,18 +695,21 @@ body {
     .col-div {
       cursor: hand;
       cursor: pointer;
+      display: inline-block;
     }
 
     /* mod enabled  */
     .col-div.on-col {
-      color: black;
-      background-color: @green-300;
+      color: @column-controls-mod-enabled-font-color;
+      background-color: @column-controls-mod-enabled-background-color;
+      border: @column-controls-mod-enabled-border;
       //text-decoration: underline;
     }
     /* mod disabled  */
     .col-div.off-col {
-      color: black;
-      background-color: @red-300;
+      color: @column-controls-mod-disabled-font-color;
+      background-color: @column-controls-mod-disabled-background-color;
+      border: @column-controls-mod-disabled-border;
     }
   }
 }
@@ -646,3 +730,57 @@ body {
     color:gold;
   }
 }
+
+@menu-font-size: var(--menu-font-size);
+@save-views-choice-background-color: var(--save-views-choice-background-color);
+@save-views-label-font-color: var(--save-views-label-font-color);
+@save-views-choice-hover-background-color: var(--save-views-choice-hover-background-color);
+@pane-button-font-color: var(--pane-button-font-color);
+@pane-button-text-shadow: var(--pane-button-text-shadow);
+@pane-button-box-shadow: var(--pane-button-box-shadow);
+@pane-button-clear-filters-font-color: var(--pane-button-clear-filters-font-color);
+@pane-button-refresh-tabs-font-color: var(--pane-button-refresh-tabs-font-color);
+@pane-button-upgrades-font-color: var(--pane-button-upgrades-font-color);
+@pane-button-select-columns-font-color: var(--pane-button-select-columns-font-color);
+@pane-button-export-csv-font-color: var(--pane-button-export-csv-font-color);
+
+@pane-button-clear-filters-background-color: var(--pane-button-clear-filters-background-color);
+@pane-button-refresh-tabs-background-color: var(--pane-button-refresh-tabs-background-color);
+@pane-button-upgrades-background-color: var(--pane-button-upgrades-background-color);
+@pane-button-select-columns-background-color: var(--pane-button-select-columns-background-color);
+@pane-button-export-csv-background-color: var(--pane-button-export-csv-background-color);
+
+@refresh-tabs-buttons-for-show-hide-reload-refresh-chars: var(--refresh-tabs-buttons-for-show-hide-reload-refresh-chars);
+@font-size: var(--font-size);
+@sub-pages-font-color: var(--sub-pages-font-color);
+@sub-pages-background-color: var(--sub-pages-background-color);
+@table-row-even-background: var(--table-row-even-background);
+@table-row-odd-background: var(--table-row-odd-background);
+@table-body-border: var(--table-body-border);
+@table-row-hover-indicator: var(--table-row-hover-indicator);
+
+@wealth-table-header-background: var(--wealth-table-header-background);
+//@wealth-table-header-font-color: var(--wealth-table-header-font-color);
+//@wealth-table-row-even-background: var(--wealth-table-row-even-background);
+@wealth-table-body-border:var(--wealth-table-body-border);
+@wealth-table-body-font-color: var(--wealth-table-body-font-color);
+
+@wealth-table-input-background: var(--wealth-table-input-background);
+@wealth-table-input-box-shadow: var(--wealth-table-input-box-shadow);
+@wealth-table-input-font-color: var(--wealth-table-input-font-color);
+@wealth-table-input-border-bottom: var(--wealth-table-input-border-bottom);
+@wealth-table-footer-background: var(--wealth-table-footer-background);
+@wealth-table-footer-font-color: var(--wealth-table-footer-font-color);
+
+@column-controls-background: var(--column-controls-background);
+@column-controls-mod-group-name-font-color: var(--column-controls-mod-group-name-font-color);
+@column-controls-mod-group-name-font-size: var(--column-controls-mod-group-name-font-size);
+/*@column-controls-mod-toggle-button*/
+
+@column-controls-mod-enabled-font-color: var(--column-controls-mod-enabled-font-color);
+@column-controls-mod-enabled-background-color: var(--column-controls-mod-enabled-background-color);
+@column-controls-mod-enabled-border: var(--column-controls-mod-enabled-border);
+
+@column-controls-mod-disabled-font-color: var(--column-controls-mod-disabled-font-color);
+@column-controls-mod-disabled-background-color: var(--column-controls-mod-disabled-background-color);
+@column-controls-mod-disabled-border: var(--column-controls-mod-disabled-border);

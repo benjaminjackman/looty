@@ -17,20 +17,24 @@
 }
 
 .MaterialBtn {
-  color: black;
+  color: @default-button-color;
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 10px;
   padding-right: 10px;
   margin-top: 5px;
   margin-bottom: 5px;
-  background: #f4f4f4;
+  background: @default-button-background-color;
   -webkit-transition: all 250ms;
   -moz-transition: all 250ms;
   transition: all 250ms;
   .BoxShadowHelper(2);
   &:hover {
-    background: #c2c2c2;
+    background: @default-button-hover-background-color;
   }
 
 }
+
+@default-button-color: var(--default-button-color);
+@default-button-background-color: var(--default-button-background-color);
+@default-button-hover-background-color: var(--default-button-hover-background-color);

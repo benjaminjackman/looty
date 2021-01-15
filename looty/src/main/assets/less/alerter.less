@@ -20,18 +20,18 @@
   }
 
   .info {
-    background: @alerter-info-bg;
-    color: @alerter-info-text;
+    background-color: @alerter-info-background-color;
+    color: @alerter-info-font-color;
     padding: 2px 0;
   }
 
   .info a, .info a:visited {
-    color: @alerter-info-link;
+    color: @alerter-info-link-font-color;
   }
 
   .warn {
-    background: @alerter-warning-bg;
-    color: @alerter-warning-text;
+    background-color: @alerter-warning-background-color;
+    color: @alerter-warning-font-color;
     margin: 5px;
     .BoxShadowHelper(2);
     padding-top: 3px;
@@ -41,12 +41,12 @@
   }
 
   .warn a, .war a:visited {
-    color: @alerter-warning-link;
+    color: @alerter-warning-link-font-color;
   }
 
   .error {
-    background: @alerter-error-bg;
-    color: @alerter-error-text;
+    background-color: @alerter-error-background-color;
+    color: @alerter-error-font-color;
     margin: 5px;
     .BoxShadowHelper(2);
 
@@ -56,9 +56,21 @@
   }
 
   .error a, .error a:visited {
-    color: @alerter-error-link;
+    color: @alerter-error-link-font-color;
   }
 
 }
 
 
+@alerter-info-font-color: var(--alerter-info-font-color);
+@alerter-info-background-color: var(--alerter-info-background-color);
+@alerter-info-link-font-color: var(--alerter-info-link-font-color);
+
+@alerter-warning-font-color: var(--alerter-warning-font-color);
+@alerter-warning-background-color: var(--alerter-warning-background-color);
+@alerter-warning-link-font-color: var(--alerter-warning-link-font-color);
+/*@alerter-warning-bg: #ead026;*/
+
+@alerter-error-font-color: var(--alerter-error-font-color);
+@alerter-error-background-color: var(--alerter-error-background-color);
+@alerter-error-link-font-color: var(--alerter-error-link-font-color);

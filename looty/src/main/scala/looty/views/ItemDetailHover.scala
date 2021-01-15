@@ -2,6 +2,8 @@ package looty
 package views
 
 import looty.model.ComputedItem
+import looty.poeapi.PoeTypes
+import looty.util.Settings
 import org.scalajs.dom
 import org.scalajs.jquery.JQuery
 import util.ProgressBar._
@@ -18,11 +20,10 @@ import scala.scalajs.js
 //////////////////////////////////////////////////////////////
 
 class ItemDetailHover {
-  val styles = jq(insertProgressBarStyling)
-  val el  = jq("""<div id="item-details" style="display:inline-block"></div>""")
+
+  val el  = jq(s"""<div id="item-details" style="display:inline-block;"></div>""")
   val el1 = jq("""<div></div>""")
   val el2 = jq("""<div></div>""")
-  el.append(styles)
   el.append(el1)
   el.append(el2)
 
@@ -68,6 +69,15 @@ class ItemDetailHover {
     el.css("left", cssValueOf(left))
   }
 
+  def insertStyling(className:String, text:String) = s"<span class='$className'>$text</span>"
+  def insertSocketColoring(sockets:String): String = {
+    var sockRepl = sockets
+      val s =sockRepl.replaceAll("G", insertStyling("G","G"))
+      .replaceAll("R",insertStyling("R","R"))
+      .replaceAll("B",insertStyling("B","B"))
+      .replaceAll("W",insertStyling("W","W"))
+    s
+  }
   def displayItem(item: ComputedItem, el: JQuery) {
     val frameTypeName = item.item.getFrameType.name
     def requirements = {
@@ -115,7 +125,7 @@ class ItemDetailHover {
       //if (item.item.incubatedItem.toOption.isDefined) s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}" else "",
       if (item.item.incubatedItem.toOption.isDefined) {
         //s"Incubating: ${item.item.incubatedItem.get.name}<br>${item.item.getIncubator}"
-        s"Incubating: ${item.item.incubatedItem.get.name}<br>" +
+        addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total, "incubator", true)
         addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total)
 
       } else "",

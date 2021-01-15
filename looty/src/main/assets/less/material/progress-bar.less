@@ -1,0 +1,53 @@
+.progress-bar {
+  background-color: rgba(0,0,0,0);
+  background-color: rgb(220, 220, 220);
+  width: 100px;
+  height: 1em;
+  border-radius: 5px;
+  margin: 5px auto;
+  border: 1px solid rgb(50, 50, 50);
+  border: 1px solid #848484;
+  border: none;
+  overflow: hidden;
+  position: relative;
+
+  &.xp  {
+    height: 5px;
+    .filling {
+      background-color: #5facb2;
+      border-right-color: #2d939b;
+    }
+  }
+
+  &.incubator {
+    .filling {
+      background-color: #d0ab1c;
+      border-right-color: #bd850e;
+    }
+  }
+
+  .filling, .value {
+    height: 100%;
+    display: block;
+    color: rgb(255, 251, 251);
+    line-height: 1em;
+    position: absolute;
+    text-align: end;
+    padding-right: 5px;
+  }
+
+  .filling {
+    width: 0;
+    border-right: 2px solid;
+  }
+
+  .value {
+    color: white;
+    text-align: center;
+    width: 100%;
+    position: absolute;
+    text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+  }
+
+
+}
