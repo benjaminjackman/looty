@@ -40,6 +40,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ```code
 # Version History
 ## 0.2.1.79 (2021-01-15)
+Special thanks, again, to Traf27 for keeping Looty going!
 
 Design
 - Added dark theme! to easy strain on your eyes at night - switch is on the right side
