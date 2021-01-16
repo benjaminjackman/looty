@@ -23,6 +23,7 @@ cp "$SRC/looty.html" "$SRC/popup.html" "$SRC/looty-opt.js" "$SRC/manifest.json" 
 cp -r $SRC/images "$OUT"
 cp -r $SRC/jslib "$OUT"
 cp -r $SRC/less "$OUT"
+cp -r $SRC/fonts "$OUT"
 
 cd $OUT
 zip -r build.zip *

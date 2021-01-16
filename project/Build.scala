@@ -44,7 +44,7 @@ object Build extends sbt.Build {
     """
 
     //Copy over the html files, while filling in the template sections
-    val lessFiles = {
+    val lessFiles  = {
       val i = (includeFilter in(Assets, LessKeys.less)).value
       val x = (excludeFilter in(Assets, LessKeys.less)).value
       val srcDir = (sourceDirectory in Assets).value
@@ -54,7 +54,8 @@ object Build extends sbt.Build {
         //.replace("\\","/")
           f.map(_._2).map(_.replace(".less", ".css").replace("\\","/"))
     }
-    val less = lessFiles.map(f => s"""<link rel="stylesheet" href="$f"/>""").mkString("\n")
+
+    val less = lessFiles.sorted.map(f => s"""<link rel="stylesheet" href="$f"/>""").mkString("\n")
     val htmlSrcDir: File = (sourceDirectory in Assets).value
     val htmlSrcs: PathFinder = htmlSrcDir * "*.template.html"
     val outDir: File = WebKeys.webTarget.value / "public" / "main"
