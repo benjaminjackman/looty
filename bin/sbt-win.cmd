@@ -20,7 +20,7 @@ set JVM_ARGS=%JVM_ARGS% -XX:CodeCacheMinimumFreeSpace=32m
 set JVM_ARGS=%JVM_ARGS% -XX:MaxGCPauseMillis=5
 rem JVM_ARGS="$JVM_ARGS -XX:ReservedCodeCacheSize=512m"
 
-java %JVM_ARGS% -jar %__CD__%\bin\sbt-launch-0.13.0.jar %1
+java %JVM_ARGS% -jar %__CD__%\bin\sbt-launch-0.13.6.jar %1
 
 if %ERRORLEVEL% NEQ 0 goto Req
 goto :EOF

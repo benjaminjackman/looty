@@ -9,4 +9,5 @@ xcopy looty\target\web\public\main\manifest.json build\
 xcopy looty\target\web\public\main\images build\images\ /s
 xcopy looty\target\web\public\main\jslib build\jslib\ /s
 xcopy looty\target\web\public\main\less build\less\ /s
+xcopy looty\target\web\public\main\fonts build\fonts\ /s
 cd bin
