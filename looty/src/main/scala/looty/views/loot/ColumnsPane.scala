@@ -1,6 +1,7 @@
 package looty
 package views.loot
 
+import looty.util.Settings
 import org.scalajs.jquery.JQuery
 
 
@@ -17,6 +18,18 @@ class ColumnsPane(columns: Columns) {
     val el = jq("<div class='columns-controls'></div>")
     val showDefault = jq("<a href='javascript:void(0)'class='col-btn'>Default</a>")
     val showAll = jq("<a href='javascript:void(0)' class='col-btn'>All +</a>")
+    val searchMods = jq("<input id='search-mod' placeholder='Find mods/affixes...'>")
+    val clearSearchModbtn = jq("<button id='clear-search-mod'>Clear</button>")
+
+    clearSearchModbtn.on("click", () => {
+      //remove all previous selections
+      searchMods.value("")
+      jq(".group-div").show();
+      jq(".group-div").css("opacity",1);
+      jq(".col-div").removeClass("select-mod");
+      jq(".col-div").css("opacity",1);
+      false
+    })
     showAll.on("click", () => {
       columns.all.foreach(_.show())
       false
@@ -31,6 +44,8 @@ class ColumnsPane(columns: Columns) {
       false
     })
     val mainColControls = jq("<div class='col-main'></div>")
+    mainColControls.append(searchMods)
+    mainColControls.append(clearSearchModbtn)
     mainColControls.append(showAll)
     mainColControls.append(hideAll)
     mainColControls.append(showDefault)
@@ -63,8 +78,7 @@ class ColumnsPane(columns: Columns) {
       grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
 
       group.foreach { c =>
-        //val colDiv = jq(s"""<div style="display:inline-block" title="${c.fullName}: ${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
-        //Got rid of c.fullName as c.description says much more then that field.
+        //mod filtering for user use <input> in Select Columns, in which text is compared with titles.
         val colDiv = jq(s"""<div style="display:inline-block" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
         colDiv.on("click", () => {
           c.toggle()
@@ -84,6 +98,12 @@ class ColumnsPane(columns: Columns) {
 
       el.append(grpDiv)
     }
+    //this pannel is hidden by default and we cant addEventListener to input field otherwise
+    if (Settings.isSet(Settings.FUZZY_SEARCH))
+      el.append(s"""<script type="text/javascript" src="jslib/search-mod-fuzzysearch.js"></script>""")
+    else
+      el.append(s"""<script type="text/javascript" src="jslib/search-mod.js"></script>""")
+
     el
   }
 }

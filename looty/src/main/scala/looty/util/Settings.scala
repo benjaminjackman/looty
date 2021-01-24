@@ -29,6 +29,9 @@ object Settings {
   val SHOW_TOOLTIP_ON_KEY_PRESS_DESCR = "Show items tooltip when presses ctrl key"
   val TOOLTIP_TEXT_ALIGN = "SETTINGS_TOOLTIP_TEXT_ALIGN"
   val TOOLTIP_TEXT_ALIGN_DESCR = "Align text in Item Tooltip (Dark Theme) to left side"
+  val FUZZY_SEARCH = "SETTINGS_FUZZY_SEARCH"
+  val FUZZY_SEARCH_DESCR = "Use mod search which matches letters across whole mod name. " +
+    "For example you can type 'frdmg' and it will find all mod names that includes consecutive letters. Though besides 'fire damage' it will also match mods like 'Life Leech from Physical Attack Damage'"
 
   def isSet(option:String): Boolean = {
     window.localStorage.getItem(option) == "true"
