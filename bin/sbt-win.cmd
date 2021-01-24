@@ -18,6 +18,9 @@ set JVM_ARGS=%JVM_ARGS% -XX:+UseConcMarkSweepGC
 set JVM_ARGS=%JVM_ARGS% -XX:+UseParNewGC
 set JVM_ARGS=%JVM_ARGS% -XX:CodeCacheMinimumFreeSpace=32m
 set JVM_ARGS=%JVM_ARGS% -XX:MaxGCPauseMillis=5
+rem fix for windows10 "cannot run node" -Djdk.lang.Process.allowAmbiguousCommands=true
+set JVM_ARGS=%JVM_ARGS% -Djdk.lang.Process.allowAmbiguousCommands=true
+
 rem JVM_ARGS="$JVM_ARGS -XX:ReservedCodeCacheSize=512m"
 
 java %JVM_ARGS% -jar %__CD__%\bin\sbt-launch-0.13.6.jar %1
