@@ -3,100 +3,125 @@
     code taken from https://fusejs.io/
 */
 
-//---------------------------fuse--------------------
-const allColumns = Array.from(document.getElementsByClassName("col-div"));
-const allColumns2 = Array.from(document.querySelectorAll(".col-div"));
 //documentation about options: https://fusejs.io/api/options.html
 const options = { //fuse.js options
-
     // isCaseSensitive: false,
-    // includeScore: false,
-    shouldSort: false,
+    includeScore: false,
+    shouldSort: true,
     // includeMatches: false,
     //findAllMatches: true,
     // minMatchCharLength: 1,
     // location: 0,
-    threshold: 0,
+    threshold: 0.3,
     //distance: 3,
     // useExtendedSearch: false,
-    ignoreLocation: true
-    // ignoreFieldNorm: false,
+    //ignoreLocation: false
+     ignoreFieldNorm: true,
     // keys: []
 };
-const fuseWithTitles = new Fuse(allColTitlesArr(), { threshold: 0, ignoreLocation: true});
+//{ threshold: 0, ignoreLocation: true} //previous options
+const allColumns = Array.from(document.getElementsByClassName("col-div")); //HTMLElements
+const fuse = new Fuse(dataSet(), {
+        //possible bug when loaded variable with options instead of whole object like {...}
+        threshold: 0.4,
+        ignoreFieldNorm: true,
+        includeScore: true,
+        shouldSort: true
+        }
+    );
 const input = document.getElementById("search-mod");
-const allGroups = Array.from(document.getElementsByClassName("group-div"));
-// -----------------initialization end---------------
+const allGroups = Array.from(document.getElementsByClassName("group-div")); //HTMLElements
+const cols = $(".col-div"); //JQuery
+const groups = $(".group-div"); //JQuery
 
-function allColTitlesArr() { //build array with all titles in columns
-    all = [];
-    allColumns.forEach((column) => {
-        all.push(column.title);
+function dataSet() { //build array with mod descriptions to search
+    let all = [];
+    allColumns.forEach((col) => {
+        all.push(col.dataset.modDescription);
     });
+    //show meh de dataz!
+    console.log(all);
     return all;
 }
 
 function findMod(e) {
-    // Search through all group-div and their col-div elements and
-    // compare their title with input text
-    let inputText = e.target.value
-    if (inputText.length == 0) {
-        //clear
-        $(".group-div").show();
-        $(".group-div").css("opacity",1);
-        $(".col-div").removeClass("select-mod"); //remove all previous selections
-        $(".col-div").css("opacity",1);
-        return;
-    }
-    allGroups.forEach((group) => {
-        let isInGroup = false;
-        let cols = Array.from(group.querySelectorAll(".col-div"));
-        cols.forEach((col) => {
-            //when there is some text in input field, that we can search for ...
-            let results = fuseWithTitles.search(inputText);
-            //(Array.isArray(results) && results.length > 0)
-            let resultsMaped = results.map((el)=> el.item)
-            //check if it found match in column title
-            if (resultsMaped.includes(col.title)) {
-                isInGroup = true;
-                group.style.display = 'block';
-                col.style.opacity = 1;
-                col.classList.add("select-mod");
-            } else {
-                //not found, and remove class if previously had it
-                col.classList.remove("select-mod");
-                col.style.opacity = 0.4; //fade not selected buttons
-            }
+    // Search through all col-div elements (in group-div) to find
+    // one matching input field with its attribute data-mod-description
+    let inputText = e.target.value.toLowerCase();
+    cols.css("opacity",1).removeClass("select-mod");
+    groups.show();
+    if (inputText.length > 0) {
+        allGroups.forEach((group) => {
+            //let isInGroup = true; //so we later can do something with group-div without matching col
+            show(group);
+            let colsArr = Array.from(group.querySelectorAll(".col-div"));
+            colsArr.forEach((col) => {
+                let needle = col.dataset.modDescription; //<div data-mod-description
+                let results = fuse.search(inputText);
+                let haystack = results.map((el) => el.item);
+                if (haystack.includes(needle)) {
+                    //isInGroup = true;
+                    show(group);
+                    select(col);
+                } else {
+                    hide(group);
+                    fade(col); //fade not selected buttons
+                }
+            });
+            //hide group-div were mods were not found
+            //  if (!isInGroup) hide(group);
+            //  else show(group);
         });
-        //hide group-div were mods were not found
-        if (!isInGroup) group.style.display = 'none';
-        else group.style.display = 'block';
-    });
+    }
+    // else {
+    //     clearPageResults(); //remove all previous selections
+    // }
 }
 
-/*function findContains(e) {
+function clearPageResults() {
+    cols.removeClass("select-mod").css("opacity", 1);
+    groups.css("opacity", 1).show();
+}
+
+function fade(el) {
+    el.classList.remove("select-mod"); //in case of el == group it doesnt matter
+    el.style.opacity = 0.4;
+}
+
+function select(col) {
+    col.style.opacity = 1;
+    col.classList.add("select-mod");
+}
+
+function hide(el) {
+    el.style.display = 'none';
+    //el.style.opacity = 0.4; //for version with fading group-divs, instead of disappearing
+}
+function show(el) {
+    el.style.display = 'block';
+    el.style.opacity = 1;
+}
+
+/*
+//It checks only cols without hiding groups
+function findCols(e) {
     let inputText = e.target.value;
     if (inputText.length > 0) {
-        $(".col-div").removeClass("select-mod");
-        //console.table( fuseWithTitles);
-        let results = fuseWithTitles.search(inputText);
+        clearPageResults();
+        let results = fuse.search(inputText);
         if (Array.isArray(results) && results.length > 0) {
-            let resultsMaped = results.map((el)=> el.item);
+            let haystack = results.map((el)=> el.item);
             allColumns.forEach((col) => {
-                 if (resultsMaped.includes(col.title)) {
-                     col.classList.add("select-mod");
-                     col.style.opacity = 1;
-                 }
-                 else {
-                     col.classList.remove("select-mod");
-                     col.style.opacity = 0.5;
-                 }
+                 if (haystack.includes(col.dataset.modDescription))
+                     select(col);
+                 else
+                     fade(col);
             });
         }
     } else {
-        //$() //cos bedziesz robil z grupami ?
-        $(".col-div").removeClass("select-mod");
+        clearPageResults();
     }
-}*/
+}
+*/
 
-input.addEventListener("keyup", findMod, false);
+input.addEventListener("keyup", findMod, false); //<---

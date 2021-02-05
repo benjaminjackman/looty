@@ -24,10 +24,8 @@ class ColumnsPane(columns: Columns) {
     clearSearchModbtn.on("click", () => {
       //remove all previous selections
       searchMods.value("")
-      jq(".group-div").show();
-      jq(".group-div").css("opacity",1);
-      jq(".col-div").removeClass("select-mod");
-      jq(".col-div").css("opacity",1);
+      jq(".group-div").css("opacity",1).show()
+      jq(".col-div").css("opacity",1).removeClass("select-mod")
       false
     })
     showAll.on("click", () => {
@@ -78,8 +76,9 @@ class ColumnsPane(columns: Columns) {
       grpDiv.append(s"""<span class="group-name">$groupName:</span>""")
 
       group.foreach { c =>
-        //mod filtering for user use <input> in Select Columns, in which text is compared with titles.
-        val colDiv = jq(s"""<div style="display:inline-block" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
+        //part of mod filtering feature
+        val dataFilterMod = c.fullName + ": " + c.description
+        val colDiv = jq(s"""<div style="display:inline-block" data-mod-description="${dataFilterMod}" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
         colDiv.on("click", () => {
           c.toggle()
           false

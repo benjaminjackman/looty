@@ -44,7 +44,40 @@ function showEl(el) {
     //el.style.opacity = 0.2;
     el.style.display = 'block';
 }
+function checkGroupsForMatchedMods(event) {
+    // Search through all group-div and their col-div elements and
+    // compare their title with input text
+    $(".col-div").removeClass("select-mod");
+    let input = event.target.value.toLowerCase();
 
+    allGroups.forEach((group) => {
+        group.style.display = "block";
+        let cols = Array.from(group.querySelectorAll(".col-div"));
+
+        cols.forEach((col) => {
+            let coltitle = col.title.toLowerCase();
+            if (input.length > 0 && input.value !== "") {
+                //when there is some text in input field, that we can search for ...
+                //check if it found match in column title
+                if (fuzzysearch(input, coltitle)) {
+                    group.style.display = "block";
+                    col.classList.add("select-mod");
+                } else {
+                    group.style.display = "none";
+                    //not found, and remove class if previously had it
+                    col.classList.remove("select-mod");
+                }
+            } else {
+                //if there is no text in input field
+                //group.style.opacity = 1;
+                //col.classList.remove("select-mod"); //remove all previous selections
+                $(".col-div").removeClass("select-mod");
+            }
+        }); //forEach col
+    });
+}
+
+/*
 function checkGroupsForMatchedMods(event) {
     // Search through all group-div and their col-div elements and
     // compare their title with input text
@@ -78,5 +111,7 @@ function checkGroupsForMatchedMods(event) {
         //fade group-div were mods were not found
         else showEl(group);
     });
-}
+} */
+
+
 input.addEventListener("keyup",checkGroupsForMatchedMods, false);
