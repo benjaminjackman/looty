@@ -366,7 +366,7 @@ body {
     background-color: @sub-pages-background-color;
     padding: 1em;
     border: 1px solid black;
-    height: 120px;
+    height: 300px;
 
     label {
       float: left;
@@ -374,9 +374,15 @@ body {
       margin-right: 15px;
       width: 600px;
     }
- /*   .settingsOption {
+    .settingsOption {
+      .optionfield {
+        height: 100px;
+        margin: 10px 0;
+        padding: 20px;
+      }
 
-    }*/
+      padding: 4px 0;
+    }
   }
 }/* end of #content block*/
 
@@ -414,10 +420,18 @@ body {
 
 
 /*buttons*/
-.view-btn, .ctrl-btn, .pane-btn, .ls-btn, .col-btn, .col-div,
+.view-btn, .ctrl-btn, .pane-btn, .ls-btn, .col-btn,
 .upgrade-btn, .char-btn, .tab-btn {
   margin-right: 2px;
   .MaterialBtn;
+}
+
+.col-div {
+  margin-right: 2px;
+  .MaterialBtn;
+  //override MaterialBtn margin top/bottom so space between rows could be handled by group-div
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .show-all-btn, .hide-all-btn, .reload-all-btn, .reload-visible-btn, .refresh-characters-btn {
@@ -679,6 +693,7 @@ body {
   .col-main {
     margin-bottom: 5px;
     padding-top: 5px;
+    width: 170px;
   }
 
   /*todo add this class to html, to be free of all btn changes*/
@@ -688,6 +703,18 @@ body {
     /*+ - group*/
     color: #808080;
     background: #252427;
+  }
+
+  /*search-mod floating*/
+  input#search-mod {
+    display: inline-block;
+    margin-bottom: 4px;
+    width: 130px;
+    width: 102px;
+    //position: fixed;
+  }
+  button#clear-search-mod {
+
   }
 
   .group-div {
@@ -716,7 +743,6 @@ body {
       cursor: pointer;
       display: inline-block;
     }
-
     /* mod enabled  */
     .col-div.on-col {
       color: @column-controls-mod-enabled-font-color;
@@ -729,6 +755,11 @@ body {
       color: @column-controls-mod-disabled-font-color;
       background-color: @column-controls-mod-disabled-background-color;
       border: @column-controls-mod-disabled-border;
+    }
+    /* mod selected via search-mod input*/
+    .col-div.select-mod {
+      border-radius: 7px !important;
+      border: @column-controls-selected-mod-border;
     }
   }
 }
@@ -803,3 +834,4 @@ body {
 @column-controls-mod-disabled-font-color: var(--column-controls-mod-disabled-font-color);
 @column-controls-mod-disabled-background-color: var(--column-controls-mod-disabled-background-color);
 @column-controls-mod-disabled-border: var(--column-controls-mod-disabled-border);
+@column-controls-selected-mod-border: var(--column-controls-selected-mod-border);

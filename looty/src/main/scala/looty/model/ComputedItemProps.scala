@@ -164,7 +164,7 @@ object ComputedItemProps {
   Location ?= "The name of the character / stash tab that contains the item."
   Rarity ?= "Rarity of the item."
   DisplayName ?= "The name of the item"
-  TypeName ?= "The name of the base item type, you can enter more then one separating them with | which act as \"or\" "
+  TypeName ?= "The name of the base item type, you can enter more then one separating them with | which act as OR"
   TypeLine !?= "The type line of an item"
   Cosmetics ?= "A list of all cosmetic effects applied to the item"
   Sockets ?= "The sockets sorted by number in group, then by color"
