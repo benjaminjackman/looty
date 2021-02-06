@@ -40,47 +40,12 @@ function dataSet() { //build array with mod descriptions to search
         all.push(col.dataset.modDescription);
     });
     //show meh de dataz!
-    console.log(all);
+    //console.log(all);
     return all;
 }
-
-function findMod(e) {
-    // Search through all col-div elements (in group-div) to find
-    // one matching input field with its attribute data-mod-description
-    let inputText = e.target.value.toLowerCase();
-    cols.css("opacity",1).removeClass("select-mod");
-    groups.show();
-    if (inputText.length > 0) {
-        allGroups.forEach((group) => {
-            //let isInGroup = true; //so we later can do something with group-div without matching col
-            show(group);
-            let colsArr = Array.from(group.querySelectorAll(".col-div"));
-            colsArr.forEach((col) => {
-                let needle = col.dataset.modDescription; //<div data-mod-description
-                let results = fuse.search(inputText);
-                let haystack = results.map((el) => el.item);
-                if (haystack.includes(needle)) {
-                    //isInGroup = true;
-                    show(group);
-                    select(col);
-                } else {
-                    hide(group);
-                    fade(col); //fade not selected buttons
-                }
-            });
-            //hide group-div were mods were not found
-            //  if (!isInGroup) hide(group);
-            //  else show(group);
-        });
-    }
-    // else {
-    //     clearPageResults(); //remove all previous selections
-    // }
-}
-
 function clearPageResults() {
     cols.removeClass("select-mod").css("opacity", 1);
-    groups.css("opacity", 1).show();
+    groups.show();
 }
 
 function fade(el) {
@@ -101,6 +66,35 @@ function show(el) {
     el.style.display = 'block';
     el.style.opacity = 1;
 }
+function findMod(e) {
+    // Search through all col-div elements (in group-div) to find
+    // one matching input field with its attribute data-mod-description
+    let inputText = e.target.value.toLowerCase();
+    clearPageResults();
+    groups.show();
+    if (inputText.length > 0) {
+        allGroups.forEach((group) => {
+            //let isInGroup = true; //so we later can do something with group-div without matching col
+            show(group);
+            let colsArr = Array.from(group.querySelectorAll(".col-div"));
+            colsArr.forEach((col) => {
+                let needle = col.dataset.modDescription; //<div data-mod-description
+                let results = fuse.search(inputText);
+                let haystack = results.map((el) => el.item);
+                if (haystack.includes(needle)) {
+                    //isInGroup = true;
+                    show(group);
+                    select(col);
+                } else {
+                    hide(group);
+                    fade(col); //fade not selected buttons
+                }
+            });
+        });
+    }
+}
+
+input.addEventListener("keyup", findMod, false); //<---
 
 /*
 //It checks only cols without hiding groups
@@ -123,5 +117,3 @@ function findCols(e) {
     }
 }
 */
-
-input.addEventListener("keyup", findMod, false); //<---
