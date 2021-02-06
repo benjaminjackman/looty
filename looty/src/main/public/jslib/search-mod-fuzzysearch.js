@@ -58,7 +58,7 @@ function findMod(e) {
     clearPageResults();
     if (inputText.length > 0 && inputText.value !== "") {
         allGroups.forEach((group) => {
-            show(group);
+            hide(group);
             let colsArr = Array.from(group.querySelectorAll(".col-div"));
             colsArr.forEach((col) => {
                 let needle = col.dataset.modDescription.toLowerCase(); //<div data-mod-description
@@ -68,7 +68,7 @@ function findMod(e) {
                         show(group);
                         select(col);
                     } else {
-                        hide(group);
+                        //hide(group);
                         //not found, and remove class if previously had it
                         fade(col);
                     }

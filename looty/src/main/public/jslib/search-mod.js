@@ -45,7 +45,7 @@ function dataSet() { //build array with mod descriptions to search
 }
 function clearPageResults() {
     cols.removeClass("select-mod").css("opacity", 1);
-    groups.show();
+    groups.css("display","block");
 }
 
 function fade(el) {
@@ -70,23 +70,20 @@ function findMod(e) {
     // Search through all col-div elements (in group-div) to find
     // one matching input field with its attribute data-mod-description
     let inputText = e.target.value.toLowerCase();
-    clearPageResults();
-    groups.show();
-    if (inputText.length > 0) {
+    console.log(inputText);
+    clearPageResults(); //show all columns and groups
+    if (inputText.length > 0 && inputText.value !== "") {
         allGroups.forEach((group) => {
-            //let isInGroup = true; //so we later can do something with group-div without matching col
-            show(group);
+           hide(group); //hide all groups if there is some input, so when there is match in that group, we will show it, otherwise there is no need
             let colsArr = Array.from(group.querySelectorAll(".col-div"));
             colsArr.forEach((col) => {
-                let needle = col.dataset.modDescription; //<div data-mod-description
+                let needle = col.dataset.modDescription;//.toLowerCase(); //<div data-mod-description
                 let results = fuse.search(inputText);
                 let haystack = results.map((el) => el.item);
                 if (haystack.includes(needle)) {
-                    //isInGroup = true;
                     show(group);
                     select(col);
                 } else {
-                    hide(group);
                     fade(col); //fade not selected buttons
                 }
             });
