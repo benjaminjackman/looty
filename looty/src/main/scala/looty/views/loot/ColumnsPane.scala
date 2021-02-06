@@ -78,7 +78,7 @@ class ColumnsPane(columns: Columns) {
       group.foreach { c =>
         //part of mod filtering feature
         val dataFilterMod = c.fullName + ": " + c.description
-        val colDiv = jq(s"""<div style="display:inline-block" data-mod-description="${dataFilterMod}" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
+        val colDiv = jq(s"""<div data-mod-description="${dataFilterMod}" title="${c.description}" class="col-div ${if (c.visible) "on-col" else "off-col"}">${c.id}</div>""")
         colDiv.on("click", () => {
           c.toggle()
           false
