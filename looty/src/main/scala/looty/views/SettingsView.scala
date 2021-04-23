@@ -72,9 +72,6 @@ class SettingsView(implicit val pc: PoeCacher) extends View {
     Settings.insertHtmlElement(Settings.SHOW_TOOLTIP_ON_KEY_PRESS,Settings.SHOW_TOOLTIP_ON_KEY_PRESS_DESCR, el, "settingsOption")
     //display ggg like tooltip instead of standard
     Settings.insertHtmlElement(Settings.TOOLTIP_TEXT_ALIGN,Settings.TOOLTIP_TEXT_ALIGN_DESCR, el, "settingsOption")
-    //switch to "very" fuzzysearch - https://github.com/bevacqua/fuzzysearch
-    // having: "Increased Fire Damage", "Regenerate % of Life per Second"  searching "fir" it match both
-    Settings.insertHtmlElement(Settings.FUZZY_SEARCH,Settings.FUZZY_SEARCH_DESCR, el, "settingsOption")
 
   }
   override def stop(): Unit = {}

@@ -97,11 +97,8 @@ class ColumnsPane(columns: Columns) {
 
       el.append(grpDiv)
     }
-    //this pannel is hidden by default and we cant addEventListener to input field otherwise
-    if (Settings.isSet(Settings.FUZZY_SEARCH))
-      el.append(s"""<script type="text/javascript" src="jslib/search-mod-fuzzysearch.js"></script>""")
-    else
-      el.append(s"""<script type="text/javascript" src="jslib/search-mod.js"></script>""")
+    //attaching code for filtering mods via input box
+    el.append(s"""<script type="text/javascript" src="jslib/search-mod-fuzzysearch.js"></script>""")
 
     el
   }
