@@ -178,7 +178,7 @@ object ComputedItemProps {
   GemKeywords !?= "The keywords on a skill gem"
 
   //Misc
-  val IsCrafted = boo("Crafted", "crafted",20)("Misc")(_.item.identified.toOption.getOrElse(false))
+  val IsCrafted = boo("Crafted", "crafted",20)("Misc")(_.item.isCrafted)
   val IsCorrupted = boo("Corrupted", "corrupted",20)("Misc")(_.item.corrupted.toOption.getOrElse(false))
   val IsMirrored = boo("Mirrored", "mirrored",20)("Misc")(_.item.duplicated .toOption.getOrElse(false))
   val IsIdentified = boo("Identified", "identified",20)("Misc")(_.item.identified .toOption.getOrElse(false))
