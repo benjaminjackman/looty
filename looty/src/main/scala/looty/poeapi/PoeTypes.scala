@@ -226,7 +226,9 @@ object PoeTypes {
       //Beast
       def isBeast = x.typeLine.contains("Beast")
       //Hireling Equipment - Heist league 3.12
-      def isHirelingE = x.typeLine.contains("Hireling Equipment")
+      def isHirelingE = x.descrText.toOption.exists(_ contains "Can only be equipped to Heist members.")
+      def isBlueprint = x.typeLine.contains("Blueprint")
+      def isContract = x.typeLine.contains("Contract")
       // TODO --
       def isInSocket = x.socket.toOption.isDefined
 
@@ -238,6 +240,8 @@ object PoeTypes {
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
       def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
       def fracturedModsList = x.fracturedMods.toOption.getOrElse(js.Array()).toList
+
+      def isCrafted: Boolean = if (x.craftedMods.toOption.getOrElse(js.Array()).toList.length>0) true else false
 
       def getIncubatorRewardName: String = {
         if (x.incubatedItem.toOption.isDefined) {
