@@ -37,7 +37,6 @@ object Build extends sbt.Build {
 <script type="text/javascript" src="jslib/slickgrid/slick.grid.js"></script>
 <script type="text/javascript" src="jslib/slickgrid/slick.dataview.js"></script>
 <script type="text/javascript" src="jslib/theme-switcher.js"></script>
-<script type="text/javascript" src="jslib/fuse.js"></script>
     """
 
     val analytics = """
