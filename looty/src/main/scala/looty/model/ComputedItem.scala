@@ -468,6 +468,10 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     //count - maybe?
   }
 
+  object socketedGems {
+    var name = ""
+  }
+
 	object skill {
 		var name = ""
 		var level = 0.0

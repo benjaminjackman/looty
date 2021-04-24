@@ -386,6 +386,7 @@ object AffixesParser {
   strRegex1(s"^Grants Level \\d+ ([\\w ]+) Skill")(_.skill.name += _)
   regex1(s"^Grants Level (\\d+) [\\w ]+ Skill")(_.skill.level += _)
 
+  strRegex1(s"^Socketed Gems are Supported by Level \\d+ ([\\w ]+)")(_.socketedGems.name += _ + "  ")
   //Cluster Jewels affixes:
   //Adds # Passive Skills
   regex1(s"^\\Adds (\\d+) Passive Skills")(_.passiveSkill.count += _)
