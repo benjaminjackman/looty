@@ -439,6 +439,25 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     //on abyss jewels
     var increasedDamageWhenSkillUsed  = 0.0
   }
+
+  object traps {
+    var damage                  = 0.0
+    var throwingSpeed           = 0.0
+    var reducedDuration         = 0.0
+  }
+
+  object mines {
+    var damage                  = 0.0
+    var throwingSpeed           = 0.0
+    var reducedDuration         = 0.0
+  }
+
+  object totems {
+    var damage                  = 0.0
+    var life                    = 0.0
+    var allElemResists          = 0.0
+  }
+
   //field for mods which we could not/will not parse
   //so we could search through column with them anyway
   object  notParsedYet {
