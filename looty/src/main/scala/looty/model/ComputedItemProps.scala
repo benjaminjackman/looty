@@ -472,6 +472,8 @@ object ComputedItemProps {
   val IncreasedGemLevelStrength     = pno("IncreasedGemLevelStrength", "+gStr")(Gems)(_.gemLevel.attribute.strength)
   val IncreasedGemLevelDexterity    = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.gemLevel.attribute.dexterity)
   val IncreasedGemLevelIntelligence = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.gemLevel.attribute.intelligence)
+  val SocketedGemsSupportedBySpell          = str("SocketedGemsSupportedBySpell", "+gemsSupSpell",150)(Gems)(_.socketedGems.name)
+  SocketedGemsSupportedBySpell !?= "Socketed Gems are Supported by Spell"
   IncreasedGemLevelBow !?= "Increased Bow Gem Level "
   IncreasedGemLevelMinion !?= "Increased Minion Gem Level "
   IncreasedGemLevelMelee !?= "Increased Melee Gem Level "
