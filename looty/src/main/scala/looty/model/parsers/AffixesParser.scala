@@ -375,6 +375,18 @@ object AffixesParser {
   strRegex1(s"^Grants Level \\d+ ([\\w ]+) Skill")(_.skill.name += _)
   regex1(s"^Grants Level (\\d+) [\\w ]+ Skill")(_.skill.level += _)
 
+  //Cluster Jewels affixes:
+  //Adds # Passive Skills
+  regex1(s"^\\Adds (\\d+) Passive Skills")(_.passiveSkill.count += _)
+  //number of sockets that jewel gives
+  //1 Added Passive Skill is a Jewel Socket
+  //2 Added Passive Skills are Jewel Sockets
+  regex1(s"^(\\d+) Added Passive Skill is a Jewel Socket")(_.passiveSkill.socketCount += _)
+  regex1(s"^(\\d+) Added Passive Skills are Jewel Sockets")(_.passiveSkill.socketCount += _)
+  //1 Added Passive Skill is a # - name of given skill
+  strRegex1(s"^1 Added Passive Skill is ([\\w ]+)")(_.passiveSkill.name += _ + ", ")
+  strRegex1(s"^Added Small Passive Skills also grant: (.+)")(_.passiveSkill.grants += _ + ", ")
+  strRegex1(s"^Added Small Passive Skills grant: (.+)")(_.passiveSkill.grants += _ + ", ")
   val all = _all.toList
 
 }
