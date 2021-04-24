@@ -65,6 +65,7 @@ object ComputedItemProps {
   val Crit            = "Crit"
   val Spells          = "Spells"
   val DamageToSpells  = "Damage to Spells"
+  val DoT = "Damage over Time"
   val IncreasedDamage = "Increased Damage"
   val Gems            = "Gems"
   val FlasksMods      = "Flask Mods"
@@ -437,6 +438,22 @@ object ComputedItemProps {
   IncreasedAreaDamage !?= "Increased Area Damage"
   IncreasedAttackDamage !?= "Increased Attack Damage"
   IncreasedMeleeDamage !?= "Increased Melee Damage"
+
+  //Damage over Time
+  val DoTGeneralMultiplier = pno("DoTGeneralMultiplier", "+%DoT")(DoT)(_.DoT.multiplier.general)
+  val DoTColdMultiplier = pno("DoTColdMultiplier", "+%cDoT")(DoT)(_.DoT.multiplier.cold)
+  val DoTFireMultiplier = pno("DoTFireMultiplier", "+%fDoT")(DoT)(_.DoT.multiplier.fire)
+  val DoTChaosMultiplier = pno("DoTChaosMultiplier", "+%xDoT")(DoT)(_.DoT.multiplier.chaos)
+  val DoTNonAilmentChaosMultiplier = pno("DoTNonAilmentChaosMultiplier", "+%naxDoT")(DoT)(_.DoT.multiplier.nonAilmentChaos)
+  val DoTPhysicalMultiplier = pno("DoTPhysicalMultiplier", "+%pDoT")(DoT)(_.DoT.multiplier.physical)
+  val DoTBleedMultiplier = pno("DoTBleedinglMultiplier", "+%bDoT")(DoT)(_.DoT.multiplier.bleeding)
+  DoTGeneralMultiplier !?= "Damage over Time Multiplier"
+  DoTColdMultiplier !?= "Cold Damage over Time Multiplier"
+  DoTFireMultiplier !?= "Fire Damage over Time Multiplier"
+  DoTChaosMultiplier !?= "Chaos Damage over Time Multiplier"
+  DoTNonAilmentChaosMultiplier !?= "Non-Ailment Chaos Damage over Time Multiplier"
+  DoTPhysicalMultiplier !?= "Physical Damage over Time Multiplier"
+  DoTBleedMultiplier !?= "Damage over Time Multiplier for Bleeding"
 
   //Elemental
   val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(IncreasedDamage)(_.increased.elementalDamage)

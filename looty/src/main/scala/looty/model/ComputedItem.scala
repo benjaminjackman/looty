@@ -490,5 +490,16 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     //TODO Passive Skills in Radius also grant: Traps and Mines deal # to # added Physical Damage
     //TODO Notable Passive Skills in Radius are Transformed to
   }
+  object DoT {
+    object multiplier {
+      var general = 0.0
+      var cold = 0.0
+      var fire = 0.0
+      var chaos = 0.0
+      var nonAilmentChaos = 0.0
+      var physical = 0.0
+      var bleeding = 0.0
+    }
+  }
 
   }
