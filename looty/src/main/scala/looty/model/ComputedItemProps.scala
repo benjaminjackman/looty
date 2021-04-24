@@ -542,8 +542,8 @@ object ComputedItemProps {
   TotemAllElementalResistances !?= "Totem All Elemental Resistances"
 
   //Special
-  val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
-  val GrantsSkillLevel            = pno("SkillLevel", "grantSkillLvl", 30)(Special)(_.skill.level)
+  val GrantsSkill                 = str("GrantsSkill", "gSkill", 150)(Special)(_.skill.name)
+  val GrantsSkillLevel            = pno("SkillLevel", "gSkillLvl", 30)(Special)(_.skill.level)
   val Enchantments  = str("Enchantments", "ench", 80)(Special)(_.item.enchantModsList.mkString(", "))
   val Unparsed = str("Unparsed", "unparsed", 120)(Special)(_.notParsedYet.name)
   val limitedTo                   = pno("LimitedTo","limited",30)(Special)(_.properties.limitedTo)
