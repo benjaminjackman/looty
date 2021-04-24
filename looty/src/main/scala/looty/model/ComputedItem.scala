@@ -423,6 +423,22 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var instantRecovery        = false
     var instantRecoveryLowLife = false
   }
+
+  object minions {
+    var damage                        = 0.0
+    var areaOfEffects                 = 0.0
+    var attackSpeed                   = 0.0
+    var castSpeed                     = 0.0
+    var maximumLife                   = 0.0
+    var movementSpeed                 = 0.0
+    var eleResist                     = 0.0
+    var dblDamage                     = 0.0
+    var accuracyRating                = 0.0
+    var reducedReflectedDamage        = 0.0
+    var increasedMinionDuration       = 0.0
+    //on abyss jewels
+    var increasedDamageWhenSkillUsed  = 0.0
+  }
   //field for mods which we could not/will not parse
   //so we could search through column with them anyway
   object  notParsedYet {
