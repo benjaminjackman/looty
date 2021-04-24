@@ -253,12 +253,14 @@ object ComputedItemProps {
   val IncreasedAttackSpeed = pno("IncreasedAttackSpeed", "+%as")(Attack)(_.increased.attackSpeed)
   val ArrowPierceChance = pno("ArrowPierceChance", "+%apc")(Attack)(_.arrowPierceChance)
   val WeaponRange = pno("WeaponRange", "+weprng")(Attack)(_.properties.weaponRange)
+  val AreaOfEffects = pno("AreaOfEffects","+%area")(Attack)(_.increased.areaOfEffects)
   AttacksPerSecond !?= "AttacksPerSecond"
   PlusToAccuracy !?= "Flat bonus to accuracy + dexterity bonus"
   IncreasedAccuracy !?= "Increased Accuracy Rating"
   IncreasedAttackSpeed !?= "Increased Attack Speed"
   ArrowPierceChance !?= "Chance of Arrows Piercing"
   WeaponRange !?= "Weapon Range"
+  AreaOfEffects !?= "Increased Area Of Effects"
 
   //Dps
   val DpsTotal     = pno("DpsTotal", "dps")(Dps)(_.total.dps.round)
@@ -359,12 +361,21 @@ object ComputedItemProps {
   val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
   val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
   val PlusInt  = pno("PlusInt", "+int")(Attributes)(_.plusTo.attribute.intelligence)
+  val IncreasedAttr  = pno("IncrAttr", "+%attr")(Attributes)(_.increased.attributes)
+  val IncreasedDex  = pno("IncrDex", "+%dex")(Attributes)(_.increased.dexterity)
+  val IncreasedStr  = pno("IncrStr", "+%str")(Attributes)(_.increased.strength)
+  val IncreasedInt  = pno("IncrInt", "+%int")(Attributes)(_.increased.intellect)
+
   PlusLife ?= "Adds this amount of life (includes strength bonus)"
   IncreasedMaxLife !?= "Increased Maximum Life"
   PlusMana !?= "Adds this amount of mana (includes intelligence bonus)"
   PlusDex !?= "Adds this amount of dex"
   PlusStr ?= "Adds this amount of str"
   PlusInt !?= "Adds this amount of int"
+  IncreasedAttr !?= "Increases your attributes"
+  IncreasedDex !?= "Increases your dexterity"
+  IncreasedInt !?= "Increases your intellect"
+  IncreasedStr !?= "Increases your strength"
 
   //Resists
   val PlusTotalResist     = pno("PlusTotalResist", "+SRes")(Resists)(_.plusTo.totalResistance)
@@ -418,6 +429,14 @@ object ComputedItemProps {
   AddsLightningDamageToSpells !?= "Adds Lightning Damage To Spells"
   AddsChaosDamageToSpells !?= "Adds Chaos Damage To Spells"
 
+  val IncreasedGlobalDamage = pno("IncreasedGlobalDamage", "+%Dmg")(IncreasedDamage)(_.increased.globalDamage)
+  val IncreasedAreaDamage = pno("IncreasedAreaDamage", "+%areaDmg")(IncreasedDamage)(_.increased.areaDamage)
+  val IncreasedAttackDamage = pno("IncreasedAttackDamage", "+%attackDmg")(IncreasedDamage)(_.increased.attackDamage)
+  val IncreasedMeleeDamage = pno("IncreasedMeleeDamage", "+%meleeDmg")(IncreasedDamage)(_.increased.meleeDamage)
+  IncreasedGlobalDamage !?= "Increased Damage"
+  IncreasedAreaDamage !?= "Increased Area Damage"
+  IncreasedAttackDamage !?= "Increased Attack Damage"
+  IncreasedMeleeDamage !?= "Increased Melee Damage"
 
   //Elemental
   val IncreasedElementalDamage = pno("IncreasedElementalDamage", "+%eleDmg")(IncreasedDamage)(_.increased.elementalDamage)

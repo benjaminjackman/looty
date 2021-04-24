@@ -179,6 +179,17 @@ object AffixesParser {
 
   chanceTo("Block Spell Damage")(_.chanceTo.blockSpellDamage += _)
   chanceTo("Dodge Spell Hits")(_.chanceTo.dodgeSpellHits += _)
+
+  increased("Attributes")(_.increased.attributes += _)
+  increased("Intellect")(_.increased.intellect += _)
+  increased("Dexterity")(_.increased.dexterity += _)
+  increased("Strength")(_.increased.strength += _)
+
+  increased("Damage")(_.increased.globalDamage += _)
+  increased("Area Damage")(_.increased.areaDamage += _)
+  increased("Attack Damage")(_.increased.attackDamage += _)
+  increased("Melee Damage")(_.increased.meleeDamage += _)
+  increased("Area of Effects")(_.increased.areaOfEffects += _)
   //On belts
   increased("Global Physical Damage")(_.increased.damage.physical += _)
   increased("Attack Speed")(_.increased.attackSpeed += _)
