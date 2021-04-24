@@ -182,8 +182,8 @@ object ComputedItemProps {
   //Misc
   val IsCrafted = boo("Crafted", "crafted",20)("Misc")(_.item.isCrafted)
   val IsCorrupted = boo("Corrupted", "corrupted",20)("Misc")(_.item.corrupted.toOption.getOrElse(false))
-  val IsMirrored = boo("Mirrored", "mirrored",20)("Misc")(_.item.duplicated .toOption.getOrElse(false))
-  val IsIdentified = boo("Identified", "identified",20)("Misc")(_.item.identified .toOption.getOrElse(false))
+  val IsMirrored = boo("Mirrored", "mirrored",20)("Misc")(_.item.duplicated.toOption.getOrElse(false))
+  val IsIdentified = boo("Identified", "identified",20)("Misc")(_.item.identified.toOption.getOrElse(false))
   val IsVeiled = boo("Veiled", "veiled",20)("Misc")(_.item.veiled.toOption.getOrElse(false))
   val IsSynthesised = boo("Synthesised", "synthesised",20)("Misc")(c => c.item.fractured.toOption.getOrElse(false) || c.item.synthesised.toOption.getOrElse(false) )
   //isEnchanted - check mod enchlist - redundant button, but more obvious
@@ -223,9 +223,10 @@ object ComputedItemProps {
   //val AttackBlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   //val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
   val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
+  val BlockChance                   = pno("BlockChance", "%blk")(Defensive)(_.properties.chanceToBlock)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
-  val DodgeSpellHits = pno("ChanceToDodgeSpellHits","SpDg%")(Defensive)(_.chanceTo.dodgeSpellHits)
-  val BlockSpellDamage = pno("ChanceToBlockSpellDamage","SpBlk%")(Defensive)(_.chanceTo.blockSpellDamage)
+  val DodgeSpellHits = pno("ChanceToDodgeSpellHits","%SpDgc")(Defensive)(_.chanceTo.dodgeSpellHits)
+  val BlockSpellDamage = pno("ChanceToBlockSpellDamage","%SpBlkc")(Defensive)(_.chanceTo.blockSpellDamage)
 
 
   Armour ?= "Armour"
@@ -520,23 +521,23 @@ object ComputedItemProps {
   MinionsDamageIfUsedSkill !?= "Increased Minions Damage If Used Minion Skill"
 
   //TrapsMinesTotems
-  val IncreasedTrapDamage = pno("Increased Trap Damage","trapDmg")(TrapsMinesTotems)(_.traps.damage)
-  val IncreasedTrapThrowingSpeed = pno("Increased Trap Throwing Speed", "%throws")(TrapsMinesTotems)(_.traps.throwingSpeed)
-  val ReducedTrapDuration = pno("Reduced Trap Duration","lessTrapDur")(TrapsMinesTotems)(_.traps.reducedDuration)
+  val IncreasedTrapDamage = pno("Increased Trap Damage","+%trDmg")(TrapsMinesTotems)(_.traps.damage)
+  val IncreasedTrapThrowingSpeed = pno("Increased Trap Throwing Speed", "+%tts")(TrapsMinesTotems)(_.traps.throwingSpeed)
+  val ReducedTrapDuration = pno("Reduced Trap Duration","-tDur")(TrapsMinesTotems)(_.traps.reducedDuration)
   IncreasedTrapDamage !?= "Increased Trap Damage"
   IncreasedTrapThrowingSpeed !?= "Increased Trap Throwing Speed"
   ReducedTrapDuration !?= "Reduced Trap Duration"
 
-  val IncreasedMineDamage = pno("Increased Mine Damage","mineDmg")(TrapsMinesTotems)(_.mines.damage)
-  val IncreasedMineThrowingSpeed = pno("Increased Mine Throwing Speed", "%mthrows")(TrapsMinesTotems)(_.mines.throwingSpeed)
-  val ReducedMineDuration = pno("Reduced Mine Duration","lessMineDur")(TrapsMinesTotems)(_.mines.reducedDuration)
+  val IncreasedMineDamage = pno("Increased Mine Damage","+%mDmg")(TrapsMinesTotems)(_.mines.damage)
+  val IncreasedMineThrowingSpeed = pno("Increased Mine Throwing Speed", "+%mts")(TrapsMinesTotems)(_.mines.throwingSpeed)
+  val ReducedMineDuration = pno("Reduced Mine Duration","-mDur")(TrapsMinesTotems)(_.mines.reducedDuration)
   IncreasedMineDamage !?= "Increased Mine Damage"
   IncreasedMineThrowingSpeed !?= "Increased Mine Throwing Speed"
   ReducedMineDuration !?= "Reduced Mine Duration"
 
-  val IncreasedTotemDamage = pno("Increased Totem Damage","tDmg")(TrapsMinesTotems)(_.totems.damage)
-  val IncreasedTotemLife = pno("Increased Totem Life","tLife")(TrapsMinesTotems)(_.totems.life)
-  val TotemAllElementalResistances = pno("Totem All Elemental Resistances","taRes")(TrapsMinesTotems)(_.totems.allElemResists)
+  val IncreasedTotemDamage = pno("Increased Totem Damage","+%tDmg")(TrapsMinesTotems)(_.totems.damage)
+  val IncreasedTotemLife = pno("Increased Totem Life","+%tLife")(TrapsMinesTotems)(_.totems.life)
+  val TotemAllElementalResistances = pno("Totem All Elemental Resistances","+%taRes")(TrapsMinesTotems)(_.totems.allElemResists)
   IncreasedTotemDamage !?= "Increased Totem Damage"
   IncreasedTotemLife !?= "Increased Totem Life"
   TotemAllElementalResistances !?= "Totem All Elemental Resistances"
