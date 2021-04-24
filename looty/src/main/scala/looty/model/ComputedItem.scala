@@ -186,19 +186,8 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var accuracyRating                 = 0.0
     var blockRecovery                  = 0.0
     var elementalDamage                = 0.0
-//    var meleeDamage                    = 0.0 //TODO add mods increased
-//    var mineDamage                     = 0.0 //TODO add mods increased
-//    var trapDamage                     = 0.0 //TODO add mods increased
 //    var dotDamage                     = 0.0 //TODO add mods increased
-//    var mineThrowingSpeed              = 0.0 //TODO add mods increased
 //    var maximumMana                    = 0.0 //TODO add mods increased
-//Minions
-//    var totemDamage                    = 0.0 //TODO add mods increased
-//    var minionDamage                    = 0.0 //TODO add mods increased
-//    var minionLife                    = 0.0 //TODO add mods increased
-//    var minionCastSpeed                    = 0.0 //TODO add mods increased
-//    var minionMovementSpeed                    = 0.0 //TODO add mods increased
-//    var minionAllRes                    = 0.0 //TODO add mods increased
   }
 
   object increasedSpell {
@@ -215,7 +204,6 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   object reduced {
     var attributeRequirements = 0.0
     var enemyStunThreshold    = 0.0
-//    var reducedTrapDuration   = 0.0 //TODO add mods reduced
 //    var costOfSkills          = 0.0 //TODO add mods reduced
 //    var manaReserved          = 0.0 //TODO add mods reduced
   }
