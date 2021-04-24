@@ -357,6 +357,14 @@ object AffixesParser {
   simple1("", "additional Elemental Resistances during Flask effect")(_.flask.additionalResistances += _)
   simple1("Grants", "of Life Recovery to Minions")(_.flask.lifeRecoveryToMinions += _)
 
+  //damage over time
+  plusTo("Cold Damage over Time Multiplier")(_.DoT.multiplier.cold += _)
+  plusTo("Fire Damage over Time Multiplier")(_.DoT.multiplier.fire += _)
+  plusTo("Chaos Damage over Time Multiplier")(_.DoT.multiplier.chaos += _)
+  plusTo("Non-Ailment Chaos Damage over Time Multiplier")(_.DoT.multiplier.nonAilmentChaos += _)
+  plusTo("Physical Damage over Time Multiplier")(_.DoT.multiplier.physical += _)
+  plusTo("Damage over Time Multiplier for Bleeding")(_.DoT.multiplier.bleeding += _)
+  plusTo("Damage over Time Multiplier")(_.DoT.multiplier.general += _)
   simple1("Minions deal","increased Damage")(_.minions.damage += _)
   simple1("Minions have","increased Area of Effects")(_.minions.areaOfEffects += _)
   simple1("Minions have","increased Attack Speed")(_.minions.attackSpeed += _)
