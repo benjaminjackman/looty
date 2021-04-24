@@ -144,6 +144,17 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   }
 
   object increased {
+    var attributes                     = 0.0
+    var dexterity                      = 0.0
+    var intellect                      = 0.0
+    var strength                       = 0.0
+
+    var globalDamage                   = 0.0
+    var areaDamage                     = 0.0
+    var attackDamage                   = 0.0
+    var meleeDamage                    = 0.0
+    var areaOfEffects                  = 0.0
+
     val damage                         = Elements mutable 0.0
     var bleedingDamage                 = 0.0
     var burningDamage                  = 0.0
