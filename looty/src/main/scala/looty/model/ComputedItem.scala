@@ -127,6 +127,9 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isLeaguestone) "Leaguestone"
     else if (item.isProphecy) "SealedProphecy"
     else if (item.isOrgan) "Organ"
+    else if (item.isHirelingE) "Heist Tool"
+    else if (item.isBlueprint) "Blueprint"
+    else if (item.isContract) "Contract"
     // moving it as the last one to not include possible fragments catches as currency
     // which are recognized via description text
     // thanks GGG for lack of proper handling it :/
