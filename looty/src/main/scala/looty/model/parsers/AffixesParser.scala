@@ -359,6 +359,19 @@ object AffixesParser {
   increased("Minion Duration")(_.minions.increasedMinionDuration += _)
   simple1("Minions deal","increased Damage if you've used a Minion Skill Recently")(_.minions.increasedDamageWhenSkillUsed += _)
 
+
+  increased("Mine Damage")(_.mines.damage += _)
+  increased("Mine Throwing Speed")(_.mines.throwingSpeed += _)
+  reduced("Mine duration")(_.mines.reducedDuration += _)
+
+  increased("Traps Damage")(_.traps.damage += _)
+  increased("Traps Throwing Speed")(_.traps.throwingSpeed += _)
+  reduced("Trap duration")(_.traps.reducedDuration += _)
+
+  increased("Totem Damage")(_.totems.damage += _)
+  increased("Totem Life")(_.totems.life += _)
+  simple1("Totems gain","to all Elemental Resistances")(_.totems.allElemResists += _)
+
   strRegex1(s"^Grants Level \\d+ ([\\w ]+) Skill")(_.skill.name += _)
   regex1(s"^Grants Level (\\d+) [\\w ]+ Skill")(_.skill.level += _)
 

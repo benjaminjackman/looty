@@ -70,6 +70,7 @@ object ComputedItemProps {
   val FlasksMods      = "Flask Mods"
   val FlasksActions   = "Flask Actions"
   val Minions         = "Minions"
+  val TrapsMinesTotems = "Traps Mines Totems"
   val Special         = "Special"
 
   def str(
@@ -517,6 +518,28 @@ object ComputedItemProps {
   MinionsReducedReflectedDamage !?= "Minions Reduced Reflected Damage"
   increasedMinionDuration !?= "Increased Minion Duration"
   MinionsDamageIfUsedSkill !?= "Increased Minions Damage If Used Minion Skill"
+
+  //TrapsMinesTotems
+  val IncreasedTrapDamage = pno("Increased Trap Damage","trapDmg")(TrapsMinesTotems)(_.traps.damage)
+  val IncreasedTrapThrowingSpeed = pno("Increased Trap Throwing Speed", "%throws")(TrapsMinesTotems)(_.traps.throwingSpeed)
+  val ReducedTrapDuration = pno("Reduced Trap Duration","lessTrapDur")(TrapsMinesTotems)(_.traps.reducedDuration)
+  IncreasedTrapDamage !?= "Increased Trap Damage"
+  IncreasedTrapThrowingSpeed !?= "Increased Trap Throwing Speed"
+  ReducedTrapDuration !?= "Reduced Trap Duration"
+
+  val IncreasedMineDamage = pno("Increased Mine Damage","mineDmg")(TrapsMinesTotems)(_.mines.damage)
+  val IncreasedMineThrowingSpeed = pno("Increased Mine Throwing Speed", "%mthrows")(TrapsMinesTotems)(_.mines.throwingSpeed)
+  val ReducedMineDuration = pno("Reduced Mine Duration","lessMineDur")(TrapsMinesTotems)(_.mines.reducedDuration)
+  IncreasedMineDamage !?= "Increased Mine Damage"
+  IncreasedMineThrowingSpeed !?= "Increased Mine Throwing Speed"
+  ReducedMineDuration !?= "Reduced Mine Duration"
+
+  val IncreasedTotemDamage = pno("Increased Totem Damage","tDmg")(TrapsMinesTotems)(_.totems.damage)
+  val IncreasedTotemLife = pno("Increased Totem Life","tLife")(TrapsMinesTotems)(_.totems.life)
+  val TotemAllElementalResistances = pno("Totem All Elemental Resistances","taRes")(TrapsMinesTotems)(_.totems.allElemResists)
+  IncreasedTotemDamage !?= "Increased Totem Damage"
+  IncreasedTotemLife !?= "Increased Totem Life"
+  TotemAllElementalResistances !?= "Totem All Elemental Resistances"
 
   //Special
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)
