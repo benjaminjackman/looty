@@ -69,6 +69,7 @@ object ComputedItemProps {
   val Gems            = "Gems"
   val FlasksMods      = "Flask Mods"
   val FlasksActions   = "Flask Actions"
+  val Minions         = "Minions"
   val Special         = "Special"
 
   def str(
@@ -489,6 +490,33 @@ object ComputedItemProps {
   FlaskCurseImmunity !?= "Flask Curse Immunity"
   FlaskKnockback !?= "Flask adds Knockback"
   FlaskInstant !?= "Flask Instant Recovery"
+
+  //Minions
+  val MinionsDamage = pno("MinionsDamage","mDmg")(Minions)(_.minions.damage)
+  val MinionsAreaOfEffects = pno("MinionsAreaOfEffects","mAoE")(Minions)(_.minions.areaOfEffects)
+  val MinionsAttackSpeed = pno("MinionsAttackSpeed","mas%")(Minions)(_.minions.attackSpeed)
+  val MinionsCastSpeed = pno("MinionsCastSpeed","mcs%")(Minions)(_.minions.castSpeed)
+  val MinionsMaximumLife = pno("MinionsMaximumLife","mLife")(Minions)(_.minions.maximumLife)
+  val MinionsMovementSpeed = pno("MinionsMovementSpeed","mmove%")(Minions)(_.minions.movementSpeed)
+  val MinionsEleResist = pno("MinionsEleResist","mRes")(Minions)(_.minions.eleResist)
+  val MinionsDblDamage = pno("MinionsDblDamage","mDblDmg")(Minions)(_.minions.dblDamage)
+  val MinionsAccuracyRating = pno("MinionsAccuracyRating","mAR")(Minions)(_.minions.accuracyRating)
+  val MinionsReducedReflectedDamage = pno("MinionsReducedReflectedDamage","mRefl")(Minions)(_.minions.reducedReflectedDamage)
+  val increasedMinionDuration = pno("IncreasedMinionDuration","mDur")(Minions)(_.minions.increasedMinionDuration)
+  val MinionsDamageIfUsedSkill = pno("IncreasedMinionDamageWhenSkillUsed","mDmgius")(Minions)(_.minions.increasedDamageWhenSkillUsed)
+
+  MinionsDamage !?= "Minions Damage"
+  MinionsAreaOfEffects !?= "Minions Area Of Effects"
+  MinionsAttackSpeed !?= "Minions Attack Speed"
+  MinionsCastSpeed !?= "Minions Cast Speed"
+  MinionsMaximumLife !?= "Minions Maximum Life"
+  MinionsMovementSpeed !?= "Minions Movement Speed"
+  MinionsEleResist !?= "Minions Elemental Resist"
+  MinionsDblDamage !?= "Minions Double Damage"
+  MinionsAccuracyRating !?= "Minions Accuracy Rating"
+  MinionsReducedReflectedDamage !?= "Minions Reduced Reflected Damage"
+  increasedMinionDuration !?= "Increased Minion Duration"
+  MinionsDamageIfUsedSkill !?= "Increased Minions Damage If Used Minion Skill"
 
   //Special
   val GrantsSkill                 = str("GrantsSkill", "grantSkill", 150)(Special)(_.skill.name)

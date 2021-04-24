@@ -346,6 +346,19 @@ object AffixesParser {
   simple1("", "additional Elemental Resistances during Flask effect")(_.flask.additionalResistances += _)
   simple1("Grants", "of Life Recovery to Minions")(_.flask.lifeRecoveryToMinions += _)
 
+  simple1("Minions deal","increased Damage")(_.minions.damage += _)
+  simple1("Minions have","increased Area of Effects")(_.minions.areaOfEffects += _)
+  simple1("Minions have","increased Attack Speed")(_.minions.attackSpeed += _)
+  simple1("Minions have","increased Cast Speed")(_.minions.castSpeed += _)
+  simple1("Minions have","increased maximum Life")(_.minions.maximumLife += _)
+  simple1("Minions have","increased Movement Speed")(_.minions.movementSpeed += _)
+  simple1("Minions have","to all Elemental Resistances")(_.minions.eleResist += _)
+  simple1("Minions have","chance to deal Double Damage")(_.minions.dblDamage += _)
+  simple1("Minions have","to Accuracy Rating")(_.minions.accuracyRating += _)
+  simple1("You and your Minions take","reduced Reflected Physical Damage")(_.minions.reducedReflectedDamage += _)
+  increased("Minion Duration")(_.minions.increasedMinionDuration += _)
+  simple1("Minions deal","increased Damage if you've used a Minion Skill Recently")(_.minions.increasedDamageWhenSkillUsed += _)
+
   strRegex1(s"^Grants Level \\d+ ([\\w ]+) Skill")(_.skill.name += _)
   regex1(s"^Grants Level (\\d+) [\\w ]+ Skill")(_.skill.level += _)
 
