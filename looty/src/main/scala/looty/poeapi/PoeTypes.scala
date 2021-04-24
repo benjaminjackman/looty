@@ -461,6 +461,8 @@ object PoeTypes {
     val nextLevelRequirements: Optional[js.Array[ItemRequirement]] = js.native
     //used in items for stating require attributes, level to equip that item
     val requirements: Optional[js.Array[ItemRequirement]] = js.native
+    //Delve 3.4 used in resonator items
+    val delve: Optional[Boolean] = js.native
     //description on Gems/Flasks
     val descrText: Optional[String] = js.native
     //if description text is longer, ex. description of gem effect
