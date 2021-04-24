@@ -228,12 +228,15 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   lazy val propLevel   : Int = item.getLevel.getOrElse(0)
   lazy val mapLevel    : Int = item.getMapLevel.getOrElse(0)
   lazy val countInStack: Int = item.getCountInStack.getOrElse(0)
+  //Sockets in cluster jewel
+  val clusterJewelSockets: Double = passiveSkill.socketCount
 
   lazy val misc: Double = {
     if (countInStack > 0) countInStack
     else if (socketCnt > 0) socketCnt
     else if (propLevel > 0) propLevel
     else if (mapLevel > 0) mapLevel
+    else if (clusterJewelSockets > 0) clusterJewelSockets
     else 0.0
   }
 
@@ -470,5 +473,19 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 		var name = ""
 		var level = 0.0
 	}
+  object passiveSkill {
+    //# Added Passive Skill is Widespread Destruction
+    //# Added Passive Skill is a Jewel Socket
+    var name = ""
+    // this is all number of passive skills
+    //Adds # Passive Skills
+    var count = 0.0
+    // how much sockets is in cluster jewel
+    var socketCount = 0.0
+    //Added Small Passive Skills also grant: +#% to Elemental Resistance
+    var grants = ""
+    //TODO Passive Skills in Radius also grant: Traps and Mines deal # to # added Physical Damage
+    //TODO Notable Passive Skills in Radius are Transformed to
+  }
 
-}
+  }

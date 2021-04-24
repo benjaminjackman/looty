@@ -71,6 +71,7 @@ object ComputedItemProps {
   val FlasksActions   = "Flask Actions"
   val Minions         = "Minions"
   val TrapsMinesTotems = "Traps Mines Totems"
+  val ClusterJewels   = "Cluster Jewels"
   val Special         = "Special"
 
   def str(
@@ -542,6 +543,16 @@ object ComputedItemProps {
   IncreasedTotemDamage !?= "Increased Totem Damage"
   IncreasedTotemLife !?= "Increased Totem Life"
   TotemAllElementalResistances !?= "Totem All Elemental Resistances"
+
+  //Cluster Jewels
+  val addPassiveSkill = str("AddPassiveSkill", "addPS", 150)(ClusterJewels)(_.passiveSkill.name)
+  val addPassiveSkillCount = pno("AddPassiveSkillCount", "addPSc")(ClusterJewels)(_.passiveSkill.count)
+  val addPassiveSkillGrants = str("AddPassiveSkillGrants", "addPSgrnt", 150)(ClusterJewels)(_.passiveSkill.grants)
+  val AddPassiveSkillSocketCount = pno("AddPassiveSkillSocketCount", "jwlSc")(ClusterJewels)(_.passiveSkill.socketCount)
+  addPassiveSkill !?= "Added Passive Skill"
+  addPassiveSkillCount !?= "Number of Added Passive Skills"
+  addPassiveSkillGrants !?= "Added Small Passive Skills grant"
+  AddPassiveSkillSocketCount !?= "Passive Skill as Sockets"
 
   //Special
   val GrantsSkill                 = str("GrantsSkill", "gSkill", 150)(Special)(_.skill.name)
