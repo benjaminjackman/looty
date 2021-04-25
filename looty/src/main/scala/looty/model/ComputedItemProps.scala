@@ -225,9 +225,7 @@ object ComputedItemProps {
   val IncreasedLocalArmour               = pno("IncreasedLocalArmour", "+%lAR")(Defensive)(_.increased.localArmour)
   val IncreasedLocalEvasionRating        = pno("IncreasedLocalEvasionRating", "+%lEV")(Defensive)(_.increased.localEvasionRating)
 
-  //val AttackBlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
-  //val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
-  val BlockChance                   = pno("BlockChance", "blk%")(Defensive)(_.properties.chanceToBlock)
+  //TODO AttackBlockChance
   val BlockChance                   = pno("BlockChance", "%blk")(Defensive)(_.properties.chanceToBlock)
   val IncreasedBlockAndStunRecovery = pno("IncreasedBlockAndStunRecovery", "+bsrec")(Defensive)(_.increased.blockAndStunRecovery)
   val DodgeSpellHits = pno("ChanceToDodgeSpellHits","%SpDgc")(Defensive)(_.chanceTo.dodgeSpellHits)
@@ -481,8 +479,6 @@ object ComputedItemProps {
 
   //AllGems
   val IncreasedGemLevelMinion           = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.allGemLevel.minion)
-  val IncreasedGemLevelMinion       = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.gemLevel.minion)
-  val IncreasedGemLevelMelee        = pno("IncreasedGemLevelMelee", "+gMelee")(Gems)(_.gemLevel.melee)
   val IncreasedGemLevelAny              = pno("IncreasedGemLevelAny", "+gAny")(Gems)(_.allGemLevel.any)
   val IncreasedGemLevelFire             = pno("IncreasedGemLevelFire", "+gFir")(Gems)(_.allGemLevel.element.fire)
   val IncreasedGemLevelCold             = pno("IncreasedGemLevelCold", "+gCol")(Gems)(_.allGemLevel.element.cold)
@@ -491,7 +487,6 @@ object ComputedItemProps {
   val IncreasedGemLevelDexterity        = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.allGemLevel.attribute.dexterity)
   val IncreasedGemLevelIntelligence     = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.allGemLevel.attribute.intelligence)
   IncreasedGemLevelMinion !?= "Increased Minion Gem Level"
-  val SocketedGemsSupportedBySpell          = str("SocketedGemsSupportedBySpell", "+gemsSupSpell",150)(Gems)(_.socketedGems.name)
   IncreasedGemLevelAny !?= "Increased Any Gem Level"
   IncreasedGemLevelFire !?= "Increased Fire Gem Level"
   IncreasedGemLevelCold !?= "Increased Cold Gem Level"
@@ -526,10 +521,7 @@ object ComputedItemProps {
 
   val SocketedGemsSupportedBySpell          = str("SocketedGemsSupportedBySpell", "+gemsSupSpell",150)(SocketedGems)(_.socketedGems.name)
   SocketedGemsSupportedBySpell !?= "Socketed Gems are Supported by Spell"
-  IncreasedGemLevelBow !?= "Increased Bow Gem Level "
-  IncreasedGemLevelMinion !?= "Increased Minion Gem Level "
-  IncreasedGemLevelMelee !?= "Increased Melee Gem Level "
-  IncreasedGemLevelSupport !?= "Increased Support Gem Level "
+
   IncreasedSocketedGemLevelBow !?= "Increased Socketed Bow Gem Level"
   IncreasedSocketedGemLevelMinion !?= "Increased Socketed Minion Gem Level"
   IncreasedSocketedGemLevelMelee !?= "Increased Socketed Melee Gem Level"
