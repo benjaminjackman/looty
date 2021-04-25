@@ -47,6 +47,8 @@ object ItemScorer {
     fscore1("60+ max Life")(_.plusTo.lifeAndMana.life >= 60)
     fscore1("60+ max Mana")(_.plusTo.lifeAndMana.mana >= 40)
 
+    fscore1("5%+ max Life")(_.increased.maximumLife >= 5)
+
     fscore1("60%+ armour")(_.increased.globalArmour >= 60)
     fscore1("60%+ evasion")(_.increased.localEvasionRating >= 60)
     fscore1("60%+ energyShield")(_.increased.localEnergyShield >= 60)
