@@ -295,8 +295,6 @@ object AffixesParser {
 
   //level of all gems
   allGemlevel("Minion")(_.allGemLevel.minion += _)
-  level("Minion")(_.gemLevel.minion += _)
-  level("Bow")(_.gemLevel.bow += _)
   allGemlevel("")(_.allGemLevel.addToAll(_))
   //level of all spell gems
   allSpellGemlevel("")(_.allSpellGemLevel.addToAll(_))
