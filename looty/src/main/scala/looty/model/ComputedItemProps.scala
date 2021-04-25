@@ -50,30 +50,32 @@ object ComputedItemProps {
 
   }
   //affixes Group names for use in Column Select Panel
-  val General         = "General"
-  val Miscellaneous   = "Miscellaneous"
-  val Scores          = "Score" //unused
-  val Defensive       = "Defensive"
-  val Attack          = "Attack"
-  val Dps             = "Dps"
-  val AverageDamage   = "Average Damage"
-  val Requirements    = "Requirements"
-  val Efficiency      = "Efficiency"
-  val Regen           = "Regen"
-  val Attributes      = "Attributes"
-  val Resists         = "Resists"
-  val Crit            = "Crit"
-  val Spells          = "Spells"
-  val DamageToSpells  = "Damage to Spells"
-  val DoT = "Damage over Time"
-  val IncreasedDamage = "Increased Damage"
-  val Gems            = "Gems"
-  val FlasksMods      = "Flask Mods"
-  val FlasksActions   = "Flask Actions"
-  val Minions         = "Minions"
-  val TrapsMinesTotems = "Traps Mines Totems"
-  val ClusterJewels   = "Cluster Jewels"
-  val Special         = "Special"
+  val General           = "General"
+  val Miscellaneous     = "Miscellaneous"
+  val Scores            = "Score" //unused
+  val Defensive         = "Defensive"
+  val Attack            = "Attack"
+  val Dps               = "Dps"
+  val AverageDamage     = "Average Damage"
+  val Requirements      = "Requirements"
+  val Efficiency        = "Efficiency"
+  val Regen             = "Regen"
+  val Attributes        = "Attributes"
+  val Resists           = "Resists"
+  val Crit              = "Crit"
+  val Spells            = "Spells"
+  val DamageToSpells    = "Damage to Spells"
+  val DoT               = "Damage over Time"
+  val IncreasedDamage   = "Increased Damage"
+  val Gems              = "Gems Level"
+  val SpellGems         = "Spell Gems Level"
+  val SocketedGems      = "Socketed Gems Level"
+  val FlasksMods        = "Flask Mods"
+  val FlasksActions     = "Flask Actions"
+  val Minions           = "Minions"
+  val TrapsMinesTotems  = "Traps Mines Totems"
+  val ClusterJewels     = "Cluster Jewels"
+  val Special           = "Special"
 
   def str(
     fullName: String,
@@ -477,31 +479,69 @@ object ComputedItemProps {
   IncreasedBurningDamage !?= "Increased Burning Damage"
   IncreasedElementalAttackDamage !?= "Increased Elemental Attack Damage"
 
-  //Gems
-  val IncreasedGemLevelBow          = pno("IncreasedGemLevelBow", "+gBow")(Gems)(_.gemLevel.bow)
+  //AllGems
+  val IncreasedGemLevelMinion           = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.allGemLevel.minion)
   val IncreasedGemLevelMinion       = pno("IncreasedGemLevelMinion", "+gMinion")(Gems)(_.gemLevel.minion)
   val IncreasedGemLevelMelee        = pno("IncreasedGemLevelMelee", "+gMelee")(Gems)(_.gemLevel.melee)
-  val IncreasedGemLevelSupport        = pno("IncreasedGemLevelSupport", "+gSupport")(Gems)(_.gemLevel.support)
-  val IncreasedGemLevelAny          = pno("IncreasedGemLevelAny", "+gAny")(Gems)(_.gemLevel.any)
-  val IncreasedGemLevelFire         = pno("IncreasedGemLevelFire", "+gFir")(Gems)(_.gemLevel.element.fire)
-  val IncreasedGemLevelCold         = pno("IncreasedGemLevelCold", "+gCol")(Gems)(_.gemLevel.element.cold)
-  val IncreasedGemLevelLightning    = pno("IncreasedGemLevelLightning", "+gLig")(Gems)(_.gemLevel.element.lightning)
-  val IncreasedGemLevelStrength     = pno("IncreasedGemLevelStrength", "+gStr")(Gems)(_.gemLevel.attribute.strength)
-  val IncreasedGemLevelDexterity    = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.gemLevel.attribute.dexterity)
-  val IncreasedGemLevelIntelligence = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.gemLevel.attribute.intelligence)
+  val IncreasedGemLevelAny              = pno("IncreasedGemLevelAny", "+gAny")(Gems)(_.allGemLevel.any)
+  val IncreasedGemLevelFire             = pno("IncreasedGemLevelFire", "+gFir")(Gems)(_.allGemLevel.element.fire)
+  val IncreasedGemLevelCold             = pno("IncreasedGemLevelCold", "+gCol")(Gems)(_.allGemLevel.element.cold)
+  val IncreasedGemLevelLightning        = pno("IncreasedGemLevelLightning", "+gLig")(Gems)(_.allGemLevel.element.lightning)
+  val IncreasedGemLevelStrength         = pno("IncreasedGemLevelStrength", "+gStr")(Gems)(_.allGemLevel.attribute.strength)
+  val IncreasedGemLevelDexterity        = pno("IncreasedGemLevelDexterity", "+gDex")(Gems)(_.allGemLevel.attribute.dexterity)
+  val IncreasedGemLevelIntelligence     = pno("IncreasedGemLevelIntelligence", "+gInt")(Gems)(_.allGemLevel.attribute.intelligence)
+  IncreasedGemLevelMinion !?= "Increased Minion Gem Level"
   val SocketedGemsSupportedBySpell          = str("SocketedGemsSupportedBySpell", "+gemsSupSpell",150)(Gems)(_.socketedGems.name)
+  IncreasedGemLevelAny !?= "Increased Any Gem Level"
+  IncreasedGemLevelFire !?= "Increased Fire Gem Level"
+  IncreasedGemLevelCold !?= "Increased Cold Gem Level"
+  IncreasedGemLevelLightning !?= "Increased Lightning Gem Level"
+  IncreasedGemLevelStrength !?= "Increased Strength Gem Level"
+  IncreasedGemLevelDexterity !?= "Increased Dexterity Gem Level"
+  IncreasedGemLevelIntelligence !?= "Increased Intelligence Gem Level"
+
+  //AllSpellGems
+  val IncreasedGemLevelAnySpell              = pno("IncreasedGemLevelAnySpell", "+gAnyS")(SpellGems)(_.allSpellGemLevel.any)
+  val IncreasedGemLevelFireSpell             = pno("IncreasedGemLevelFireSpell", "+gFirS")(SpellGems)(_.allSpellGemLevel.element.fire)
+  val IncreasedGemLevelColdSpell             = pno("IncreasedGemLevelColdSpell", "+gColS")(SpellGems)(_.allSpellGemLevel.element.cold)
+  val IncreasedGemLevelLightningSpell        = pno("IncreasedGemLevelLightningSpell", "+gLigS")(SpellGems)(_.allSpellGemLevel.element.lightning)
+  IncreasedGemLevelAnySpell !?= "Increased All Spell Skill Gem Level"
+  IncreasedGemLevelFireSpell !?= "Increased Fire Spell Gem Level"
+  IncreasedGemLevelColdSpell !?= "Increased Cold Spell Gem Level"
+  IncreasedGemLevelLightningSpell !?= "Increased Lightning Spell Gem Level"
+
+  //SocketedGems
+  val IncreasedSocketedGemLevelBow          = pno("IncreasedSocketedGemLevelBow", "+sgBow")(SocketedGems)(_.socketedGemLevel.bow)
+  val IncreasedSocketedGemLevelMinion       = pno("IncreasedSocketedGemLevelMinion", "+sgMinion")(SocketedGems)(_.socketedGemLevel.minion)
+  val IncreasedSocketedGemLevelMelee        = pno("IncreasedSocketedGemLevelMelee", "+sgMelee")(SocketedGems)(_.socketedGemLevel.melee)
+  val IncreasedSocketedGemLevelTrapOrMine   = pno("IncreasedSocketedGemLevelTrapOrMine", "+sgtm")(SocketedGems)(_.socketedGemLevel.trapOrMine)
+  val IncreasedSocketedGemLevelSupport      = pno("IncreasedSocketedGemLevelSupport", "+sgSupport")(SocketedGems)(_.socketedGemLevel.support)
+  val IncreasedSocketedGemLevelAny          = pno("IncreasedSocketedGemLevelAny", "+sgAny")(SocketedGems)(_.socketedGemLevel.any)
+  val IncreasedSocketedGemLevelFire         = pno("IncreasedSocketedGemLevelFire", "+sgFir")(SocketedGems)(_.socketedGemLevel.element.fire)
+  val IncreasedSocketedGemLevelCold         = pno("IncreasedSocketedGemLevelCold", "+sgCol")(SocketedGems)(_.socketedGemLevel.element.cold)
+  val IncreasedSocketedGemLevelLightning    = pno("IncreasedSocketedGemLevelLightning", "+sgLig")(SocketedGems)(_.socketedGemLevel.element.lightning)
+  val IncreasedSocketedGemLevelStrength     = pno("IncreasedSocketedGemLevelStrength", "+sgStr")(SocketedGems)(_.socketedGemLevel.attribute.strength)
+  val IncreasedSocketedGemLevelDexterity    = pno("IncreasedSocketedGemLevelDexterity", "+sgDex")(SocketedGems)(_.socketedGemLevel.attribute.dexterity)
+  val IncreasedSocketedGemLevelIntelligence = pno("IncreasedSocketedGemLevelIntelligence", "+sgInt")(SocketedGems)(_.socketedGemLevel.attribute.intelligence)
+
+  val SocketedGemsSupportedBySpell          = str("SocketedGemsSupportedBySpell", "+gemsSupSpell",150)(SocketedGems)(_.socketedGems.name)
   SocketedGemsSupportedBySpell !?= "Socketed Gems are Supported by Spell"
   IncreasedGemLevelBow !?= "Increased Bow Gem Level "
   IncreasedGemLevelMinion !?= "Increased Minion Gem Level "
   IncreasedGemLevelMelee !?= "Increased Melee Gem Level "
   IncreasedGemLevelSupport !?= "Increased Support Gem Level "
-  IncreasedGemLevelAny !?= "Increased Any Gem Level "
-  IncreasedGemLevelFire !?= "Increased Fire Gem Level "
-  IncreasedGemLevelCold !?= "Increased Cold Gem Level "
-  IncreasedGemLevelLightning !?= "Increased Lightning Gem Level "
-  IncreasedGemLevelStrength !?= "Increased Strength Gem Level "
-  IncreasedGemLevelDexterity !?= "Increased Dexterity Gem Level "
-  IncreasedGemLevelIntelligence !?= "Increased Intelligence Gem Level "
+  IncreasedSocketedGemLevelBow !?= "Increased Socketed Bow Gem Level"
+  IncreasedSocketedGemLevelMinion !?= "Increased Socketed Minion Gem Level"
+  IncreasedSocketedGemLevelMelee !?= "Increased Socketed Melee Gem Level"
+  IncreasedSocketedGemLevelTrapOrMine !?= "Increased Socketed Trap or Mine Gem Level"
+  IncreasedSocketedGemLevelSupport !?= "Increased Socketed Support Gem Level"
+  IncreasedSocketedGemLevelAny !?= "Increased Socketed Any Gem Level"
+  IncreasedSocketedGemLevelFire !?= "Increased Socketed Fire Gem Level"
+  IncreasedSocketedGemLevelCold !?= "Increased Socketed Cold Gem Level"
+  IncreasedSocketedGemLevelLightning !?= "Increased Socketed Lightning Gem Level"
+  IncreasedSocketedGemLevelStrength !?= "Increased Socketed Strength Gem Level"
+  IncreasedSocketedGemLevelDexterity !?= "Increased Socketed Dexterity Gem Level"
+  IncreasedSocketedGemLevelIntelligence !?= "Increased Socketed Intelligence Gem Level"
 
   //Flask
   val FlaskExtraCharges                 = pno("FlaskExtraCharges", "fextrac")(FlasksMods)(_.flask.extraCharges)

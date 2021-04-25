@@ -72,7 +72,8 @@ object ItemScorer {
     }
     fscore1("Projectile Speed")(_.increased.projectileSpeed >= 20)
 
-    fscore1("+2+ for gems")(_.gemLevel.max >= 2)
+    fscore1("+2+ for socketed gems")(_.socketedGemLevel.max >= 2)
+    fscore1("+2+ for gems")(_.allGemLevel.max >= 2)
 
     fscore1("20%+ Increased Spell Damage")(!_.slots.isWeapon, !_.slots.isSpiritShield, _.increased.spellDamage >= 20)
     fscore1("30%+ Increased Spell Damage (Spirit Shield)")(

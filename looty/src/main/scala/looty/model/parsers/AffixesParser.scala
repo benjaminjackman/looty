@@ -138,9 +138,19 @@ object AffixesParser {
   def addsDamage(element: String, suffix : String = "")(f: (ComputedItem, Double, Double) => Unit) = {
     regex2(s"^Adds ([\\d]+) to ([\\d]+) $element Damage${suffix}$$")(f)
   }
-  def level(name: String)(f: (ComputedItem, Double) => Unit) = {
+  def socketedGemlevel(name: String)(f: (ComputedItem, Double) => Unit) = {
     val a = if (name.isEmpty) "" else name + " "
-    val r = s"^([.+-\\d]+)%* to Level of Socketed ${a}Gems$$"
+    val r = s"^([.+-\\d]+) to Level of Socketed ${a}Gems$$"
+    regex1(r)(f)
+  }
+  def allGemlevel(name: String)(f: (ComputedItem, Double) => Unit) = {
+    val a = if (name.isEmpty) "" else name + " "
+    val r = s"^([.+-\\d]+) to Level of all ${a}Skill Gems$$"
+    regex1(r)(f)
+  }
+  def allSpellGemlevel(name: String)(f: (ComputedItem, Double) => Unit) = {
+    val a = if (name.isEmpty) "" else name + " "
+    val r = s"^([.+-\\d]+) to Level of all ${a}Spell Skill Gems$$"
     regex1(r)(f)
   }
   def simple1(prefix: String, suffix: String)(f: (ComputedItem, Double) => Unit) = {
@@ -154,7 +164,8 @@ object AffixesParser {
 //BEGIN AFFIXES
   for (x <- Attributes.all) {
     plusTo(x.cap)(_.plusTo.attribute.+=(x, _))
-    level(x.cap)(_.gemLevel.attribute.+=(x, _))
+    socketedGemlevel(x.cap)(_.socketedGemLevel.attribute.+=(x, _))
+    allGemlevel(x.cap)(_.allGemLevel.attribute.+=(x, _))
   }
 
   for (x <- Elements.all) {
@@ -164,7 +175,9 @@ object AffixesParser {
     addsDamage(x.cap, " to Attacks")(_.damages(x).+=(_, _))
     addsDamage(x.cap, " to Bow Attacks")(_.damagesWithBows(x).+=(_, _))
     addsDamage(x.cap, " to Spells")(_.addDamagesToSpells(x).+=(_, _))
-    level(x.cap)(_.gemLevel.element.+=(x, _))
+    socketedGemlevel(x.cap)(_.socketedGemLevel.element.+=(x, _))
+    allGemlevel(x.cap)(_.allGemLevel.element.+=(x, _))
+    allSpellGemlevel(x.cap)(_.allSpellGemLevel.element.+=(x, _))
   }
 
   for (x <- LifeAndMana.all) {
@@ -280,11 +293,20 @@ object AffixesParser {
   reduced("Attribute Requirements")(_.reduced.attributeRequirements += _)
   reduced("Enemy Stun Threshold")(_.reduced.enemyStunThreshold += _)
 
-  level("Melee")(_.gemLevel.melee += _)
-  level("Support")(_.gemLevel.support += _)
+  //level of all gems
+  allGemlevel("Minion")(_.allGemLevel.minion += _)
   level("Minion")(_.gemLevel.minion += _)
   level("Bow")(_.gemLevel.bow += _)
-  level("")(_.gemLevel.addToAll(_))
+  allGemlevel("")(_.allGemLevel.addToAll(_))
+  //level of all spell gems
+  allSpellGemlevel("")(_.allSpellGemLevel.addToAll(_))
+  //level of all socketed gems
+  socketedGemlevel("Melee")(_.socketedGemLevel.melee += _)
+  socketedGemlevel("Support")(_.socketedGemLevel.support += _)
+  socketedGemlevel("Minion")(_.socketedGemLevel.minion += _)
+  socketedGemlevel("Bow")(_.socketedGemLevel.bow += _)
+  socketedGemlevel("Trap or Mine")(_.socketedGemLevel.trapOrMine += _)
+  socketedGemlevel("")(_.socketedGemLevel.addToAll(_))
 
   simple1("Reflects", "Physical Damage to Melee Attackers")(_.reflectsPhysicalDamageToAttackers += _)
   simple1("", "additional Block Chance")(_.blockChance += _)
@@ -365,6 +387,7 @@ object AffixesParser {
   plusTo("Physical Damage over Time Multiplier")(_.DoT.multiplier.physical += _)
   plusTo("Damage over Time Multiplier for Bleeding")(_.DoT.multiplier.bleeding += _)
   plusTo("Damage over Time Multiplier")(_.DoT.multiplier.general += _)
+
   simple1("Minions deal","increased Damage")(_.minions.damage += _)
   simple1("Minions have","increased Area of Effects")(_.minions.areaOfEffects += _)
   simple1("Minions have","increased Attack Speed")(_.minions.attackSpeed += _)
@@ -407,6 +430,7 @@ object AffixesParser {
   strRegex1(s"^1 Added Passive Skill is ([\\w ]+)")(_.passiveSkill.name += _ + ", ")
   strRegex1(s"^Added Small Passive Skills also grant: (.+)")(_.passiveSkill.grants += _ + ", ")
   strRegex1(s"^Added Small Passive Skills grant: (.+)")(_.passiveSkill.grants += _ + ", ")
+
   val all = _all.toList
 
 }
