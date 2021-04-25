@@ -536,15 +536,15 @@ object ComputedItemProps {
   //Minions
   val MinionsDamage = pno("MinionsDamage","+%mnDmg")(Minions)(_.minions.damage)
   val MinionsAreaOfEffects = pno("MinionsAreaOfEffects","+%mnAoE")(Minions)(_.minions.areaOfEffects)
-  val MinionsAttackSpeed = pno("MinionsAttackSpeed","mnas%")(Minions)(_.minions.attackSpeed)
-  val MinionsCastSpeed = pno("MinionsCastSpeed","mncs%")(Minions)(_.minions.castSpeed)
+  val MinionsAttackSpeed = pno("MinionsAttackSpeed","+%mnas")(Minions)(_.minions.attackSpeed)
+  val MinionsCastSpeed = pno("MinionsCastSpeed","+%mncs")(Minions)(_.minions.castSpeed)
   val MinionsMaximumLife = pno("MinionsMaximumLife","+%mnLife")(Minions)(_.minions.maximumLife)
-  val MinionsMovementSpeed = pno("MinionsMovementSpeed","mnmove%")(Minions)(_.minions.movementSpeed)
+  val MinionsMovementSpeed = pno("MinionsMovementSpeed","+%mnmove")(Minions)(_.minions.movementSpeed)
   val MinionsEleResist = pno("MinionsEleResist","+%mnRes")(Minions)(_.minions.eleResist)
   val MinionsDblDamage = pno("MinionsDblDamage","+%mnDblDmg")(Minions)(_.minions.dblDamage)
-  val MinionsAccuracyRating = pno("MinionsAccuracyRating","mnAR")(Minions)(_.minions.accuracyRating)
-  val MinionsReducedReflectedDamage = pno("MinionsReducedReflectedDamage","mnRefl")(Minions)(_.minions.reducedReflectedDamage)
-  val increasedMinionDuration = pno("IncreasedMinionDuration","mnDur")(Minions)(_.minions.increasedMinionDuration)
+  val MinionsAccuracyRating = pno("MinionsAccuracyRating","+mnAR")(Minions)(_.minions.accuracyRating)
+  val MinionsReducedReflectedDamage = pno("MinionsReducedReflectedDamage","%mnRefl")(Minions)(_.minions.reducedReflectedDamage)
+  val increasedMinionDuration = pno("IncreasedMinionDuration","+%mnDur")(Minions)(_.minions.increasedMinionDuration)
   val MinionsDamageIfUsedSkill = pno("IncreasedMinionDamageWhenSkillUsed","+%mnDmgius")(Minions)(_.minions.increasedDamageWhenSkillUsed)
 
   MinionsDamage !?= "Minions Damage"
