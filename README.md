@@ -39,6 +39,73 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
+## 0.2.1.80 (2021-04-25)
+
+Features
+- Added input field to filter mod buttons (above mod list on the left) to help you choose desired ones faster.
+(this feature uses something called fuzzy search, it searches all letter occurrences, so if you type "life" it would select also "the type line of an item", it is as good as it gets :) )
+
+Added columns for affixes :
+  - #% Increased Attributes
+  - #% Increased Dexterity
+  - #% Increased Intellect
+  - #% Increased Strength
+  - #% increased Damage
+  - #% increased Area Damage
+  - #% increased Melee Damage
+  - #% increased Attack Damage
+  - #% increased Area of Effects
+  
+Turned on score column, as some of you liked it. Although its a bit outdated, i'll try to add there stats from time to time.
+All suggestions welcomed!
+
+Added columns for cluster jewels affixes:
+  - Adds # Passive Skills
+  - # Added Passives is/are Jewel Socket - number of sockets
+  - # Added Small Passive (also) grants # - what stats you gain with small passives
+  - # Added Passive Skill is # - what skill(s) cluster jewel adds
+
+Added "Damage over Time" mod group, which supports following mods:
+  - #% to Cold Damage over Time Multiplier
+  - #% to Fire Damage over Time Multiplier
+  - #% to Chaos Damage over Time Multiplier
+  - #% to Non-Ailment Chaos Damage over Time Multiplier
+  - #% to Physical Damage over Time Multiplier
+  - #% to Damage over Time Multiplier for Bleeding
+  - #% to Damage over Time Multiplier
+
+Gave some love to minion, totem, traps and mines builds:
+  - Minions deal #% increased Damage
+  - Minions have #% increased Area of Effect
+  - Minions have #% increased Attack Speed
+  - Minions have #% increased Cast Speed
+  - Minions have #% increased maximum Life
+  - Minions have #% increased Movement Speed
+  - Minions have +#% to all Elemental Resistance
+  - Minions have #% chance to deal Double Damage"
+  - Minions Accuracy Rating
+  - Minions Reduced Reflected Damage
+  - Increased Minion Duration
+  - #% increased Mine Damage
+  - #% increased Mine Throwing Speed
+  - #% increased Trap Damage
+  - #% increased Trap Throwing Speed
+  - #% increased Totem Damage
+  - #% increased Totem Life
+  - Totems gain +#% to all Elemental Resistances
+
+Changes to gem mods:
+  - renamed previous mod group "Gems"  to "Socketed Gems Level" 
+  - added column for mod "Socketed Gems are Supported by Level x #" - in this column you will get name of that spell
+  - added mod groups for "Spell Gems Level" and "Gems Level" so it shows now:
+    - # to Level of all # Skill Gem
+    - # to Level of all # Spell Skill Gem
+
+Fixes
+  - heist items for hirelings, contracts and blueprints are correctly recognized
+  - resonators are recognized as separate type
+  - crafted mod, showing if item has crafted mod is fixed
+
 ## 0.2.1.79 (2021-01-15)
 Special thanks, again, to Traf27 for keeping Looty going!
 
