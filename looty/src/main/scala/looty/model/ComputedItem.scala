@@ -272,12 +272,13 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
   object leech {var physical = LifeAndMana mutable 0.0}
   object onKill {var lifeAndMana = LifeAndMana mutable 0.0}
   object onAttackHit {var lifeAndMana = LifeAndMana mutable 0.0}
-  object gemLevel {
+
+  object socketedGemLevel {
     val element   = Elements mutable 0.0
     val attribute = Attributes mutable 0.0
     var melee     = 0.0
     var minion    = 0.0
-//    var trapOrMine = 0.0 //TODO add mod - + level to socketed gem
+    var trapOrMine = 0.0
     var bow       = 0.0
     var any       = 0.0
     var support   = 0.0
@@ -286,10 +287,35 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
       Attributes.all.foreach(attribute +=(_, n))
       melee += n
       minion += n
+      trapOrMine += n
       bow += n
       any += n
+      support += n
     }
-    def max = (List(melee, minion, bow) ::: attribute.all ::: element.all).max
+    def max = (List(melee, minion, trapOrMine, support, bow) ::: attribute.all ::: element.all).max
+  }
+
+  object allGemLevel {
+    val element   = Elements mutable 0.0
+    val attribute = Attributes mutable 0.0
+    var minion        = 0.0
+    var any           = 0.0
+    def addToAll(n: Double) = {
+      Elements.all.foreach(element +=(_, n))
+      Attributes.all.foreach(attribute +=(_, n))
+      minion += n
+      any += n
+    }
+    def max = (List(minion) ::: attribute.all ::: element.all).max
+  }
+  object allSpellGemLevel {
+    val element   = Elements mutable 0.0
+    var any     = 0.0
+
+    def addToAll(n: Double) = {
+      Elements.all.foreach(element +=(_, n))
+      any += n
+    }
   }
 
   object total {
