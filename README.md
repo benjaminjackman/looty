@@ -39,7 +39,7 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
-## 0.2.1.80 (2021-04-25)
+## 0.2.1.81 (2021-04-25) (Traf contributed this update)
 
 Features
 - Added input field to filter mod buttons (above mod list on the left) to help you choose desired ones faster.
