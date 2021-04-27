@@ -23,8 +23,9 @@ https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgeh
 https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
 
 #upload
+go ~/dev/github/looty/build/
 ./build/build.zip
-~/dev/github/looty/build/build.zip
+
 
 # TODO: Github releases!
 
