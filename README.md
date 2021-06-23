@@ -2,8 +2,6 @@ Looty
 =====
 A browser extension for Path of Exile that makes inventory searching fun!
 
-
-Available on the [Firefox Marketplace](https://addons.mozilla.org/en-US/firefox/addon/looty-path-of-exile-stash-find/) and
 [Chrome Web Store](https://chrome.google.com/webstore/detail/looty/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en&gl=US)
 
 Built using [ScalaJs](http://www.scala-js.org/) based on [GPLv2](http://www.gnu.org/licenses/gpl-2.0.html)
