@@ -33,4 +33,5 @@ object Settings {
   def isSet(option:String): Boolean = {
     window.localStorage.getItem(option) == "true"
   }
+  val SHOW_PARSING_PROBLEM = true
 }

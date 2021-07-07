@@ -5,6 +5,7 @@ import looty.poeapi.PoeTypes.AnyItem
 import scala.scalajs.js
 import looty.poeapi.PoeTypes.AnyItem.FrameTypes
 import looty.model.{LootContainerId, ComputedItem}
+import looty.util.Settings.SHOW_PARSING_PROBLEM
 
 
 //////////////////////////////////////////////////////////////
@@ -33,7 +34,7 @@ object ItemParser {
 
     } catch {
       case e : Throwable =>
-        console.error("Unable To Parse Properties for item", item)
+        if (SHOW_PARSING_PROBLEM) console.error("Unable To Parse Properties for item", item)
         e.printStackTrace()
     }
     ci
@@ -51,7 +52,7 @@ object ItemParser {
         ci.notParsedYet.name += mod ++ " |"
         //Silence these warnings with localStorage.setItem("SQUELCH_WARNINGS", "true") inside the console
         if (window.localStorage.getItem("SQUELCH_WARNINGS") != "true") {
-          console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
+          if (SHOW_PARSING_PROBLEM) console.warn("Unable to parse affix", ci.item.getFrameType.name, ci.item.getName, "->", mod)
         }
       }
     }
@@ -74,7 +75,7 @@ object ItemParser {
     } {
       if (!PropertyParsers.parse(ci, prop)) {
         if (!ci.item.isFlask && !ci.item.isGem) {
-          console.warn("Unable to parse property", ci.item.getFrameType.name, ci.item.getName, "->", prop, ci.item)
+          if (SHOW_PARSING_PROBLEM) console.warn("Unable to parse property", ci.item.getFrameType.name, ci.item.getName, "->", prop, ci.item)
         }
       }
     }
@@ -88,7 +89,7 @@ object ItemParser {
 
   def parseTypeLine(ci: ComputedItem) {
     if (ci.isEquippable && !ci.slots.isWeapon && !ci.slots.isFlask  && !ArmourParser.parse(ci, ci.item.typeLine)) {
-      console.warn("Unable to parse typeline", ci.item.getFrameType.name, ci.item.typeLine, ci.item.getName, ci.item)
+      if (SHOW_PARSING_PROBLEM) console.warn("Unable to parse typeline", ci.item.getFrameType.name, ci.item.typeLine, ci.item.getName, ci.item)
     }
   }
 
