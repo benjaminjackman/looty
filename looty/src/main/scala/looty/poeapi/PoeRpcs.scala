@@ -151,7 +151,7 @@ object PoeRpcs {
   def scheduleQueueCheck(wasThrottled: Boolean) {
     if (!willCheckQueue) {
       willCheckQueue = true
-      global.setTimeout(() => checkQueue(), if (wasThrottled) coolOffMs else 0)
+      global.setTimeout(() => checkQueue(), if (wasThrottled) coolOffMs else requestTimeGap)
     }
   }
 
@@ -243,7 +243,10 @@ object PoeRpcs {
 
   private var willCheckQueue = false
   //How long to wait after we hit the throttle before checking again
-  val coolOffMs = 10000
+  val coolOffMs = 60000
+  val requestTimeGap = 300
+  // Gap between removing queue item, and then looking at (def peek) the SAME one (which should not be used as it was already removed ) is 10ms
+  // when spreading requests ~300ms apart they don't overlap anymore even if value would be less then 300ms, browser shows responses from server still at ~300ms apart
 
   case class BadParameters(msg: String) extends Exception
   case class ThrottledFailure(msg: String) extends Exception
