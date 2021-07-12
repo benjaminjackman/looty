@@ -504,7 +504,7 @@ latest changes to the APIs from the abyssal leagues.
 - [x] Allow users to save filter sets
 - [x] Load StashTab on click
 - [x] Add / Remove Columns (prioritized for fph)
-- [ ] Require ctrl to show tooltips (fph suggestion)
+- [x] Require ctrl to show tooltips (fph suggestion)
 - [ ] Custom and better default item scoring options [reddit post](http://www.reddit.com/r/pathofexile/comments/1q5rdi/its_worth_keeping_if/)
 - [ ] Show reason for score in the item detail.
 - [ ] Ability to click on a row and label the item in that row
@@ -522,7 +522,7 @@ latest changes to the APIs from the abyssal leagues.
 
 ### Extensibility and compatability with other sites
 - [ ] Act as a secure API that can get data up to other sites and act as a Pseudo API until GGG makes one (if they do, *cough* item level *ahem* item uuids *ATAZIRIQUADSWTFCHOO* last mod time get-stash-items/{tabs:1} *hack*)
-- [ ] Provide CSV / Google Document export of items table
+- [x] Provide CSV / Google Document export of items table
 - [ ] Upload builds / equipment to the http://poebuilds.com
 - [ ] Get stats for current character's build from http://poebuilds.com and use it to calculate actual dps and so on for a character with an item and for a skill
 
@@ -574,10 +574,16 @@ If you would like to prepare your own sample-item.json file. Here's [how-to](./H
 
 #### Useful links:
 
+Dev docs
+- [Official Path of Exile Dev Docs](https://www.pathofexile.com/developer/docs)
+- [Chuanhsing's PoE complete API documentation with missing endpoins in PoE official dev docs](https://poedb.tw/us/poe-api)
+- [RePoe](https://github.com/brather1ng/RePoE) brather1ng repository of Path of Exile resources. Contains the generated data from GGPK file in JSON format
+- [Important changes in PoE for developers - official forum where Novynn post threads with changes for current temporary league](https://www.pathofexile.com/forum/view-forum/674)
+
+Tools
 - [Firefox extension documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
 - [Scala documentation](https://docs.scala-lang.org/)
 - [Scala 2.12 Library](https://devdocs.io/scala~2.12_library/) parsed doc from previous site Library API but easier to search
-- [RePoe](https://github.com/brather1ng/RePoE) repository of Path of Exile resources. Contains the generated data from GGPK file in JSON format  
 - [Itellij IDEA](https://www.jetbrains.com/idea/) Java IDE with native Scala support
 
 ### How to build for iterative development
