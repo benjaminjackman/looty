@@ -330,7 +330,10 @@ object ComputedItemProps {
   val LifeGainOnHit      = pno("LifeGainOnHit", "lgoh")(Regen)(_.onAttackHit.lifeAndMana.life)
   val ManaGainOnHit      = pno("ManaGainOnHit", "mgoh")(Regen)(_.onAttackHit.lifeAndMana.mana)
   val LifeGainOnKill     = pno("LifeGainOnKill", "lgok")(Regen)(_.onKill.lifeAndMana.life)
+  val RecoverLifeOnKill     = pno("RecoverLifeOnKill", "r%lok")(Regen)(_.recoverOnKill.lifeAndMana.life)
   val ManaGainOnKill     = pno("ManaGainOnKill", "mgok")(Regen)(_.onKill.lifeAndMana.mana)
+  val RecoverManaOnKill     = pno("RecoverManaOnKill", "r%mok")(Regen)(_.recoverOnKill.lifeAndMana.mana)
+  val RecoverESOnKill     = pno("RecoverESOnKill", "r%ESok")(Regen)(_.recoverOnKill.energyShield)
   val ManaLeech          = pno("ManaLeech", "mleech")(Regen)(_.leech.physical.mana)
 
   val flatLifeRegen          = pno("RegenerateLifePerSecond", "lireg")(Regen)(_.regenPerSecond.flat.life)
@@ -346,7 +349,10 @@ object ComputedItemProps {
   LifeGainOnHit !?= "Life Gain on Hit"
   ManaGainOnHit !?= "Mana Gain on Hit"
   LifeGainOnKill !?= "Life Gain on Kill"
+  RecoverLifeOnKill !?= "Recover Life on Kill"
   ManaGainOnKill !?= "Mana Gain on Kill"
+  RecoverManaOnKill !?= "Recover Mana on Kill"
+  RecoverESOnKill !?= "Recover Energy Shield on Kill"
   ManaLeech !?= "Mana Leech from Physical Attack Damage"
   flatLifeRegen !?= "Regenerate Life per second"
   percentLifeRegen !?= "Regenerate % of Life per second"
@@ -358,6 +364,7 @@ object ComputedItemProps {
   //Attributes
   val PlusLife = pno("PlusLife", "+life")(Attributes)(_.plusTo.lifeAndManaWithStrInt.life)
   val IncreasedMaxLife      = pno("IncreasedMaxLife", "+%Life")(Attributes)(_.increased.maximumLife)
+  val IncreasedMaxMana      = pno("IncreasedMaxMana", "+%Mana")(Attributes)(_.increased.maximumMana)
   val PlusMana = pno("PlusMana", "+mana")(Attributes)(_.plusTo.lifeAndManaWithStrInt.mana)
   val PlusDex  = pno("PlusDex", "+dex")(Attributes)(_.plusTo.attribute.dexterity)
   val PlusStr  = pno("PlusStr", "+str")(Attributes)(_.plusTo.attribute.strength)
@@ -369,6 +376,7 @@ object ComputedItemProps {
 
   PlusLife ?= "Adds this amount of life (includes strength bonus)"
   IncreasedMaxLife !?= "Increased Maximum Life"
+  IncreasedMaxMana !?= "Increased Maximum Mana"
   PlusMana !?= "Adds this amount of mana (includes intelligence bonus)"
   PlusDex !?= "Adds this amount of dex"
   PlusStr ?= "Adds this amount of str"
