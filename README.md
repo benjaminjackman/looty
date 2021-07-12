@@ -45,7 +45,8 @@ Features
   - added # increased maximum Mana
   - value of affix "#% increased Attack and Cast speed" is now added to mods "attack speed" and "cast speed"
   - flasks removing bleeding has new modifier, old one is still used on previous ones
-
+  - re enabled 2 custom score mods per user request
+  
 Fixes
    - duplicate requests problem solved -> faster item data download
 

@@ -52,7 +52,7 @@ object ComputedItemProps {
   //affixes Group names for use in Column Select Panel
   val General           = "General"
   val Miscellaneous     = "Miscellaneous"
-  val Scores            = "Score" //unused
+  val Scores            = "Score"
   val Defensive         = "Defensive"
   val Attack            = "Attack"
   val Dps               = "Dps"
@@ -205,11 +205,11 @@ object ComputedItemProps {
   //Turned on because some user requested as he still uses it
   //Score
   val DefaultScore = pno("DefaultScore", "score")(Scores)(_.Scores.default.score)
-//  val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
-//  val CustomScore2 = pno("CustomScore2", "custom2")(Scores)(_.Scores.custom2.score)
+  val CustomScore  = pno("CustomScore", "custom")(Scores)(_.Scores.custom.score)
+  val CustomScore2 = pno("CustomScore2", "custom2")(Scores)(_.Scores.custom2.score)
   DefaultScore !?= "An experimental score assigned to assess the desirability of the item"
-//  CustomScore !?= "The result of the user definable score"
-//  CustomScore2 !?= "Score according to semi-strict high value rules (roughly tier 2 and higher)"
+  CustomScore !?= "The result of the user definable score"
+  CustomScore2 !?= "Score according to semi-strict high value rules (roughly tier 2 and higher)"
 
   //Defensive
   val Armour                        = pno("Armour", "AR")(Defensive)(_.total.armour)
