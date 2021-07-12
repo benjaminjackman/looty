@@ -184,11 +184,14 @@ object AffixesParser {
     regex1(s"^Regenerate ([.\\d]+) ${x.cap} per second")(_.regenPerSecond.flat.+=(x, _))
     regex1(s"^Regenerate ([.\\d]+)% of ${x.cap} per second")(_.regenPerSecond.percent(x) += _)
     regex1(s"^([+-\\d]+) ${x.cap} [gG]ained on Kill")(_.onKill.lifeAndMana(x) += _)
+    regex1(s"^Recover ([.\\d]+)% of ${x.cap} on Kill")(_.recoverOnKill.lifeAndMana(x) += _)
     regex1(s"^([+-\\.\\d]+)% of Physical Attack Damage Leeched as ${x.cap}")(_.leech.physical(x) += _)
     plusTo(s"maximum ${x.cap}")(_.plusTo.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} gained for each Enemy hit by Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
     simple1("", s"${x.cap} gained for each Enemy hit by your Attacks")(_.onAttackHit.lifeAndMana.+=(x, _))
   }
+
+  regex1(s"^Recover ([.\\d]+)% of Energy Shield on Kill")(_.recoverOnKill.energyShield += _)
 
   chanceTo("Block Spell Damage")(_.chanceTo.blockSpellDamage += _)
   chanceTo("Dodge Spell Hits")(_.chanceTo.dodgeSpellHits += _)
@@ -203,6 +206,9 @@ object AffixesParser {
   increased("Attack Damage")(_.increased.attackDamage += _)
   increased("Melee Damage")(_.increased.meleeDamage += _)
   increased("Area of Effects")(_.increased.areaOfEffects += _)
+  //On jewels
+  increased("Attack and Cast Speed")(_.increased.attackSpeed += _)
+  increased("Attack and Cast Speed")(_.increased.castSpeed += _)
   //On belts
   increased("Global Physical Damage")(_.increased.damage.physical += _)
   increased("Attack Speed")(_.increased.attackSpeed += _)
@@ -243,6 +249,7 @@ object AffixesParser {
   increased("Energy Shield")(_.increased.localEnergyShield += _)
   increased("maximum Energy Shield")(_.increased.maximumEnergyShield += _) //from jewelry
   increased("maximum Life")(_.increased.maximumLife += _)
+  increased("maximum Mana")(_.increased.maximumMana += _)
   increased("Armour") { (i, a) => i.increased.localArmour += a}
   increased("Evasion Rating") { (i, a) => i.increased.localEvasionRating += a}
   increased("Armour and Evasion") { (i, a) => i.increased.localArmour += a; i.increased.localEvasionRating += a}
@@ -343,7 +350,10 @@ object AffixesParser {
   simple0("Immunity to Freeze and Chill during Flask effect\nRemoves Freeze and Chill on use")(_.flask.removesFrozenAndChilled = true)
   simple0("Immunity to Shock during Flask effect\nRemoves Shock on use")(_.flask.removesShocked = true)
   simple0("Immunity to Ignite during Flask effect\nRemoves Burning on use")(_.flask.removesBurning = true)
+  //previous mod still in use on old flasks
   simple0("Immunity to Bleeding during Flask effect\nRemoves Bleeding on use")(_.flask.removesBleeding = true)
+  //new antibleed mod
+  simple0("Immunity to Bleeding and Corrupted Blood during Flask effect\nRemoves Bleeding and Corrupted Blood on use")(_.flask.removesBleeding = true)
   //simple0("Immunity to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
   // curse immunities have been reworded?
   simple0("Immune to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)

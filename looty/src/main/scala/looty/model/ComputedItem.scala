@@ -173,6 +173,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var localEnergyShield              = 0.0
     var maximumEnergyShield            = 0.0
     var maximumLife                    = 0.0
+    var maximumMana                    = 0.0
     var quantityOfItemsFound           = 0.0
     var rarityOfItemsFound             = 0.0
     var movementSpeed                  = 0.0
@@ -271,6 +272,10 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
 
   object leech {var physical = LifeAndMana mutable 0.0}
   object onKill {var lifeAndMana = LifeAndMana mutable 0.0}
+  object recoverOnKill {
+    var lifeAndMana = LifeAndMana mutable 0.0
+    var energyShield = 0.0
+  }
   object onAttackHit {var lifeAndMana = LifeAndMana mutable 0.0}
 
   object socketedGemLevel {
