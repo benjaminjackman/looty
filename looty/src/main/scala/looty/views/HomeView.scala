@@ -14,13 +14,20 @@ class HomeView(val banner: String, val version: String) extends View {
   def versionHistory = """
 # Version History
 ## 0.2.1.82 (2021-07-10)
+Features
+  - added Recover # of Energy Shield on Kill
+  - added Recover # Life on Kill
+  - added Recover # Mana on Kill
+  - added # increased maximum Mana
+  - value of affix "#% increased Attack and Cast speed" is now added to mods "attack speed" and "cast speed"
+  - flasks removing bleeding has new modifier, old one is still used on previous ones
 
 Fixes
-- duplicate requests problem solved -> faster item data download
+  - duplicate requests problem solved -> faster item data download
 
 Dev
-- added to readme various useful dev docs
-- added boolean variable to turn off console parsing messages (by default they are shown, as before)
+  - added to readme various useful dev docs
+  - added boolean variable to turn off console parsing messages (by default they are shown, as before)
 
 ## 0.2.1.81 (2021-04-25) (Traf contributed this update)
 
