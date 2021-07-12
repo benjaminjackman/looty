@@ -37,13 +37,14 @@ Quoted from Steve Yegge's [Excellent Blog Post](http://steve-yegge.blogspot.com/
 ## Developer Log
 ```code
 # Version History
-## 0.2.1.82 (2021-07-10)
+## 0.2.1.82 (2021-07-12)
+
 Fixes
-Duplicate requests problem solved -> faster item data download
+- duplicate requests problem solved -> faster item data download
 
 Dev
-Added boolean variable to turn off console parsing messages. 
-By default they are shown, as before.
+- added to readme various useful dev docs
+- added boolean variable to turn off console parsing messages (by default they are shown, as before)
 
 ## 0.2.1.81 (2021-04-25) (Traf contributed this update)
 
@@ -144,6 +145,12 @@ Features
 	- changed behavior of Evasion Rating and Armor increased mods, added their local variations, and added local Energy Shield increase
 	- armor and evasion rating are correctly calculated and now are global - it recognize "% increased Armor" and "% increased Evasion Rating" on talismans, rings, belts, jewels
 	- items with dexterity include "global Evasion Rating" column (as every 5 dexterity increases Evasion Rating by 1 %)
+```
+
+<details><summary>Even more history</summary>
+<p>
+
+```code
 
 ## 0.2.1.78 (2020-09-17)
 - Added types
@@ -189,12 +196,7 @@ firefox review placation
 
 ## 0.2.1.75 (2019-05-01)
 Jewel Support
-```
 
-<details><summary>Even more history</summary>
-<p>
-
-```code
 ## 0.2.1.74 (2019-04-26)
 Realm can be set under settings, set it to sony in order for looty to
 work with the ps4 version of PoE, other realms may work as well.
