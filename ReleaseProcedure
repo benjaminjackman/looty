@@ -21,10 +21,18 @@ bin/deploy
 https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US#
 https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
 
-#upload
+#upload to chrome
 go ~/dev/github/looty/build/
-./build/build.zip
+./build.zip
 
+
+#upload to gh for firefoxen
+source ~/dev/github/looty/user/firefox
+
+Go to your extension folder, open a terminal and execute:
+cd ~/dev/github/looty/buildffsrc/looty/target/web/public/main
+web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET
+# try some more of this later: https://linuxconfig.org/how-to-create-package-and-sign-a-firefox-web-extension
 
 # TODO: Github releases!
 
@@ -39,3 +47,12 @@ https://addons.mozilla.org/en-US/developers/addon/looty-path-of-exile-stash-find
 #firefox location of development file:
 about:debugging
 ~/dev/github/looty/looty/target/web/public/main/manifest.json
+
+
+Generate a signed .xpi
+
+#One time setup for firefox
+npm install --global web-ext
+Go to https://addons.mozilla.org/en-US/developers/addon/api/key/ and generate a new API KEY.
+
+
