@@ -5,10 +5,15 @@ gmocff
 
 #bump version number in
 c ./looty/src/main/scala/looty/views/HomeView.scala ./looty/src/main/public/manifest.json ./README.md
+
 "version": "0.2.1.82",
 
-webpage
+# webpage
 https://www.pathofexile.com/forum/view-thread/832233
+
+# create release in github with version notes
+https://github.com/benjaminjackman/looty/releases/new
+
 
 #copy homeview to commit
 
@@ -21,12 +26,15 @@ bin/deploy
 https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US#
 https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
 
-#upload to chrome
+
+#upload to chrome & github
 go ~/dev/github/looty/build/
-./build.zip
 
 
-#upload to gh for firefoxen
+
+### YOU ARE ALL DONE (for now)
+
+
 source ~/dev/github/looty/user/firefox
 
 Go to your extension folder, open a terminal and execute:
