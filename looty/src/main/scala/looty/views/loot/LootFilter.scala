@@ -45,6 +45,7 @@ object LootFilterColumn {
     val LTE = "<=(.*)".r
     val EQ = "=(.*)".r
     val NUM = "([0-9.-]+)".r
+    val NOT = "!(.*)".r
 
     try {
       text.trim match {
@@ -55,6 +56,11 @@ object LootFilterColumn {
         case EQ(n) if n.nonEmpty => numFilter(n)(_ == _)
         case NUM(n) if n.nonEmpty && col.defaultNumFilter.isDefined => numFilter(n)(col.defaultNumFilter.get.apply)
         case "" => LootFilterColumn(text, col, i => true)
+        case NOT(s) =>
+          LootFilterColumn(text,col,(i) => {
+            val value = col.getJs(i).toString.toLowerCase
+            !value.matches(".*" + s + ".*")
+          })
         case s =>
           val toks = s.split("\\|")
           LootFilterColumn(text, col, (i) => {
