@@ -26,6 +26,24 @@ object ArmourParser {
   val spiritShield = List("Spirit Shield")
   val shield       = List("Buckler", "Shield", "Spiked Bundle")
   val quiver       = List("Quiver")
+  val heistMemberItem = List("Brooch","Sharpening Stone", "Conduit Line", "Aggregator Charm", "Burst Band",
+    "Arrowhead", "Cloak", "Lockpick", "Bracers", "Drill", "Blowtorch", "Sole", "Ward", "Charm", "Flashpowder",
+    "Keyring", "Kit")
+  //Brooch 1x1
+  //Sharpening Stone 2x2
+  //Conduit Line 2x2
+  //Aggregator Charm 2x2
+  //Burst Band 2x2
+  //Arrowhead 2x2
+  //cloak 2x2
+  //lockpick 2x2
+  //bracers 2x2
+  //drill 2x2
+  //blowtorch 2x2
+  //sole 2x2
+  //ward 2x2
+  //charm 2x2
+  //flashpowder 2x2
 
   def parse(ci: ComputedItem, typeLine: String): Boolean = {
     if (ci.item.h =?= 1 && ci.item.w =?= 1) {
@@ -35,6 +53,9 @@ object ArmourParser {
       } else if (typeLine.contains("Ring")) {
         ci.slots.isRing = true
         true
+      } else if (typeLine.contains("Brooch")) {
+        ci.slots.isHeistMemberItem = true
+        true
       } else {
         console.warn("1x1 Non Jewelery", ci.item.typeLine, ci.asJsAny)
         false
@@ -43,7 +64,7 @@ object ArmourParser {
       ci.slots.isBelt = true
       true
     } else if (ci.item.h =?= 2 && ci.item.w =?= 2) {
-      //Helmet, Gloves, Boots
+      //Helmet, Gloves, Boots, HeistMemberItem (except brooch)
       if (helmets.exists(typeLine.contains(_))) {
         ci.slots.isHelmet = true
         true
@@ -59,6 +80,9 @@ object ArmourParser {
         true
       } else if (shield.exists(typeLine.contains(_))) {
         ci.slots.isShield = true
+        true
+      } else if (heistMemberItem.exists(typeLine.contains(_))) {
+        ci.slots.isHeistMemberItem = true
         true
       } else {
         console.warn("2x2 Unknown", ci.item.typeLine, ci.asJsAny)
