@@ -229,6 +229,7 @@ object PoeTypes {
       def isHirelingE = x.descrText.toOption.exists(_ contains "Can only be equipped to Heist members.")
       def isBlueprint = x.typeLine.contains("Blueprint")
       def isContract = x.typeLine.contains("Contract")
+      def isLogbook = x.typeLine.contains("Logbook")
       // TODO --
       def isInSocket = x.socket.toOption.isDefined
 
