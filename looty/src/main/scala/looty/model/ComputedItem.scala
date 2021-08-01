@@ -130,6 +130,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isHirelingE) "Heist Tool"
     else if (item.isBlueprint) "Blueprint"
     else if (item.isContract) "Contract"
+    else if (item.isLogbook) "Logbook"
     else if (item.isResonator) "Resonator"
     // moving it as the last one to not include possible fragments catches as currency
     // which are recognized via description text
@@ -372,6 +373,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var isBelt   = false
     var isBoots  = false
     var isQuiver = false
+    var isHeistMemberItem = false
   }
 
 
