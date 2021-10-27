@@ -549,27 +549,33 @@ object ComputedItemProps {
   val FlaskChargesOnCriticalStrikeGiven = pno("FlaskChargesOnCriticalStrikeGiven", "fsurgeon")(FlasksMods)(_.flask.chargesOnCriticalStrikeGiven)
   val FlaskLifeRecoveryToMinions        = pno("FlaskLifeRecoveryToMinions", "fminion")(FlasksMods)(_.flask.lifeRecoveryToMinions)
   val FlaskAmountAppliedInstantly       = pno("FlaskAmountAppliedInstantly", "f%instant")(FlasksMods)(_.flask.amountAppliedInstantly)
+  val FlaskAImmunityTime       = pno("FlaskAmountImmunityTime", "fimmuntime")(FlasksMods)(_.flask.immunityTime)
 
   FlaskExtraCharges !?= "Flask Extra Charges"
   FlaskChargesUsed !?= "Flask Charges Used"
   FlaskChargesOnCriticalStrikeGiven !?= "Flask Charges On Critical Strike Given"
   FlaskLifeRecoveryToMinions !?= "Flask Life Recovery To Minions"
   FlaskAmountAppliedInstantly !?= "Flask Amount Applied Instantly"
+  FlaskAImmunityTime !?= "Flask Immunity Time"
 
 
   val FlaskDispelsFrozenAndChilled = boo("FlaskDispelsFrozenAndChilled", "fafreeze")(FlasksActions)(_.flask.removesFrozenAndChilled)
   val FlaskDispelsShocked          = boo("FlaskDispelsShocked", "fashock")(FlasksActions)(_.flask.removesShocked)
   val FlaskDispelsBurning          = boo("FlaskDispelsBurning", "faburn")(FlasksActions)(_.flask.removesBurning)
   val FlaskRemovesBleeding         = boo("FlaskRemovesBleeding", "fableed")(FlasksActions)(_.flask.removesBleeding)
-  val FlaskCurseImmunity           = boo("FlaskCurseImmunity", "facurse")(FlasksActions)(_.flask.removesCurses)
+  val FlaskRemovesCurse           = boo("FlaskRemovesCurse", "facurse")(FlasksActions)(_.flask.removesCurses)
+  val FlaskPoisonImmunity           = boo("FlaskCurseImmunity", "fapois")(FlasksActions)(_.flask.removesPoison)
+  val FlaskHinderMaimImmunity           = boo("FlaskHinderMaimImmunity", "faHinderMaim")(FlasksActions)(_.flask.removesHinderAndMaim)
   val FlaskKnockback               = boo("FlaskKnockback", "fknock")(FlasksActions)(_.flask.knockback)
   val FlaskInstant                 = boo("FlaskInstant", "finstant")(FlasksActions)(_.flask.instantRecovery)
 
-  FlaskDispelsFrozenAndChilled !?= "Flask Dispels FrozenAndChilled"
+  FlaskDispelsFrozenAndChilled !?= "Flask Dispels Frozen and Chilled"
   FlaskDispelsShocked !?= "Flask Dispels Shocked"
   FlaskDispelsBurning !?= "Flask Dispels Burning"
   FlaskRemovesBleeding !?= "Flask Removes Bleeding"
-  FlaskCurseImmunity !?= "Flask Curse Immunity"
+  FlaskRemovesCurse !?= "Flask Removes Curse"
+  FlaskPoisonImmunity !?= "Flask Removes Poison"
+  FlaskHinderMaimImmunity !?= "Flask Removes Hindered and Maimed"
   FlaskKnockback !?= "Flask adds Knockback"
   FlaskInstant !?= "Flask Instant Recovery"
 
