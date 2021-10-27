@@ -129,7 +129,7 @@ class ItemDetailHover {
 	    requirements,
       item.item.secDescrText.toOption.map(_.toString).getOrElse(""),
       if (!item.item.enchantModsList.isEmpty) s"""<span class='enchantMod'>${item.item.enchantModsList.mkString("<br>")}</span>""" else "",
-      //item.item.implicitModList.mkString("<br>"),
+      item.item.scourgeModList.map(affix => s"<div class='mod scourgeMod'>$affix</div>").mkString("\n"),
       item.item.implicitModList.map(affix => s"<div class='mod implicitMod'>$affix</div>").mkString("\n"),
       item.item.fracturedModsList.map(affix => s"<div class='mod fracturedMod'>$affix</div>").mkString("\n"),
       item.item.explicitModList.map(affix => s"<div class='mod explicitMod'>$affix</div>").mkString("\n"),
@@ -138,10 +138,15 @@ class ItemDetailHover {
         s"${insertStyling("propertyDescr","Incubating: ")}${insertStyling("propertyValue",item.item.incubatedItem.get.name)}<br>" +
         addProgressBar(item.item.incubatedItem.get.progress, item.item.incubatedItem.get.total, "incubator", true)
       } else "",
+      //TODO more tests
+      /*if (item.item.scourged.toOption.isDefined) {
+          addProgressBar(item.item.scourged.toOption.get.progress.get, item.item.scourged.toOption.get.total.get, "scourge", true)
+      } else "",*/
       item.item.cosmeticMods.toOption.map(_.mkString("<br>")).getOrElse(""),
       if (!flavorText.isEmpty) s"""<span class="flavorText">${flavorText}</span>""" else "",
       if (item.item.identified.toOption.map(x => x: Boolean).getOrElse(true)) "" else insertStyling("unidentified","Unidentified"),
       if (item.item.corrupted.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("corrupted","Corrupted") else "",
+      if (item.item.scourged.toOption.isDefined) insertStyling("scourgeMod",s"Scourged (Tier ${item.item.scourged.get.tier})") else "",
       if (item.item.duplicated.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("mirrored","Mirrored") else "",
       if (item.item.veiled.toOption.map(x => x: Boolean).getOrElse(false)) insertStyling("veiled","veiled") else "",
       if (item.item.getInfluences.length > 0 ) s"Influence: ${item.item.getInfluences}" else "",

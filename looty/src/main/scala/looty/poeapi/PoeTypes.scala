@@ -239,10 +239,12 @@ object PoeTypes {
       def implicitModList = x.implicitMods.toOption.getOrElse(js.Array()).toList
       def explicitModList = x.explicitMods.toOption.getOrElse(js.Array()).toList
       def craftedModList = x.craftedMods.toOption.getOrElse(js.Array()).toList
+      def scourgeModList = x.scourgeMods.toOption.getOrElse(js.Array()).toList
       def enchantModsList = x.enchantMods.toOption.getOrElse(js.Array()).toList
       def fracturedModsList = x.fracturedMods.toOption.getOrElse(js.Array()).toList
 
       def isCrafted: Boolean = if (x.craftedMods.toOption.getOrElse(js.Array()).toList.length>0) true else false
+      def isScourged: Boolean = if (x.scourgeMods.toOption.getOrElse(js.Array()).toList.length>0) true else false
 
       def getIncubatorRewardName: String = {
         if (x.incubatedItem.toOption.isDefined) {
@@ -472,6 +474,10 @@ object PoeTypes {
     val implicitMods: Optional[js.Array[String]] = js.native
     //up to 6 mods/affixes on item
     val explicitMods: Optional[js.Array[String]] = js.native
+    //mods from 3.16 temp league - now known if it will go core 22 X 2011
+    val scourgeMods: Optional[js.Array[String]] = js.native
+    // which level of scourge item has
+    val scourged: Optional[Scourged] = js.native
     //Mods crafted with crafting bench
     val craftedMods: Optional[js.Array[String]] = js.native
     //mods added in Lords Labirytnh (gloves/boots/helms), in Cluster Jewels (Delirium league), from anointment with oils (rings/amulet) (Blight league)
@@ -595,5 +601,19 @@ object PoeTypes {
     val progress:Int = js.native
     //How many monsters you have to kill
     val total:Int = js.native
+  }
+
+  trait Scourged extends js.Object {
+    //1-3 for items, 1-10 for maps
+    val tier: Int = js.native
+    val level: Optional[Int] = js.native
+    val progress: Optional[Int] = js.native
+    val total: Optional[Int] = js.native
+  }
+
+  //TODO what items has it?
+  trait UltimatumMods extends js.Object {
+    val `type`:String = js.native
+    val tier:Int = js.native
   }
 }
