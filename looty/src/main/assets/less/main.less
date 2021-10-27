@@ -15,6 +15,11 @@ body {
   /*background-image: url("/images/main-bg-heist.jpg");*/
   font-size: @font-size;
 
+  /*To make footer bottom "sticky"*/
+  margin:0;
+  display: flex;
+  flex-direction: column;
+
 }
 
 /* == Header ==*/
@@ -456,7 +461,6 @@ body {
 
   #buttons {
     display: inline-block;
-    margin-top: 12px;
 
     a {
       color: @pane-button-font-color;
@@ -529,7 +533,7 @@ body {
     }
 
     display: inline-block;
-    padding: 5px 0 0 12px;
+    padding-left: 12px;
     border-radius: 5px 5px 0 0;
   }
 
@@ -774,13 +778,24 @@ body {
 
 /* ==== Footer ==== */
 #footer {
-  margin-left: 5px;
+  flex-shrink: 0; /*?*/
+  background: black;
+  padding: 0.5em;
+  color: #aeaeae;
+
   .license {
-    transform:scaleX(-1);
-    transform:scaleX(-1);
+      color: #5c4e00;
+      text-decoration: none;
   }
   .author {
-    color:gold;
+
+  }
+  #invitation {
+    float: right;
+
+    a {
+      color: #8e8e8e;
+    }
   }
 }
 
