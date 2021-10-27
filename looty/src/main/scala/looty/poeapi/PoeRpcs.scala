@@ -244,7 +244,10 @@ object PoeRpcs {
   private var willCheckQueue = false
   //How long to wait after we hit the throttle before checking again
   val coolOffMs = 60000
-  val requestTimeGap = 300
+  //val requestTimeGap = 300
+  // when spreading requests ~300ms apart they don't overlap anymore even if value would be less then 300ms, browser shows responses from server still at ~300ms apart
+  // changing time gap per advice of /u/MoldyDwarf https://www.reddit.com/r/pathofexile/comments/pvuv2g/giant_stash_something_im_working_on/hhb23fz/?context=3
+  val requestTimeGap = 550
   // Gap between removing queue item, and then looking at (def peek) the SAME one (which should not be used as it was already removed ) is 10ms
   // when spreading requests ~300ms apart they don't overlap anymore even if value would be less then 300ms, browser shows responses from server still at ~300ms apart
 
