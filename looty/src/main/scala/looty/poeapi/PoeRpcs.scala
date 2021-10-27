@@ -164,13 +164,13 @@ object PoeRpcs {
           case Success(x) =>
             qi.debugLog("Get => Success")
             Q.remove(qi)
-            Alerter.info(s"Downloaded some data from ${basePoeUrl}! If you like Looty please comment ${Alerter.featuresLink("here")} so more people find out about it! ")
+            Alerter.info(s"Downloaded some items!")
             qi.success(x)
             checkQueue()
           case Failure(ThrottledFailure(msg)) =>
             qi.debugLog(s"Get => Throttled Failure $msg")
             console.debug("Throttled, cooling off ", qi.url, qi.params, msg)
-            Alerter.warn(s"""Throttled by ${basePoeUrl}, while you wait stop by ${Alerter.featuresLink("here")} and help other players discover the tool!""")
+            Alerter.warn(s"""Waiting in queue to download more items for you. It will resume downloading in less then 60sec""")
             scheduleQueueCheck(true)
           case Failure(UnauthorizedAccessFailure(msg)) =>
             qi.debugLog(s"Get => Unauthorized Access Failure $msg")
