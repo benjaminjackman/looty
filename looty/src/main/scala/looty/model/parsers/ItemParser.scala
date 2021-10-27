@@ -23,6 +23,7 @@ object ItemParser {
   def parseItem(item: AnyItem, containerId : LootContainerId, locationName : String): ComputedItem = {
     val ci = new ComputedItem(item, containerId, locationName)
     try {
+      if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.scourgeMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.fracturedMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.explicitMods.toOption)
       if (ci.isEquippable || ci.item.isJewel) parseMods(ci, ci.item.implicitMods.toOption)

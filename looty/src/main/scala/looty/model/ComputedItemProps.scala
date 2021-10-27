@@ -189,10 +189,12 @@ object ComputedItemProps {
   val IsMirrored = boo("Mirrored", "mirrored",20)("Misc")(_.item.duplicated.toOption.getOrElse(false))
   val IsIdentified = boo("Identified", "identified",20)("Misc")(_.item.identified.toOption.getOrElse(false))
   val IsVeiled = boo("Veiled", "veiled",20)("Misc")(_.item.veiled.toOption.getOrElse(false))
+  val IsScourged = boo("Scourged", "scourged",20)("Misc")(_.item.isScourged)
   val IsSynthesised = boo("Synthesised", "synthesised",20)("Misc")(c => c.item.fractured.toOption.getOrElse(false) || c.item.synthesised.toOption.getOrElse(false) )
   //isEnchanted - check mod enchlist - redundant button, but more obvious
   val Influences = str("Influences", "influences", width = 70)("Misc")(_.item.getInfluences)
 
+  IsScourged !?= "Item is Scourged"
   IsSynthesised !?= "Item is Syntesised (have fractured mods)"
   IsIdentified !?= "Item is Identified"
   IsCrafted !?= "Item is Crafted"
