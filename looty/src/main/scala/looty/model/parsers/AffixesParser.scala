@@ -130,6 +130,29 @@ object AffixesParser {
     }
   }
 
+  //"Ugly" Hack to detect immunity flasks
+  trait RegexBoolean extends RegexAffixParser {
+    override def parse(s: String, i:ComputedItem):Boolean = {
+      s.asInstanceOf[js.Dynamic].`match`(regex).nullSafe.asInstanceOf[Option[js.Array[String]]].getOrElse(js.Array()).toList match {
+        case null => false
+        case x :: y :: zs =>
+          process(i)
+          true
+        case xs => false
+      }
+    }
+    def process(i:ComputedItem)
+  }
+  def flaskRegex(regex: String)(f: (ComputedItem) => Unit) {
+    val r = regex
+    add {
+      new RegexBoolean {
+        val regex = new js.RegExp(r, "i")
+        def process(i: ComputedItem): Unit = f(i)
+      }
+    }
+  }
+
 
   def chanceTo(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* chance to $name$$")(f) }
   def increased(name: String)(f: (ComputedItem, Double) => Unit) = { regex1(s"^([.+-\\d]+)%* increased $name$$")(f) }
@@ -345,20 +368,43 @@ object AffixesParser {
   increased("Mana Recovered")(_.flask.increased.manaRecovered += _)
   increased("Armour during Flask effect")(_.flask.increased.armour += _)
   increased("Evasion Rating during Flask effect")(_.flask.increased.evasion += _)
-  increased("Movement Speed during Flask effect")(_.flask.increased.evasion += _)
+  increased("Movement Speed during Flask effect")(_.flask.increased.movementSpeed += _)
 
-  simple0("Immunity to Freeze and Chill during Flask effect\nRemoves Freeze and Chill on use")(_.flask.removesFrozenAndChilled = true)
-  simple0("Immunity to Shock during Flask effect\nRemoves Shock on use")(_.flask.removesShocked = true)
+  //ggg revamped flasks in 3.16 again
+  //Bleed
+  //Corrupted Blood
+  regex1("Grants Immunity to Bleeding for (\\d+) seconds if used while Bleeding\nGrants Immunity to Corrupted Blood for \\d+ seconds if used while affected by Corrupted Blood")(_.flask.immunityTime += _)
+  flaskRegex("Grants Immunity to Bleeding for (\\d+) seconds if used while Bleeding\nGrants Immunity to Corrupted Blood for \\d+ seconds if used while affected by Corrupted Blood")(_.flask.removesBleeding = true)
+  simple0("Immunity to Bleeding and Corrupted Blood during Flask Effect")(_.flask.removesBleeding = true)
+
+  //Chill
+  //Freeze
+  regex1("Grants Immunity to Chill for (\\d+) seconds if used while Chilled\nGrants Immunity to Freeze for \\d+ seconds if used while Frozen")(_.flask.immunityTime += _)
+  flaskRegex("Grants Immunity to Chill for (\\d+) seconds if used while Chilled\nGrants Immunity to Freeze for \\d+ seconds if used while Frozen")(_.flask.removesFrozenAndChilled = true)
+  simple0("Immunity to Freeze and Chill during Flask Effect")(_.flask.removesShocked = true)
+
+  //Shock
+  regex1("Grants Immunity to Shock for (\\d+) seconds if used while Shocked")(_.flask.immunityTime += _)
+  simple0("Immunity to Shock during Flask Effect")(_.flask.removesShocked = true)
+  simple0("Grants Immunity to Shock for 4 seconds if used while Shocked")(_.flask.removesShocked = true)
+
+  //Ignite
+  //Burning
+  regex1("Grants Immunity to Ignite for (\\d+) seconds if used while Ignited\nRemoves all Burning when used")(_.flask.immunityTime += _)
+  flaskRegex("Grants Immunity to Ignite for (\\d+) seconds if used while Ignited\nRemoves all Burning when used")(_.flask.removesBurning = true)
   simple0("Immunity to Ignite during Flask effect\nRemoves Burning on use")(_.flask.removesBurning = true)
-  //previous mod still in use on old flasks
-  simple0("Immunity to Bleeding during Flask effect\nRemoves Bleeding on use")(_.flask.removesBleeding = true)
-  //new antibleed mod
-  simple0("Immunity to Bleeding and Corrupted Blood during Flask effect\nRemoves Bleeding and Corrupted Blood on use")(_.flask.removesBleeding = true)
-  //simple0("Immunity to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
-  // curse immunities have been reworded?
-  simple0("Immune to Curses during Flask effect\nRemoves Curses on use")(_.flask.removesCurses = true)
-  // new poison immune Flasks
-  simple0("Immune to Poison during Flask effect\nRemoves Poison on use")(_.flask.removesPoison = true)
+
+  //Curse
+  simple0("Removes Curses on use")(_.flask.removesCurses = true)
+
+  //Hinder and Maim
+  regex1("Grants Immunity to Hinder for (\\d+) seconds if used while Hindered\nGrants Immunity to Maim for \\d+ seconds if used while Maimed")(_.flask.immunityTime += _)
+  flaskRegex("Grants Immunity to Hinder for (\\d+) seconds if used while Hindered\nGrants Immunity to Maim for \\d+ seconds if used while Maimed")(_.flask.removesHinderAndMaim = true)
+
+  //Poison
+  regex1("Grants Immunity to Poison for (\\d+) seconds if used while Poisoned")(_.flask.immunityTime += _)
+  flaskRegex("Grants Immunity to Poison for (\\d+) seconds if used while Poisoned")(_.flask.removesPoison = true)
+  simple0("Immunity to Poison during Flask Effect")(_.flask.removesPoison = true)
 
   simple0("Adds Knockback to Melee Attacks during Flask effect")(_.flask.knockback = true)
   simple0("Instant Recovery")(_.flask.instantRecovery = true)

@@ -437,6 +437,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var chargesOnCriticalStrikeGiven = 0.0
     var lifeFromMana                 = 0.0
     var manaFromLife                 = 0.0
+    var immunityTime                 = 0.0
 
     var additionalResistances = 0.0
     var lifeRecoveryToMinions = 0.0
@@ -448,12 +449,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     var removesBleeding         = false
     var removesCurses           = false
     var removesPoison           = false
-
-//    var frozenAndChilledImmunity = false
-//    var shockedImmunity          = false
-//    var burningImmunity          = false
-//    var bleedingImmunity         = false
-//    var cursesImmunity           = false
+    var removesHinderAndMaim    = false
 
     var knockback              = false
     var instantRecovery        = false
