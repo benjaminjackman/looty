@@ -13,6 +13,21 @@ class HomeView(val banner: String, val version: String) extends View {
 	val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   def versionHistory = """
 # Version History
+## 0.2.1.83 (2021-10-27)
+Features
+  - added Scourge items
+    - new column scourged - to quickly check which items are scourged (works same as corrupted etc.)
+    - updated item tooltip with scourge affixes and Tier info
+  - added changes to flasks
+    - new column in Flask Action: faHinderMaim for flasks giving immunity to Hinder and Maim
+    - new column in Flask Action: fapois for flasks giving immunity to poison
+    - new column in Flask Mods: fimmunetime  to check how long immunity will last when you use flask - works with magic flasks
+  - added new base armor types from 3.15
+  - added operator ! for filtering column rows. You can now exclude some string of letters/numbers.
+  It should be only entry in filter box
+  example: you are looking for ring, but you would like to see all rings except breach ones, type in "!breach" in column "tpeln"
+  example: you are looking for all not crafted items, type in "!1" in column "crafted"
+
 ## 0.2.1.82 (2021-07-10)
 Features
   - added Recover # of Energy Shield on Kill
