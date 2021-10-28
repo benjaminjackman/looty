@@ -20,12 +20,12 @@ mkdir build
 OUT="$(pwd)/build"
 SRC=looty/target/web/public/main
 cp "$SRC/looty.html" "$SRC/popup.html" "$SRC/looty-opt.js" "$SRC/manifest.json" "$OUT"
-cp -r $SRC/images "$OUT"
-cp -r $SRC/jslib "$OUT"
-cp -r $SRC/less "$OUT"
-cp -r $SRC/fonts "$OUT"
+cp -r "$SRC/images" "$OUT"
+cp -r "$SRC/jslib" "$OUT"
+cp -r "$SRC/less" "$OUT"
+cp -r "$SRC/fonts" "$OUT"
 
-cd $OUT
+cd "$OUT"
 zip -r build.zip *
 
 cd ../
@@ -38,10 +38,9 @@ cp -r project "$OUT"
 cp -r bin "$OUT"
 cp README.md "$OUT"
 
-cd $OUT
+cd "$OUT"
 zip -r buildffsrc.zip *
 cp buildffsrc.zip ../build/
-
 
 
 #zip "$OUT"
