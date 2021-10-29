@@ -18,15 +18,17 @@ gg (commit)
 bin/deploy
 
 
-#to chrome web store
-https://chrome.google.com/webstore/developer/edit/ajfbflclpnpbjkfibijekgcombcgehbi?hl=en-US#
-https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
-
-
 #upload to chrome & github
 go ~/dev/github/looty/build/
-https://github.com/benjaminjackman/looty/releases/new
 
+#to chrome web store
+https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
+(top level: https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US)
+
+#to github
+git tag release-$(cat ./looty/src/main/public/manifest.json | jq -r .version)
+git push --tags
+https://github.com/benjaminjackman/looty/releases/new
 
 
 ### YOU ARE ALL DONE (for now)
