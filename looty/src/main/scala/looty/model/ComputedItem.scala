@@ -121,6 +121,7 @@ class ComputedItem(val item: AnyItem, val containerId: LootContainerId, val loca
     else if (item.isFragment) "Fragment"
     else if (item.isSplinter) "Splinter"
     else if (item.isQuest) "QuestItem"
+    else if (item.isClusterJewel) "Cluster Jewel"    
     else if (item.isJewel && !item.isAbyssJewel) "Jewel"
     else if (item.isAbyssJewel) "Abyss Jewel"
     else if (item.isDivinationCard) "DivCard"
