@@ -3,10 +3,10 @@ gru
 gmocff
 #commit changes
 
-#bump version number in
+#bump version number in BOTH files
 c ./looty/src/main/scala/looty/views/HomeView.scala ./looty/src/main/public/manifest.json ./README.md
 
-"version": "0.2.1.83",
+"version": "0.2.1.84",
 
 # webpage
 https://www.pathofexile.com/forum/view-thread/832233
@@ -16,7 +16,6 @@ https://www.pathofexile.com/forum/view-thread/832233
 gg (commit)
 
 bin/deploy
-
 
 #upload to chrome & github
 go ~/dev/github/looty/build/

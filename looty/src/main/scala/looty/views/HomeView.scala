@@ -13,6 +13,10 @@ class HomeView(val banner: String, val version: String) extends View {
 	val jq: JQueryStatic = global.jQuery.asInstanceOf[JQueryStatic]
   def versionHistory = """
 # Version History
+## 0.2.1.84 (2022-04-12)
+Features
+  - added cluster jewel filter type
+
 ## 0.2.1.83 (2021-10-27)
 Features
   - added Scourge items
