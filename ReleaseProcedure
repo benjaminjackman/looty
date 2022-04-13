@@ -3,7 +3,7 @@ gru
 gmocff
 #commit changes
 
-#bump version number in BOTH files
+#bump version number in THREE files
 c ./looty/src/main/scala/looty/views/HomeView.scala ./looty/src/main/public/manifest.json ./README.md
 
 "version": "0.2.1.84",
@@ -17,21 +17,20 @@ gg (commit)
 
 bin/deploy
 
-#upload to chrome & github
+#upload build.zip to chrome & github
 go ~/dev/github/looty/build/
 
 #to chrome web store
 https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US
 (top level: https://chrome.google.com/webstore/devconsole/456b4e3d-da2b-493b-8124-a63fb0fbdd9b/ajfbflclpnpbjkfibijekgcombcgehbi/edit/package?hl=en-US)
 
-#to github
+#to github (use version # for the name)
 git tag release-$(cat ./looty/src/main/public/manifest.json | jq -r .version)
 git push --tags
-https://github.com/benjaminjackman/looty/releases/new
+browser https://github.com/benjaminjackman/looty/releases/new
 
 
 ### YOU ARE ALL DONE (for now)
-
 
 source ~/dev/github/looty/user/firefox
 
