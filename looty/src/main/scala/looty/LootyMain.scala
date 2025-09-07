@@ -36,12 +36,11 @@ class LootyApp(extensionMode: Boolean) {
 
   implicit val pc: PoeCacher = {
     if (extensionMode) {
-      // load data from /data/sample-items.json instead of GGG servers
-      //new PoeCacherJSON()
       // fetch data from GGG API
       new PoeCacherChrome()
     } else {
-      new PoeCacherExileTools()
+      // load data from /data/sample-items.json instead of GGG servers
+      new PoeCacherDemo()
     }
   }
 

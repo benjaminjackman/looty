@@ -35,10 +35,8 @@ SBT_JAR=`dirname $0`/sbt-launch-0.13.6.jar
 TERM=xterm-color
 
 #This requires nvs is installed see: https://github.com/jasongin/nvs
-export NVS_HOME="$HOME/.nvs"
-[ -s "$NVS_HOME/nvs.sh" ] && . "$NVS_HOME/nvs.sh"
 echo "Using node v8"
-nvs use 8
+. nvs.sh use 8
 
 JAVA_CMD=java8
 

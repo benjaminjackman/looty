@@ -1,0 +1,25 @@
+services:
+  builder:
+    build:
+      context: ./
+      target: builder
+      args:
+        USER_ID: ${USER_ID}
+        GROUP_ID: ${GROUP_ID}
+    volumes:
+      - ./:/home/devel/app
+      - cache_sbt:/home/devel/.sbt
+      - cache_ivy:/home/devel/.ivy2
+
+  nginx:
+    build:
+      context: ./
+      target: nginx
+    ports:
+      - '${NGINX_PORT}:80'
+    volumes:
+      - ./looty/target/web/public/main:/usr/share/nginx/html:ro
+
+volumes:
+  cache_sbt:
+  cache_ivy:

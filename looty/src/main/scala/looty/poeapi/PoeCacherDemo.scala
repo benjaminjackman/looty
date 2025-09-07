@@ -25,7 +25,7 @@ class PoeCacherDemo extends PoeCacher {
       // TODO update sample-items.json
       // TODO Get more data with various items having affixes/properties/types from previous leagues
       // [how-to](./HowTo-sample-items-file.md)
-      AjaxHelp.get[js.Dynamic]("/data/sample-items.json").map { x =>
+      AjaxHelp.get[js.Dynamic]("/data/sample-items-mercenaries.json").map { x =>
         jsonCache = Some(x)
         x
       }
