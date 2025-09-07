@@ -29,9 +29,13 @@ object PoeRpcs {
 
   import PoeTypes._
 
+  def encodeURIComponent(uriComponent: String): String = {
+    return js.Dynamic.global.encodeURIComponent(uriComponent).asInstanceOf[String]
+  }
+
   def getAccountName(): Future[String] = {
     AjaxHelp[String](s"$basePoeUrl/my-account", HttpRequestTypes.Get, None).flatMap { html =>
-      val Regex = "href=\"/account/view-profile/([^\"]*)".r.unanchored
+      val Regex = "href=\"/account/view-profile/[^\"]+\">([^<]+)</a>".r.unanchored
       html match {
         case Regex(accountName) => Future.successful(accountName)
         case _ => Future.failed(new Throwable("Unable to regex parse account name from page."))
@@ -46,8 +50,9 @@ object PoeRpcs {
   def getPassiveSkills(accountNameRealm: (String, Option[String]), character: String): Future[PassivesTree] = {
     //Also reqData=0 is sent sometimes
     //TODO
+    val accountName = encodeURIComponent(accountNameRealm._1)
     val anrs = {
-      s"accountName=${accountNameRealm._1}" +
+      s"accountName=${accountName}" +
         accountNameRealm._2.map(r => s"&realm=$r").getOrElse("")
     }
     enqueue[PassivesTree](
@@ -60,14 +65,14 @@ object PoeRpcs {
   def getCharacterInventory(accountNameRealm: (String, Option[String]), character: String): Future[Inventory] = {
     val p = newObject
     p.character = character
-    p.accountName = accountNameRealm._1
+    p.accountName = encodeURIComponent(accountNameRealm._1)
     accountNameRealm._2.foreach(r => p.realm = r)
     enqueue[Inventory](url = s"$basePoeUrl/character-window/get-items", params = p)
   }
 
   def getStashTab(accountNameRealm: (String, Option[String]), league: String, tabIdx: Int): Future[StashTab] = {
     val p = newObject
-    p.accountName = accountNameRealm._1
+    p.accountName = encodeURIComponent(accountNameRealm._1)
     p.league = league.toString
     p.tabIndex = tabIdx
     accountNameRealm._2.foreach(r => p.realm = r)
@@ -76,7 +81,7 @@ object PoeRpcs {
 
   def getStashTabInfos(accountNameRealm: (String, Option[String]), league: String): Future[StashTabInfos] = {
     val p = newObject
-    p.accountName = accountNameRealm._1
+    p.accountName = encodeURIComponent(accountNameRealm._1)
     accountNameRealm._2.foreach(r => p.realm = r)
     p.league = league.toString
     p.tabIndex = 0
